@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Doing Scala</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/codetheme.css" rel="stylesheet">
+    <link href="http:////maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Side Menu -->
+    <a id="menu-toggle" href="#" class="btn btn-primary btn-lg toggle"><i class="fa fa-bars"></i></a>
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <a id="menu-close" href="#" class="btn btn-default btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
+            <li><a href="#top" onclick="moveToDiv('top'); return false;">Home</a><li>
+            <li><a href="#koans" onclick="moveToDiv('koans'); return false;">Koans</a></li>
+			<li>
+				<ol>
+					<!-- <li data-target="#carousel-koans" data-slide-to="0" class="">Instrucciones</li> -->
+					<li data-target="#carousel-koans" data-slide-to="1">Asserts</li>
+					<li data-target="#carousel-koans" data-slide-to="2">Val & Var</li>
+					<li data-target="#carousel-koans" data-slide-to="3">Classes</li>
+					<li data-target="#carousel-koans" data-slide-to="4">Options</li>
+					<li data-target="#carousel-koans" data-slide-to="5">Objects</li>
+					<li data-target="#carousel-koans" data-slide-to="6">Tuples</li>
+					<li data-target="#carousel-koans" data-slide-to="7">Higher Order Functions</li>
+					<li data-target="#carousel-koans" data-slide-to="8">Lists</li>
+					<li data-target="#carousel-koans" data-slide-to="9">Maps</li>
+					<li data-target="#carousel-koans" data-slide-to="10">Sets</li>
+					<li data-target="#carousel-koans" data-slide-to="11">Formatting</li>
+					<li data-target="#carousel-koans" data-slide-to="12">Patter nMatching</li>
+					<li data-target="#carousel-koans" data-slide-to="13">Case Classes</li>
+					<li data-target="#carousel-koans" data-slide-to="14">Range</li>
+					<li data-target="#carousel-koans" data-slide-to="15">Partially Applied Functions</li>
+					<li data-target="#carousel-koans" data-slide-to="16">Partial Functions</li>
+					<li data-target="#carousel-koans" data-slide-to="17">Implicits</li>
+					<li data-target="#carousel-koans" data-slide-to="18">Traits</li>
+					<li data-target="#carousel-koans" data-slide-to="19">For Expressions</li>
+					<li data-target="#carousel-koans" data-slide-to="20">Infix Prefix & Postfix Operators</li>
+					<li data-target="#carousel-koans" data-slide-to="21">Infix Types</li>
+					<li data-target="#carousel-koans" data-slide-to="22">Mutable Maps</li>
+					<li data-target="#carousel-koans" data-slide-to="23">Mutable Sets</li>
+					<li data-target="#carousel-koans" data-slide-to="24">Sequences & Arrays</li>
+					<li data-target="#carousel-koans" data-slide-to="25">Iterables</li>
+					<li data-target="#carousel-koans" data-slide-to="26">Traversables</li>
+					<li data-target="#carousel-koans" data-slide-to="27">Named & Default Arguments</li>
+					<li data-target="#carousel-koans" data-slide-to="28">Manifests</li>
+					<li data-target="#carousel-koans" data-slide-to="29">Preconditions</li>
+					<li data-target="#carousel-koans" data-slide-to="30">Extractors</li>
+					<li data-target="#carousel-koans" data-slide-to="31">ByName Parameter</li>
+					<li data-target="#carousel-koans" data-slide-to="32">Repeated  Parameters</li>
+					<li data-target="#carousel-koans" data-slide-to="33">Parent Classes</li>
+					<li data-target="#carousel-koans" data-slide-to="34">Empty Values</li>
+					<li data-target="#carousel-koans" data-slide-to="35">Type Signatures</li>
+					<li data-target="#carousel-koans" data-slide-to="36">Uniform Access Principle</li>
+					<li data-target="#carousel-koans" data-slide-to="37">Literal Booleans</li>
+					<li data-target="#carousel-koans" data-slide-to="38">Literal Numbers</li>
+					<li data-target="#carousel-koans" data-slide-to="39">Literal Strings</li>
+					<li data-target="#carousel-koans" data-slide-to="40">Type Variance</li>
+					<li data-target="#carousel-koans" data-slide-to="41">Enumerations</li>
+					<li data-target="#carousel-koans" data-slide-to="41">Constructors</li>
+				</ol>
+			</li>
+        </ul>
+		
+    </div>
+    <!-- /Side Menu -->
+
+    <!-- Full Page Image Header Area -->
+    <div id="top" class="header">
+        <div class="vert-text">
+            <h1>Doing Scala</h1>
+            <!-- <h3>Familiarízate con la sintaxis de Scala</h3> -->
+            <button class="btn btn-default btn-special" onclick="moveToDiv('koans');">KOANS</button>
+            <button class="btn btn-default btn-special" onclick="moveToDiv('resources');">RESOURCES</button>
+        </div>
+    </div>
+    <!-- /Full Page Image Header Area -->
+
+    <!-- Intro -->
+    <div id="koans" class="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 text-center">
+                    
+					<a href="#carousel-koans" role="button" data-slide="prev">
+						<span class="fa-stack fa-lg">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
+						</span>
+				    </a>
+					
+					<a href="#carousel-koans" role="button" data-slide="next">
+						<span class="fa-stack fa-lg">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
+						</span>
+				    </a>
+										
+                </div>
+            </div>
+			
+        </div>
+    
+	
+		<div id="carousel-koans" class="carousel slide" data-ride="carousel">
+		      
+		      <div class="carousel-inner">
+				  
+				  
+				  <div class="item active">
+	          		<div class="container">
+		          		<h2>Presentation</h2>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						
+					</div>
+		          </div>
+				 
+				  
+
+		      </div>
+
+		</div>
+            
+		
+        <div id="comments" class="container">
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+                var disqus_shortname = 'doingscala';
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+	
+	</div>
+    <!-- /Intro -->
+
+
+    <!-- Resources -->
+    <div id="resources" class="resources">
+        <div class="container">
+            
+            <div class="row">
+                <div class="col-md-4 col-md-offset-X text-center">
+                    <div class="service-item">
+                        <i class="service-icon fa fa-book"></i>
+						<h4><a href="#">Books</a></h4>
+                        <p>Did your navigation system shut down in the middle of that asteroid field? We can repair any dings and scrapes to your spacecraft!</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="service-item">
+                        <i class="service-icon fa fa-file-text"></i>
+						<h4><a href="#">Official Docs</a></h4>
+                        <p>Planning a time travel trip to the middle ages? Preserve the space time continuum by blending in with period accurate armor and weapons.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="service-item">
+                        <i class="service-icon fa fa-pencil"></i>
+                        <h4><a href="#">Blog</a></h4>
+						<p>Planning a time travel trip to the middle ages? Preserve the space time continuum by blending in with period accurate armor and weapons.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Services -->
+	
+
+   <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 text-center">
+                    <ul class="list-inline">
+                        <li><i class="fa fa-facebook fa-3x"></i>
+                        </li>
+                        <li><i class="fa fa-twitter fa-3x"></i>
+                        </li>
+                        <li><i class="fa fa-dribbble fa-3x"></i>
+                        </li>
+                    </ul>
+                    <div class="top-scroll">
+                        <a href="#top"><i class="fa fa-circle-arrow-up scroll fa-4x"></i></a>
+                    </div>
+                    <hr>
+                    <p>Copyright &copy; Company 2013</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- /Footer -->
+
+    <!-- JavaScript -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="js/app.js"></script>
+	
+
+
+</body>
+
+</html>
