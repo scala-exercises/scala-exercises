@@ -1,0 +1,27 @@
+{
+  "modules" : [ {
+    "code" : "val left = 2\nval right = 1\nassert(left == right)",
+    "postparagraph" : "<p>If the passed expression is <code>true</code>, <code>assert</code> will return normally. If <code>false</code>,\nScala's <code>assert</code> will complete abruptly with an <code>AssertionError</code>. This behavior is provided by\nthe <code>assert</code> method defined in object <code>Predef</code>, whose members are implicitly imported into every\nScala source file.\n</p>",
+    "preparagraph" : "<p>\nScalaTest makes three assertions available by default in any style trait. You can use:\n</p>\n<ul>\n<li><code>assert</code> for general assertions;</li>\n<li><code>assertResult</code> to differentiate expected from actual values;</li>\n<li><code>intercept</code> to ensure a bit of code throws an expected exception.</li>\n</ul>\n<p>In any Scala program, you can write assertions by invoking <code>assert</code> and passing in a <code>Boolean</code> expression:</p>\n"
+  }, {
+    "code" : "result should equal (3) // can customize equality\nresult should === (3)   // can customize equality and enforce type constraints\nresult should be (3)    // cannot customize equality, so fastest to compile\nresult shouldEqual 3    // can customize equality, no parentheses required\nresult shouldBe 3       // cannot customize equality, so fastest to compile, no parentheses required",
+    "postparagraph" : "",
+    "preparagraph" : "<p>\nScalaTest provides a domain specific language (DSL) for expressing assertions in tests\nusing the word <code>should</code>. ScalaTest matchers provides five different ways to check equality, each designed to address a different need. They are:</p>"
+  }, {
+    "code" : "true should be(__)",
+    "postparagraph" : "",
+    "preparagraph" : "Come on, your turn: true and false values can be compared with should matchers",
+    "solutions" : [ "true" ]
+  }, {
+    "code" : "val v1 = 4\nval v2 = 4\nv1 === __",
+    "postparagraph" : "<code>===</code> is an assert. It is from ScalaTest, not from the Scala language.",
+    "preparagraph" : "Booleans in asserts can test equality.",
+    "solutions" : [ "v2" ]
+  }, {
+    "code" : "assert(__ == 1 + 1)",
+    "postparagraph" : "",
+    "preparagraph" : "Sometimes we expect you to fill in the values",
+    "solutions" : [ "2" ]
+  } ],
+  "title" : "Asserts"
+}
