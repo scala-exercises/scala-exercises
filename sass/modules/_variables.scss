@@ -1,0 +1,35 @@
+// VARIABLES
+// =====================================
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+
+// Colors
+$color-primary: #859A00;
+$color-light-primary: #BDCBCE;
+$color-dark-primary: #002B37;
+$color-dark-second: #033643;
+$color-dark-third: #144754;
+$color-dark-fourth: #436C77;
+$color-white: #FFF;
+
+// Typography
+$font-sans-serif: "Open Sans", sans-serif;
+$font-light: 300;
+$font-regular: 400;
+$font-semibold: 600;
+$font-bold: 700;
+
+// Sizes
+$base-font-size: em(17);
+$base-line-height: $base-font-size * 1.6;
+$base-border-radius: em(3);
+
+$font-size-h1: $base-font-size * 3.5;
+$font-size-h2: $base-font-size * 2.5;
+$font-size-h3: $base-font-size * 1.5;
+
+// Breakpoints
+$bp-small: 400px;
+$bp-medium: 768px;
+$bp-large: 992px;
+$bp-xlarge: 1600px;

@@ -1,0 +1,45 @@
+// BASE
+// =====================================
+
+// Global
+
+html,
+body {
+    @include global;
+}
+
+// Header
+
+#intro { 
+    display: table;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background: $color-dark-second;
+    z-index: 1;
+    
+    .content-image {
+        bottom: 0;
+        display: block;
+        left: 0;
+        min-height: 100%;
+        min-width: 100%;
+        position: absolute;
+        z-index: 0;
+    }
+    
+    .presentation {
+        display: table-cell;
+        position: relative;
+        text-align: center;
+        vertical-align: middle;
+        z-index: 2;
+    }
+}
+
+// Section
+
+
+// Footer
+
+
