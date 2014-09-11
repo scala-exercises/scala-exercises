@@ -1,127 +1,20 @@
 {
-  "title": "Maps",
+  "title": "Val & Var",
   "modules": [
     {
-      "preparagraph": "Scala `map` is a collection of key/value pairs. Any value can be retrieved based on its key. Keys are unique in the `Map`, but values need not be unique. Maps are also called Hash tables. There are two kinds of Maps, the immutable and the mutable. The difference between mutable and immutable objects is that when an object is immutable, the object itself can't be changed.\n\nBy default, Scala uses the immutable `Map`. If you want to use the mutable `Set`, you'll have to import `scala.collection.mutable.Map` class explicitly. If you want to use both mutable and immutable Maps in the same, then you can continue to refer to the immutable Map as Map but you can refer to the mutable set as `mutable.Map`.\n\nMaps can be created easily:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nmyMap.size should be(__)",
+      "preparagraph": "Scala allows one to decide whether a variable is immutable or mutable. Immutable is Read only where as mutable is read-write. Immutable variables are declared with the keyword `val`.\n\n```\nval age:Int=22\n```\n\nHere age has been initialized to a value during its declaration. As it has been declared as a `val`, age cannot be reassigned to a new value. Any attempt to do will result in al reassignment to `val` error. Let us consider an Array being declared as `val`.\n\nMutable variables are delcared with the keyword `var`. Unlike val, `var` can be reassigned to different values or point to different objects. But they have to be initialised at the time of declaration.\"\n\n```\nvar age:Int=22\nage=35\n```\n\nThere’s an exception to the rule that one must initialize the `val`’s and `var`’s. When they are used as constructor parameters, the `val`’s and `var`’s will be initialised when the object is instantiated. Also, derived classes can override `val`’s declared inside the parent classes.\n\nYour turn. Remember, `var`'s may be reassigne.",
+      "code": "var a = 5\na should be(__)\na = 7\na should be(__)",
       "solutions": [
-        "4"
+        "5",
+        "7"
       ],
       "postparagraph": ""
     },
     {
-      "preparagraph": "Maps contain distinct pairings:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"MI\" -> \"Michigan\")\nmyMap.size should be(__)",
+      "preparagraph": "And `val`'s may not be reassigned",
+      "code": "val a = 5\na should be(__)\n\n// What happens if you uncomment these lines?\n// a = 7\n// a should be (7)",
       "solutions": [
-        "3"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Maps can be added to easily:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"MI\" -> \"Michigan\")\n\nval aNewMap = myMap + (\"IL\" -> \"Illinois\")\n\naNewMap.contains(\"IL\") should be(__)",
-      "solutions": [
-        "true"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Map values can be iterated:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"MI\" -> \"Michigan\")\n\nval mapValues = myMap.values\n\nmapValues.size should be(__)\n\nmapValues.head should be(__)\n\nval lastElement = mapValues.last\nlastElement should be(__)",
-      "solutions": [
-        "3",
-        "\"Michigan\"",
-        "\"Wisconsin\""
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Maps insertion with duplicate key updates previous entry with subsequent value:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"MI\" -> \"Meechigan\")\n\nval mapValues = myMap.values\n\nmapValues.size should be(__)\n\nmyMap(\"MI\") should be(__)",
-      "solutions": [
-        "3",
-        "\"Meechigan\""
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Map keys may be of mixed type",
-      "code": "val myMap = Map(\"Ann Arbor\" -> \"MI\", 49931 -> \"MI\")\nmyMap(\"Ann Arbor\") should be(__)\nmyMap(49931) should be(__)",
-      "solutions": [
-        "\"MI\"",
-        "\"MI\""
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Mixed type values can be added to a map:",
-      "code": "val myMap = scala.collection.mutable.Map.empty[String, Any]\nmyMap(\"Ann Arbor\") = (48103, 48104, 48108)\nmyMap(\"Houghton\") = 49931\n\nmyMap(\"Houghton\") should be(__)\nmyMap(\"Ann Arbor\") should be((__, __, __))",
-      "solutions": [
-        "49931",
-        "48103",
-        "48104",
-        "48108"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Maps may be accessed:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nmyMap(\"MI\") should be(__)\nmyMap(\"IA\") should be(__)",
-      "solutions": [
-        "\"Michigan\"",
-        "\"Iowa\""
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Map elements can be removed easily:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - \"MI\"\naNewMap.contains(\"MI\") should be(__)",
-      "solutions": [
-        "false"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Accessing a map by key results in an exception if key is not found:",
-      "code": "val myMap = Map(\"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\n\nintercept[NoSuchElementException] {\n  myMap(\"MI\") should be(__)\n}",
-      "solutions": [
-        "Nil"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Map elements can be removed in multiple:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap -- List(\"MI\", \"OH\")\n\naNewMap.contains(\"MI\") should be(__)\n\naNewMap.contains(\"WI\") should be(__)\naNewMap.size should be(__)",
-      "solutions": [
-        "false",
-        "true",
-        "2"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Map elements can be removed with a tuple",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - (\"MI\", \"WI\") // Notice: single '-' operator for tuples\n\naNewMap.contains(\"MI\") should be(__)\naNewMap.contains(\"OH\") should be(__)\naNewMap.size should be(__)",
-      "solutions": [
-        "false",
-        "true",
-        "2"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Attempted removal of nonexistent elements from a map is handled gracefully:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - \"MN\"\n\naNewMap.equals(myMap) should be(__)",
-      "solutions": [
-        "true"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Map equivalency is independent of order:",
-      "code": "val myMap1 = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval myMap2 = Map(\"WI\" -> \"Wisconsin\", \"MI\" -> \"Michigan\", \"IA\" -> \"Iowa\", \"OH\" -> \"Ohio\")\n\nmyMap1.equals(myMap2) should be(__)",
-      "solutions": [
-        "true"
+        "5"
       ],
       "postparagraph": ""
     }
