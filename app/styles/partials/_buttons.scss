@@ -1,7 +1,6 @@
 // Buttons
 // =====================================
 
-// Base styles
 
 .btn {
     text-transform: uppercase;
@@ -9,9 +8,12 @@
     border: none;
 }
 
-// Buttons sizes
 
 .btn-lg {
   // line-height: ensure even-numbered height of button next to large input
-  @include button-size($padding-large-vertical, $buttons-padding-large-horizontal, $font-size-large, $line-height-large, $buttons-border-radius-large);
+  @include button-size($buttons-padding-large-vertical, $buttons-padding-large-horizontal, $font-size-large, $line-height-large, $buttons-border-radius-large);
+}
+
+.divider .btn {
+    margin-top: -70px;
 }

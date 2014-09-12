@@ -26,13 +26,14 @@ $font-size-base:          16px !default;
 
 $font-size-h1:            floor(($font-size-base * 4)) !default; // ~64px
 $font-size-h2:            floor(($font-size-base * 2.5)) !default; // ~40px
-$font-size-h3:            ceil(($font-size-base * 1.5)) !default; // ~24px
+$font-size-h3:            ceil(($font-size-base * 1.4)) !default; // ~24px
 
 $headings-font-weight:    $font-bold !default;
 
 // Components
 
 $buttons-padding-large-horizontal:   80px !default;
+$buttons-padding-large-vertical:     12px !default;
 $buttons-border-radius-large:        2px  !default;
 
 
@@ -40,3 +41,8 @@ $buttons-border-radius-large:        2px  !default;
 
 $btn-primary-color:              #fff !default;
 $btn-primary-bg:                 $brand-primary !default;
+
+// Layout
+
+$padding-layout-general-large:    90px !default;
+$padding-layout-general-small:    60px !default;

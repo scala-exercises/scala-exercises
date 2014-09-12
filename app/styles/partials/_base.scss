@@ -8,6 +8,12 @@ body {
     @include global;
 }
 
+hr {
+    border: none;
+    height: 1px;
+    background: rgba($color-dark-primary, 0.2);
+}
+
 
 // Header
 
@@ -26,6 +32,9 @@ body {
         min-height: 100%;
         min-width: 100%;
         position: absolute;
+        background: url(../images/background.png) no-repeat;
+        @include image-size;
+        opacity:0;
         z-index: 0;
     }
     
@@ -40,4 +49,38 @@ body {
 
 // Content
 
+#content {
+    padding: $padding-layout-general-large 0;
+    
+    .introduction {
+        margin-bottom: $padding-layout-general-small;
+    }
+    
+    .step {
+        margin: $padding-layout-general-small 0;
+    } 
+}
+
 // Footer
+
+#bottom {
+    background: $color-dark-primary;
+    
+    .link-content,
+    .spread {
+        padding: $padding-layout-general-small 0;
+        background: $color-dark-third;
+    }
+    
+    .link-content {
+        background: $color-dark-third;
+    }
+    
+    .spread {
+        background: $color-dark-second;
+    }
+    
+    .about {
+        padding: 20px 0;
+    }
+}

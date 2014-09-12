@@ -1,18 +1,44 @@
 // Base
 // =====================================
 
-// Headings
+body {
+    color: $color-dark-fourth;
+}
 
 h1 {
     color: $color-white;
 }
 
-// Body text
+h2, h3 {
+    color: $color-dark-third;
+}
+
+h3 {
+    text-transform: uppercase;
+}
+
 
 .lead {
-    margin-bottom: $line-height-computed;
-    font-size: floor(($font-size-base * 1.4));
+    font-size: floor(($font-size-base * 1.5));
     font-weight: $font-regular;
-    line-height: 1.4;
     color: rgba($color-white, 0.4);
+}
+
+.function {
+    font-size: floor(($font-size-base * 1.3));
+}
+
+.link-content {
+    h3 {
+        text-transform: none;
+        color: $color-white;
+    }
+    
+    p {
+        color: rgba($color-white, 0.6);
+    }
+}
+
+.about p {
+    margin-bottom: 0;
 }
