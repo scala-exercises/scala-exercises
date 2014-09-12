@@ -1,0 +1,18 @@
+// Base
+// =====================================
+
+// Headings
+
+h1 {
+    color: $color-white;
+}
+
+// Body text
+
+.lead {
+    margin-bottom: $line-height-computed;
+    font-size: floor(($font-size-base * 1.4));
+    font-weight: $font-regular;
+    line-height: 1.4;
+    color: rgba($color-white, 0.4);
+}

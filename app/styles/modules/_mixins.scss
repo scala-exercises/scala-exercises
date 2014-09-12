@@ -1,0 +1,21 @@
+// Mixing
+// =====================================
+
+// Global
+@mixin global {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+// Antialiased
+@mixin font-smoothing($value: on) {
+    @if $value == on {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    @else {
+        -webkit-font-smoothing: subpixel-antialiased;
+        -moz-osx-font-smoothing: auto;
+    }
+}
