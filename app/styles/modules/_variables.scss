@@ -4,7 +4,8 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
 
 // Colors
-$color-primary:        #859A00;
+
+$brand-primary:        #859A00;
 $color-light-primary:  #BDCBCE;
 $color-dark-primary:   #002B37;
 $color-dark-second:    #033643;
@@ -13,6 +14,7 @@ $color-dark-fourth:    #436C77;
 $color-white:          #FFFFFF;
 
 // Typography
+
 $font-family-sans-serif:  "Open Sans", sans-serif !default;
 
 $font-light:      300;
@@ -27,3 +29,14 @@ $font-size-h2:            floor(($font-size-base * 2.5)) !default; // ~40px
 $font-size-h3:            ceil(($font-size-base * 1.5)) !default; // ~24px
 
 $headings-font-weight:    $font-bold !default;
+
+// Components
+
+$buttons-padding-large-horizontal:   80px !default;
+$buttons-border-radius-large:        2px  !default;
+
+
+// Buttons
+
+$btn-primary-color:              #fff !default;
+$btn-primary-bg:                 $brand-primary !default;
