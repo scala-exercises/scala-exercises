@@ -72,13 +72,22 @@
 
 #content pre{
     background-color: #002b36;
-    border: 4px solid #002b36;
     border-radius: 0px;
     padding: 0px;
+    position: relative;
+    z-index: 90;
+    overflow: visible;
 }
 
-#content pre.koan{border: 4px solid #002b36;}
-#content pre.koan.success{border: 4px solid #859900;}
+
+    
+#content pre.koan .ribbon{opacity:0.0;-webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.3s linear;
+    -o-transition: all 0.3s linear;
+    transition: all 0.3s linear;}
+    
+#content pre.koan.success{min-height:90px;}
+#content pre.koan.success .ribbon{ opacity:1.0;}
 
 #content p code{
     color: #2aa198;
@@ -128,3 +137,8 @@
   border-width: 0 5px 5px;
   margin-top: 8px;
 }
+
+
+
+
+

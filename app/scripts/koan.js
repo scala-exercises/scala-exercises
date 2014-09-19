@@ -150,7 +150,7 @@ function drawModule(content, index_module, module) {
 	if(module.preparagraph){
 		var preparapraph = $('<div></div>').attr({'class':'preparapraph'}).html(marked(module.preparagraph)); module_wrapper.append(preparapraph);
 	}
-	var pre = $('<pre></pre>'); module_wrapper.append(pre);
+	var pre = $('<pre></pre>').html('<div class="ribbon ribbon-wrapper-green"><div class="ribbon-green">Done</div></div>'); module_wrapper.append(pre);
 	var code = $('<code></code>').attr({'data-index':index_module}).html(module.code); pre.append(code);
 	if(module.postparagraph){
 		var postparagraph = $('<div></div>').attr({'class':'postparagraph'}).html(marked(module.postparagraph)); module_wrapper.append(postparagraph);
@@ -251,15 +251,22 @@ function calculeSize(moduleIndex, index) {
     var module = koan.modules[moduleIndex];
     if(module.solutions){
         var solution = module.solutions[index];
-        size = 6+solution.length * 12;
+        size = mySize(solution.length);
     }
     return size;
 }
 
+function mySize(length) {
+    var initial = length-1;
+    if(initial<0) initial=0;
+    return 18 + initial*9;
+}
 
 function studySolution(element) {
     var input = $(element);
     var answer = input.val();
+    var size = size = mySize(answer.length);
+    input.animate({width: size+"px"}, 100 );
     var index = input.attr('data-index');
     var module_index = input.attr('data-module-index');
     var module = koan.modules[module_index];
