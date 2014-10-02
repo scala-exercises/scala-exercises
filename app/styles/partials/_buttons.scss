@@ -6,7 +6,13 @@
     text-transform: uppercase;
     font-weight: $font-semibold;
     border: none;
+    -webkit-transition: all 0.3s linear;
+       -moz-transition: all 0.3s linear;
+         -o-transition: all 0.3s linear;
+            transition: all 0.3s linear;
+    
 }
+
 
 
 .btn-lg {
