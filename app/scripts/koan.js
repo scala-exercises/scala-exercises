@@ -327,7 +327,7 @@ function writeKoanComplete(koan) {
     localStorage.setItem('complete.'+koan,true);
     if(editing){
         editing = false;
-        showCongratModule();
+        showCongrat();
     }
     
 }
@@ -348,9 +348,18 @@ function cleanLocalStorage() {
 }
 
 //Modals
+function showCongrat() {
+    if(didComplete()) showCongratCourse();
+    else showCongratModule();
+}
+
 function showCongratModule() {
-    $('#myModalLabel').text('"'+koan.title+'" completed!');
+    $('#myModuleModalLabel').text('"'+koan.title+'" completed!');
     $('#moduleModal').modal('show');
+}
+
+function showCongratCourse() {
+    $('#courseModal').modal('show');
 }
 
 function goToNext() {
@@ -368,6 +377,16 @@ function goToNext() {
 
 }
 
+function didComplete() {
+    var completed = false;
+    var items = $('#nav .item');
+    var num_items = items.length;
+    var items_completed = $('#nav .item.completed');
+    var num_items_completed = items_completed.length;
+    if(num_items == num_items_completed) completed = true;
+    return completed
+}
+
 //Share
 
 function shareStepFacebook() {
@@ -382,6 +401,20 @@ function shareStepTwitter() {
 }
 
 function shareStepGoogle() {
+    launchPopup('https://plus.google.com/share?url='+base_url)
+}
+
+function shareCourseFacebook() {
+    var title = "I've just completed all Scala exercises!";
+    launchPopup('http://www.facebook.com/sharer/sharer.php?u='+base_url+'&t='+title)
+}
+
+function shareCourseTwitter() {
+    var text = "I've just completed all Scala exercises at "+base_url;
+    launchPopup('https://twitter.com/home?status='+text)
+}
+
+function shareCourseGoogle() {
     launchPopup('https://plus.google.com/share?url='+base_url)
 }
 

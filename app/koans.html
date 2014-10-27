@@ -37,13 +37,13 @@
     <footer></footer>
     
     
-    <!-- Modal -->
-    <div class="modal fade" id="moduleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <!-- Modals -->
+    <div class="modal fade" id="moduleModal" tabindex="-1" role="dialog" aria-labelledby="myModuleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="myModalLabel">"Formatting" completed!</h4>
+            <h4 class="modal-title" id="myModuleModalLabel">"Formatting" completed!</h4>
           </div>
           <div class="modal-body">
 
@@ -75,6 +75,48 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" onclick="goToNext();">GO TO NEXT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="myCourseModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myCourseModalLabel">Completed!</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">Wow, good job! You completed all the modules, so we can proudly say you are a Scala developer. Everyone must know it.</div>
+            </div>
+            
+            <div class="row share-step">
+                <div class="col-sm-2 col-sm-offset-3">
+                    <span class="fa-stack fa-lg" onclick="shareCourseFacebook();">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-facebook fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="fa-stack fa-lg" onclick="shareCourseTwitter();">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-twitter fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="fa-stack fa-lg" onclick="shareCourseGoogle();">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-google-plus fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+            </div>
+            
+          </div>
+          <div class="modal-footer">
+            
           </div>
         </div>
       </div>
