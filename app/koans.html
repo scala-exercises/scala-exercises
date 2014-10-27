@@ -11,7 +11,7 @@
         <!-- bower:css -->
         <!-- endbower -->
         <!-- endbuild -->
-        <link rel="import" href="bower_components/disqus-thread/disqus-thread.html">
+        <!-- <link rel="import" href="bower_components/disqus-thread/disqus-thread.html"> -->
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
@@ -29,11 +29,57 @@
     <section id="content"></section>
     
     <div id="comments" class="container">
-        <!-- <disqus-thread shortname="doingscala" ></disqus-thread> -->
+        <disqus-thread shortname="doingscala" ></disqus-thread>
+        <div id="disqus_thread"></div>
     </div>
     
     <div id="waiting" class="almosthidden"></div>
     <footer></footer>
+    
+    
+    <!-- Modal -->
+    <div class="modal fade" id="moduleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel">"Formatting" completed!</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">Congrats dude, you're on the right track. Be proud and share it with the world.</div>
+            </div>
+            
+            <div class="row share-step">
+                <div class="col-sm-2 col-sm-offset-3">
+                    <span class="fa-stack fa-lg" onclick="shareStepFacebook();">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-facebook fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="fa-stack fa-lg" onclick="shareStepTwitter();">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-twitter fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="fa-stack fa-lg" onclick="shareStepGoogle();">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-google-plus fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+            </div>
+            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="goToNext();">GO TO NEXT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->

@@ -31,3 +31,8 @@ function showAniming(element, animation) {
         element.removeClass('animatedss').removeClass(animation);
     }, 3000);
 }
+
+function moveToDiv(id) {
+	$('html, body').animate({scrollTop:$("#"+id).offset().top}, 500);
+	return false;
+}

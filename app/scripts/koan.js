@@ -2,11 +2,14 @@ $(function() {
     
     $.when(
 		$.getScript('http://yandex.st/highlightjs/8.0/highlight.min.js'),
+        $('head').append('<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" />'),
         $.ready.promise()
     ).then(function(){
 		
         loadNav();
         init();
+        // loadDisqus();
+        
         // colorea();
 		// buscaReplace();
     });
@@ -18,13 +21,13 @@ var koans_groups_id =[];
 var koan = false;
 var first = getId(koans_groups[0]);
 var hash = false;
+var editing = false;
 
-
+var base_url = location.protocol + '//' + location.host;
 
 // HASH
 
 $(window).on('hashchange', function() {
-    console.log('Hash cambiado');
     init();
 });
 
@@ -40,7 +43,9 @@ function loadNav() {
 
 
 function init() {
+    editing = false;
     if(restoreNav()){
+        moveToDiv('content')
         writeCurrent(hash);
         readKoanJSON();
     }
@@ -99,16 +104,13 @@ function updateCompletes() {
 //Koans
 
 function readKoanJSON() {
-    console.log('entro en readKoanJSON: '+hash);
     runReadingMode();
     var url = "json/"+hash+".json";
-    
     
     $.getJSON(url, function(data) {
         hideReadingMode();
         koan = data;
         drawKoan();
-        
     })
     .error(function (xhr, ajaxOptions, thrownError){
         if(xhr.status==404) {
@@ -120,7 +122,6 @@ function readKoanJSON() {
 }
 
 function drawKoan() {
-    console.log('entro en drawKoan: ');
 	var wrapper = $('#content');
     wrapper.empty();
 	var item = $('<div></div>').attr({'class':'item'}); wrapper.append(item);
@@ -141,8 +142,7 @@ function drawKoan() {
       activeInputs();
     }, 500);
     
-    console.log('FIN');
-    //reloadComments();
+    // reloadComments();
 }
 
 function drawModule(content, index_module, module) {
@@ -162,16 +162,14 @@ function drawModule(content, index_module, module) {
 
 // Sintaxis
 function colorea() {
-    console.log('entro en colorea: ');
 	hljs.initHighlightingOnLoad();	
 	$('pre code').each(function(i, block) {
-        $(block).addClass('ruby');
+        $(block).addClass('scala');
 		hljs.highlightBlock(block);
 	});
 }
 
 function searchInputs() {
-    console.log('entro en searchInputs: ');
 	$('#content pre code').each(function(i, block) {
 		
         var code = $(block);
@@ -186,7 +184,6 @@ function searchInputs() {
 }
 
 function activeInputs() {
-    console.log('entro en activeInputs: ');
     
     $('#content .module').each(function(module_index) {
         var module = $(this);
@@ -226,23 +223,14 @@ function activeInputs() {
                     });
 
             	});
-                console.log('Salgo ');
             }
-            else{
-                console.log('CODE sin input');
-            }
-            console.log('Salgo de un CODE');
-            
-            
-            
-            
             
         });
         
+        
     });
     
-    
-    console.log('preFIN');
+    editing = true;
     
 }
 
@@ -337,6 +325,11 @@ function removeKoanComplete(koan) {
 
 function writeKoanComplete(koan) {
     localStorage.setItem('complete.'+koan,true);
+    if(editing){
+        editing = false;
+        showCongratModule();
+    }
+    
 }
 
 function writeSolution(koan, module, solution, answer) {
@@ -354,6 +347,49 @@ function cleanLocalStorage() {
     localStorage.clear();
 }
 
+//Modals
+function showCongratModule() {
+    $('#myModalLabel').text('"'+koan.title+'" completed!');
+    $('#moduleModal').modal('show');
+}
+
+function goToNext() {
+    var current = $('#nav .item.current');
+    var items = $('#nav .item');
+    var num_items = items.length;
+    var index = current.index();
+    var next = index+1;
+    
+    if(next<num_items){
+        var next_item = items.get(next);
+        $('#moduleModal').modal('hide');
+        next_item.click();
+    }
+
+}
+
+//Share
+
+function shareStepFacebook() {
+    // var url = document.URL;
+    var title = "I've just completed some Scala exercises!";
+    launchPopup('http://www.facebook.com/sharer/sharer.php?u='+base_url+'&t='+title)
+}
+
+function shareStepTwitter() {
+    var text = "I've just completed some Scala exercises at "+base_url;
+    launchPopup('https://twitter.com/home?status='+text)
+}
+
+function shareStepGoogle() {
+    launchPopup('https://plus.google.com/share?url='+base_url)
+}
+
+function launchPopup(url) {
+    window.open(url, 'Social Share', 'height=320, width=640, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
+}
+
+
 
 
 // Views Status
@@ -362,7 +398,6 @@ function runReadingMode() {
     $('#waiting').removeClass();
 }
 
-
 function hideReadingMode() {
     $('#waiting').addClass('almosthidden');
 }
@@ -370,17 +405,31 @@ function hideReadingMode() {
 
 //Disqus
 
+function loadDisqus() {
+    var disqus_shortname = 'doingscala';
+
+
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            console.log('siiii');
+
+}
 function reloadComments() {
+    
+    
     if(typeof DISQUS === 'undefined' || true){
-        // console.log('Disqus not defined');
+        console.log('Disqus not defined');
+
     }else{
         DISQUS.reset({
           reload: true,
-          config: function () {  
-            this.page.identifier = hash;  
+          config: function () {
+            this.page.identifier = hash;
             this.page.url = "http://example.com/#!"+hash;
           }
         });
+
     }
     
 }
