@@ -3,12 +3,12 @@ $(function() {
     $.when(
 		$.getScript('http://yandex.st/highlightjs/8.0/highlight.min.js'),
         $('head').append('<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" />'),
+        loadDisqus(),
         $.ready.promise()
     ).then(function(){
 		
         loadNav();
         init();
-        loadDisqus();
         
         // colorea();
 		// buscaReplace();
@@ -446,17 +446,32 @@ function loadDisqus() {
 
 
 function reloadComments() {
-    var discussion_url = base_url + '/#!' + hash;
-    console.log(discussion_url);
-    DISQUS.reset({
-      reload: true,
-      config: function () {  
-          this.page.identifier = hash;
-          this.page.url = discussion_url;
-      }
-    });
-
     
+    
+    
+    
+    if(typeof DISQUS === 'undefined'){
+        console.log('Disqus not defined');
+
+    }else{
+        var discussion_url = base_url + '/#!' + hash;
+        console.log(discussion_url);
+        DISQUS.reset({
+          reload: true,
+          config: function () {  
+              this.page.identifier = hash;
+              this.page.url = discussion_url;
+          }
+        });
+    }
+    
+}
+
+//Console
+
+function openConsole() {
+    var consoleWrapper = $('#consoleWrapper');
+    consoleWrapper.toggleClass('shown');
 }
 
 // Utils
