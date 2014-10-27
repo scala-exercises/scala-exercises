@@ -8,7 +8,7 @@ $(function() {
 		
         loadNav();
         init();
-        // loadDisqus();
+        loadDisqus();
         
         // colorea();
 		// buscaReplace();
@@ -22,7 +22,7 @@ var koan = false;
 var first = getId(koans_groups[0]);
 var hash = false;
 var editing = false;
-
+var disqus_shortname = 'doingscala';
 var base_url = location.protocol + '//' + location.host;
 
 // HASH
@@ -142,7 +142,7 @@ function drawKoan() {
       activeInputs();
     }, 500);
     
-    // reloadComments();
+    reloadComments();
 }
 
 function drawModule(content, index_module, module) {
@@ -439,31 +439,23 @@ function hideReadingMode() {
 //Disqus
 
 function loadDisqus() {
-    var disqus_shortname = 'doingscala';
-
-
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            console.log('siiii');
-
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);    
 }
+
+
 function reloadComments() {
-    
-    
-    if(typeof DISQUS === 'undefined' || true){
-        console.log('Disqus not defined');
+    var discussion_url = base_url + '/#!' + hash;
+    console.log(discussion_url);
+    DISQUS.reset({
+      reload: true,
+      config: function () {  
+          this.page.identifier = hash;
+          this.page.url = discussion_url;
+      }
+    });
 
-    }else{
-        DISQUS.reset({
-          reload: true,
-          config: function () {
-            this.page.identifier = hash;
-            this.page.url = "http://example.com/#!"+hash;
-          }
-        });
-
-    }
     
 }
 
