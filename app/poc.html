@@ -18,88 +18,59 @@
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
+
     </head>
-    <body>
-    <!--[if lt IE 10]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your     browser</a> to improve your experience.</p>
-    <![endif]-->
-        
-        
-        
-    <!-- Side Menu -->
-    <a id="menu-toggle" href="#" class="btn btn-primary btn-lg toggle"><i class="fa fa-bars"></i></a>
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <a id="menu-close" href="#" class="btn btn-default btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
-            <li><a href="#top" onclick="moveToDiv('top'); return false;">Home</a><li>
-            <li><a href="#koans" onclick="moveToDiv('koans'); return false;">Koans</a></li>
-			<li>
-				<ol>
-					<!-- <li data-target="#carousel-koans" data-slide-to="0" class="">Instrucciones</li> -->
-					<li data-target="#carousel-koans" data-slide-to="1">Asserts</li>
-					<li data-target="#carousel-koans" data-slide-to="2">Val & Var</li>
-					<li data-target="#carousel-koans" data-slide-to="3">Classes</li>
-					<li data-target="#carousel-koans" data-slide-to="4">Options</li>
-					<li data-target="#carousel-koans" data-slide-to="5">Objects</li>
-					<li data-target="#carousel-koans" data-slide-to="6">Tuples</li>
-					<li data-target="#carousel-koans" data-slide-to="7">Higher Order Functions</li>
-					<li data-target="#carousel-koans" data-slide-to="8">Lists</li>
-					<li data-target="#carousel-koans" data-slide-to="9">Maps</li>
-					<li data-target="#carousel-koans" data-slide-to="10">Sets</li>
-					<li data-target="#carousel-koans" data-slide-to="11">Formatting</li>
-					<li data-target="#carousel-koans" data-slide-to="12">Patter nMatching</li>
-					<li data-target="#carousel-koans" data-slide-to="13">Case Classes</li>
-					<li data-target="#carousel-koans" data-slide-to="14">Range</li>
-					<li data-target="#carousel-koans" data-slide-to="15">Partially Applied Functions</li>
-					<li data-target="#carousel-koans" data-slide-to="16">Partial Functions</li>
-					<li data-target="#carousel-koans" data-slide-to="17">Implicits</li>
-					<li data-target="#carousel-koans" data-slide-to="18">Traits</li>
-					<li data-target="#carousel-koans" data-slide-to="19">For Expressions</li>
-					<li data-target="#carousel-koans" data-slide-to="20">Infix Prefix & Postfix Operators</li>
-					<li data-target="#carousel-koans" data-slide-to="21">Infix Types</li>
-					<li data-target="#carousel-koans" data-slide-to="22">Mutable Maps</li>
-					<li data-target="#carousel-koans" data-slide-to="23">Mutable Sets</li>
-					<li data-target="#carousel-koans" data-slide-to="24">Sequences & Arrays</li>
-					<li data-target="#carousel-koans" data-slide-to="25">Iterables</li>
-					<li data-target="#carousel-koans" data-slide-to="26">Traversables</li>
-					<li data-target="#carousel-koans" data-slide-to="27">Named & Default Arguments</li>
-					<li data-target="#carousel-koans" data-slide-to="28">Manifests</li>
-					<li data-target="#carousel-koans" data-slide-to="29">Preconditions</li>
-					<li data-target="#carousel-koans" data-slide-to="30">Extractors</li>
-					<li data-target="#carousel-koans" data-slide-to="31">ByName Parameter</li>
-					<li data-target="#carousel-koans" data-slide-to="32">Repeated  Parameters</li>
-					<li data-target="#carousel-koans" data-slide-to="33">Parent Classes</li>
-					<li data-target="#carousel-koans" data-slide-to="34">Empty Values</li>
-					<li data-target="#carousel-koans" data-slide-to="35">Type Signatures</li>
-					<li data-target="#carousel-koans" data-slide-to="36">Uniform Access Principle</li>
-					<li data-target="#carousel-koans" data-slide-to="37">Literal Booleans</li>
-					<li data-target="#carousel-koans" data-slide-to="38">Literal Numbers</li>
-					<li data-target="#carousel-koans" data-slide-to="39">Literal Strings</li>
-					<li data-target="#carousel-koans" data-slide-to="40">Type Variance</li>
-					<li data-target="#carousel-koans" data-slide-to="41">Enumerations</li>
-					<li data-target="#carousel-koans" data-slide-to="41">Constructors</li>
-				</ol>
-			</li>
-        </ul>
-		
+    <body id="koan_body">
+    
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Doing Scala</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Links</a></li>
+            <li><a class="rounder" href="#"><i class="fa fa-terminal"></i></a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <!-- /Side Menu -->
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview</a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+            <li><a href="">Nav item</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+            <li><a href="">More navigation</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          <section id="module_content"></section>
     
-    <div id="nav"></div>
-    <section id="content"></section>
-    
-    <div id="comments" class="container">
-        <div id="disqus_thread"></div>
+          <div id="comments">
+              <div id="disqus_thread"></div>
+          </div>
+          
+        </div>
+      </div>
     </div>
-    
-    <div id="waiting" class="almosthidden"></div>
-    
-    <div id="consoleWrapper">
-        <button class="btn btn-primary" id="consoleButton" onclick="openConsole();"><i class="fa fa-terminal"></i></button>
-        <iframe name="scalaconsole" src="http://codebrew.io/" width="100%" height="100%" frameborder="0"></iframe>
-    </div>
-    
-    <footer></footer>
     
     
     <!-- Modals -->
@@ -222,7 +193,6 @@
     <!-- build:js({app,.tmp}) scripts/main.js -->
     <script src="scripts/koan.js"></script>
     <!-- endbuild -->
-    
     
 </body>
 </html>

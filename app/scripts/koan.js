@@ -9,7 +9,7 @@ $(function() {
 		
         loadNav();
         init();
-        
+        activeMenu();
         // colorea();
 		// buscaReplace();
     });
@@ -45,7 +45,7 @@ function loadNav() {
 function init() {
     editing = false;
     if(restoreNav()){
-        moveToDiv('content')
+        moveToDiv('module_content')
         writeCurrent(hash);
         readKoanJSON();
     }
@@ -62,6 +62,7 @@ function drawNavItem(index, kg) {
     item.click(function(){
        window.location.hash = $(this).attr('data-id');
     });
+    
 }
 
 function restoreNav() {
@@ -122,12 +123,12 @@ function readKoanJSON() {
 }
 
 function drawKoan() {
-	var wrapper = $('#content');
+	var wrapper = $('#module_content');
     wrapper.empty();
 	var item = $('<div></div>').attr({'class':'item'}); wrapper.append(item);
-	var container = $('<div></div>').attr({'class':'container'}); item.append(container);
-	var h2 = $('<h2></h2>').text(koan.title); container.append(h2);
-	var content = $('<div></div>').attr({'class':'content'}); container.append(content);
+    // var container = $('<div></div>').attr({'class':'container'}); item.append(container);
+	var h2 = $('<h2></h2>').text(koan.title); item.append(h2);
+	var content = $('<div></div>').attr({'class':'content'}); item.append(content);
 	
 	if(koan.modules){
 		$.each(koan.modules, function(index_module, module) {
@@ -170,7 +171,7 @@ function colorea() {
 }
 
 function searchInputs() {
-	$('#content pre code').each(function(i, block) {
+	$('#module_content pre code').each(function(i, block) {
 		
         var code = $(block);
         var module_index=code.attr('data-index');
@@ -185,7 +186,7 @@ function searchInputs() {
 
 function activeInputs() {
     
-    $('#content .module').each(function(module_index) {
+    $('#module_content .module').each(function(module_index) {
         var module = $(this);
         var codes = module.find('pre code');
         module.find('pre code').each(function(code_index) {
@@ -472,6 +473,19 @@ function reloadComments() {
 function openConsole() {
     var consoleWrapper = $('#consoleWrapper');
     consoleWrapper.toggleClass('shown');
+}
+
+// Menu
+function activeMenu() {
+    $("#menu-close").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+	
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
 }
 
 // Utils
