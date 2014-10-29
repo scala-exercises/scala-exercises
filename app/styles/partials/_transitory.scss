@@ -244,7 +244,7 @@
     height: 0px;
     position: fixed;
     bottom:0px;
-    z-index: 101;
+    z-index: 1001;
     -webkit-transition: all 0.3s ease-out;
     -moz-transition: all 0.3s ease-out;
     -o-transition: all 0.3s ease-out;
@@ -254,8 +254,8 @@
 #consoleWrapper.shown{height: 300px;}
 
 #consoleButton{
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     color: #fff;
     font-size: 20px;
@@ -264,7 +264,7 @@
     text-align: center;
     position: absolute;
     top:-80px;
-    left:30px;
+    right:20px;
     outline:none;
 }
 
