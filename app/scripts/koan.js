@@ -2,6 +2,7 @@ $(function() {
     
     $.when(
 		$.getScript('http://yandex.st/highlightjs/8.0/highlight.min.js'),
+        calculateWaitingFrame(),
         $('head').append('<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" />'),
         loadDisqus(),
         $.ready.promise()
@@ -10,6 +11,7 @@ $(function() {
         loadNav();
         init();
         activeMenu();
+        
         // colorea();
 		// buscaReplace();
     });
@@ -31,13 +33,16 @@ $(window).on('hashchange', function() {
     init();
 });
 
+$(window).resize(function() {
+    calculateWaitingFrame();
+});
+
 
 function loadNav() {
     var count = koans_groups.length;
     $.each(koans_groups, function(index, kg) {
         drawNavItem(index, kg);
     });
-    $('#nav').tooltip({ selector: '.item' });
 }
 
 
@@ -45,7 +50,7 @@ function loadNav() {
 function init() {
     editing = false;
     if(restoreNav()){
-        moveToDiv('module_content')
+        moveToTop()
         writeCurrent(hash);
         readKoanJSON();
     }
@@ -58,16 +63,20 @@ function init() {
 
 // Nav
 function drawNavItem(index, kg) {
-    var item = $('<div></div>').attr({'class':'item', 'data-id':getId(kg), 'data-toggle':'tooltip', 'data-placement':'bottom', 'title':kg}).text(index+1); $('#nav').append(item);
-    item.click(function(){
-       window.location.hash = $(this).attr('data-id');
+    var item = $('<li></li>').attr({'class':'item', 'data-id':getId(kg)}); $('#sidebar_menu').append(item);
+    var a = $('<a></a>').attr({'href':'#', 'data-id':getId(kg)}).text(kg); item.append(a);
+    var i = $('<i></i>').attr({'class':'pull-right fa'}); a.prepend(i);
+    
+    a.click(function(event){
+        event.preventDefault();
+        window.location.hash = $(this).attr('data-id');
     });
     
 }
 
 function restoreNav() {
     var dev = false;
-    var items = $('#nav .item');
+    var items = $('#sidebar_menu .item');
     items.attr('class','item');
     var newhash = window.location.hash.substring(1);
     if(newhash.length==0){
@@ -75,8 +84,8 @@ function restoreNav() {
     }
     else{
         hash = newhash;
-        var item = $('#nav .item[data-id="'+hash+'"]');
-        item.addClass('current');
+        var item = $('#sidebar_menu .item[data-id="'+hash+'"]');
+        item.addClass('active');
         updateCompletes();
         dev = true;
     }
@@ -96,7 +105,7 @@ function setInitialKoan() {
 function updateCompletes() {
     $.each(koans_groups, function(index, kg) {
         var id = getId(kg);
-        var navItem = $('#nav .item[data-id="'+id+'"]');
+        var navItem = $('#sidebar_menu .item[data-id="'+id+'"]');
         if(isCompleteKoan(id)) navItem.addClass('completed');
         else navItem.removeClass('completed');
     });
@@ -109,9 +118,8 @@ function readKoanJSON() {
     var url = "json/"+hash+".json";
     
     $.getJSON(url, function(data) {
-        hideReadingMode();
-        koan = data;
-        drawKoan();
+        hideReadingMode(data);
+        
     })
     .error(function (xhr, ajaxOptions, thrownError){
         if(xhr.status==404) {
@@ -364,25 +372,26 @@ function showCongratCourse() {
 }
 
 function goToNext() {
-    var current = $('#nav .item.current');
-    var items = $('#nav .item');
+    var current = $('#sidebar_menu .item.active');
+    var items = $('#sidebar_menu .item');
     var num_items = items.length;
     var index = current.index();
     var next = index+1;
     
     if(next<num_items){
         var next_item = items.get(next);
+        var next_link = $(next_item).find('a');
         $('#moduleModal').modal('hide');
-        next_item.click();
+        next_link.click();
     }
 
 }
 
 function didComplete() {
     var completed = false;
-    var items = $('#nav .item');
+    var items = $('#sidebar_menu .item');
     var num_items = items.length;
-    var items_completed = $('#nav .item.completed');
+    var items_completed = $('#sidebar_menu .item.completed');
     var num_items_completed = items_completed.length;
     if(num_items == num_items_completed) completed = true;
     return completed
@@ -432,8 +441,16 @@ function runReadingMode() {
     $('#waiting').removeClass();
 }
 
-function hideReadingMode() {
-    $('#waiting').addClass('almosthidden');
+function hideReadingMode(data) {
+    setTimeout(function(){
+        koan = data;
+        drawKoan();
+        
+        setTimeout(function(){
+            $('#waiting').addClass('almosthidden');
+        }, 500);
+    }, 500);
+    
 }
 
 
@@ -456,7 +473,6 @@ function reloadComments() {
 
     }else{
         var discussion_url = base_url + '/#!' + hash;
-        console.log(discussion_url);
         DISQUS.reset({
           reload: true,
           config: function () {  
@@ -490,6 +506,13 @@ function activeMenu() {
 
 // Utils
 
+function calculateWaitingFrame(){
+    var height = $( window ).height();
+    console.log(height);
+    var waiting = $('#waiting');
+    waiting.css('height', height+'px');
+}
+
 function getId(kg) {
     return kg.replace(/\s+/g, '').toLowerCase();
 }
@@ -498,3 +521,9 @@ function moveToDiv(id) {
 	$('html, body').animate({scrollTop:$("#"+id).offset().top}, 500);
 	return false;
 }
+
+function moveToTop() {
+	$('html, body').animate({scrollTop:0}, 500);
+	return false;
+}
+
