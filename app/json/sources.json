@@ -7,6 +7,26 @@
       "description": "Koans are small lessons on the path to enlightenment. The aim of the Scala Koans project is to provide an easy learning environment in Scala. Your insight will be derived by encountering failing tests and fixing them so that they pass. A testing framework is used to simplify this process and to get you off to a good start with using Scala."
     },
     {
+      "url": "http://www.scala-lang.org/",
+      "title": "Scala Official",
+      "description": "The Scala Programming Language official site."
+    },
+    {
+      "url": "http://danielwestheide.com/blog/tags/scala/",
+      "title": "Daniel Westheide Blog",
+      "description": "On this blog, you might find his discussing functional programming (mainly Scala and Clojure), usability, as well as anything related to the software development process."
+    },
+    {
+      "url": "http://blog.sanaulla.info/category/scala-4/",
+      "title": "Sanaulla Blog",
+      "description": "Exploring the realm of Java & Scala"
+    },
+    {
+      "url": "http://www.tutorialspoint.com/scala/index.htm",
+      "title": "Tutorials Point",
+      "description": "Find thousands of online working examples, which you can use in your day to day software development. Pickup any tutorial from the tutorials library, start from the home of the tutorial and continue till its completion."
+    },
+    {
       "url": "http://www.scalatest.org/",
       "title": "ScalaTest",
       "description": "ScalaTest is designed to increase your tema's productivity through simple, clear tests and executable specifications that improve both code and communication."

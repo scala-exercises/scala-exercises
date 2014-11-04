@@ -319,8 +319,13 @@ function drawSources(data) {
     wrapper.empty();
 	var item = $('<div></div>').attr({'class':'item'}); wrapper.append(item);
 	var h2 = $('<h2></h2>').text(data.title); item.append(h2);
-	var p = $('<p></p>').text('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'); item.append(p);
+	var p = $('<p></p>').text('Modules have been written after following several Scala documentation sites. All of them constitute an interesting stack of awesome links, listed below.'); item.append(p);
 	var content = $('<ul></ul>').attr({'class':'content'}); item.append(content);
+    
+	var callout = $('<div></div>').attr({'class':'bs-callout'}); item.append(callout);
+    var h4 = $('<h4></h4>').text('Add links'); callout.append(h4);
+    var p = $('<p></p>').html('If you would like add another interesting link about Scala, feel free to edit the "sources.json" and pull request:  <a target="_blank" href="https://github.com/47deg/scala-koans-online/edit/master/app/json/sources.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
+	
 	
     if(data.sources){
         $.each(data.sources, function(index_source, source) {
