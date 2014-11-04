@@ -310,6 +310,36 @@ function studyKoanStatus() {
     updateCompletes();
 }
 
+
+// Sources
+
+function drawSources(data) {
+    console.log(data);
+	var wrapper = $('#module_content');
+    wrapper.empty();
+	var item = $('<div></div>').attr({'class':'item'}); wrapper.append(item);
+	var h2 = $('<h2></h2>').text(data.title); item.append(h2);
+	var p = $('<p></p>').text('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'); item.append(p);
+	var content = $('<ul></ul>').attr({'class':'content'}); item.append(content);
+	
+    if(data.sources){
+        $.each(data.sources, function(index_source, source) {
+            drawSource(content, index_source, source);
+
+        });
+    }
+
+    reloadComments();
+}
+
+function drawSource(content, index_source, source) {
+	var source_wrapper = $('<li></li>').attr({'class':'source'}); content.append(source_wrapper);
+	if(source.title){
+		var title = $('<h5></h5>').attr({'class':'title'}).html('<a href="'+source.url+'" target="_blank">'+source.title+'</a>'); source_wrapper.append(title);
+		var description = $('<p></p>').attr({'class':'title'}).html(source.description); source_wrapper.append(description);
+	}
+}
+
 // Local Storage
 
 function writeCurrent(koan) {
@@ -443,8 +473,12 @@ function runReadingMode() {
 
 function hideReadingMode(data) {
     setTimeout(function(){
-        koan = data;
-        drawKoan();
+        
+        if(hash == 'sources') drawSources(data)
+        else{
+            koan = data;
+            drawKoan();
+        }
         
         setTimeout(function(){
             $('#waiting').addClass('almosthidden');

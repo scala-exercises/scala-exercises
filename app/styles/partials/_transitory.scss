@@ -122,6 +122,24 @@
    content: "\f058";
 }
 
+#source {
+    margin: 0px;
+    margin-bottom: 30px;
+    padding: 0px 20px 20px;
+    text-align: center;
+}
+
+#source a { 
+    
+    font-size: 13px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.6);
+}
+
+#source a:hover{ 
+    text-decoration: none;
+    color: $brand-primary;
+}
 
 /*
  * Main content
@@ -244,7 +262,7 @@
     height: 0px;
     position: fixed;
     bottom:0px;
-    z-index: 1001;
+    z-index: 10002;
     -webkit-transition: all 0.3s ease-out;
     -moz-transition: all 0.3s ease-out;
     -o-transition: all 0.3s ease-out;
