@@ -103,7 +103,7 @@ hr {
         background: $color-dark-third;
         
         .content-image-footer {
-            opacity: 0.1;
+            opacity: 0.12;
         }
         
         .icon-general {
@@ -134,5 +134,11 @@ hr {
     
     .about {
         padding: 20px 0;
+        
+        img {
+            width: 30px;
+            height: auto;
+            margin-right: 10px;
+        }
     }
 }
