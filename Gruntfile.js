@@ -323,6 +323,9 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             'images/{,*/}*.webp',
+            'images/45.GIF',
+            'scripts/koan.js',
+            'styles/codetheme.css',
             '{,*/}*.html',
             'styles/fonts/{,*/}*.*'
           ]
@@ -335,6 +338,11 @@ module.exports = function (grunt) {
           cwd: '.',
           src: 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*',
           dest: '<%= config.dist %>'
+        },{
+          cwd: '<%= config.app %>/json',  // set working folder / root to copy
+          src: '**/*',           // copy all files and subfolders
+          dest: '<%= config.dist %>/json',    // destination folder
+          expand: true           // required when using cwd
         }]
       },
       styles: {

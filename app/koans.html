@@ -61,7 +61,7 @@
     
     <div id="consoleWrapper">
         <button class="btn btn-primary" id="consoleButton" onclick="openConsole();"><i class="fa fa-terminal"></i></button>
-        <iframe name="scalaconsole" src="http://codebrew.io/" width="100%" height="100%" frameborder="0"></iframe>
+        <iframe name="scalaconsole" src="http://www.codebrew.io/index" width="100%" height="100%" frameborder="0"></iframe>
     </div>
     
     
@@ -167,7 +167,6 @@
     <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/modal.js"></script>
     <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js"></script>
     <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js"></script>
-    <script src="bower_components/marked/lib/marked.js"></script>
     <script src="bower_components/highlightjs-scss/highlight.pack.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
@@ -183,9 +182,12 @@
     </script>
         -->
 
-    <!-- build:js({app,.tmp}) scripts/main.js -->
+    <!-- build:js({app,.tmp}) scripts/koan.js -->
     <script src="scripts/koan.js"></script>
     <!-- endbuild -->
+    
+    <!-- include: "type": "js", "files": "scripts/**/*.js" -->
+
     
 </body>
 </html>
