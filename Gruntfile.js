@@ -395,6 +395,12 @@ module.exports = function (grunt) {
           push: true,
           message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
         },
+        pages: {
+              options: {
+                remote: 'https://github.com/47deg/scala-koans-online.git',
+                branch: 'gh-pages'
+              }
+            },
         heroku: {
           options: {
             remote: 'git@heroku.com:doing-scala.git',
