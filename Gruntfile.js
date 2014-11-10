@@ -397,7 +397,7 @@ module.exports = function (grunt) {
         },
         pages: {
               options: {
-                remote: 'https://github.com/47deg/scala-koans-online.git',
+                remote: 'https://github.com/47deg/doing-scala.git',
                 branch: 'gh-pages'
               }
             },

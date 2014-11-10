@@ -325,7 +325,7 @@ function drawSources(data) {
     
 	var callout = $('<div></div>').attr({'class':'bs-callout'}); item.append(callout);
     var h4 = $('<h4></h4>').text('Add links'); callout.append(h4);
-    var p = $('<p></p>').html('If you would like add another interesting link about Scala, feel free to edit the "sources.json" and pull request:  <a target="_blank" href="https://github.com/47deg/scala-koans-online/edit/master/app/json/sources.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
+    var p = $('<p></p>').html('If you would like add another interesting link about Scala, feel free to edit the "sources.json" and pull request:  <a target="_blank" href="https://github.com/47deg/doing-scala/edit/master/app/json/sources.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
 	
 	
     if(data.sources){
