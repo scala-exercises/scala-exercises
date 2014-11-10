@@ -386,7 +386,29 @@ module.exports = function (grunt) {
         'imagemin',
         'svgmin'
       ]
-    }
+    },
+    
+    buildcontrol: {
+        options: {
+          dir: 'dist',
+          commit: true,
+          push: true,
+          message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+        },
+        heroku: {
+          options: {
+            remote: 'git@heroku.com:doing-scala.git',
+            branch: 'master'
+          }
+        },
+        local: {
+          options: {
+            remote: '../',
+            branch: 'build'
+          }
+        }
+      }
+      
   });
 
 
@@ -449,4 +471,8 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+  
+  
+  grunt.loadNpmTasks('grunt-build-control');
+  
 };
