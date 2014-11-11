@@ -263,7 +263,9 @@ function mySize(length) {
 function studySolution(element) {
     var input = $(element);
     var answer = input.val();
-    var size = size = mySize(answer.length);
+    
+    var size = mySize(answer.length);
+    console.log(size);
     input.animate({width: size+"px"}, 100 );
     var index = input.attr('data-index');
     var module_index = input.attr('data-module-index');
