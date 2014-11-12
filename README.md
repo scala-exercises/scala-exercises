@@ -16,3 +16,13 @@
 - EDIT: After completing a category, you'll be able to edit it. Adding new exercises or improving existing ones just sending a pull-request.
 
 - APPROVED: Complete every category and you'll get our Scala ninja certificate.
+
+
+##How build and deploy the app
+
+```bash
+grunt build
+git add dist && git commit -m "message"
+git push dist origin master
+grunt buildcontrol:pages
+```
