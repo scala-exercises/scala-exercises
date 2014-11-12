@@ -23,3 +23,11 @@
 .divider .btn {
     margin-top: -70px;
 }
+
+
+@media (max-width: 620px) {
+    .spread .btn.btn-primary.btn-lg{
+        padding-left:40px;
+        padding-right: 40px;
+    }
+}
