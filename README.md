@@ -22,7 +22,7 @@
 
 ```bash
 grunt build
-git add dist && git commit -m "message"
-git push dist origin master
+git add * && git commit -m "message"
+git push origin master
 grunt buildcontrol:pages
 ```
