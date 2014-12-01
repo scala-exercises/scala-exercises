@@ -2,38 +2,61 @@
   "title": "Named and Default Arguments",
   "modules": [
     {
-      "preparagraph": "A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait PartialFunction requires that the method `isDefinedAt` and `apply` be implemented.",
-      "code": "val doubleEvens: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {\n  //States that this partial function will take on the task\n  def isDefinedAt(x: Int) = x % 2 == 0\n\n  //What we do if this does partial function matches\n  def apply(v1: Int) = v1 * 2\n}\n\nval tripleOdds: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {\n  def isDefinedAt(x: Int) = x % 2 != 0\n\n  def apply(v1: Int) = v1 * 3\n}\n\nval whatToDo = doubleEvens orElse tripleOdds //Here we chain the partial functions together\n\nwhatToDo(3) should be(__)\nwhatToDo(4) should be(__)",
+      "preparagraph": "When calling methods and functions, you can use the name of the variables expliclty in the call, like so:\n\n```\ndef printName(first:String, last:String) = {\n    println(first + \" \" + last)\n}\n\nprintName(\"John\",\"Smith\") // Prints \"John Smith\"\nprintName(first = \"John\",last = \"Smith\") // Prints \"John Smith\"\nprintName(last = \"Smith\",first = \"John\") // Prints \"John Smith\"\n```\n\nNote that once you are using parameter names in your calls, the order doesn’t matter, so long as all parameters are named. This feature works well with default parameter values:\n\n```\ndef printName(first:String = \"John\", last:String = \"Smith\") = {\n    println(first + \" \" + last)\n}\nprintName(last = \"Jones\") // Prints \"John Jones\"\n```\n\nGiven classes below:\n\n```\nclass WithoutClassParameters() {\n  def addColors(red: Int, green: Int, blue: Int) = {\n    (red, green, blue)\n  }\n\n  def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {\n    (red, green, blue)\n  }\n}\n\nclass WithClassParameters(val defaultRed: Int, val defaultGreen: Int, val defaultBlue: Int) {\n  def addColors(red: Int, green: Int, blue: Int) = {\n    (red + defaultRed, green + defaultGreen, blue + defaultBlue)\n  }\n\n  def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {\n    (red + defaultRed, green + defaultGreen, blue + defaultBlue)\n  }\n}\n\nclass WithClassParametersInClassDefinition(val defaultRed: Int = 0, val defaultGreen: Int = 255, val defaultBlue: Int = 100) {\n  def addColors(red: Int, green: Int, blue: Int) = {\n    (red + defaultRed, green + defaultGreen, blue + defaultBlue)\n  }\n\n  def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {\n    (red + defaultRed, green + defaultGreen, blue + defaultBlue)\n  }\n}\n\n```\n\nCan specify arguments in any order if you use their names:",
+      "code": "val me = new WithoutClassParameters()\n\n// what happens if you change the order of these parameters (nothing)\nval myColor = me.addColors(green = 0, red = 255, blue = 0)\n\n// for koan, remove the values in the should equal\nmyColor should equal(__, __, __)",
       "solutions": [
-        "9",
-        "8"
+        "255",
+        "0",
+        "0"
       ],
       "postparagraph": ""
     },
     {
-      "preparagraph": "Case statements are a quick way to create partial functions. When you create a case statement, the apply and `isDefinedAt` is created for you.",
-      "code": "//The case statements are called case statements with guards\nval doubleEvens: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) == 0 => x * 2\n}\nval tripleOdds: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) != 0 => x * 3\n}\n\nval whatToDo = doubleEvens orElse tripleOdds //Here we chain the partial functions together\nwhatToDo(3) should be(__)\nwhatToDo(4) should be(__)",
+      "preparagraph": "Can default arguments if you leave them off:",
+      "code": "val me = new WithoutClassParameters()\nval myColor = me.addColorsWithDefaults(green = 255)\n\nmyColor should equal(__, __, __)",
       "solutions": [
-        "9",
-        "8"
+        "0",
+        "255",
+        "0"
       ],
       "postparagraph": ""
     },
     {
-      "preparagraph": "The result of partial functions can have an `andThen` function added to the end of the chain",
-      "code": "//These are called case statements with guards\nval doubleEvens: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) == 0 => x * 2\n}\nval tripleOdds: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) != 0 => x * 3\n}\n\nval addFive = (x: Int) => x + 5\nval whatToDo = doubleEvens orElse tripleOdds andThen addFive //Here we chain the partial functions together\nwhatToDo(3) should be(__)\nwhatToDo(4) should be(__)",
+      "preparagraph": "Can access class parameters and specify arguments in any order if you use their names:",
+      "code": "val me = new WithClassParameters(40, 50, 60)\nval myColor = me.addColors(green = 50, red = 60, blue = 40)\n\nmyColor should equal(__, __, __)",
       "solutions": [
-        "14",
-        "13"
+        "100",
+        "100",
+        "100"
       ],
       "postparagraph": ""
     },
     {
-      "preparagraph": "The result of partial functions can have an `andThen` function added to the end of the chain used to continue onto another chain of logic:",
-      "code": "val doubleEvens: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) == 0 => x * 2\n}\nval tripleOdds: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) != 0 => x * 3\n}\n\nval printEven: PartialFunction[Int, String] = {\n  case x: Int if (x % 2) == 0 => \"Even\"\n}\nval printOdd: PartialFunction[Int, String] = {\n  case x: Int if (x % 2) != 0 => \"Odd\"\n}\n\nval whatToDo = doubleEvens orElse tripleOdds andThen (printEven orElse printOdd)\n\nwhatToDo(3) should be(__)\nwhatToDo(4) should be(__)",
+      "preparagraph": "Can access class parameters and default arguments if you leave them off",
+      "code": "val me = new WithClassParameters(10, 20, 30)\nval myColor = me.addColorsWithDefaults(green = 70)\n\nmyColor should equal(__, __, __)",
       "solutions": [
-        "\"Odd\"",
-        "\"Even\""
+        "10",
+        "90",
+        "30"
+      ],
+      "postparagraph": ""
+    },
+    {
+      "preparagraph": "Can default class parameters and have default arguments too",
+      "code": "val me = new WithClassParametersInClassDefinition()\nval myColor = me.addColorsWithDefaults(green = 70)\n\nmyColor should equal(__, __, __)",
+      "solutions": [
+        "0",
+        "325",
+        "100"
+      ],
+      "postparagraph": ""
+    },
+    {
+      "preparagraph": "Default parameters can be functional too",
+      "code": "def reduce(a: Int, f: (Int, Int) => Int = _ + _): Int = f(a, a)\n\nreduce(5) should equal(__)\nreduce(5, _ * _) should equal(__)",
+      "solutions": [
+        "10",
+        "25"
       ],
       "postparagraph": ""
     }
