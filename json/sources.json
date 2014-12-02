@@ -12,6 +12,11 @@
       "description": "The Scala Programming Language official site."
     },
     {
+      "url": "http://books.google.es/books?id=MFjNhTjeQKkC",
+      "title": "\"Programming in Scala\" by Martin Odersky, Lex Spoon, Bill Venners",
+      "description": "Programming in Scala is the definitive book on Scala, the new language for the Java Platform that blends object-oriented and functional programming concepts into a unique and powerful tool for developers. Coauthored by the designer of the Scala language, this authoritative book will teach you, one step at a time, the Scala language and the ideas behind it. The book is carefully crafted to help you learn. The first few chapters will give you enough of the basics that you can already start using Scala for simple tasks. The entire book is organized so that each new concept builds on concepts that came before - a series of steps that promises to help you master the Scala language and the important ideas about programming that Scala embodies. A comprehensive tutorial and reference for Scala, this book covers the entire language and important libraries."
+    },
+    {
       "url": "http://danielwestheide.com/blog/tags/scala/",
       "title": "Daniel Westheide Blog",
       "description": "On this blog, you might find his discussing functional programming (mainly Scala and Clojure), usability, as well as anything related to the software development process."
@@ -25,6 +30,11 @@
       "url": "http://www.tutorialspoint.com/scala/index.htm",
       "title": "Tutorials Point",
       "description": "Find thousands of online working examples, which you can use in your day to day software development. Pickup any tutorial from the tutorials library, start from the home of the tutorial and continue till its completion."
+    },
+    {
+      "url": "http://www.scala-blogs.org/",
+      "title": "Scala Blogs",
+      "description": "Site specializing in Scala with 48 contributors."
     },
     {
       "url": "http://www.scalatest.org/",
