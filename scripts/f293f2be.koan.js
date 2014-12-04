@@ -13,7 +13,7 @@ $(function() {
         init();
         activeMenu();
         
-        // colorea();
+        // colourify();
 		// buscaReplace();
     });
 });
@@ -142,10 +142,10 @@ function drawKoan() {
 	if(koan.modules){
 		$.each(koan.modules, function(index_module, module) {
 			drawModule(content, index_module, module);
-			
 		});
+        drawEditLink(content);
 	}
-    colorea();
+    colourify();
 	searchInputs();
     
     setTimeout(function(){
@@ -156,22 +156,29 @@ function drawKoan() {
 }
 
 function drawModule(content, index_module, module) {
-	var module_wrapper = $('<div></div>').attr({'class':'module'}); content.append(module_wrapper);
-	if(module.preparagraph){
-		var preparapraph = $('<div></div>').attr({'class':'preparapraph'}).html(marked(module.preparagraph)); module_wrapper.append(preparapraph);
-	}
-	var pre = $('<pre></pre>').html('<div class="ribbon ribbon-wrapper-green"><div class="ribbon-green">Done</div></div>'); module_wrapper.append(pre);
-	var code = $('<code></code>').attr({'data-index':index_module}).html(module.code); pre.append(code);
-	if(module.postparagraph){
-		var postparagraph = $('<div></div>').attr({'class':'postparagraph'}).html(marked(module.postparagraph)); module_wrapper.append(postparagraph);
-	}
-	
+    var module_wrapper = $('<div></div>').attr({'class':'module'}); content.append(module_wrapper);
+    if(module.preparagraph){
+        var preparapraph = $('<div></div>').attr({'class':'preparapraph'}).html(marked(module.preparagraph)); module_wrapper.append(preparapraph);
+    }
+    var pre = $('<pre></pre>').html('<div class="ribbon ribbon-wrapper-green"><div class="ribbon-green">Done</div></div>'); module_wrapper.append(pre);
+    var code = $('<code></code>').attr({'data-index':index_module}).html(module.code); pre.append(code);
+    if(module.postparagraph){
+        var postparagraph = $('<div></div>').attr({'class':'postparagraph'}).html(marked(module.postparagraph)); module_wrapper.append(postparagraph);
+    }
+}
 
+function drawEditLink(content) {
+	var callout = $('<div></div>').attr({'id': 'editLink', 'class':'bs-callout'}).hide(); content.append(callout);
+    var h4 = $('<h4></h4>').text('Add exercises'); callout.append(h4);
+    var id = getId(koan.title);
+    var p = $('<p></p>').html('If you would like add another interesting exercises about "'+koan.title+'", feel free to edit "'+id+'.json" and submit a pull request: <a target="_blank" href="https://github.com/47deg/doing-scala/edit/master/app/json/'+id+'.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
+    
 }
 
 
+
 // Sintaxis
-function colorea() {
+function colourify() {
 	hljs.initHighlightingOnLoad();	
 	$('pre code').each(function(i, block) {
         $(block).addClass('scala');
@@ -311,6 +318,7 @@ function studyKoanStatus() {
         else writeKoanComplete(hash);
     }
     updateCompletes();
+    
 }
 
 
@@ -368,6 +376,7 @@ function isCompleteKoan(koan) {
 
 function removeKoanComplete(koan) {
     localStorage.removeItem('complete.'+koan);
+    $('#editLink').hide();
 }
 
 function writeKoanComplete(koan) {
@@ -376,7 +385,7 @@ function writeKoanComplete(koan) {
         editing = false;
         showCongrat();
     }
-    
+    $('#editLink').show();
 }
 
 function writeSolution(koan, module, solution, answer) {
@@ -422,7 +431,6 @@ function goToNext() {
         $('#moduleModal').modal('hide');
         next_link.click();
     }
-
 }
 
 function didComplete() {
