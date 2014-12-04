@@ -168,8 +168,6 @@ function drawModule(content, index_module, module) {
 }
 
 function drawEditLink(content) {
-    // var module_wrapper = $('<div></div>').attr({'class':'editLink'}).html("afksdjfa sdfjahsdfjas dhfjhasd"); content.append(module_wrapper);
-    
 	var callout = $('<div></div>').attr({'id': 'editLink', 'class':'bs-callout'}).hide(); content.append(callout);
     var h4 = $('<h4></h4>').text('Add exercises'); callout.append(h4);
     var id = getId(koan.title);
