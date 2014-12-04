@@ -88,6 +88,8 @@
                             <p>Each category is preceded by an explanation of the basics. Learn the concepts through simple examples of code.</p>
                         </div>
                     </div>
+                </div>
+                 <div class="row">
                     <div class="col-md-8 col-md-offset-2 step-content">
                         <div class="step-icon">
                             <img src="images/step_022x.png" alt="">
@@ -97,6 +99,8 @@
                             <p>Each exercise is a unit test that must be passed successfully, filling blanks. Instantly you can to know if you got it correctly since evaluation of them is performed in real time.</p>
                         </div>
                     </div>
+                </div>
+                 <div class="row">
                     <div class="col-md-8 col-md-offset-2 step-content">
                         <div class="step-icon">
                             <img src="images/step_032x.png" alt="">
@@ -106,6 +110,8 @@
                             <p>The system will consider the category as completed when all its exercises were successfully done. Don't forget share your progress on social networks before jump to the next category!</p>
                         </div>
                     </div>
+                </div>
+                 <div class="row">
                     <div class="col-md-8 col-md-offset-2 step-content">
                         <div class="step-icon">
                             <img src="images/step_042x.png" alt="">
@@ -115,6 +121,8 @@
                             <p>After completing a category, you'll be able to edit it. Adding new exercises or improving existing ones just sending a pull-request.</p>
                         </div>
                     </div>
+                </div>
+                 <div class="row">
                     <div class="col-md-8 col-md-offset-2 step-content">
                         <div class="step-icon step-approved">
                             <img src="images/step_approved2x.png" alt="">
@@ -169,7 +177,7 @@
         </div>
         <div class="spread text-center">
             <div class="container">
-                 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Spread the word</button>
+                 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#spreadModal">Spread the word</button>
             </div>
 
         </div>
@@ -182,19 +190,50 @@
     </footer>
     
     <!-- modal start -->            
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="spreadModal" tabindex="-1" role="dialog" aria-labelledby="spreadModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="myModalLabel">Social</h4>
+            <h4 class="modal-title" id="spreadModalLabel">SPREAD THE WORD</h4>
           </div>
           <div class="modal-body">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati, reiciendis provident distinctio. Nesciunt quos, aperiam, modi voluptatum excepturi earum doloremque ad. Atque vero, accusantium ipsa distinctio, inventore quod suscipit et. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque, culpa, odit. Inventore aspernatur aperiam unde odio quisquam minus reprehenderit cupiditate amet necessitatibus, possimus excepturi ad voluptas officiis. Facere, eos, enim.</p>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">Do you think "Doing Scala" is useful? Share it with your people. Who knows, maybe your friends become Scala developers.</div>
+            </div>
+            
+            <div class="row share-step">
+                <div class="col-sm-2 col-sm-offset-3">
+                    <span class="fa-stack fa-lg" onclick="shareSiteFacebook();">
+                      <i class="fa fa-circle fa-stack-2x facebook"></i>
+                      <i class="fa fa-facebook fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="fa-stack fa-lg" onclick="shareSiteTwitter();">
+                      <i class="fa fa-circle fa-stack-2x twitter"></i>
+                      <i class="fa fa-twitter fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <div class="col-sm-2">
+                    <span class="fa-stack fa-lg" onclick="shareSiteGoogle();">
+                      <i class="fa fa-circle fa-stack-2x plus"></i>
+                      <i class="fa fa-google-plus fa-fw fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+            </div>
+            
+          </div>
+          <div class="modal-footer">
+            
           </div>
         </div>
       </div>
     </div>
+    
+    
+    
     <!-- modal end -->
     
 

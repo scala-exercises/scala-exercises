@@ -127,17 +127,16 @@ hr {
             @include image-2x("../images/icon_blog2x.png", 110px, 110px);
         }
         
+        .item {
+            opacity: 1.0;
+            -webkit-transition: all 0.3s ease-out;
+            -moz-transition: all 0.3s ease-out;
+            -o-transition: all 0.3s ease-out;
+            transition: all 0.3s ease-out;
+        }
+        
         .item:hover {
-            
-            h3 {
-                color: $brand-primary;
-                text-decoration: underline;
-            }
-            
-            p {
-                color: #fff;
-            }
-            
+            opacity: 0.5;
         }
     }
     

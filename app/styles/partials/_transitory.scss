@@ -235,13 +235,25 @@
 
 /*Modal*/
 .modal-content {border-radius: 2px;}
-.modal-header { border-bottom: 0px solid #e5e5e5;}
+.modal-header { border-bottom: 0px solid #e5e5e5; color: $color-dark-primary; text-transform: uppercase; padding-bottom: 5px;}
+.modal-header h4 { padding-top: 15px;}
 .modal-body { text-align: center;}
-.modal-body .share-step{margin-top: 30px;}
+.modal-body .share-step{margin-top: 30px; margin-bottom: 30px; font-size: 30px;}
 .modal-body .fa-stack { cursor: pointer;}
-.modal-body .fa-circle { color: #CCC;}
-.modal-body .fa-stack:hover .fa-circle{ color: #777;}
+.modal-body .fa-circle {
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+    color: $color-light-primary;
+}
+.modal-body .fa-stack:hover .fa-circle{ color: $color-dark-fourth;}
+.modal-body .fa-stack:hover .fa-circle.facebook{ color: $color-facebook;}
+.modal-body .fa-stack:hover .fa-circle.twitter{ color: $color-twitter;}
+.modal-body .fa-stack:hover .fa-circle.plus{ color: $color-plus;}
 .modal-footer { text-align: center; border-top: 0px solid #e5e5e5;}
+
+.modal-title{text-align: center;}
 
 
 
