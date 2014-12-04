@@ -322,6 +322,7 @@ module.exports = function (grunt) {
           dest: '<%= config.dist %>',
           src: [
             '*.{ico,png,txt}',
+            'static/{,*/}*.jpg',
             'images/{,*/}*.webp',
             'images/45.GIF',
             'scripts/koan.js',
