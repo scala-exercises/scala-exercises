@@ -126,6 +126,19 @@ hr {
             background: url("../images/icon_blog.png") center center no-repeat;
             @include image-2x("../images/icon_blog2x.png", 110px, 110px);
         }
+        
+        .item:hover {
+            
+            h3 {
+                color: $brand-primary;
+                text-decoration: underline;
+            }
+            
+            p {
+                color: #fff;
+            }
+            
+        }
     }
     
     .spread {
