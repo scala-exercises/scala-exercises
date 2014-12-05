@@ -1,5 +1,5 @@
 $(function() {
-    
+
     $.when(
         $('head').append('<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" />'),
         $.ready.promise()
@@ -7,7 +7,7 @@ $(function() {
         loadStepIconAnimation();
         loadIconGeneralAnimation();
     });
-    
+
 });
 
 var base_url = location.protocol + '//' + location.host;
@@ -46,12 +46,12 @@ function moveToDiv(id) {
 }
 
 function shareSiteFacebook() {
-    var title = '"Doing Scala" offers hundreds of exercises that covering main concepts of Scala!';
+    var title = '"Doing Scala" offers hundreds of exercises covering the main concepts of Scala!';
     launchPopup('http://www.facebook.com/sharer/sharer.php?u='+base_url+'&t='+title)
 }
 
 function shareSiteTwitter() {
-    var text = '"Doing Scala" offers hundreds of exercises that covering main concepts of Scala! '+base_url;
+    var text = '"Doing Scala" offers hundreds of exercises covering the main concepts of Scala! '+base_url;
     launchPopup('https://twitter.com/home?status='+text)
 }
 
