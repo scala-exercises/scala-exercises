@@ -33,7 +33,7 @@ Scala Koans Copyright © [Scala Koans](http://scalakoans.org) - All Rights Reser
 ##License
 
 Copyright (C) 2012 47 Degrees, LLC
-Reactive scalable software solutions designed with your future in
+Reactive, scalable software solutions.
 http://47deg.com
 hello@47deg.com
 
