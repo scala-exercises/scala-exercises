@@ -1,10 +1,10 @@
-#Doing Scala
+#Scala Exercises
 
 ------------------------
 
 ##How it works?
 
-"Doing Scala" brings the popular [Scala Koans](http://www.scalakoans.org/) to the web. Offering hundreds of solveable exercises organized into 42 categories covering the basics of the Scala language.
+"Scala Exercises" brings the popular [Scala Koans](http://www.scalakoans.org/) to the web. Offering hundreds of solveable exercises organized into 42 categories covering the basics of the Scala language.
 
 
 - LEARN: Each category includes an explanation of the basics. Learn the concepts through simple code samples.

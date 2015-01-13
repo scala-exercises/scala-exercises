@@ -1,5 +1,4 @@
 $(function() {
-
     $.when(
 		$.getScript('http://yandex.st/highlightjs/8.0/highlight.min.js'),
 		$.getScript('http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js'),
@@ -8,28 +7,23 @@ $(function() {
         loadDisqus(),
         $.ready.promise()
     ).then(function(){
-
         loadNav();
         init();
         activeMenu();
-
-        // colourify();
-		// buscaReplace();
     });
 });
 
 
-var koans_groups = ["Asserts", "Val and Var", "Classes", "Options", "Objects", "Tuples", "Higher Order Functions", "Lists", "Maps", "Sets", "Formatting", "Pattern Matching", "Case Classes", "Range", "Partially Applied Functions", "Partial Functions", "Implicits", "Traits", "For Expressions", "Infix Prefix and Postfix Operators", "Infix Types", "Mutable Maps", "Mutable Sets", "Sequences and Arrays", "Iterables", "Traversables", "Named and Default Arguments", "Manifests", "Preconditions", "Extractors", "ByName Parameter", "Repeated Parameters", "Parent Classes", "Empty Values", "Type Signatures", "Uniform Access Principle", "Literal Booleans", "Literal Numbers", "Literal Strings", "Type Variance", "Enumerations", "Constructors"];
-var koans_groups_id =[];
+var koansGroups = ["Asserts", "Val and Var", "Classes", "Options", "Objects", "Tuples", "Higher Order Functions", "Lists", "Maps", "Sets", "Formatting", "Pattern Matching", "Case Classes", "Range", "Partially Applied Functions", "Partial Functions", "Implicits", "Traits", "For Expressions", "Infix Prefix and Postfix Operators", "Infix Types", "Mutable Maps", "Mutable Sets", "Sequences and Arrays", "Iterables", "Traversables", "Named and Default Arguments", "Manifests", "Preconditions", "Extractors", "ByName Parameter", "Repeated Parameters", "Parent Classes", "Empty Values", "Type Signatures", "Uniform Access Principle", "Literal Booleans", "Literal Numbers", "Literal Strings", "Type Variance", "Enumerations", "Constructors"];
+var koansGroupsId =[];
 var koan = false;
-var first = getId(koans_groups[0]);
+var first = getId(koansGroups[0]);
 var hash = false;
 var editing = false;
-var disqus_shortname = 'doingscala';
-var base_url = location.protocol + '//' + location.host;
+var disqusShortname = 'doingscala';
+var baseURL = location.protocol + '//' + location.host;
 
 // HASH
-
 $(window).on('hashchange', function() {
     init();
 });
@@ -38,15 +32,12 @@ $(window).resize(function() {
     calculateWaitingFrame();
 });
 
-
 function loadNav() {
-    var count = koans_groups.length;
-    $.each(koans_groups, function(index, kg) {
+    var count = koansGroups.length;
+    $.each(koansGroups, function(index, kg) {
         drawNavItem(index, kg);
     });
 }
-
-
 
 function init() {
     editing = false;
@@ -55,12 +46,7 @@ function init() {
         writeCurrent(hash);
         readKoanJSON();
     }
-
 }
-
-// window.location.hash = tb;
-
-
 
 // Nav
 function drawNavItem(index, kg) {
@@ -72,7 +58,6 @@ function drawNavItem(index, kg) {
         event.preventDefault();
         window.location.hash = $(this).attr('data-id');
     });
-
 }
 
 function restoreNav() {
@@ -80,9 +65,7 @@ function restoreNav() {
     var items = $('#sidebar_menu .item');
     items.attr('class','item');
     var newhash = window.location.hash.substring(1);
-    if(newhash.length==0){
-        setInitialKoan();
-    }
+    if(newhash.length==0) setInitialKoan();
     else{
         hash = newhash;
         var item = $('#sidebar_menu .item[data-id="'+hash+'"]');
@@ -91,7 +74,6 @@ function restoreNav() {
         dev = true;
     }
     return dev;
-
 }
 
 function setInitialKoan() {
@@ -104,7 +86,7 @@ function setInitialKoan() {
 }
 
 function updateCompletes() {
-    $.each(koans_groups, function(index, kg) {
+    $.each(koansGroups, function(index, kg) {
         var id = getId(kg);
         var navItem = $('#sidebar_menu .item[data-id="'+id+'"]');
         if(isCompleteKoan(id)) navItem.addClass('completed');
@@ -113,22 +95,15 @@ function updateCompletes() {
 }
 
 //Koans
-
 function readKoanJSON() {
     runReadingMode();
     var url = "json/"+hash+".json";
-
     $.getJSON(url, function(data) {
         hideReadingMode(data);
-
     })
     .error(function (xhr, ajaxOptions, thrownError){
-        if(xhr.status==404) {
-
-            console.log("JSON not found");
-        }
+        if(xhr.status==404) console.log("JSON not found");
     });
-
 }
 
 function drawKoan() {
@@ -140,8 +115,8 @@ function drawKoan() {
 	var content = $('<div></div>').attr({'class':'content'}); item.append(content);
 
 	if(koan.modules){
-		$.each(koan.modules, function(index_module, module) {
-			drawModule(content, index_module, module);
+		$.each(koan.modules, function(indexModule, module) {
+			drawModule(content, indexModule, module);
 		});
         drawEditLink(content);
 	}
@@ -155,15 +130,15 @@ function drawKoan() {
     reloadComments();
 }
 
-function drawModule(content, index_module, module) {
-    var module_wrapper = $('<div></div>').attr({'class':'module'}); content.append(module_wrapper);
+function drawModule(content, indexModule, module) {
+    var moduleWrapper = $('<div></div>').attr({'class':'module'}); content.append(moduleWrapper);
     if(module.preparagraph){
-        var preparapraph = $('<div></div>').attr({'class':'preparapraph'}).html(marked(module.preparagraph)); module_wrapper.append(preparapraph);
+        var preparapraph = $('<div></div>').attr({'class':'preparapraph'}).html(marked(module.preparagraph)); moduleWrapper.append(preparapraph);
     }
-    var pre = $('<pre></pre>').html('<div class="ribbon ribbon-wrapper-green"><div class="ribbon-green">Done</div></div>'); module_wrapper.append(pre);
-    var code = $('<code></code>').attr({'data-index':index_module}).html(module.code); pre.append(code);
+    var pre = $('<pre></pre>').html('<div class="ribbon ribbon-wrapper-green"><div class="ribbon-green">Done</div></div>'); moduleWrapper.append(pre);
+    var code = $('<code></code>').attr({'data-index':indexModule}).html(module.code); pre.append(code);
     if(module.postparagraph){
-        var postparagraph = $('<div></div>').attr({'class':'postparagraph'}).html(marked(module.postparagraph)); module_wrapper.append(postparagraph);
+        var postparagraph = $('<div></div>').attr({'class':'postparagraph'}).html(marked(module.postparagraph)); moduleWrapper.append(postparagraph);
     }
 }
 
@@ -171,7 +146,7 @@ function drawEditLink(content) {
 	var callout = $('<div></div>').attr({'id': 'editLink', 'class':'bs-callout'}).hide(); content.append(callout);
     var h4 = $('<h4></h4>').text('Add exercises'); callout.append(h4);
     var id = getId(koan.title);
-    var p = $('<p></p>').html('If you would like add other interesting exercises about "'+koan.title+'", feel free to edit "'+id+'.json" and submit a pull request: <a target="_blank" href="https://github.com/47deg/doing-scala/edit/master/app/json/'+id+'.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
+    var p = $('<p></p>').html('If you would like add other interesting exercises about "'+koan.title+'", feel free to edit "'+id+'.json" and submit a pull request: <a target="_blank" href="https://github.com/47deg/scala-exercises/edit/master/app/json/'+id+'.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
 
 }
 
@@ -190,10 +165,10 @@ function searchInputs() {
 	$('#module_content pre code').each(function(i, block) {
 
         var code = $(block);
-        var module_index=code.attr('data-index');
-	    var texto = code.text();
-		var reemplazado = texto.replace(/\__/g, '<input data-module-index="'+module_index+'" type="text" value="" />');
-	    code.html(reemplazado);
+        var moduleIndex=code.attr('data-index');
+	    var text = code.text();
+		var replaced = text.replace(/\__/g, '<input data-module-index="'+moduleIndex+'" type="text" value="" />');
+	    code.html(replaced);
         hljs.highlightBlock(block);
 
 	});
@@ -202,10 +177,10 @@ function searchInputs() {
 
 function activeInputs() {
 
-    $('#module_content .module').each(function(module_index) {
+    $('#module_content .module').each(function(moduleIndex) {
         var module = $(this);
         var codes = module.find('pre code');
-        module.find('pre code').each(function(code_index) {
+        module.find('pre code').each(function(codeIndex) {
             var code = $(this);
 
 
@@ -213,15 +188,15 @@ function activeInputs() {
             var inputs = code.find('input');
             if(inputs.length>0){
                 pre.addClass('koan');
-            	inputs.each(function(input_index) {
+            	inputs.each(function(inputIndex) {
                     var input = $(this);
-                    input.attr('data-index',input_index);
+                    input.attr('data-index',inputIndex);
                     var moduleIndex = input.attr('data-module-index');
-                    var inputSize = calculeSize(moduleIndex, input_index);
+                    var inputSize = calculeSize(moduleIndex, inputIndex);
                     // input.width(inputSize);
                     input.animate({width: inputSize+"px"}, 300 );
 
-                    var answer = readSolution(hash,moduleIndex,input_index);
+                    var answer = readSolution(hash,moduleIndex,inputIndex);
                     if(answer.length>0){
                         input.val(answer);
                     }
@@ -275,11 +250,11 @@ function studySolution(element) {
     console.log(size);
     input.animate({width: size+"px"}, 100 );
     var index = input.attr('data-index');
-    var module_index = input.attr('data-module-index');
-    var module = koan.modules[module_index];
+    var moduleIndex = input.attr('data-module-index');
+    var module = koan.modules[moduleIndex];
     if(module.solutions){
         var solution = module.solutions[index];
-        writeSolution(hash,module_index,index,answer);
+        writeSolution(hash,moduleIndex,index,answer);
         if(solution==answer){
             input.addClass('success');
         }
@@ -335,12 +310,12 @@ function drawSources(data) {
 
 	var callout = $('<div></div>').attr({'class':'bs-callout'}); item.append(callout);
     var h4 = $('<h4></h4>').text('Add links'); callout.append(h4);
-    var p = $('<p></p>').html('If you would like add other interesting links about Scala, feel free to edit the "sources.json" and pull request:  <a target="_blank" href="https://github.com/47deg/doing-scala/edit/master/app/json/sources.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
+    var p = $('<p></p>').html('If you would like add other interesting links about Scala, feel free to edit the "sources.json" and pull request:  <a target="_blank" href="https://github.com/47deg/scala-exercises/edit/master/app/json/sources.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
 
 
     if(data.sources){
-        $.each(data.sources, function(index_source, source) {
-            drawSource(content, index_source, source);
+        $.each(data.sources, function(indexSource, source) {
+            drawSource(content, indexSource, source);
 
         });
     }
@@ -348,11 +323,11 @@ function drawSources(data) {
     reloadComments();
 }
 
-function drawSource(content, index_source, source) {
-	var source_wrapper = $('<li></li>').attr({'class':'source'}); content.append(source_wrapper);
+function drawSource(content, indexSource, source) {
+	var sourceWrapper = $('<li></li>').attr({'class':'source'}); content.append(sourceWrapper);
 	if(source.title){
-		var title = $('<h5></h5>').attr({'class':'title'}).html('<a href="'+source.url+'" target="_blank">'+source.title+'</a>'); source_wrapper.append(title);
-		var description = $('<p></p>').attr({'class':'title'}).html(source.description); source_wrapper.append(description);
+		var title = $('<h5></h5>').attr({'class':'title'}).html('<a href="'+source.url+'" target="_blank">'+source.title+'</a>'); sourceWrapper.append(title);
+		var description = $('<p></p>').attr({'class':'title'}).html(source.description); sourceWrapper.append(description);
 	}
 }
 
@@ -421,25 +396,25 @@ function showCongratCourse() {
 function goToNext() {
     var current = $('#sidebar_menu .item.active');
     var items = $('#sidebar_menu .item');
-    var num_items = items.length;
+    var numItems = items.length;
     var index = current.index();
     var next = index+1;
 
-    if(next<num_items){
-        var next_item = items.get(next);
-        var next_link = $(next_item).find('a');
+    if(next<numItems){
+        var nextItem = items.get(next);
+        var nextLink = $(nextItem).find('a');
         $('#moduleModal').modal('hide');
-        next_link.click();
+        nextLink.click();
     }
 }
 
 function didComplete() {
     var completed = false;
     var items = $('#sidebar_menu .item');
-    var num_items = items.length;
-    var items_completed = $('#sidebar_menu .item.completed');
-    var num_items_completed = items_completed.length;
-    if(num_items == num_items_completed) completed = true;
+    var numItems = items.length;
+    var itemsCompleted = $('#sidebar_menu .item.completed');
+    var numitemsCompleted = itemsCompleted.length;
+    if(numItems == numitemsCompleted) completed = true;
     return completed
 }
 
@@ -448,30 +423,30 @@ function didComplete() {
 function shareStepFacebook() {
     // var url = document.URL;
     var title = "I've just completed some Scala exercises!";
-    launchPopup('http://www.facebook.com/sharer/sharer.php?u='+base_url+'&t='+title)
+    launchPopup('http://www.facebook.com/sharer/sharer.php?u='+baseURL+'&t='+title)
 }
 
 function shareStepTwitter() {
-    var text = "I've just completed some Scala exercises at "+base_url;
+    var text = "I've just completed some Scala exercises at "+baseURL;
     launchPopup('https://twitter.com/home?status='+text)
 }
 
 function shareStepGoogle() {
-    launchPopup('https://plus.google.com/share?url='+base_url)
+    launchPopup('https://plus.google.com/share?url='+baseURL)
 }
 
 function shareCourseFacebook() {
     var title = "I've just completed all the Scala exercises!";
-    launchPopup('http://www.facebook.com/sharer/sharer.php?u='+base_url+'&t='+title)
+    launchPopup('http://www.facebook.com/sharer/sharer.php?u='+baseURL+'&t='+title)
 }
 
 function shareCourseTwitter() {
-    var text = "I've just completed all the Scala exercises at "+base_url;
+    var text = "I've just completed all the Scala exercises at "+baseURL;
     launchPopup('https://twitter.com/home?status='+text)
 }
 
 function shareCourseGoogle() {
-    launchPopup('https://plus.google.com/share?url='+base_url)
+    launchPopup('https://plus.google.com/share?url='+baseURL)
 }
 
 function launchPopup(url) {
@@ -485,11 +460,13 @@ function launchPopup(url) {
 
 function runReadingMode() {
     $('#waiting').removeClass();
+    $('#bottom').hide();
+    
 }
 
 function hideReadingMode(data) {
     setTimeout(function(){
-
+        
         if(hash == 'sources') drawSources(data)
         else{
             koan = data;
@@ -498,6 +475,7 @@ function hideReadingMode(data) {
 
         setTimeout(function(){
             $('#waiting').addClass('almosthidden');
+            $('#bottom').slideDown();
         }, 500);
     }, 500);
 
@@ -508,7 +486,7 @@ function hideReadingMode(data) {
 
 function loadDisqus() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    dsq.src = '//' + disqusShortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }
 
@@ -522,12 +500,12 @@ function reloadComments() {
         console.log('Disqus not defined');
 
     }else{
-        var discussion_url = base_url + '/#!' + hash;
+        var discussionURL = baseURL + '/#!' + hash;
         DISQUS.reset({
           reload: true,
           config: function () {
               this.page.identifier = hash;
-              this.page.url = discussion_url;
+              this.page.url = discussionURL;
           }
         });
     }

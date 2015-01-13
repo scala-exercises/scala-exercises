@@ -398,16 +398,10 @@ module.exports = function (grunt) {
         },
         pages: {
               options: {
-                remote: 'https://github.com/47deg/doing-scala.git',
+                remote: 'https://github.com/47deg/scala-exercises.git',
                 branch: 'gh-pages'
               }
             },
-        heroku: {
-          options: {
-            remote: 'git@heroku.com:doing-scala.git',
-            branch: 'master'
-          }
-        },
         local: {
           options: {
             remote: '../',
