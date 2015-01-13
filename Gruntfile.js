@@ -326,6 +326,7 @@ module.exports = function (grunt) {
             'images/{,*/}*.webp',
             'images/45.GIF',
             'scripts/koan.js',
+            'CNAME',
             'styles/codetheme.css',
             '{,*/}*.html',
             'styles/fonts/{,*/}*.*'
