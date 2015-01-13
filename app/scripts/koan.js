@@ -13,7 +13,6 @@ $(function() {
     });
 });
 
-
 var koansGroups = ["Asserts", "Val and Var", "Classes", "Options", "Objects", "Tuples", "Higher Order Functions", "Lists", "Maps", "Sets", "Formatting", "Pattern Matching", "Case Classes", "Range", "Partially Applied Functions", "Partial Functions", "Implicits", "Traits", "For Expressions", "Infix Prefix and Postfix Operators", "Infix Types", "Mutable Maps", "Mutable Sets", "Sequences and Arrays", "Iterables", "Traversables", "Named and Default Arguments", "Manifests", "Preconditions", "Extractors", "ByName Parameter", "Repeated Parameters", "Parent Classes", "Empty Values", "Type Signatures", "Uniform Access Principle", "Literal Booleans", "Literal Numbers", "Literal Strings", "Type Variance", "Enumerations", "Constructors"];
 var koansGroupsId =[];
 var koan = false;
@@ -150,9 +149,7 @@ function drawEditLink(content) {
 
 }
 
-
-
-// Sintaxis
+// Syntax
 function colourify() {
 	hljs.initHighlightingOnLoad();
 	$('pre code').each(function(i, block) {
@@ -163,27 +160,21 @@ function colourify() {
 
 function searchInputs() {
 	$('#module_content pre code').each(function(i, block) {
-
         var code = $(block);
         var moduleIndex=code.attr('data-index');
 	    var text = code.text();
 		var replaced = text.replace(/\__/g, '<input data-module-index="'+moduleIndex+'" type="text" value="" />');
 	    code.html(replaced);
         hljs.highlightBlock(block);
-
 	});
-
 }
 
 function activeInputs() {
-
     $('#module_content .module').each(function(moduleIndex) {
         var module = $(this);
         var codes = module.find('pre code');
         module.find('pre code').each(function(codeIndex) {
             var code = $(this);
-
-
             var pre = code.parent();
             var inputs = code.find('input');
             if(inputs.length>0){
@@ -193,16 +184,10 @@ function activeInputs() {
                     input.attr('data-index',inputIndex);
                     var moduleIndex = input.attr('data-module-index');
                     var inputSize = calculeSize(moduleIndex, inputIndex);
-                    // input.width(inputSize);
                     input.animate({width: inputSize+"px"}, 300 );
-
                     var answer = readSolution(hash,moduleIndex,inputIndex);
-                    if(answer.length>0){
-                        input.val(answer);
-                    }
-
+                    if(answer.length>0) input.val(answer);
                     studySolution(input.get(0));
-
                     input.unbind();
                     input.off();
                     input.on({
@@ -213,17 +198,11 @@ function activeInputs() {
                             studySolution(this);
                         }
                     });
-
             	});
             }
-
         });
-
-
     });
-
     editing = true;
-
 }
 
 function calculeSize(moduleIndex, index) {
@@ -245,7 +224,6 @@ function mySize(length) {
 function studySolution(element) {
     var input = $(element);
     var answer = input.val();
-
     var size = mySize(answer.length);
     console.log(size);
     input.animate({width: size+"px"}, 100 );
@@ -255,12 +233,8 @@ function studySolution(element) {
     if(module.solutions){
         var solution = module.solutions[index];
         writeSolution(hash,moduleIndex,index,answer);
-        if(solution==answer){
-            input.addClass('success');
-        }
-        else{
-            input.removeClass('success');
-        }
+        if(solution==answer) input.addClass('success');
+        else input.removeClass('success');
         studyModule(input);
     }
 }
@@ -293,12 +267,9 @@ function studyKoanStatus() {
         else writeKoanComplete(hash);
     }
     updateCompletes();
-
 }
 
-
 // Sources
-
 function drawSources(data) {
     console.log(data);
 	var wrapper = $('#module_content');
@@ -312,14 +283,12 @@ function drawSources(data) {
     var h4 = $('<h4></h4>').text('Add links'); callout.append(h4);
     var p = $('<p></p>').html('If you would like add other interesting links about Scala, feel free to edit the "sources.json" and pull request:  <a target="_blank" href="https://github.com/47deg/scala-exercises/edit/master/app/json/sources.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
 
-
     if(data.sources){
         $.each(data.sources, function(indexSource, source) {
             drawSource(content, indexSource, source);
 
         });
     }
-
     reloadComments();
 }
 
@@ -332,7 +301,6 @@ function drawSource(content, indexSource, source) {
 }
 
 // Local Storage
-
 function writeCurrent(koan) {
     localStorage.setItem("current", koan);
 }
@@ -421,7 +389,6 @@ function didComplete() {
 //Share
 
 function shareStepFacebook() {
-    // var url = document.URL;
     var title = "I've just completed some Scala exercises!";
     launchPopup('http://www.facebook.com/sharer/sharer.php?u='+baseURL+'&t='+title)
 }
@@ -453,52 +420,36 @@ function launchPopup(url) {
     window.open(url, 'Social Share', 'height=320, width=640, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
 }
 
-
-
-
 // Views Status
-
 function runReadingMode() {
     $('#waiting').removeClass();
     $('#bottom').hide();
-    
 }
 
 function hideReadingMode(data) {
     setTimeout(function(){
-        
         if(hash == 'sources') drawSources(data)
         else{
             koan = data;
             drawKoan();
         }
-
         setTimeout(function(){
             $('#waiting').addClass('almosthidden');
             $('#bottom').slideDown();
         }, 500);
     }, 500);
-
 }
 
-
 //Disqus
-
 function loadDisqus() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
     dsq.src = '//' + disqusShortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }
 
-
 function reloadComments() {
-
-
-
-
     if(typeof DISQUS === 'undefined'){
         console.log('Disqus not defined');
-
     }else{
         var discussionURL = baseURL + '/#!' + hash;
         DISQUS.reset({
@@ -509,11 +460,9 @@ function reloadComments() {
           }
         });
     }
-
 }
 
 //Console
-
 function openConsole() {
     var consoleWrapper = $('#consoleWrapper');
     consoleWrapper.toggleClass('shown');
@@ -533,7 +482,6 @@ function activeMenu() {
 }
 
 // Utils
-
 function calculateWaitingFrame(){
     var height = $( window ).height();
     console.log(height);
