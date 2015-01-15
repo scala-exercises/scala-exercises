@@ -92,10 +92,18 @@
 .nav-sidebar > li > a:hover {
     background-color: rgba(255,255,255,0.1);
 }
+
+.nav-sidebar > li.item.active {
+    background-color: $color-dark-second;
+    color: white;
+}
+
+
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {
-    color: #FFF;
+    background-color: $color-dark-second;
+    color: white;
 }
 
 .nav-sidebar > li > a > i {
@@ -103,20 +111,27 @@
     margin-top: 3px;
 }
 
-.nav-sidebar > li > a > i:before {
+.nav-sidebar > li > a > i.pull-right:before {
    color: rgba(255,255,255,0.5);
    font-family: FontAwesome;
    content: "\f10c";
-    -webkit-transition: all 0.3s linear;
-    -moz-transition: all 0.3s linear;
-    -o-transition: all 0.3s linear;
-    transition: all 0.3s linear;
+    -webkit-transition: all 0.9s linear;
+    -moz-transition: all 0.9s linear;
+    -o-transition: all 0.9s linear;
+    transition: all 0.9s linear;
 }
 
-.nav-sidebar > li.completed > a > i:before {
+.nav-sidebar > li.completed > a > i.pull-right:before {
     color: $brand-primary;
    content: "\f058";
 }
+
+.nav-sidebar > li > a > i.fa-spin:before {
+   color: $brand-primary;
+   content: "\f021";
+}
+
+
 
 #source {
     margin: 0px;
@@ -202,11 +217,13 @@
     text-align: center;
     line-height: 14px;
     vertical-align: middle;
-    padding: 2px 4px;
+    padding: 2px 0px;
+    margin-left: 4px;
+    margin-right: 4px;
     border: 0px solid #999;
     border-bottom: 1px solid #cb4b16;
     -webkit-animation: underliner 2s linear infinite;
-    width: 1px;
+/*    width: 1px;*/
 }
 
 #module_content code input.success{

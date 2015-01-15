@@ -21,10 +21,7 @@
 ##How build and deploy the app
 
 ```bash
-grunt build
-git add dist && git commit -m "message"
-git push origin master
-grunt buildcontrol:pages
+source deployIt.sh 
 ```
 
 ##Attribution
