@@ -381,6 +381,7 @@ function didComplete() {
 }
 
 //Share
+
 function shareStepFacebook() {
     var url = document.URL;
     var title = 'I´ve just completed the "'+koan.title+'" module from Scala Exercises!';
