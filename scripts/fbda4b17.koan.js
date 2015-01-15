@@ -8,7 +8,6 @@ $(function() {
     ).then(function(){
         loadHighlightJS();
         loadNav();
-        init();
     });
 });
 
@@ -36,8 +35,10 @@ $(window).resize(function() {
 function loadNav() {
     var count = koansGroups.length;
     $.each(koansGroups, function(index, kg) {
-        drawNavItem(index, kg);
+        var item = drawNavItem(index, kg);
+        saveJSON(item, getId(kg));
     });
+    init();
 }
 
 function init() {
@@ -52,13 +53,15 @@ function init() {
 // Nav
 function drawNavItem(index, kg) {
     var item = $('<li></li>').attr({'class':'item', 'data-id':getId(kg)}); $('#sidebar_menu').append(item);
-    var a = $('<a></a>').attr({'href':'#', 'data-id':getId(kg)}).text(kg); item.append(a);
-    var i = $('<i></i>').attr({'class':'pull-right fa'}); a.prepend(i);
+    var a = $('<a></a>').attr({'href':'#', 'data-id':getId(kg)}).html(kg); item.append(a);
+    var i = $('<i></i>').attr({'class':'pull-right fa fa-spin'}); a.prepend(i);
 
     a.click(function(event){
         event.preventDefault();
         window.location.hash = $(this).attr('data-id');
     });
+    
+    return item;
 }
 
 function restoreNav() {
@@ -98,12 +101,17 @@ function updateCompletes() {
 //Koans
 function readKoanJSON() {
     runReadingMode();
-    var url = "json/"+hash+".json";
+    hideReadingMode(readCacheKoan(hash));
+}
+
+function saveJSON(item, id) {
+    var url = "json/"+id+".json";
     $.getJSON(url, function(data) {
-        hideReadingMode(data);
+        writeCacheKoan(id, data);
+        item.find('a i.fa-spin').removeClass('fa-spin');
     })
     .error(function (xhr, ajaxOptions, thrownError){
-        if(xhr.status==404) console.log("JSON not found");
+        if(xhr.status==404) console.log("JSON not found at cache");
     });
 }
 
@@ -200,16 +208,6 @@ function activeInputs() {
     });
     editing = true;
     reloadComments();
-}
-
-function calculeSize(moduleIndex, index) {
-    var size = 0;
-    var module = koan.modules[moduleIndex];
-    if(module.solutions){
-        var solution = module.solutions[index];
-        size = mySize(solution.length);
-    }
-    return size;
 }
 
 function mySize(length) {
@@ -333,6 +331,16 @@ function writeSolution(koan, module, solution, answer) {
 function readSolution(koan,module,solution) {
     var dev = ""
     if(localStorage.getItem('answer.'+koan+'.'+module+'.'+solution)) dev = localStorage.getItem('answer.'+koan+'.'+module+'.'+solution);
+    return dev;
+}
+
+function writeCacheKoan(id, koan) {
+    localStorage.setItem('koandata.'+id, JSON.stringify(koan));
+}
+
+function readCacheKoan(id) {
+    var dev = ""
+    if(localStorage.getItem('koandata.'+id)) dev = JSON.parse(localStorage.getItem('koandata.'+id));
     return dev;
 }
 
