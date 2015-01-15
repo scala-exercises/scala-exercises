@@ -383,17 +383,20 @@ function didComplete() {
 //Share
 
 function shareStepFacebook() {
-    var title = "I've just completed some Scala exercises!";
+    var url = document.URL;
+    var title = 'I´ve just completed the "'+koan.title+'" module from Scala Exercises!';
     launchPopup('http://www.facebook.com/sharer/sharer.php?u='+baseURL+'&t='+title)
 }
 
 function shareStepTwitter() {
-    var text = "I've just completed some Scala exercises at "+baseURL;
+    var url = baseURL+'/koans%23'+hash;
+    var text = 'I´ve just completed the "'+koan.title+'" module at ' + url;
     launchPopup('https://twitter.com/home?status='+text)
 }
 
 function shareStepGoogle() {
-    launchPopup('https://plus.google.com/share?url='+baseURL)
+    var url = baseURL+'/koans%23'+hash;
+    launchPopup('https://plus.google.com/share?url='+url)
 }
 
 function shareCourseFacebook() {
