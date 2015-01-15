@@ -375,7 +375,8 @@ module.exports = function (grunt) {
           dir: 'dist',
           commit: true,
           push: true,
-          message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+          // message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+          message: grunt.option( "mymessage" )
         },
         pages: {
               options: {
