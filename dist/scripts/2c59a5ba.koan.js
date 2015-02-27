@@ -35,7 +35,8 @@ $(window).resize(function() {
 function loadNav() {
     var count = koansGroups.length;
     $.each(koansGroups, function(index, kg) {
-        var item = drawNavItem(index, kg);
+        if(kg != "sources") var item = drawNavItem(index, kg);
+        else var item = false;
         saveJSON(item, getId(kg));
     });
     init();
@@ -108,7 +109,7 @@ function saveJSON(item, id) {
     var url = "json/"+id+".json";
     $.getJSON(url, function(data) {
         writeCacheKoan(id, data);
-        item.find('a i.fa-spin').removeClass('fa-spin');
+        if(item) item.find('a i.fa-spin').removeClass('fa-spin');
     })
     .error(function (xhr, ajaxOptions, thrownError){
         if(xhr.status==404) console.log("JSON not found at cache");
@@ -124,7 +125,6 @@ function drawKoan() {
 	var content = $('<div></div>').attr({'class':'content'}); item.append(content);
 	if(koan.modules){
 		$.each(koan.modules, function(indexModule, module) {
-            
 			drawModule(content, indexModule, module);
 		});
         drawEditLink(content);
@@ -432,17 +432,24 @@ function runReadingMode() {
 }
 
 function hideReadingMode(data) {
-    setTimeout(function(){
-        if(hash == 'sources') drawSources(data)
-        else{
-            koan = data;
-            drawKoan();
-        }
+    if(typeof data !== "object"){
         setTimeout(function(){
-            $('#waiting').addClass('almosthidden');
-            $('#bottom').slideDown();
+            init();
         }, 500);
-    }, 500);
+    }
+    else{
+        setTimeout(function(){
+            if(hash == 'sources') drawSources(data)
+            else{
+                koan = data;
+                drawKoan();
+            }
+            setTimeout(function(){
+                $('#waiting').addClass('almosthidden');
+                $('#bottom').slideDown();
+            }, 500);
+        }, 500);
+    }
 }
 
 //Disqus
