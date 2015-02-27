@@ -88,11 +88,35 @@ hr {
     }
 }
 
+#contentKoans{
+    background-color: #FFF;
+    margin-bottom: 120px;
+    position: relative;
+    z-index: 1;
+}
+
 // Footer
+
+#bodykoans footer{
+    position: fixed;
+    bottom:0px;
+    width: 100%;
+    z-index: 0;
+    
+    padding-left: 16%;
+}
+
+@media (max-width: 768px) {
+    #bodykoans footer{
+        padding-left: 0;
+    }
+}
+
 
 #bottom {
     display: none;
     background: $color-dark-primary;
+    
     
     .link-content,
     .spread {
