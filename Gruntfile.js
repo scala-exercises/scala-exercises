@@ -310,6 +310,7 @@ module.exports = function (grunt) {
             'styles/codetheme.css',
             '{,*/}*.html',
             '{,*/}*.txt',
+            '{,*/}*.xml',
             'styles/fonts/{,*/}*.*'
           ]
         }, {
