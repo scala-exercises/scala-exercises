@@ -309,6 +309,7 @@ module.exports = function (grunt) {
             'CNAME',
             'styles/codetheme.css',
             '{,*/}*.html',
+            '{,*/}*.txt',
             'styles/fonts/{,*/}*.*'
           ]
         }, {
