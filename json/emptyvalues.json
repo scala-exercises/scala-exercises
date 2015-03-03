@@ -60,14 +60,6 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "But *None* cannot be cast to all types of objects:",
-      "code": "intercept[ClassCastException] {\n  // put the exception you expect to see in place of the blank\n  assert(None.asInstanceOf[String] === __)\n}",
-      "solutions": [
-        "false"
-      ],
-      "postparagraph": ""
-    },
-    {
       "preparagraph": "*None* can be used with *Option* instead of null references",
       "code": "val optional: Option[String] = None\nassert(optional.isEmpty === __)\nassert(optional === __)",
       "solutions": [
