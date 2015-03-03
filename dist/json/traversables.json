@@ -337,7 +337,7 @@
       "preparagraph": "`dropWhile` will continually drop elements until a predicate is no longer satisfied.  Again, *TreeSet* is *Traversable*. *TreeSet* also is also sorted.",
       "code": "val list = List(87, 44, 5, 4, 200, 10, 39, 100)\nlist.dropWhile(_ < 100) should be(List(__, __, __, __))",
       "solutions": [
-        "100",
+        "200",
         "10",
         "39",
         "100"
