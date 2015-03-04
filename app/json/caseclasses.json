@@ -71,8 +71,8 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Case classes have default and named parameters:",
-      "code": "val p1 = Person(\"Fred\", \"Jones\", 23, \"111-22-3333\")\nval p2 = Person(\"Samantha\", \"Jones\") // note missing age and ssn\nval p3 = Person(last = \"Jones\", first = \"Fred\", ssn = \"111-22-3333\") // note the order can change, and missing age\nval p4 = p3.copy(age = 23)\n\np1.first should be(__)\np1.last should be(__)\np1.age should be(__)\np1.ssn should be(__)\n\np2.first should be(__)\np2.last should be(__)\np2.age should be(__)\np2.ssn should be(__)\n\np3.first should be(__)\np3.last should be(__)\np3.age should be(__)\np3.ssn should be(__)\n\n(p1 == p4) should be(__)",
+      "preparagraph": "Case classes can have default and named parameters:",
+      "code": "case class Person(first: String, last: String, age: Int=0, ssn: String=\"\")\nval p1 = Person(\"Fred\", \"Jones\", 23, \"111-22-3333\")\nval p2 = Person(\"Samantha\", \"Jones\") // note missing age and ssn\nval p3 = Person(last = \"Jones\", first = \"Fred\", ssn = \"111-22-3333\") // note the order can change, and missing age\nval p4 = p3.copy(age = 23)\n\np1.first should be(__)\np1.last should be(__)\np1.age should be(__)\np1.ssn should be(__)\n\np2.first should be(__)\np2.last should be(__)\np2.age should be(__)\np2.ssn should be(__)\n\np3.first should be(__)\np3.last should be(__)\np3.age should be(__)\np3.ssn should be(__)\n\n(p1 == p4) should be(__)",
       "solutions": [
         "\"Fred\"",
         "\"Jones\"",
