@@ -147,10 +147,10 @@ function drawModule(content, indexModule, module) {
 }
 
 function drawEditLink(content) {
-	var callout = $('<div></div>').attr({'id': 'editLink', 'class':'bs-callout'}).hide(); content.append(callout);
+	var callout = $('<div></div>').attr({'id': 'editLink', 'class':'bs-callout'}); content.append(callout);
     var h4 = $('<h4></h4>').text('Add exercises'); callout.append(h4);
     var id = getId(koan.title);
-    var p = $('<p></p>').html('If you would like add other interesting exercises about "'+koan.title+'", feel free to edit "'+id+'.json" and submit a pull request: <a target="_blank" href="https://github.com/47deg/scala-exercises/edit/master/app/json/'+id+'.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
+    var p = $('<p></p>').html('If you would like add other interesting exercises or improve the section "'+koan.title+'", feel free to edit "'+id+'.json" and submit a pull request: <a target="_blank" href="https://github.com/47deg/scala-exercises/edit/master/app/json/'+id+'.json"><i class="fa fa-pencil"></i> Edit</a>'); callout.append(p);
 
 }
 
@@ -311,7 +311,6 @@ function isCompleteKoan(koan) {
 
 function removeKoanComplete(koan) {
     localStorage.removeItem('complete.'+koan);
-    $('#editLink').hide();
 }
 
 function writeKoanComplete(koan) {
@@ -320,7 +319,6 @@ function writeKoanComplete(koan) {
         editing = false;
         showCongrat();
     }
-    $('#editLink').show();
 }
 
 function writeSolution(koan, module, solution, answer) {
