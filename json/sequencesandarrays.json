@@ -57,7 +57,7 @@
       "preparagraph": "You can map values in a sequence through a function:",
       "code": "val s = Seq(\"hello\", \"world\")\nval r = s map {\n  _.reverse\n}\n\nr should be(__)",
       "solutions": [
-        "Seq(\"olleh\",\"dlrow\")"
+        "Seq(\"olleh\", \"dlrow\")"
       ],
       "postparagraph": ""
     }
