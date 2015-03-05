@@ -83,9 +83,9 @@
     },
     {
       "preparagraph": "Accessing a map by key results in an exception if key is not found:",
-      "code": "val myMap = Map(\"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\n\nintercept[NoSuchElementException] {\n  myMap(\"MI\") should be(__)\n}",
+      "code": "val myMap = Map(\"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nvar blewWithException = true\nintercept[NoSuchElementException] {\n  myMap(\"MI\")\n  blewWithException = false\n}\nblewWithException should be(__)",
       "solutions": [
-        "Nil"
+        "true"
       ],
       "postparagraph": ""
     },
