@@ -4,6 +4,7 @@ $(function() {
         $.ready.promise()
     ).then(function(){
         $('#bottom').show();
+        loadGitHubStats();
         loadStepIconAnimation();
         loadIconGeneralAnimation();
     });
@@ -59,4 +60,18 @@ function shareSiteGoogle() {
 
 function launchPopup(url) {
     window.open(url, 'Social Share', 'height=320, width=640, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
+}
+
+function loadGitHubStats(){
+        
+ var gitHubAPI = "https://api.github.com/repos/47deg/scala-exercises?callback=?";
+  $.getJSON( gitHubAPI).done(function( data ) {
+    $('#eyes').text(data.data.watchers_count );    
+    $('#stars').text(data.data.stargazers_count );    
+    $('#forks').text(data.data.forks);
+      setTimeout(function(){
+          showAniming($('#gitHubLayer'), 'fadeInDown');
+      }, 500);
+  });
+    
 }
