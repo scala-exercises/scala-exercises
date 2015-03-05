@@ -39,7 +39,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "As long as the method signatures aren't the same, you can have an many unapply methods as you want:",
+      "preparagraph": "As long as the method signatures aren't the same, you can have as many unapply methods as you want:",
       "code": "class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)\nclass Employee(val firstName: String, val middleName: Option[String], val lastName: String)\n\nobject Tokenizer {\n  def unapply(x: Car) = Some(x.make, x.model, x.year, x.topSpeed)\n\n  def unapply(x: Employee) = Some(x.firstName, x.lastName)\n}\n\nval result = new Employee(\"Kurt\", None, \"Vonnegut\") match {\n  case Tokenizer(c, d) => \"c: %s, d: %s\".format(c, d)\n  case _ => \"Not found\"\n}\n\nresult should be(__)",
       "solutions": [
         "\"c: Kurt, d: Vonnegut\""
