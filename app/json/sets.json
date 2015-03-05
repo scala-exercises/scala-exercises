@@ -19,9 +19,10 @@
     },
     {
       "preparagraph": "Sets can be added to easily:",
-      "code": "val mySet = Set(\"Michigan\", \"Ohio\", \"Wisconsin\", \"Iowa\")\nval aNewSet = mySet + \"Illinois\"\n\naNewSet.contains(\"Illinois\") should be(__)",
+      "code": "val mySet = Set(\"Michigan\", \"Ohio\", \"Wisconsin\", \"Iowa\")\nval aNewSet = mySet + \"Illinois\"\n\naNewSet.contains(\"Illinois\") should be(__)\n\mySet.contains(\"Illinois\") should be(__)",
       "solutions": [
-        "true"
+        "true",
+        "false"
       ],
       "postparagraph": ""
     },
@@ -45,9 +46,10 @@
     },
     {
       "preparagraph": "Set elements can be removed easily:",
-      "code": "val mySet = Set(\"Michigan\", \"Ohio\", \"Wisconsin\", \"Iowa\")\nval aNewSet = mySet - \"Michigan\"\n\naNewSet.contains(\"Michigan\") should be(__)",
+      "code": "val mySet = Set(\"Michigan\", \"Ohio\", \"Wisconsin\", \"Iowa\")\nval aNewSet = mySet - \"Michigan\"\n\naNewSet.contains(\"Michigan\") should be(__)\n\mySet.contains(\"Michigan\") should be(__)",
       "solutions": [
-        "false"
+        "false",
+        "true"
       ],
       "postparagraph": ""
     },
