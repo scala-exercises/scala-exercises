@@ -23,20 +23,19 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Meet closure. A closure is a function, whose return value depends on the value of one or more variables declared outside this function. Consider the following piece of code with anonymous function:\n\n```\nval multiplier = (i:Int) => i * 10\n```\n\nHere the only variable used in the function body, `i * 10`, is `i`, which is defined as a parameter to the function.",
+      "preparagraph": "Meet closure. A closure is a function, whose return value depends on the captured value of one or more variables declared outside this function. Consider the following piece of code with anonymous function:\n\n```\nval multiplier = (i:Int) => i * 10\n```\n\nHere the only variable used in the function body, `i * 10`, is `i`, which is defined as a parameter to the function.",
       "code": "var incrementer = 1\n\ndef closure = {\n  x: Int => x + incrementer\n}\n\nval result1 = closure(10)\nresult1 should be(__)\n\nincrementer = 2\n\nval result2 = closure(10)\nresult2 should be(__)",
       "solutions": [
         "11",
-        "12"
+        "11"
       ],
       "postparagraph": ""
     },
     {
       "preparagraph": "We can take that closure and throw into a method and it will still hold the environment",
-      "code": "def summation(x:Int, y: Int => Int) = y(x)\n\nvar incrementer = 3\ndef closure = (x: Int) => x + incrementer\n\nval result = summation(10, closure)\nresult should be(__)\n\nincrementer = 4\nval result2 = summation(10, closure)\nresult2 should be(__)",
+      "code": "def summation(x:Int, y: Int => Int) = y(x)\n\nvar incrementer = 3\ndef closure = (x: Int) => x + incrementer\n\nval result = summation(10, closure)\nresult should be(__)",
       "solutions": [
         "13",
-        "14"
       ],
       "postparagraph": ""
     },
