@@ -27,7 +27,7 @@
     },
     {
       "preparagraph": "Map values can be iterated:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"MI\" -> \"Michigan\")\n\nval mapValues = myMap.values\nmapValues.size should be(__)\nmapValues.head should be(__)\n\nval lastElement = mapValues.last\nlastElement should be(__)",
+      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"MI\" -> \"Michigan\")\n\nval mapValues = myMap.values\nmapValues.size should be(__)\nmapValues.head should be(__) //Failed presumption: The order in maps is not guaranteed \n\nval lastElement = mapValues.last\nlastElement should be(__) //Failed presumption: The order in maps is not guaranteed",
       "solutions": [
         "3",
         "\"Michigan\"",
