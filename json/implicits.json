@@ -21,9 +21,13 @@
     },
     {
       "preparagraph": "Implicits can be used to automatically convert one type to another",
-      "code": "import java.math.BigInteger\nimplicit def Int2BigIntegerConvert(value: Int): BigInteger = new BigInteger(value.toString)\n\ndef add(a: BigInteger, b: BigInteger) = a.add(b)\n\n\nadd(3, 6) should be(__)",
+      "code": "import java.math.BigInteger\nimplicit def Int2BigIntegerConvert(value: Int): BigInteger = new BigInteger(value.toString)\n\ndef add(a: BigInteger, b: BigInteger) = a.add(b)\n\n\nadd(Int2BigIntegerConvert(3), Int2BigIntegerConvert(6)) == Int2BigIntegerConvert(9)  should be(__)\n\nadd(3, 6) == 9  should be(__)\nadd(3, 6) == Int2BigIntegerConvert(9)  should be(__)\n\nadd(3, 6) == (9:BigInteger)  should be(__)\nadd(3, 6).intValue == 9  should be(__)",
       "solutions": [
-        "Int2BigIntegerConvert(9)"
+        "true",
+        "false",
+        "true",
+        "true",
+        "true"
       ],
       "postparagraph": ""
     },
