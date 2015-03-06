@@ -19,6 +19,7 @@ var hash = false;
 var editing = false;
 var disqusShortname = 'doingscala';
 var baseURL = location.protocol + '//' + location.host;
+var prodURL = 'http://scala-exercises.47deg.com/koans';
 
 var timeSearchInputs = 0;
 var timeActiveInputs = 0;
@@ -466,7 +467,7 @@ function reloadComments() {
         }, 500);
         
     }else{
-        var discussionURL = baseURL + '/#!' + hash;
+        var discussionURL = prodURL + '#' + hash;
         DISQUS.reset({
           reload: true,
           config: function () {

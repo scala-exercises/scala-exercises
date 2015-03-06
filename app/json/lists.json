@@ -51,7 +51,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Lists can accessed by position",
+      "preparagraph": "Lists can be accessed by position",
       "code": "val a = List(1, 3, 5, 7, 9)\na(0) should equal(__)\na(2) should equal(__)\na(4) should equal(__)\n\nintercept[IndexOutOfBoundsException] {\n  println(a(5))\n}",
       "solutions": [
         "1",
