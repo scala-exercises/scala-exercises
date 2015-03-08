@@ -15,8 +15,6 @@
 
 - EDIT: After completing a category, you'll be able to go back and edit it. Add new exercises or improve existing ones by sending a pull-request.
 
-- APPROVED: Complete every category and you'll receive our Scala ninja certificate.
-
 
 ##How build and deploy the app
 
