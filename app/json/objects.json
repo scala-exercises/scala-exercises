@@ -23,7 +23,7 @@
     },
     {
       "preparagraph": "An object that has the same name as class is called a companion object, it is used to contain factories for the class that it complements.",
-      "code": "class Movie(val name: String, val year: Short)\n\nobject Movie {\n  def academyAwardBestMoviesForYear(x: Short) = {\n    //These are match statement, more powerful than Java switch statements!\n    x match {\n      case 1930 => Some(new Movie(\"All Quiet On the Western Front\", 1930))\n      case 1931 => Some(new Movie(\"Cimarron\", 1931))\n      case 1932 => Some(new Movie(\"Grand Hotel\", 1931))\n      case _ => None\n    }\n  }\n}\n\nMovie.academyAwardBestMoviesForYear(1932).get.name should be(__)",
+      "code": "class Movie(val name: String, val year: Short)\n\nobject Movie {\n  def academyAwardBestMoviesForYear(x: Short) = {\n    //These are match statement, more powerful than Java switch statements!\n    x match {\n      case 1930 => Some(new Movie(\"All Quiet On the Western Front\", 1930))\n      case 1931 => Some(new Movie(\"Cimarron\", 1931))\n      case 1932 => Some(new Movie(\"Grand Hotel\", 1932))\n      case _ => None\n    }\n  }\n}\n\nMovie.academyAwardBestMoviesForYear(1932).get.name should be(__)",
       "solutions": [
         "\"Grand Hotel\""
       ],
