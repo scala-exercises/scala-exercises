@@ -6,7 +6,6 @@
 
 "Scala Exercises" brings the popular [Scala Koans](http://www.scalakoans.org/) to the web. Offering hundreds of solveable exercises organized into 42 categories covering the basics of the Scala language.
 
-
 - LEARN: Each category includes an explanation of the basics. Learn the concepts through simple code samples.
 
 - SOLVE: Each exercise is a unit test that must pass successfully, complete the exercise by filling in the blanks. Receive instant feedback as your answers are validated in real-time.
