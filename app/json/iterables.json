@@ -128,13 +128,15 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`sameElements` will return true if the two iterables have the same number of elements:",
-      "code": "val xs = List(\"Manny\", \"Moe\", \"Jack\")\nval ys = List(\"Manny\", \"Moe\", \"Jack\")\n(xs sameElements ys) should be(__)\n\nval xs1 = Set(3, 2, 1, 4, 5, 6, 7)\nval ys1 = Set(7, 2, 1, 4, 5, 6, 3)\n(xs1 sameElements ys1) should be(__)",
+      "preparagraph": "`sameElements` will return true if the two iterables produce the same elements in the same order:",
+      "code": "val xs = List(\"Manny\", \"Moe\", \"Jack\")\nval ys = List(\"Manny\", \"Moe\", \"Jack\")\n(xs sameElements ys) should be(__)\n\nval xs = List(\"Manny\", \"Moe\", \"Jack\")\nval ys = List(\"Manny\", \"Jack\", \"Moe\")\n(xs sameElements ys) should be(__)\n\nval xs1 = Set(3, 2, 1, 4, 5, 6, 7)\nval ys1 = Set(7, 2, 1, 4, 5, 6, 3)\n(xs1 sameElements ys1) should be(__)\n\nval xs1 = Set(1, 2, 3)\nval ys1 = Set(3, 2, 1)\n(xs1 sameElements ys1) should be(__) // Caution - see below!",
       "solutions": [
         "true",
-        "true"
+        "false",
+        "true",
+        "false"
       ],
-      "postparagraph": ""
+      "postparagraph": "Note that very small Sets (containing up to 4 elements) are implemented differently to larger Sets; as a result, their iterators produce the elements in the order that they were originally added. This causes the surprising (and arguably incorrect) behaviour in the final example above."
     }
   ]
 }
