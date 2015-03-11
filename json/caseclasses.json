@@ -100,6 +100,15 @@
         "\"111-22-3333\""
       ],
       "postparagraph": ""
+    },
+    {
+      "preparagraph": "Case classes are Serializable",
+      "code": "case class PersonCC(firstName:String, lastName:String)\nval indy = PersonCC(\"Indiana\", \"Jones\")\n\nindy.isInstanceOf[Serializable] should be(__)\n\n\nclass Person(firstName:String, lastName:String)\nval junior = new Person(\"Indiana\", \"Jones\")\n\njunior.isInstanceOf[Serializable] should be(__)",
+      "solutions": [
+        "true",
+        "false"
+      ],
+      "postparagraph": ""
     }
   ]
 }
