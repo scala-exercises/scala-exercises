@@ -28,12 +28,9 @@
     },
     {
       "preparagraph": "Using 'for' we can make more readable code",
-      "code": "val nums = List(List(1), List(2), List(3), List(4), List(5))\n\nval result = for {\n  numList <- nums\n  num <- numList\n  if(num%2 == 0)\n} yield(num)\n\nresult should be (__)\n\n// For is a syntatic sugar way to use flatMap, map, filter\n\nnums.__ {\n  numList => numList.__ {\n    num => num\n  }\n}.__ {\n  num => num%2 == 0\n} should be (result)\n",
+      "code": "val nums = List(List(1), List(2), List(3), List(4), List(5))\n\nval result = for {\n  numList <- nums\n  num <- numList\n  if(num%2 == 0)\n} yield(num)\n\nresult should be (__)\n\n// Which is the same as\n\nnums.flatMap(numList=>numList).filter(_%2==0) should be(result)\n",
       "solutions": [
-        "List(2, 4)",
-        "flatMap",
-        "map",
-        "filter"
+        "List(2, 4)"
       ],
       "postparagraph": ""
     }
