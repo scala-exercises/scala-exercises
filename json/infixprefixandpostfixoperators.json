@@ -20,7 +20,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Any method which does not require a parameter can be used as a postfix operator: `a.m` can be written `a m`.\n\nFor instance `a.##(b)` can be written `a ## b` and `a.!` can be written `a!``\n\n**Postfix operators** have lower precedence than **infix operators**, so:\n- `foo bar baz` means `foo.bar(baz)`.\n- `foo bar baz bam` means `(foo.bar(baz)).bam`\n- `foo bar baz bam bim` means `(foo.bar(baz)).bam(bim)`.",
+      "preparagraph": "Any method which does not require a parameter can be used as a postfix operator: `a.m` can be written `a m`.\n\nFor instance `a.##(b)` can be written `a ## b` and `a.!` can be written `a!`\n\n**Postfix operators** have lower precedence than **infix operators**, so:\n- `foo bar baz` means `foo.bar(baz)`.\n- `foo bar baz bam` means `(foo.bar(baz)).bam`\n- `foo bar baz bam bim` means `(foo.bar(baz)).bam(bim)`.",
       "code": "val g: Int = 31\n(g toHexString) should be(__) //toHexString takes no params therefore can be called as a postfix operator.\n//Hint: The answer is \"1f\"",
       "solutions": [
         "\"1f\""
