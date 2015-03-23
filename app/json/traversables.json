@@ -150,12 +150,11 @@
     },
     {
       "preparagraph": "`toStream` will convert any *Traversable* to a `Stream` which is a lazy list where elements are evaluated as they are needed.",
-      "code": "val list = List(4, 6, 7, 8, 9, 13, 14)\nval result = list.toStream\nresult.isInstanceOf[Stream[_]] should be(__)\n(result take 3) should be(List(__, __, __))",
+      "code": "val list = List(4, 6, 7, 8, 9, 13, 14)\nval result = list.toStream\nresult.isInstanceOf[Stream[_]] should be(__)\n(result take 3) should be(Stream(__, __))",
       "solutions": [
         "true",
         "4",
-        "6",
-        "7"
+        "?"
       ],
       "postparagraph": ""
     },
