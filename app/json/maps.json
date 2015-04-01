@@ -75,9 +75,10 @@
     },
     {
       "preparagraph": "Map elements can be removed easily:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - \"MI\"\naNewMap.contains(\"MI\") should be(__)",
+      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - \"MI\"\naNewMap.contains(\"MI\") should be(__)\nmyMap.contains(\"MI\") should be(__)",
       "solutions": [
-        "false"
+        "false",
+        "true"
       ],
       "postparagraph": ""
     },
@@ -91,21 +92,25 @@
     },
     {
       "preparagraph": "Map elements can be removed in multiple:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap -- List(\"MI\", \"OH\")\n\naNewMap.contains(\"MI\") should be(__)\n\naNewMap.contains(\"WI\") should be(__)\naNewMap.size should be(__)",
+      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap -- List(\"MI\", \"OH\")\n\naNewMap.contains(\"MI\") should be(__)\nmyMap.contains(\"MI\") should be(__)\n\naNewMap.contains(\"WI\") should be(__)\naNewMap.size should be(__)\nmyMap.size should be(__)",
       "solutions": [
-        "false",
+        "false", 
         "true",
-        "2"
+        "true",
+        "2",
+        "4"
       ],
       "postparagraph": ""
     },
     {
       "preparagraph": "Map elements can be removed with a tuple:",
-      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - (\"MI\", \"WI\") // Notice: single '-' operator for tuples\n\naNewMap.contains(\"MI\") should be(__)\naNewMap.contains(\"OH\") should be(__)\naNewMap.size should be(__)",
+      "code": "val myMap = Map(\"MI\" -> \"Michigan\", \"OH\" -> \"Ohio\", \"WI\" -> \"Wisconsin\", \"IA\" -> \"Iowa\")\nval aNewMap = myMap - (\"MI\", \"WI\") // Notice: single '-' operator for tuples\n\naNewMap.contains(\"MI\") should be(__)\nmyMap.contains(\"MI\") should be(__)\naNewMap.contains(\"OH\") should be(__)\naNewMap.size should be(__)\nmyMap.size should be(__)",
       "solutions": [
         "false",
         "true",
-        "2"
+        "true",
+        "2",
+        "4"
       ],
       "postparagraph": ""
     },
