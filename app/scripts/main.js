@@ -66,7 +66,7 @@ function loadGitHubStats(){
         
  var gitHubAPI = "https://api.github.com/repos/47deg/scala-exercises?callback=?";
   $.getJSON( gitHubAPI).done(function( data ) {
-    $('#eyes').text(data.data.watchers_count );    
+    $('#eyes').text(data.data.subscribers_count  );    
     $('#stars').text(data.data.stargazers_count );    
     $('#forks').text(data.data.forks);
       setTimeout(function(){
