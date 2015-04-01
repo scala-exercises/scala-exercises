@@ -34,13 +34,17 @@ $(window).resize(function() {
 });
 
 function loadNav() {
-    var count = koansGroups.length;
-    $.each(koansGroups, function(index, kg) {
-        if(kg != "sources") var item = drawNavItem(index, kg);
-        else var item = false;
-        saveJSON(item, getId(kg));
-    });
-    init();
+    if(checkLocalStorage() === true){
+        var count = koansGroups.length;
+        $.each(koansGroups, function(index, kg) {
+            if(kg != "sources") var item = drawNavItem(index, kg);
+            else var item = false;
+            saveJSON(item, getId(kg));
+        });
+        init();
+    }else{
+        showLocalStorageModal();
+    }
 }
 
 function init() {
@@ -294,6 +298,18 @@ function drawSource(content, indexSource, source) {
 }
 
 // Local Storage
+
+function checkLocalStorage(){
+    var test = 'test';
+    try {
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
 function writeCurrent(koan) {
     localStorage.setItem("current", koan);
 }
@@ -360,6 +376,10 @@ function showCongratModule() {
 
 function showCongratCourse() {
     $('#courseModal').modal('show');
+}
+
+function showLocalStorageModal() {
+    $('#localStorageModal').modal('show');
 }
 
 function goToNext() {
