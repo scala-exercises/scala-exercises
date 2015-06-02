@@ -83,7 +83,7 @@
     },
     {
       "preparagraph": "Sets can be iterated easily:",
-      "code": "val mySet = Set(1, 3, 4, 9)\nvar sum = 0\nfor (i <- mySet)\n  sum = sum + i  //Of course this is the same thing as mySet.reduce(_ + _)\n\nsum should be(__)",
+      "code": "val mySet = Set(1, 3, 4, 9)\nvar sum = 0\nfor (i <- mySet)\n  sum = sum + i  //Of course this is the same thing as mySet.reduce(_ + _) or mySet.sum\n\nsum should be(__)",
       "solutions": [
         "17"
       ],
