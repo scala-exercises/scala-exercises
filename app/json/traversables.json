@@ -412,7 +412,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`groupBy` will categorize a *Traversable* according to function, and return a map with the results.  This exercise uses *Partial Function* chaining.",
+      "preparagraph": "`groupBy` will categorize a *Traversable* according to a given function, and return a map with the results.  This exercise uses *Partial Function* chaining.",
       "code": "val array = Array(87, 44, 5, 4, 200, 10, 39, 100)\n\nval oddAndSmallPartial: PartialFunction[Int, String] = {\n  case x: Int if x % 2 != 0 && x < 100 => \"Odd and less than 100\"\n}\n\nval evenAndSmallPartial: PartialFunction[Int, String] = {\n  case x: Int if x != 0 && x % 2 == 0 && x < 100 => \"Even and less than 100\"\n}\n\nval negativePartial: PartialFunction[Int, String] = {\n  case x: Int if x < 0 => \"Negative Number\"\n}\n\nval largePartial: PartialFunction[Int, String] = {\n  case x: Int if x > 99 => \"Large Number\"\n}\n\nval zeroPartial: PartialFunction[Int, String] = {\n  case x: Int if x == 0 => \"Zero\"\n}\n\nval result = array groupBy {\n    oddAndSmallPartial orElse\n    evenAndSmallPartial orElse\n    negativePartial orElse\n    largePartial orElse\n    zeroPartial\n}\n\n(result(\"Even and less than 100\") size) should be(__)\n(result(\"Large Number\") size) should be(__)",
       "solutions": [
         "3",
