@@ -397,7 +397,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`partition` will split a *Traversable* according to predicate, return a 2 product *Tuple*. The left side are the elements satisfied by the predicate, the right side is `not`. *Array* is *Traversable*, partition is also defined as `(xs filter p, xs filterNot p)`",
+      "preparagraph": "`partition` will split a *Traversable* according to predicate, returning a 2 product *Tuple*. The left hand side contains the elements satisfied by the predicate whereas the right hand side contains those that `don't`. *Array* is *Traversable*, partition is also defined as `(xs filter p, xs filterNot p)`",
       "code": "val array = Array(87, 44, 5, 4, 200, 10, 39, 100)\nval result = array partition (_ < 100)\nresult._1 should be(Array(__, __, __, __, __, __))\nresult._2 should be(Array(__, __))",
       "solutions": [
         "87",
