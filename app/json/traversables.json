@@ -323,7 +323,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`takeWhile` will continually accumulate elements until a predicate is no longer satisfied.  In this exercise, *TreeSet* is *Traversable*. *TreeSet* also is also sorted.",
+      "preparagraph": "`takeWhile` will continually accumulate elements until a predicate is no longer satisfied.",
       "code": "val list = List(87, 44, 5, 4, 200, 10, 39, 100)\nlist.takeWhile(_ < 100) should be(List(__, __, __, __))",
       "solutions": [
         "87",
@@ -334,7 +334,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`dropWhile` will continually drop elements until a predicate is no longer satisfied.  Again, *TreeSet* is *Traversable*. *TreeSet* also is also sorted.",
+      "preparagraph": "`dropWhile` will continually drop elements until a predicate is no longer satisfied.",
       "code": "val list = List(87, 44, 5, 4, 200, 10, 39, 100)\nlist.dropWhile(_ < 100) should be(List(__, __, __, __))",
       "solutions": [
         "200",
