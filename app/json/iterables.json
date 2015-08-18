@@ -105,14 +105,19 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "If two Iterables aren't the same size, then `zipAll` can provide fillers for what it couldn't find a complement for:\n\nE.g. `Iterable(x1, x2, x3) zipAll (Iterable(y1, y2), x, y)` will return `((x1,y1), (x2, y2, y))`",
-      "code": "val xs = List(3, 5, 9)\nval ys = List(\"Bob\", \"Ann\")\n(xs zipAll(ys, -1, \"?\")) should be(List((__, __), (__, __), (__, \"?\")))\n\n",
+      "preparagraph": "If two Iterables aren't the same size, then `zipAll` can provide fillers for what it couldn't find a complement for:\n\nE.g. `Iterable(x1, x2, x3) zipAll (Iterable(y1, y2), x, y)` will return `((x1,y1), (x2, y2), (x3, y)))`",
+      "code": "val xs = List(3, 5, 9)\nval ys = List(\"Bob\", \"Ann\")\n(xs zipAll(ys, -1, \"?\")) should be(List((__, __), (__, __), (__, \"?\")))\n\nval xs = List(3, 5)\nval ys = List(\"Bob\", \"Ann\", \"Stella\")\n(xs zipAll(ys, -1, \"?\")) should be(List((__, __), (__, __), (-1, __)))\n\n",
       "solutions": [
         "3",
         "\"Bob\"",
         "5",
         "\"Ann\"",
-        "9"
+        "9",
+        "3",
+        "\"Bob\"",
+        "5",
+        "\"Ann\"",
+        "\"Stella\""
       ],
       "postparagraph": ""
     },
