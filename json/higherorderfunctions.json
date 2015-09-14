@@ -62,7 +62,7 @@
     },
     {
       "preparagraph": "`isInstanceOf` is the same as `instanceof` in java, but in this case the parameter types can be *blanked out* using existential types with is a single underline, since parameter type are unknown at runtime.",
-      "code": "def addWithSyntaxSugar(x: Int) = (y:Int) => x + y\n\naddWithSyntaxSugar(1).isInstanceOf[Function1[Int, Int]] should be(__)",
+      "code": "def addWithSyntaxSugar(x: Int) = (y:Int) => x + y\n\naddWithSyntaxSugar(1).isInstanceOf[Function1[_, _]] should be(__)",
       "solutions": [
         "true"
       ],
