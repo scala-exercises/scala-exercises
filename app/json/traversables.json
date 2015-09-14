@@ -227,7 +227,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`headOption` will return the first element as an *Option* of an order collection, or some random element if order is not defined.  If a first element is not available, then *None* is returned.",
+      "preparagraph": "`headOption` will return the first element as an *Option* of an ordered collection, or some random element if order is not defined.  If a first element is not available, then *None* is returned.",
       "code": "val list = List(10, 19, 45, 1, 22)\nlist.headOption should be(Some(__))\n\nval list2 = List()\nlist2.headOption should be(__)",
       "solutions": [
         "10",
@@ -244,7 +244,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`lastOption` will return the first element as an *Option* of an order collection, or some random element if order is not defined.  If a first element is not available, then `None` is returned:",
+      "preparagraph": "`lastOption` will return the first element as an *Option* of an ordered collection, or some random element if order is not defined.  If a first element is not available, then `None` is returned:",
       "code": "val list = List(10, 19, 45, 1, 22)\nlist.lastOption should be(Some(__))\n\nval list2 = List()\nlist2.lastOption should be(__)",
       "solutions": [
         "22",
@@ -323,7 +323,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`takeWhile` will continually accumulate elements until a predicate is no longer satisfied.  In this exercise, *TreeSet* is *Traversable*. *TreeSet* also is also sorted.",
+      "preparagraph": "`takeWhile` will continually accumulate elements until a predicate is no longer satisfied.",
       "code": "val list = List(87, 44, 5, 4, 200, 10, 39, 100)\nlist.takeWhile(_ < 100) should be(List(__, __, __, __))",
       "solutions": [
         "87",
@@ -334,7 +334,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`dropWhile` will continually drop elements until a predicate is no longer satisfied.  Again, *TreeSet* is *Traversable*. *TreeSet* also is also sorted.",
+      "preparagraph": "`dropWhile` will continually drop elements until a predicate is no longer satisfied.",
       "code": "val list = List(87, 44, 5, 4, 200, 10, 39, 100)\nlist.dropWhile(_ < 100) should be(List(__, __, __, __))",
       "solutions": [
         "200",
@@ -397,7 +397,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`partition` will split a *Traversable* according to predicate, return a 2 product *Tuple*. The left side are the elements satisfied by the predicate, the right side is `not`. *Array* is *Traversable*, partition is also defined as `(xs filter p, xs filterNot p)`",
+      "preparagraph": "`partition` will split a *Traversable* according to predicate, returning a 2 product *Tuple*. The left hand side contains the elements satisfied by the predicate whereas the right hand side contains those that `don't`. *Array* is *Traversable*, partition is also defined as `(xs filter p, xs filterNot p)`",
       "code": "val array = Array(87, 44, 5, 4, 200, 10, 39, 100)\nval result = array partition (_ < 100)\nresult._1 should be(Array(__, __, __, __, __, __))\nresult._2 should be(Array(__, __))",
       "solutions": [
         "87",
@@ -412,7 +412,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "`groupBy` will categorize a *Traversable* according to function, and return a map with the results.  This exercise uses *Partial Function* chaining.",
+      "preparagraph": "`groupBy` will categorize a *Traversable* according to a given function, and return a map with the results.  This exercise uses *Partial Function* chaining.",
       "code": "val array = Array(87, 44, 5, 4, 200, 10, 39, 100)\n\nval oddAndSmallPartial: PartialFunction[Int, String] = {\n  case x: Int if x % 2 != 0 && x < 100 => \"Odd and less than 100\"\n}\n\nval evenAndSmallPartial: PartialFunction[Int, String] = {\n  case x: Int if x != 0 && x % 2 == 0 && x < 100 => \"Even and less than 100\"\n}\n\nval negativePartial: PartialFunction[Int, String] = {\n  case x: Int if x < 0 => \"Negative Number\"\n}\n\nval largePartial: PartialFunction[Int, String] = {\n  case x: Int if x > 99 => \"Large Number\"\n}\n\nval zeroPartial: PartialFunction[Int, String] = {\n  case x: Int if x == 0 => \"Zero\"\n}\n\nval result = array groupBy {\n    oddAndSmallPartial orElse\n    evenAndSmallPartial orElse\n    negativePartial orElse\n    largePartial orElse\n    zeroPartial\n}\n\n(result(\"Even and less than 100\") size) should be(__)\n(result(\"Large Number\") size) should be(__)",
       "solutions": [
         "3",
@@ -446,8 +446,9 @@
     },
     {
       "preparagraph": "`/:` or `foldLeft` will combine an operation starting with a seed and combining from the left.  *Fold Left* is defined as (seed /: list), where seed is the initial value.  Once the fold is established, you provide a function that takes two arguments.  The first argument is the running total of the operation, and the second element is the next element of the list.\n\nGiven a `Traversable (x1, x2, x3, x4)`, an initial value of `init`, an operation `op`, `foldLeft` is defined as: `(((init op x1) op x2) op x3) op x4)`",
-      "code": "val list = List(5, 4, 3, 2, 1)\nval result = (0 /: list) {\n  (`running total`, `next element`) => `running total` - `next element`\n}\nresult should be(__)\n\nval result2 = list.foldLeft(0) {\n  (`running total`, `next element`) => `running total` - `next element`\n}\nresult2 should be(__)\n\nval result3 = (0 /: list)(_ - _) //Short hand\nresult3 should be(__)\n\nval result4 = list.foldLeft(0)(_ - _)\nresult4 should be(-15)\n\n(((((0 - 5) - 4) - 3) - 2) - 1) should be(__)",
+      "code": "val list = List(5, 4, 3, 2, 1)\nval result = (0 /: list) {\n  (`running total`, `next element`) => `running total` - `next element`\n}\nresult should be(__)\n\nval result2 = list.foldLeft(0) {\n  (`running total`, `next element`) => `running total` - `next element`\n}\nresult2 should be(__)\n\nval result3 = (0 /: list)(_ - _) //Short hand\nresult3 should be(__)\n\nval result4 = list.foldLeft(0)(_ - _)\nresult4 should be(__)\n\n(((((0 - 5) - 4) - 3) - 2) - 1) should be(__)",
       "solutions": [
+        "-15",
         "-15",
         "-15",
         "-15",
