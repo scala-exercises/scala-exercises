@@ -11,7 +11,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Case statements are a quick way to create partial functions. When you create a case statement, the apply and `isDefinedAt` is created for you.",
+      "preparagraph": "Case statements are a quick way to create partial functions. When you create a case statement, the `apply` and `isDefinedAt` is created for you.",
       "code": "//These case statements are called case statements with guards\nval doubleEvens: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) == 0 => x * 2\n}\nval tripleOdds: PartialFunction[Int, Int] = {\n  case x: Int if (x % 2) != 0 => x * 3\n}\n\nval whatToDo = doubleEvens orElse tripleOdds //Here we chain the partial functions together\nwhatToDo(3) should be(__)\nwhatToDo(4) should be(__)",
       "solutions": [
         "9",
