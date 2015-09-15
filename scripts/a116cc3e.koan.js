@@ -232,10 +232,22 @@ function studySolution(element, event) {
     if(module.solutions){
         var solution = module.solutions[index];
         writeSolution(hash,moduleIndex,index,answer);
-        if(solution==answer) input.addClass('success');
+        if(isSolution(module, answer, index)) input.addClass('success');
         else input.removeClass('success');
         studyModule(input);
     }
+}
+
+function isSolution(module, answer, index) {
+	var found = false;
+  if (module.alternatives && module.alternatives[index]) {
+      var alternative = new RegExp(module.alternatives[index]);
+      found = alternative.test(answer);
+  } else {    
+  	var solution = module.solutions[index];
+  	found = solution == answer;
+  }
+  return found;
 }
 
 function studyModule(input) {
