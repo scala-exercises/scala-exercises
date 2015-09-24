@@ -1,0 +1,17 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET           /                        controllers.Application.index
+
+GET           /users/all               controllers.UserController.all
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET           /assets/*file            controllers.Assets.at(path="/public", file)
+
+# OAuth2 Stuff
+GET           /_oauth-callback         utils.OAuth2.callback(code: Option[String], state: Option[String])
+GET           /_oauth-success          utils.OAuth2.success
+GET           /logout                  utils.OAuth2.logout
