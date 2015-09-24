@@ -1,0 +1,14 @@
+@(message: String, redirectUrl: String)(implicit request: RequestHeader)
+
+@content = {
+  <ul>
+    <li>Play shouts out: <em>@message</em></li>
+    <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
+  </ul>
+  <p>
+    <a href="@routes.UserController.all()">Users</a>
+  </p>
+}
+@templates.main("Trivial example", content = content, redirectUrl = redirectUrl){
+    <script src="@routes.Assets.at("javascripts/scalajs-example-launcher.js")" type="text/javascript"></script>
+}

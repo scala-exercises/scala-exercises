@@ -1,4 +1,30 @@
-node_modules
-.tmp
-.sass-cache
-bower_components
+logs
+project/project
+project/target
+target
+tmp
+.history
+dist
+.idea
+*.iml
+/out
+.idea_modules
+.classpath
+.project
+/RUNNING_PID
+.settings
+
+scalajvm/upload/*
+
+# temp files
+.~*
+*~
+*.orig
+
+# eclipse
+.scala_dependencies
+.buildpath
+.cache
+.target
+bin/
+
