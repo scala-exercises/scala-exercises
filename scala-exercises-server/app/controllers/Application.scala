@@ -23,7 +23,11 @@ object Application extends Controller {
     }.getOrElse {
       Ok(views.html.index("Not logged", redirectUrl)).withSession("oauth-state" -> state)
     }
+  }
 
+  def home = Action { implicit request =>
+
+    Ok(views.html.templates.home())
 
   }
 

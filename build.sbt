@@ -5,8 +5,6 @@ import sbt.Project.projectToRef
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.6"
 
-//resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
-
 lazy val scalaExercisesServer = (project in file("scala-exercises-server")).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
