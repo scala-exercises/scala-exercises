@@ -4,6 +4,7 @@
 
 # Home page
 GET           /                        controllers.Application.index
+GET           /home                    controllers.Application.home
 
 GET           /users/all               controllers.UserController.all
 

@@ -5,8 +5,6 @@ import sbt.Project.projectToRef
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.6"
 
-//resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
-
 lazy val scalaExercisesServer = (project in file("scala-exercises-server")).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
@@ -63,6 +61,3 @@ lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
-
-// for Eclipse users
-EclipseKeys.skipParents in ThisBuild := false
