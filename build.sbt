@@ -27,7 +27,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server")).sett
     "org.webjars"         % "bootstrap"       % "3.2.0",
     "org.webjars"         % "jquery"          % "2.1.1",
     "org.webjars"         % "font-awesome"    % "4.1.0",
-    "com.tristanhunt"     %% "knockoff"       % "0.8.3"
+    specs2 % Test
   )
  ).enablePlugins(PlayScala).
   aggregate(clients.map(projectToRef): _*).
@@ -38,11 +38,14 @@ lazy val scalaExercisesClient = (project in file("scala-exercises-client")).sett
   persistLauncher := true,
   persistLauncher in Test := false,
   sourceMapsDirectories += scalaExercisesSharedJs.base / "..",
+  jsDependencies += RuntimeDOM,
+  testFrameworks += new TestFramework("utest.runner.Framework"),
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "0.8.1",
     "com.lihaoyi" %%% "scalatags" % "0.5.2",
     "com.lihaoyi" %%% "scalarx" % "0.2.8",
     "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
+    "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
     "com.lihaoyi" %%% "upickle" % "0.2.8"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
@@ -63,6 +66,3 @@ lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
-
-// for Eclipse users
-EclipseKeys.skipParents in ThisBuild := false
