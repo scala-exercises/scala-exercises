@@ -1,15 +1,14 @@
 package controllers
 
-import play.api.http.{Writeable, ContentTypes, ContentTypeOf}
+import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.JsError
-import play.api.mvc.{Request, Codec}
+import play.api.mvc.{Codec, Request}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object `package` {
 
-  def isAjax[A](implicit request : Request[A]) = {
-    request.headers.get("X-Requested-With") == Some("XMLHttpRequest")
-  }
+  def isAjax[A](implicit request : Request[A]) = request.headers.get("X-Requested-With").contains("XMLHttpRequest")
 
   implicit def contentTypeOf_Throwable(implicit codec: Codec): ContentTypeOf[Throwable] =
     ContentTypeOf[Throwable](Some(ContentTypes.TEXT))
@@ -22,6 +21,8 @@ object `package` {
     ContentTypeOf[JsError](Some(ContentTypes.JSON))
 
   implicit def writeableOf_JsError(implicit codec: Codec): Writeable[JsError] = {
-    Writeable(e => JsError.toFlatJson(e).toString.getBytes("utf-8"))
+    Writeable(e => JsError.toJson(e).toString.getBytes("utf-8"))
   }
+
+
 }

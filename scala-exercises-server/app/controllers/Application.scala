@@ -27,8 +27,6 @@ object Application extends Controller {
 
   def home = Action { implicit request =>
 
-    Ok(views.html.templates.home())
-
   }
 
 }
