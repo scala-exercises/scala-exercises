@@ -24,7 +24,6 @@ object Application extends Controller {
       Ok(views.html.index("Not logged", redirectUrl)).withSession("oauth-state" -> state)
     }
 
-
   }
 
 }
