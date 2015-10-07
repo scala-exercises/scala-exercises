@@ -2,14 +2,18 @@ package controllers
 
 import java.util.UUID
 
+import services.UserServiceImpl
+import services.messages.GetUserByLoginRequest
 import utils.OAuth2
 import play.api._
 import play.api.mvc._
-import shared.SharedMessages
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.Future
 
 object Application extends Controller {
 
-  def index = Action { implicit request =>
+  def index = Action.async { implicit request =>
 
     val oauth2 = new OAuth2(Play.current)
     val callbackUrl = utils.routes.OAuth2.callback(None, None).absoluteURL()
@@ -19,14 +23,15 @@ object Application extends Controller {
     val redirectUrl = oauth2.getAuthorizationUrl(callbackUrl, scope, state)
 
     request.session.get("oauth-token").map { token =>
-      Ok(views.html.index(SharedMessages.itWorks, logoutUrl))
+      val userService = new UserServiceImpl
+      val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
+      user.map(response => Ok(views.html.templates.home(user = response.user)))
     }.getOrElse {
-      Ok(views.html.index("Not logged", redirectUrl)).withSession("oauth-state" -> state)
+      Future.successful(Ok(views.html.templates.home(user = None, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
     }
-  }
-
-  def home = Action { implicit request =>
 
   }
+
 
 }
+
