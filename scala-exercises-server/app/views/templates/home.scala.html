@@ -1,4 +1,4 @@
-@(header: Html = Html(""), content: Html = Html(""))(implicit request: RequestHeader)
+@(user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -43,8 +43,12 @@
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Login with GitHub</a>
-            </li>
+
+            @user match {
+              case Some(u) => { @templates.logged(u) }
+              case None => { <li><a href="@redirectUrl">Login with GitHub</a></li> }
+            }
+
           </ul>
         </div>
           <!--.nav-collapse -->
