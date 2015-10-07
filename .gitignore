@@ -13,7 +13,6 @@ dist
 .project
 /RUNNING_PID
 .settings
-.ensime
 
 scalajvm/upload/*
 
