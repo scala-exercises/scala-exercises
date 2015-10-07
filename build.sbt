@@ -5,8 +5,6 @@ import sbt.Project.projectToRef
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.6"
 
-//resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
-
 lazy val scalaExercisesServer = (project in file("scala-exercises-server")).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
@@ -18,20 +16,26 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server")).sett
     evolutions,
     cache,
     ws,
-    "com.typesafe.slick"  %% "slick"          % "3.0.0-RC1",
-    "org.slf4j"           % "slf4j-nop"       % "1.6.4",
-    "org.postgresql"      % "postgresql"      % "9.3-1102-jdbc41",
-    "com.vmunier"         %% "play-scalajs-scripts" % "0.2.1",
-    "com.lihaoyi"         %% "upickle"        % "0.2.8",
-    "org.webjars"         %% "webjars-play"   % "2.3.0",
-    "org.webjars"         % "bootstrap"       % "3.2.0",
-    "org.webjars"         % "jquery"          % "2.1.1",
-    "org.webjars"         % "font-awesome"    % "4.1.0",
-    specs2 % Test
+    specs2 % Test,
+    "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
+    "org.slf4j" % "slf4j-nop" % "1.6.4",
+    "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
+    "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
+    "com.lihaoyi" %% "upickle" % "0.2.8",
+    "org.webjars" %% "webjars-play" % "2.3.0",
+    "org.webjars" % "bootstrap" % "3.2.0",
+    "org.webjars" % "jquery" % "2.1.1",
+    "org.webjars" % "font-awesome" % "4.1.0",
+    "com.tristanhunt" %% "knockoff" % "0.8.3",
+    "org.scala-lang" % "scala-compiler" % scalaV,
+    "org.clapper" %% "classutil" % "1.0.5",
+    "com.toddfast.typeconverter" % "typeconverter" % "1.0",
+    "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test"
   )
- ).enablePlugins(PlayScala).
-  aggregate(clients.map(projectToRef): _*).
-  dependsOn(scalaExercisesSharedJvm)
+
+).enablePlugins(PlayScala).
+    aggregate(clients.map(projectToRef): _*).
+    dependsOn(scalaExercisesSharedJvm, scalaExercisesContent)
 
 lazy val scalaExercisesClient = (project in file("scala-exercises-client")).settings(
   scalaVersion := scalaV,
@@ -49,20 +53,36 @@ lazy val scalaExercisesClient = (project in file("scala-exercises-client")).sett
     "com.lihaoyi" %%% "upickle" % "0.2.8"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
-  dependsOn(scalaExercisesSharedJs)
+    dependsOn(scalaExercisesSharedJs)
 
 lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file("scala-exercises-shared")).
-  settings(
+    settings(
       scalaVersion := scalaV,
       libraryDependencies ++= Seq(
-        "org.scalatest" % "scalatest_2.11" % "2.2.4"
+        "org.scalatest" %% "scalatest" % "2.2.4",
+        "org.scalaz" %% "scalaz-core" % "7.1.4"
       )
     ).
-  jsConfigure(_ enablePlugins ScalaJSPlay).
-  jsSettings(sourceMapsBase := baseDirectory.value / "..")
+    jsConfigure(_ enablePlugins ScalaJSPlay).
+    jsSettings(sourceMapsBase := baseDirectory.value / "..")
 
 lazy val scalaExercisesSharedJvm = scalaExercisesShared.jvm
 lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 
+lazy val scalaExercisesContent = (project in file("scala-exercises-content")).
+    settings(
+      scalaVersion := scalaV,
+      libraryDependencies ++= Seq(
+        "org.scalatest" %% "scalatest" % "2.2.4",
+        "org.scalaz" %% "scalaz-core" % "7.1.4"
+      ),
+      unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala"
+    ).dependsOn(scalaExercisesSharedJvm)
+
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
+
+
+
+
+
