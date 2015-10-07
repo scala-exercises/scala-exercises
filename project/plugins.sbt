@@ -18,6 +18,4 @@ addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.2.6")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
-addSbtPlugin("org.ensime" % "ensime-sbt" % "0.2.0")
-
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
