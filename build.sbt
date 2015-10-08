@@ -3,7 +3,7 @@ import play.PlayImport.PlayKeys._
 import sbt.Project.projectToRef
 
 lazy val clients = Seq(scalaExercisesClient)
-lazy val scalaV = "2.11.6"
+lazy val scalaV = "2.11.7"
 
 lazy val scalaExercisesServer = (project in file("scala-exercises-server")).settings(
   scalaVersion := scalaV,
@@ -23,7 +23,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server")).sett
     "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
     "com.lihaoyi" %% "upickle" % "0.2.8",
     "org.webjars" %% "webjars-play" % "2.3.0",
-    "org.webjars" % "bootstrap" % "3.2.0",
+    "org.webjars" % "bootstrap-sass" % "3.2.0",
     "org.webjars" % "jquery" % "2.1.1",
     "org.webjars" % "font-awesome" % "4.1.0",
     "com.tristanhunt" %% "knockoff" % "0.8.3",
