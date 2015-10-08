@@ -49,6 +49,12 @@ $border-radius-base:             3px;
 $border-radius-large:            3px;
 $border-radius-small:            2px;
 
+
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius-base:         $border-radius-base !default;
+$btn-border-radius-large:        $border-radius-large !default;
+$btn-border-radius-small:        $border-radius-small !default;
+
 // Buttons
 $btn-default-color:              $gray-darker;
 $btn-default-border:             #DEDEDE;

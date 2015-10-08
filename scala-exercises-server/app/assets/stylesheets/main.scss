@@ -3,8 +3,8 @@
 @import "libraries/functions";
 @import "libraries/mixin";
 
-// Vendors
-@import "vendors/bootstrap";
+// Webjars libs
+@import "lib/bootstrap-sass/stylesheets/bootstrap";
 
 // Layout
 @import "layout/global";
