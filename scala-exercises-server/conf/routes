@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET         /                                                      controllers.Application.index
+GET / controllers.Application.index
 
 GET /users/all    controllers.UserController.all
 GET /exercises/sections   controllers.ExercisesController.sections

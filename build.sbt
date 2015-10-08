@@ -82,3 +82,7 @@ lazy val scalaExercisesContent = (project in file("scala-exercises-content")).
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
 
+
+
+
+
