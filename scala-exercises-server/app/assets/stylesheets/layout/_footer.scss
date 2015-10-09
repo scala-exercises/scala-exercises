@@ -1,0 +1,49 @@
+// Footer
+// -----------------------------------------------------
+
+#bottom {
+    padding: {
+        top: ($padding-large-vertical * 2);
+        bottom: ($padding-large-vertical * 3);
+    }
+    @media (min-width: $screen-sm-min) {
+        padding: {
+            top: ($padding-large-vertical * 5);
+            bottom: ($padding-large-vertical * 6);
+        }
+    }
+    
+    svg {
+        float: left;
+    }
+    
+    p {
+        span {
+            margin-left: 10px;
+        }
+    }
+    
+    ul {
+        padding: 0;
+        
+        li {
+            padding-right: 3px;
+            list-style: none;
+            display: inline-block;
+        }
+    }
+}
+
+.dark {
+    background: $gray-base;
+
+    a {
+        text-decoration: underline;
+        color: $dark-link-color;
+        
+        &:hover {
+            text-decoration: none;
+            color: $dark-link-color-hover;
+        }
+    }
+}

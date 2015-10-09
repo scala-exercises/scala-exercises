@@ -18,7 +18,7 @@ class IntegrationSpec extends Specification {
       val htmlunitDriver = webDriver.asInstanceOf[HtmlUnitDriver]
       htmlunitDriver.setJavascriptEnabled(false)
       browser.goTo("http://localhost:" + port)
-      browser.pageSource must contain("shouts out")
+      browser.pageSource must contain("Scala Exercises")
 
     }
   }

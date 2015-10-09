@@ -1,0 +1,27 @@
+// Panels
+// -----------------------------------------------------
+
+.panel {
+    margin-bottom: $line-height-computed;
+    border: none;
+    @include box-shadow(0 1px 0 rgba(0, 0, 0, .05))
+}
+
+.panel-body {
+    //height: $panel-body-height;
+    
+    p {
+        margin-bottom: $line-height-computed;
+        line-height: 1.6;
+    }
+}
+
+.panel-heading {
+    border: none;
+}
+
+.panel-default {
+    > .panel-heading {
+        color: #fff;
+    }
+}

@@ -1,0 +1,19 @@
+//
+// Code (inline and block)
+// --------------------------------------------------
+
+
+// Blocks of code
+pre {
+  display: block;
+  padding: $line-height-computed;
+    margin: {
+        top: ($line-height-computed * 1.5);
+        bottom: ($line-height-computed * 2);
+        left: 0;
+        right: 0;
+    }
+  border: none;
+  border-radius: 0;
+    height: 210px;
+}
