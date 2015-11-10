@@ -5,13 +5,12 @@ import sbt.Project.projectToRef
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.7"
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-
 lazy val scalaExercisesServer = (project in file("scala-exercises-server")).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
   scalaJSProjects := clients,
   pipelineStages := Seq(scalaJSProd, gzip),
+  resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
     filters,
     jdbc,
