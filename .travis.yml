@@ -4,4 +4,4 @@ scala:
 jdk:
   - oraclejdk8
 install:
-  - gem install saas 
+  - gem install sass
