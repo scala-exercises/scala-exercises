@@ -5,6 +5,8 @@ import sbt.Project.projectToRef
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.7"
 
+resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+
 lazy val scalaExercisesServer = (project in file("scala-exercises-server")).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
@@ -81,8 +83,3 @@ lazy val scalaExercisesContent = (project in file("scala-exercises-content")).
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
-
-
-
-
-
