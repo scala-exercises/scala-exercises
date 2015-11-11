@@ -10,6 +10,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server")).sett
   routesImport += "config.Routes._",
   scalaJSProjects := clients,
   pipelineStages := Seq(scalaJSProd, gzip),
+  resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
     filters,
     jdbc,
@@ -81,8 +82,3 @@ lazy val scalaExercisesContent = (project in file("scala-exercises-content")).
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
-
-
-
-
-

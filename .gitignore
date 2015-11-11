@@ -13,7 +13,7 @@ dist
 .project
 /RUNNING_PID
 .settings
-
+.sass-cache
 scalajvm/upload/*
 
 # temp files
