@@ -5,7 +5,11 @@ target
 tmp
 .history
 dist
+bower_components
+node_modules
 .idea
+.tmp
+
 *.iml
 /out
 .idea_modules
