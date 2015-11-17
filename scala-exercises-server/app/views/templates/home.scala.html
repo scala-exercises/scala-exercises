@@ -1,4 +1,4 @@
-@(user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(user: Option[shared.User] = None, sections: List[models.Section] = List.empty, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -78,24 +78,32 @@
         <div class="row">
             <!-- List technologies -->
           <div class="technologies-list">
-            <div class="col-xs-12 col-sm-6 col-md-4">
-              <div class="tech scala">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Scala</h3>
-                  </div>
-                  <div class="panel-body">
-                    <p>Scala is a programming language for general software applications. Scala has full support for functional programming and a very strong</p>
-                    <div class="content-progres-bar">
-                      <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 90%;"></div>
-                      </div>
-                      <span>18/30</span>
+
+            @for(section <- sections) {
+              @templates.calltosection(section)
+            }
+
+
+          <!--
+
+          <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="tech scala">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Scala</h3>
+                </div>
+                <div class="panel-body">
+                  <p>Scala is a programming language for general software applications. Scala has full support for functional programming and a very strong</p>
+                  <div class="content-progres-bar">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 90%;"></div>
                     </div>
+                    <span>18/30</span>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
             <div class="col-xs-12 col-sm-6 col-md-4">
               <div class="tech akka">
@@ -181,6 +189,7 @@
                 </div>
               </div>
             </div>
+
             <div class="col-xs-12 col-sm-6 col-md-4">
               <div class="tech shapeless">
                 <div class="panel panel-default">
@@ -199,6 +208,7 @@
                 </div>
               </div>
             </div>
+
             <div class="col-xs-12 col-sm-6 col-md-4">
               <div class="tech cats">
                 <div class="panel panel-default">
@@ -217,6 +227,9 @@
                 </div>
               </div>
             </div>
+
+            -->
+
           </div>
         </div>
       </div>
