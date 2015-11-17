@@ -4,6 +4,7 @@ import java.util.UUID
 
 import services.UserServiceImpl
 import services.messages.GetUserByLoginRequest
+import services.parser.ExercisesService
 import utils.OAuth2
 import play.api._
 import play.api.mvc._
@@ -22,12 +23,14 @@ object Application extends Controller {
     val state = UUID.randomUUID().toString
     val redirectUrl = oauth2.getAuthorizationUrl(callbackUrl, scope, state)
 
+    val sections = ExercisesService.sections
+
     request.session.get("oauth-token").map { token =>
       val userService = new UserServiceImpl
       val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
-      user.map(response => Ok(views.html.templates.home(user = response.user)))
+      user.map(response => Ok(views.html.templates.home(user = response.user, sections = sections)))
     }.getOrElse {
-      Future.successful(Ok(views.html.templates.home(user = None, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
+      Future.successful(Ok(views.html.templates.home(user = None, sections = sections, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
     }
 
   }
