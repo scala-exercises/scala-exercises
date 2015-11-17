@@ -3,7 +3,7 @@
   "modules": [
     {
       "preparagraph": "`() => Int` is a Function type that takes a `Unit` type. `Unit` is known as `void` to a Java programmer. The function returns an `Int`. You can place this as a method parameter so that you can you use it as a block, but still it doesn't look quite right.",
-      "code": "def calc(x: () => Int): Either[Throwable, Int] = {\n  try {\n    Right(x()) //An explicit call the the x function\n  } catch {\n    case b: Throwable => Left(b)\n  }\n}\n\nval y = calc {() => //Having explicitly declaring that Unit is a parameter with ()\n  14 + 15\n}\n\ny should be (__)",
+      "code": "def calc(x: () => Int): Either[Throwable, Int] = {\n  try {\n    Right(x()) //An explicit call the x function\n  } catch {\n    case b: Throwable => Left(b)\n  }\n}\n\nval y = calc {() => //Having explicitly declaring that Unit is a parameter with ()\n  14 + 15\n}\n\ny should be (__)",
       "solutions": [
         "Right(29)"
       ],
