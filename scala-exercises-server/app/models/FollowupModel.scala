@@ -16,6 +16,8 @@ trait FollowupStore {
       category: String,
       status: String): Future[Followup]
 
+  def retrieve(login: String): Future[Seq[Followup]]
+
 }
 
 object FollowupSlickStore extends FollowupStore {
@@ -48,6 +50,10 @@ object FollowupSlickStore extends FollowupStore {
         category = category,
         status = status)
     }
+  }
+
+  override def retrieve(login: String): Future[Seq[Followup]] = {
+    db.run(followups.filter(_.login === login).result)
   }
 
 }

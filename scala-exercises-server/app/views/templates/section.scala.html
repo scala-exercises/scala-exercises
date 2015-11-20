@@ -1,4 +1,4 @@
-@(section: Section)(implicit request: RequestHeader)
+@(section: Section, status: Option[Int] = None)(implicit request: RequestHeader)
 
 <div class="col-xs-12 col-sm-6 col-md-4">
   <a href="@section.title">
@@ -10,14 +10,22 @@
         <div class="panel-body">
           <p>@section.description</p>
 
-          @*<div><button class="btn btn-primary btn-sm">Start</button></div>*@
+          @status match {
+            case Some(n) if n > 0 => {
 
-          <div class="content-progres-bar">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width : 30%;"></div>
-            </div>
-            <span>18/30</span>
-          </div>
+              @defining( 100*n/section.categories.size ) { percent =>
+                <div class="content-progres-bar">
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="width : @percent% ;"></div>
+                  </div>
+                  <span>@n/@section.categories.size</span>
+                </div>
+              }
+            }
+            case _ => {
+              <div><button class="btn btn-primary btn-sm">Start</button></div>
+            }
+          }
 
         </div>
       </div>

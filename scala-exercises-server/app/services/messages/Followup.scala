@@ -9,3 +9,8 @@ case class CreateFollowupRequest(
     status: String)
 
 case class CreateFollowupResponse(followup: Followup)
+
+case class RetrieveFollowupRequest(login: String)
+
+case class RetrieveFollowupResponse(followups: Map[String, Int])
+

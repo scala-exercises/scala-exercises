@@ -1,4 +1,10 @@
-@(user: Option[shared.User] = None, sections: List[models.Section] = Nil, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(
+    user: Option[shared.User] = None,
+    sections: List[models.Section] = Nil,
+    redirectUrl: Option[String] = Some("#"),
+    followups: Map[String, Int] = Map.empty
+)(implicit request: RequestHeader)
+
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -79,7 +85,9 @@
           <div class="technologies-list">
 
             @for(section <- sections) {
-              @templates.section(section)
+              @defining(followups.get(section.title)) { status =>
+                  @templates.section(section, status)
+              }
             }
 
           </div>

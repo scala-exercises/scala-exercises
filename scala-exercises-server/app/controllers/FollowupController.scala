@@ -1,6 +1,6 @@
 package controllers
 
-import services.messages.CreateFollowupRequest
+import services.messages.{RetrieveFollowupRequest, CreateFollowupRequest}
 import services.FollowupServicesImpl
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
@@ -21,4 +21,9 @@ object FollowupController extends Controller with JsonFormats {
         followupService.create(followup).map(r => Ok(Json.toJson(r)))
       })
   }
+
+  def retrieve(login: String) = Action.async { implicit request =>
+    followupService.retrieve(RetrieveFollowupRequest(login)).map(r => Ok(Json.toJson(r)))
+  }
+
 }

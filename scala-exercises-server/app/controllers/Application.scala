@@ -2,8 +2,8 @@ package controllers
 
 import java.util.UUID
 
-import services.UserServiceImpl
-import services.messages.GetUserByLoginRequest
+import services.{FollowupServicesImpl, UserServiceImpl}
+import services.messages.{RetrieveFollowupRequest, GetUserByLoginRequest}
 import services.parser.ExercisesService
 import utils.OAuth2
 import play.api._
@@ -16,6 +16,9 @@ object Application extends Controller {
 
   def index = Action.async { implicit request =>
 
+    val userService = new UserServiceImpl
+    val followupService = new FollowupServicesImpl
+
     val oauth2 = new OAuth2(Play.current)
     val callbackUrl = utils.routes.OAuth2.callback(None, None).absoluteURL()
     val logoutUrl = utils.routes.OAuth2.logout().absoluteURL()
@@ -26,9 +29,14 @@ object Application extends Controller {
     val sections = ExercisesService.sections
 
     request.session.get("oauth-token").map { token =>
-      val userService = new UserServiceImpl
-      val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
-      user.map(response => Ok(views.html.templates.home(user = response.user, sections = sections)))
+
+      for {
+        userRes <- userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
+        user = userRes.user
+        login = user.map(_.login).getOrElse("")
+        followupsRes <- followupService.retrieve(RetrieveFollowupRequest(login))
+      } yield Ok(views.html.templates.home(user = user, sections = sections, followups = followupsRes.followups))
+
     }.getOrElse {
       Future.successful(Ok(views.html.templates.home(user = None, sections = sections, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
     }

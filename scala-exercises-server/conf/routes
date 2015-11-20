@@ -15,6 +15,7 @@ POST        /exercises/sections/:section/:category/evaluate        controllers.E
 
 #Followup
 POST        /followup/create                                       controllers.FollowupController.create
+GET         /followup/retrieve/:login                              controllers.FollowupController.retrieve(login: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

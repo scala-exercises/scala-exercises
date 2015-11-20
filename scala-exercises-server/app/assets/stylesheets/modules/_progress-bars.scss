@@ -22,6 +22,11 @@
 }
 
 .progress-bar {
+    width: 0%;
+    -webkit-transition: width 3s ease-in-out;
+    -moz-transition: width 3s ease-in-out;
+    -o-transition: width 3s ease-in-out;
+    transition: width 3s ease-in-out;
     @include box-shadow(none);
 }
 
