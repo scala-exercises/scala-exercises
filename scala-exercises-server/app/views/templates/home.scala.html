@@ -1,4 +1,4 @@
-@(user: Option[shared.User] = None, sections: List[models.Section] = List.empty, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(user: Option[shared.User] = None, sections: List[models.Section] = Nil, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -80,7 +80,7 @@
           <div class="technologies-list">
 
             @for(section <- sections) {
-              @templates.calltosection(section)
+              @templates.section(section)
             }
 
           </div>
@@ -200,23 +200,3 @@
 
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
