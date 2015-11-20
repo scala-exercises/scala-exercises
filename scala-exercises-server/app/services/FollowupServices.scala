@@ -17,7 +17,10 @@ class FollowupServicesImpl(implicit val executionContext: ExecutionContext) exte
 
     val result = for {
       followup <- FollowupModel.store.create(
-        text = request.text)
+        login = request.login,
+        section = request.section,
+        category = request.category,
+        status = request.status)
     } yield CreateFollowupResponse(followup = followup)
 
     result recover {

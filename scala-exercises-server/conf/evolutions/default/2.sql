@@ -2,10 +2,13 @@
 
 CREATE TABLE followups (
     id serial primary key,
-    text text
+    login text,
+    section text,
+    category text,
+    status text
 );
 
-INSERT INTO followups(text) VALUES('prueba');
+INSERT INTO followups(login, section, category, status) VALUES('test_user', 'stdlib', 'extractors', 'completed');
 
 
 # --- !Downs

@@ -3,4 +3,7 @@ package shared
 
 case class Followup(
     id: Option[Long],
-    text: String)
+    login: String,
+    section: String,
+    category: String,
+    status: String)
