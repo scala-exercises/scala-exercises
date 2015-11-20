@@ -1,129 +1,49 @@
 // Technologies
 // -----------------------------------------------------
 #technologies {
-    background: $technologies-bg;
-    
-    .technologies-list {
-        .scala {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $scala;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($scala, 5%);
-                    }
-                }
-            }
+  background: $technologies-bg;
+
+  .technologies-list {
+
+    a {
+
+      color: $gray-base;
+
+      &:hover, &:focus, &:active {
+        text-decoration: none;
+      }
+
+      .panel {
+        margin-bottom: $line-height-computed;
+        border: none;
+        @include box-shadow(0 1px 0 rgba(0, 0, 0, .05));
+
+        &:hover {
+          @include box-shadow(0 1px 10px rgba(0, 0, 0, .2));
         }
-        .akka {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $akka;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($akka, 5%);
-                    }
-                }
-                
-            }
+
+      }
+
+      .panel-body {
+        //height: $panel-body-height;
+
+        p {
+          margin-bottom: $line-height-computed;
+          line-height: 1.6;
         }
-        .play {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $play;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($play, 5%);
-                    }
-                }
-            }
-        }
-        .slick {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $slick;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($slick, 5%);
-                    }
-                }
-            }
-        }
-        .spark {
-            .panel-default {
-                .panel-heading,
-                .progress-bar, 
-                .btn-primary {
-                    background: $spark;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($spark, 5%);
-                    }
-                }
-            }
-        }
-        .scalaz {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $scalaz;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($scalaz, 5%);
-                    }
-                }
-            }
-        }
-        .shapeless {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $shapeless;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($shapeless, 5%);
-                    }
-                }
-            }
-        }
-        .cats {
-            .panel-default {
-                .panel-heading,
-                .progress-bar,
-                .btn-primary {
-                    background: $cats;
-                }
-                
-                .btn-primary {
-                    &:hover {
-                        background: darken($cats, 5%);
-                    }
-                }
-            }
-        }
+      }
+
+      .panel-heading {
+        border: none;
+        color: #fff;
+        background-color: $gray-base;
+        text-transform: capitalize;
+      }
+
+      .btn-primary {
+        color: #ffffff;
+      }
+
     }
+  }
 }
