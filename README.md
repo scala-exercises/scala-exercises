@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
 #Scala Exercises
 
 [![Join the chat at https://gitter.im/47deg/scala-exercises](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/47deg/scala-exercises?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
