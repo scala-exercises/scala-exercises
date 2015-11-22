@@ -82,29 +82,6 @@
         "^List\\( *5 *, *6 *, *7 *\\)$"
       ],
       "postparagraph": ""
-    },
-    {
-      "preparagraph": "Currying is a technique to transform function with multiple parameters to function with one parameter",
-      "code": "def multiply(x: Int, y: Int) = x * y\n(multiply _).isInstanceOf[Function2[_, _, _]] should be(__)\nval multiplyCurried = (multiply _).curried\nmultiply(4, 5) should be(__)\nmultiplyCurried(3)(2) should be(__)",
-      "solutions": [
-        "true",
-        "20",
-        "6"
-      ],
-      "postparagraph": ""
-    },
-    {
-      "preparagraph": "Currying allows you to create specialized version of generalized function",
-      "code": "def customFilter(f: Int => Boolean)(xs: List[Int]) = {\n  xs filter f\n}\ndef onlyEven(x: Int) = x % 2 == 0\nval xs = List(12, 11, 5, 20, 3, 13, 2)\ncustomFilter(onlyEven)(xs) should be(__)\n\nval onlyEvenFilter = customFilter(onlyEven) _\nonlyEvenFilter(xs) should be(__)",
-      "solutions": [
-        "List(12, 20, 2)",
-        "List(12, 20, 2)"
-      ],      
-      "alternatives": [
-        "^List\\( *12 *, *20 *, *2 *\\)$",
-        "^List\\( *12 *, *20 *, *2 *\\)$"
-      ],
-      "postparagraph": ""
     }
   ]
 }
