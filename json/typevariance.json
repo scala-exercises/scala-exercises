@@ -18,7 +18,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "You can coerece your object to a type.",
+      "preparagraph": "You can coerce your object to a type.",
       "code": "class MyContainer[A](a: A)(implicit manifest: scala.reflect.Manifest[A]) {\n  private[this] var item = a\n\n  def get = item\n\n  def set(a: A) {\n    item = a\n  }\n\n  def contents = manifest.runtimeClass.getSimpleName\n}\n\nval fruitBasket: MyContainer[Fruit] = new MyContainer(new Orange())\nfruitBasket.contents should be(__)",
       "solutions": [
         "\"Fruit\""

@@ -12,6 +12,13 @@
       "postparagraph": ""
     },
     {
+      "preparagraph": "Ranges can be specified using 'until'.",
+      "code": "val someNumbers = Range(0, 10)\nval otherRange = 0 until 10\n\n(someNumbers == otherRange) should be(__)",
+      "solutions": [
+        "true"
+      ]
+    },
+    {
       "preparagraph": "Range can specify a step for an increment:",
       "code": "val someNumbers = Range(2, 10, 3)\nval second = someNumbers(1)\nval last = someNumbers.last\n\nsomeNumbers.size should be(__)\nsecond should be(__)\nlast should be(__)",
       "solutions": [
@@ -34,6 +41,14 @@
     {
       "preparagraph": "Range can specify to include the last value",
       "code": "val someNumbers = Range(0, 34).inclusive\n\nsomeNumbers.contains(34) should be(__)",
+      "solutions": [
+        "true"
+      ],
+      "postparagraph": ""
+    },
+    {
+      "preparagraph": "Inclusive ranges can be specified using 'to'.",
+      "code": "val someNumbers = Range(0, 34).inclusive\nval otherRange = 0 to 34\n\n(someNumbers == otherRange) should be(__)",
       "solutions": [
         "true"
       ],
