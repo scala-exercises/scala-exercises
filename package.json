@@ -27,7 +27,7 @@
     "grunt-wiredep": "^1.7.0",
     "jshint-stylish": "^0.4.0",
     "load-grunt-tasks": "^0.4.0",
-    "time-grunt": "^0.4.0"
+    "time-grunt": "^1.0.0"
   },
   "engines": {
     "node": ">=0.10.0"
