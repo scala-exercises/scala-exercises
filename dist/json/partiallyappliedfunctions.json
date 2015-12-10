@@ -1,0 +1,48 @@
+{
+  "title": "Partially Applied Functions",
+  "modules": [
+    {
+      "preparagraph": "A partially applied function is a function that you do not apply any or all the arguments, creating another function. This partially applied function doesn't apply any arguments.",
+      "code": "def sum(a: Int, b: Int, c: Int) = a + b + c\nval sum3 = sum _\nsum3(1, 9, 7) should be(__)\nsum(4, 5, 6) should be(__)",
+      "solutions": [
+        "17",
+        "15"
+      ],
+      "postparagraph": ""
+    },
+    {
+      "preparagraph": "Partially applied functions can replace any number of arguments:",
+      "code": "def sum(a: Int, b: Int, c: Int) = a + b + c\nval sumC = sum(1, 10, _: Int)\nsumC(4) should be(__)\nsum(4, 5, 6) should be(__)",
+      "solutions": [
+        "15",
+        "15"
+      ],
+      "postparagraph": ""
+    },
+    {
+      "preparagraph": "Currying is a technique to transform function with multiple parameters into multiple functions which each take one parameter",
+      "code": "def multiply(x: Int, y: Int) = x * y\n(multiply _).isInstanceOf[Function2[_, _, _]] should be(__)\nval multiplyCurried = (multiply _).curried\nmultiply(4, 5) should be(__)\nmultiplyCurried(3)(2) should be(__)\n val multiplyCurriedFour=multiplyCurried(4) _\n multiplyCurriedFour(2) should be(__)\n multiplyCurriedFour(4) should be(__)",
+      "solutions": [
+        "true",
+        "20",
+        "6",
+        "8",
+        "12"
+      ],
+      "postparagraph": ""
+    },
+    {
+      "preparagraph": "Currying allows you to create specialized version of generalized function",
+      "code": "def customFilter(f: Int => Boolean)(xs: List[Int]) = {\n  xs filter f\n}\ndef onlyEven(x: Int) = x % 2 == 0\nval xs = List(12, 11, 5, 20, 3, 13, 2)\ncustomFilter(onlyEven)(xs) should be(__)\n\nval onlyEvenFilter = customFilter(onlyEven) _\nonlyEvenFilter(xs) should be(__)",
+      "solutions": [
+        "List(12, 20, 2)",
+        "List(12, 20, 2)"
+      ],      
+      "alternatives": [
+        "^List\\( *12 *, *20 *, *2 *\\)$",
+        "^List\\( *12 *, *20 *, *2 *\\)$"
+      ],
+      "postparagraph": ""
+    }
+  ]
+}
