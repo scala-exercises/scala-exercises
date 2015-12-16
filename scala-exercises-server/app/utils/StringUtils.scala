@@ -2,7 +2,7 @@ package utils
 
 object StringUtils {
 
-  def camelCaseToHumanReadable(s : String): String = {
+  def camelCaseToHumanReadable(s: String): String = {
     s.replaceAll(
       String.format("%s|%s|%s",
         "(?<=[A-Z])(?=[A-Z][a-z])",
@@ -13,7 +13,7 @@ object StringUtils {
     )
   }
 
-  implicit class CamelCaseString(s : String) {
+  implicit class CamelCaseString(s: String) {
     def humanizeCamelCase: String = StringUtils.camelCaseToHumanReadable(s)
   }
 

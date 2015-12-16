@@ -1,7 +1,7 @@
 package controllers
 
-import models.{ExerciseEvaluation, Section, Category, Exercise}
-import play.api.libs.json.{Reads, Json, Writes}
+import models.{ ExerciseEvaluation, Section, Category, Exercise }
+import play.api.libs.json.{ Reads, Json, Writes }
 
 trait JsonFormats {
 
@@ -11,7 +11,7 @@ trait JsonFormats {
 
   implicit val sectionWrites: Writes[Section] = Json.writes[Section]
 
-  implicit val exerciseEvaluationReads : Reads[ExerciseEvaluation] = Json.reads[ExerciseEvaluation]
+  implicit val exerciseEvaluationReads: Reads[ExerciseEvaluation] = Json.reads[ExerciseEvaluation]
 
 }
 

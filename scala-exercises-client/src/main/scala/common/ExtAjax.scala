@@ -9,10 +9,10 @@ import shared._
 class ExtAjax(ajax: Ajax.type) {
 
   def postAsForm(url: String,
-           data: String = "",
-           timeout: Int = 0,
-           headers: Map[String, String] = Map.empty,
-           withCredentials: Boolean = false) = {
+                 data: String = "",
+                 timeout: Int = 0,
+                 headers: Map[String, String] = Map.empty,
+                 withCredentials: Boolean = false) = {
     val contentType = ("Content-Type" -> "application/x-www-form-urlencoded")
     apply("POST", url, data, timeout, headers + contentType, withCredentials)
   }
@@ -40,7 +40,7 @@ class ExtAjax(ajax: Ajax.type) {
 
 class ExtXMLHttpRequest(req: XMLHttpRequest) {
 
-//  def responseAs[T](implicit readWrite: ReadWriter[T]): T = read[T](req.responseText)
+  //  def responseAs[T](implicit readWrite: ReadWriter[T]): T = read[T](req.responseText)
 
   def ok = req.status == 200
 

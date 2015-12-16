@@ -5,7 +5,6 @@ import org.specs2.runner._
 import org.specs2.scalaz.DisjunctionMatchers
 import services.parser.ExercisesService
 
-
 @RunWith(classOf[JUnitRunner])
 class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
 
@@ -25,9 +24,9 @@ class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
 
     "return at least one category via classpath discovery" in {
       val foundCategories = for {
-        section <- ExercisesService.sections
-        categoryS <- section.categories
-        category <- ExercisesService.category(section.title, categoryS)
+        section ← ExercisesService.sections
+        categoryS ← section.categories
+        category ← ExercisesService.category(section.title, categoryS)
       } yield category
       foundCategories must not be empty
       val expectedCat = foundCategories.find(_.title == expectedTestCategory)
