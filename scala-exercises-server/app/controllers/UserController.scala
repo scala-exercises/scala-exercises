@@ -14,15 +14,16 @@ object UserController extends Controller {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
-  def index = Action { implicit request =>
+  def index = Action { implicit request ⇒
     Redirect("/")
   }
 
-  def all = Action.async { implicit request =>
-    UserModel.store.all.map { r =>
+  def all = Action.async { implicit request ⇒
+    UserModel.store.all.map { r ⇒
       Ok(write(r))
-    }.recover { case err =>
-      InternalServerError(err.getMessage)
+    }.recover {
+      case err ⇒
+        InternalServerError(err.getMessage)
     }
   }
 

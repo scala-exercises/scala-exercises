@@ -21,3 +21,5 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
 addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.3.0")

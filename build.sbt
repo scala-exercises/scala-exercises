@@ -1,12 +1,27 @@
 import play.PlayImport._
 import sbt.Project.projectToRef
+import scalariform.formatter.preferences._
 
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.7"
 
 lazy val commonSettings = Seq(
-  scalaVersion := scalaV,
-  wartremoverWarnings in (Compile, compile) ++= Warts.unsafe)
+    scalaVersion := scalaV,
+    wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
+  ) ++ scalariformSettings ++ Seq(
+    ScalariformKeys.preferences in Compile := formattingPreferences,
+    ScalariformKeys.preferences in Test    := formattingPreferences
+  )
+
+lazy val formattingPreferences = FormattingPreferences()
+  .setPreference(RewriteArrowSymbols,                         true)
+  .setPreference(AlignParameters,                             true)
+  .setPreference(AlignSingleLineCaseStatements,               true)
+  .setPreference(DoubleIndentClassDeclaration,                true)
+  .setPreference(PreserveDanglingCloseParenthesis,            true)
+  .setPreference(MultilineScaladocCommentsStartOnFirstLine,   true)
+  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+
 
 lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .settings(commonSettings: _*)
