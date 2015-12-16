@@ -56,13 +56,13 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Note that the type of result1 is now Option[Double], thanks to the scala type inference. Another operation is `fold`. this operation will extract the value from the option, or provide a default if the value is `None`",
+      "preparagraph": "Another operation is `fold`. this operation will extract the value from the option, or provide a default if the value is `None`",
       "code": "val number: Option[Int] = Some(3)\nval noNumber: Option[Int] = None\nval result1 = number.fold(0)(_ * 3)\nval result2 = noNumber.fold(0)(_ * 3)\n\nresult1 should be(__)\nresult2 should be(__)",
       "solutions": [
         "9",
         "0"
       ],
-      "postparagraph": ""
+      "postparagraph": "Note that the type of result1 is now Option[Double], thanks to the scala type inference."
     }
   ]
 }
