@@ -4,9 +4,9 @@ import scala.concurrent.Future
 import shared.User
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
+import slick.driver._
 
 object UserModel {
-
   val store: UserStore = UserSlickStore
 }
 
@@ -30,11 +30,17 @@ trait UserStore {
   def delete(ids: Long*): Future[Boolean]
 }
 
-//Postgre Version
 object UserSlickStore extends UserStore {
 
+  val profile = current.configuration.getString("db.default.driver").collect {
+    case "org.h2.Driver" => H2Driver
+    case "org.postgresql.Driver" => PostgresDriver
+    case "com.mysql.jdbc.Driver"=> MySQLDriver
+    case other => throw new Exception(s"Unable to discern Slick driver for ${other}")
+  }.get
+
   import play.api.db.DB
-  import slick.driver.PostgresDriver.api._
+  import profile.api._
 
   class Users(tag: Tag) extends Table[User](tag, "users"){
     def id   = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
@@ -95,4 +101,3 @@ object UserSlickStore extends UserStore {
   }
 
 }
-
