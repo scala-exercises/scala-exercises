@@ -1,7 +1,7 @@
 package example
 
 import scala.scalajs.js
-import js.Dynamic.{ global => g }
+import js.Dynamic.{ global ⇒ g }
 import shared.SharedMessages
 
 object ExampleJS extends js.JSApp {
@@ -10,7 +10,7 @@ object ExampleJS extends js.JSApp {
   }
 
   /** Computes the square of an integer.
-   *  This demonstrates unit testing.
-   */
-  def square(x: Int): Int = x*x
+    * This demonstrates unit testing.
+    */
+  def square(x: Int): Int = x * x
 }

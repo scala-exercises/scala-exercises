@@ -1,15 +1,14 @@
 package services.parser
 
-import models.{Section, Category, Exercise}
+import models.{ Section, Category, Exercise }
 
 import scala.annotation.tailrec
 import scalaz._, Scalaz._
 
-/**
- * Parses source code extracting section, categories and exercise code.
- * This should provably be rewritten at some point with Parser Combinators or a more robust solution than
- * top to botton regex matching
- */
+/** Parses source code extracting section, categories and exercise code.
+  * This should provably be rewritten at some point with Parser Combinators or a more robust solution than
+  * top to botton regex matching
+  */
 object ExerciseCodeExtractor {
 
   private[this] sealed trait ParserState
@@ -39,27 +38,27 @@ object ExerciseCodeExtractor {
       copy(currentExercise = exercise.some)
 
     def addCurrentExercise = currentExercise match {
-      case Some(ex) => copy(exercises = exercises :+ ex, currentExercise = None)
-      case None => this
+      case Some(ex) ⇒ copy(exercises = exercises :+ ex, currentExercise = None)
+      case None     ⇒ this
     }
 
     def setExerciseMethod(method: String) =
-      copy(currentExercise = currentExercise map (e => e.copy(method = method.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(method = method.some)))
 
     def setExerciseTitle(title: String) =
-      copy(currentExercise = currentExercise map (e => e.copy(title = title.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(title = title.some)))
 
     def addToExerciseDesc(line: String) =
-      copy(currentExercise = currentExercise map (e => e.copy(description = e.description.map(_.concat(descLineSep)) |+| line.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(description = e.description.map(_.concat(descLineSep)) |+| line.some)))
 
     def addToExerciseCode(line: String) =
-      copy(currentExercise = currentExercise map (e => e.copy(code = e.code.map(_.concat(descLineSep)) |+| line.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(code = e.code.map(_.concat(descLineSep)) |+| line.some)))
 
     def setState(state: ParserState) = copy(state = state)
 
     def build: Option[Category] = (title, description, exercises) match {
-      case (Some(t), Some(d), head :: tail) => Some(Category(t, Some(d), head :: tail))
-      case _ => None
+      case (Some(t), Some(d), head :: tail) ⇒ Some(Category(t, Some(d), head :: tail))
+      case _                                ⇒ None
     }
 
   }
@@ -74,63 +73,60 @@ object ExerciseCodeExtractor {
 
   import utils.StringUtils._
 
-  /**
-   * Recursively walks the source lines building a Category and it's all contained exercises
-   */
+  /** Recursively walks the source lines building a Category and it's all contained exercises
+    */
   def buildCategory(sources: List[String]): Option[Category] = {
     @tailrec
     def loop(remaining: List[String], builder: CategoryBuilder): CategoryBuilder =
       remaining match {
-        case Nil => builder
-        case h :: t =>
+        case Nil ⇒ builder
+        case h :: t ⇒
           val modBuilder = (h, builder.state) match {
-            case (commentStart(startLine), DefiningClass) =>
+            case (commentStart(startLine), DefiningClass) ⇒
               builder.addToCategoryDescription(startLine)
-            case (inComment(comment), DefiningClass) =>
+            case (inComment(comment), DefiningClass) ⇒
               builder.addToCategoryDescription(comment)
-            case (classStarts(className), DefiningClass) =>
+            case (classStarts(className), DefiningClass) ⇒
               builder.categoryTitle(className.humanizeCamelCase).setState(AccumulatingExercises)
-            case (commentStart(comment), AccumulatingExercises) =>
+            case (commentStart(comment), AccumulatingExercises) ⇒
               builder.setCurrentExercise(Exercise()).addToExerciseDesc(comment)
-            case (inComment(comment), AccumulatingExercises) =>
+            case (inComment(comment), AccumulatingExercises) ⇒
               builder.addToExerciseDesc(comment)
-            case (methodStart(method, _, _, friendlyDes), AccumulatingExercises) =>
+            case (methodStart(method, _, _, friendlyDes), AccumulatingExercises) ⇒
               builder.setExerciseTitle(friendlyDes).setExerciseMethod(method).setState(ExtractingCode)
-            case (methodEnd(), ExtractingCode) =>
+            case (methodEnd(), ExtractingCode) ⇒
               builder.addCurrentExercise.setState(AccumulatingExercises)
-            case (code, ExtractingCode) =>
+            case (code, ExtractingCode) ⇒
               builder.addToExerciseCode(code)
-            case _ => builder
+            case _ ⇒ builder
           }
           loop(t, modBuilder)
       }
     loop(sources, CategoryBuilder()).build
   }
 
-  /**
-   * Recursive walks a package object sources parsing section information
-   */
+  /** Recursive walks a package object sources parsing section information
+    */
   def buildSection(sources: List[String]): Option[Section] = {
     @tailrec
     def loop(remaining: List[String], maybeSection: Option[Section] = None): Option[Section] =
       remaining match {
-        case Nil => maybeSection
-        case h :: t =>
+        case Nil ⇒ maybeSection
+        case h :: t ⇒
           val modSection = (h, maybeSection) match {
-            case (commentStart(startLine), None) =>
+            case (commentStart(startLine), None) ⇒
               Section(title = "", description = startLine).some
-            case (inComment(comment), Some(section)) =>
+            case (inComment(comment), Some(section)) ⇒
               section.copy(description = section.description.concat(comment)).some
-            case (pkgStarts(pkgName), Some(section)) =>
+            case (pkgStarts(pkgName), Some(section)) ⇒
               section.copy(title = pkgName).some
-            case (_, Some(section)) =>
+            case (_, Some(section)) ⇒
               section.some
-            case _ => None
+            case _ ⇒ None
           }
           loop(t, modSection)
       }
     loop(sources)
   }
-
 
 }
