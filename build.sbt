@@ -2,11 +2,12 @@ import play.PlayImport._
 import sbt.Project.projectToRef
 import scalariform.formatter.preferences._
 
-lazy val clients = Seq(scalaExercisesClient)
-lazy val scalaV = "2.11.7"
+
+// loads the jvm project at sbt startup
+onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
 
 lazy val commonSettings = Seq(
-    scalaVersion := scalaV,
+    scalaVersion := "2.11.7",
     wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
   ) ++ scalariformSettings ++ Seq(
     ScalariformKeys.preferences in Compile := formattingPreferences,
@@ -22,15 +23,18 @@ lazy val formattingPreferences = FormattingPreferences()
   .setPreference(MultilineScaladocCommentsStartOnFirstLine,   true)
   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 
-
+lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
+  .aggregate(clients.map(projectToRef): _*)
+  .dependsOn(scalaExercisesSharedJvm, scalaExercisesContent)
+  .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-    libraryDependencies ++= Seq(
+    libraryDependencies <++= (scalaVersion)(scalaVersion => Seq(
       filters,
       jdbc,
       evolutions,
@@ -47,17 +51,17 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
       "org.webjars" % "jquery" % "2.1.1",
       "org.webjars" % "font-awesome" % "4.1.0",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
-      "org.scala-lang" % "scala-compiler" % scalaV,
+      "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0",
       "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test"
-    )
+    ))
+  )
 
-).enablePlugins(PlayScala).
-    aggregate(clients.map(projectToRef): _*).
-    dependsOn(scalaExercisesSharedJvm, scalaExercisesContent)
 
 lazy val scalaExercisesClient = (project in file("scala-exercises-client"))
+  .dependsOn(scalaExercisesSharedJs)
+  .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .settings(commonSettings: _*)
   .settings(
     persistLauncher := true,
@@ -73,33 +77,30 @@ lazy val scalaExercisesClient = (project in file("scala-exercises-client"))
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8"
     )
-  ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
-      dependsOn(scalaExercisesSharedJs)
+  )
 
 lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file("scala-exercises-shared"))
+  .jsConfigure(_ enablePlugins ScalaJSPlay)
+  .jsSettings(sourceMapsBase := baseDirectory.value / "..")
   .settings(commonSettings: _*)
   .settings(
-      libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "2.2.4",
-        "org.scalaz" %% "scalaz-core" % "7.1.4"
-      )
-    ).
-    jsConfigure(_ enablePlugins ScalaJSPlay).
-    jsSettings(sourceMapsBase := baseDirectory.value / "..")
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "org.scalaz" %% "scalaz-core" % "7.1.4"
+    )
+  )
 
 lazy val scalaExercisesSharedJvm = scalaExercisesShared.jvm
 lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 
 lazy val scalaExercisesContent = (project in file("scala-exercises-content"))
+  .dependsOn(scalaExercisesSharedJvm)
   .settings(commonSettings: _*)
   .settings(
-      libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "2.2.4",
-        "org.scalaz" %% "scalaz-core" % "7.1.4"
-      ),
-      unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala"
-    ).dependsOn(scalaExercisesSharedJvm)
-
-// loads the jvm project at sbt startup
-onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "org.scalaz" %% "scalaz-core" % "7.1.4"
+    ),
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala"
+  )
 
