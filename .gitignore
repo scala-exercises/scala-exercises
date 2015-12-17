@@ -31,3 +31,5 @@ scalajvm/upload/*
 .cache
 .target
 bin/
+.ensime
+.ensime_cache
