@@ -62,7 +62,7 @@
         "9",
         "0"
       ],
-      "postparagraph": ""
+      "postparagraph": "Note that the type of result1 is now Option[Double], thanks to the scala type inference."
     }
   ]
 }
