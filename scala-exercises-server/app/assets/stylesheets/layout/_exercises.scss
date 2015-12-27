@@ -9,37 +9,39 @@
 }
 
 
-.exercise {
+.exercises-wrapper {
     position: relative;
     padding: 30px;
     background: #fff;
     line-height: 1.6;
-    //font-size: ceil(($font-size-base * 1.14));
-    
-    .highlight {
-        position: relative;
-        
-        .compile {
-            position: absolute;
-            right: 10px;
-            bottom: 10px;
+
+    .exercise {
+        margin-bottom: 15px;
+
+        .highlight {
+            position: relative;
+
+            .compile {
+                position: absolute;
+                right: 10px;
+                bottom: 10px;
+            }
         }
-    }
-    
-    ul.list-sources {
+
+        ul.list-sources {
             padding: 0;
             margin: 0;
-            
+
             li {
                 list-style: none;
                 margin-bottom: 40px;
-                
+
                 &:last-child {
                     margin-bottom: 0;
                 }
-                
+
                 a {
-                
+
                     &:hover,
                     &:focus,
                     &:active {
@@ -48,51 +50,55 @@
                 }
             }
         }
-    
-    .highlight:last-child pre {
-        margin-bottom: 0;
-    }
-    .ribbon-wrapper {
-        width: 85px;
-        height: 88px;
-        overflow: hidden;
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        .ribbon-green {
-            //font: bold 15px Sans-Serif;
-            font-size: $font-size-small;
-            font-weight: 600;
-            color: #333;
-            text-align: center;
-            -webkit-transform: rotate(45deg);
-            -moz-transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            -o-transform: rotate(45deg);
-            position: relative;
-            padding: 7px 0;
-            left: -5px;
-            top: 15px;
-            width: 120px;
-            background: $brand-primary;
-            color: #fff;
+
+        .highlight:last-child pre {
+            margin-bottom: 0;
         }
-        .ribbon-green:before,
-        .ribbon-green:after {
-            content: "";
-            border-top: 3px solid darken($brand-primary, 10%);
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
+
+        .ribbon-wrapper {
+            width: 85px;
+            height: 88px;
+            overflow: hidden;
             position: absolute;
-            bottom: -3px;
-        }
-        .ribbon-green:before {
-            left: 0;
-        }
-        .ribbon-green:after {
-            right: 0;
+            top: -4px;
+            right: -4px;
+            .ribbon-green {
+                //font: bold 15px Sans-Serif;
+                font-size: $font-size-small;
+                font-weight: 600;
+                color: #333;
+                text-align: center;
+                -webkit-transform: rotate(45deg);
+                -moz-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                -o-transform: rotate(45deg);
+                position: relative;
+                padding: 7px 0;
+                left: -5px;
+                top: 15px;
+                width: 120px;
+                background: $brand-primary;
+                color: #fff;
+            }
+            .ribbon-green:before,
+            .ribbon-green:after {
+                content: "";
+                border-top: 3px solid darken($brand-primary, 10%);
+                border-left: 3px solid transparent;
+                border-right: 3px solid transparent;
+                position: absolute;
+                bottom: -3px;
+            }
+            .ribbon-green:before {
+                left: 0;
+            }
+            .ribbon-green:after {
+                right: 0;
+            }
         }
     }
+    
+
 }
 
 .contributors {
