@@ -5,6 +5,7 @@ package models
 case class Section(
   title: String,
   description: String,
+  color: String,
   categories: List[String] = Nil)
 
 /** A category. For example `Extractors`
@@ -20,7 +21,8 @@ case class Exercise(
   method: Option[String] = None,
   title: Option[String] = None,
   description: Option[String] = None,
-  code: Option[String] = None)
+  code: Option[String] = None,
+  explanation: Option[String] = None)
 
 /** Input params necessary to evaluate an exercise
   */
