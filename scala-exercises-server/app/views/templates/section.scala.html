@@ -4,7 +4,7 @@
   <a href="@section.title">
     <div class="tech scala">
       <div class="panel panel-default">
-        <div class="panel-heading">
+        <div class="panel-heading" style="background-color: @section.color;">
           <h3 class="panel-title">@section.title</h3>
         </div>
         <div class="panel-body">
@@ -12,12 +12,7 @@
 
           @*<div><button class="btn btn-primary btn-sm">Start</button></div>*@
 
-          <div class="content-progres-bar">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width : 30%;"></div>
-            </div>
-            <span>18/30</span>
-          </div>
+          @templates.progress(1, section)
 
         </div>
       </div>
