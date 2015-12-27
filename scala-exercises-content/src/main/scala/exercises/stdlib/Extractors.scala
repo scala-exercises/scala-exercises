@@ -4,12 +4,11 @@ import org.scalatest._
 import shared.ExerciseRunner.{ ExerciseResult, ∞ }
 import shared.{ ExerciseRunner, Exercises }
 
-/**
-  * In Scala, patterns can be defined independently of case classes. To this end, a method named `unapply` is defined to yield a so-called extractor.
+/** In Scala, patterns can be defined independently of case classes. To this end, a method named `unapply` is defined to yield a so-called extractor.
   *
   * For instance, the following code defines an extractor object `Twice`.
   *
-  *
+  * ```
   * object Twice {
   * def apply(x: Int): Int = x * 2
   * def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
@@ -19,20 +18,21 @@ import shared.{ ExerciseRunner, Exercises }
   * val x = Twice(21)
   * x match { case Twice(n) => Console.println(n) } // prints 21
   * }
-  *
+  * ```
   *
   * There are two syntactic conventions at work here:
   *
-  * * The pattern `case Twice(n)` will cause an invocation of `Twice.unapply`, which is used to match even number; the return value of the `unapply` signals whether the argument has matched or not, and any sub-values that can be used for further matching. Here, the sub-value is `z/2`
+  * * The pattern case `Twice(n)` will cause an invocation of `Twice.unapply`, which is used to match even number; the return value of the `unapply` signals whether the argument has matched or not, and any sub-values that can be used for further matching. Here, the sub-value is `z/2`
   * * The `apply` method is not necessary for pattern matching. It is only used to mimick a constructor. `val x = Twice(21)` expands to `val x = Twice.apply(21)`.
   *
   * The code in the preceding example would be expanded as follows:
   *
-  *
-  * object TwiceTest extends Application {
+  * ```
+  * object TwiceTest extends Application {``
   * val x = Twice.apply(21)
   * Twice.unapply(x) match { case Some(n) => Console.println(n) } // prints 21
   * }
+  * ```
   *
   * The return type of an `unapply` should be chosen as follows:
   *
