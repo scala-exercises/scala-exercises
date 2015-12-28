@@ -4,7 +4,7 @@
 
   <div class="exercise">
 
-    @(toXHTML(knockoff(exercise.description.getOrElse(""))))
+    @(Html(exercise.description.getOrElse("")))
 
     <div class="highlight">
 
@@ -18,7 +18,7 @@
       <pre><code>@exercise.code</code></pre>
     </div>
 
-    @(toXHTML(knockoff(exercise.explanation.getOrElse(""))))
+    @(Html(exercise.explanation.getOrElse("")))
 
   </div>
 

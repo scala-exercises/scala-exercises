@@ -1,6 +1,5 @@
 @(section: Section, category: Category)(implicit request: RequestHeader)
 @import play.api.Play
-@import com.tristanhunt.knockoff.DefaultDiscounter._
 
 <!DOCTYPE html>
 <html lang="en">
@@ -186,7 +185,7 @@
 
               <div class="exercises-wrapper">
 
-                @(toXHTML(knockoff(category.description.getOrElse(""))))
+                @(Html(category.description.getOrElse("")))
 
                 @for(exercise <- category.exercises) {
                   @templates.exercise(section, category, exercise)
