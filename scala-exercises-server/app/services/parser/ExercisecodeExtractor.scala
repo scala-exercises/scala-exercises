@@ -25,9 +25,15 @@ object ExerciseCodeExtractor {
 
   private[this] case object AccCodeInExplanation extends ParserState
 
-  private[this] val descLineSep = "\n"
+  private[this] val descLineSep = "<br>"
+
+  private[this] val codeLineSep = "\n"
 
   private[this] val codeLineStart = "    "
+
+  private[this] val codeBlockStart = "<pre><code>"
+
+  private[this] val codeBlockEnd = "</code></pre>"
 
   private[this] case class CategoryBuilder(
       title: Option[String] = None,
@@ -43,7 +49,7 @@ object ExerciseCodeExtractor {
       copy(description = description.map(_.concat(descLineSep)) |+| line.some)
 
     def addCodeToCategoryDescription(line: String) =
-      copy(description = description.map(_.concat(descLineSep).concat(codeLineStart)) |+| line.some)
+      copy(description = description.map(_.concat(codeLineSep)) |+| line.some)
 
     def setCurrentExercise(exercise: Exercise) =
       copy(currentExercise = exercise.some)
@@ -63,16 +69,16 @@ object ExerciseCodeExtractor {
       copy(currentExercise = currentExercise map (e ⇒ e.copy(description = e.description.map(_.concat(descLineSep)) |+| line.some)))
 
     def addCodeToExerciseDesc(line: String) =
-      copy(currentExercise = currentExercise map (e ⇒ e.copy(description = e.description.map(_.concat(descLineSep).concat(codeLineStart)) |+| line.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(description = e.description.map(_.concat(codeLineSep)) |+| line.some)))
 
     def addToExerciseCode(line: String) =
-      copy(currentExercise = currentExercise map (e ⇒ e.copy(code = e.code.map(_.concat(descLineSep)) |+| line.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(code = e.code.map(_.concat(codeLineSep)) |+| line.some)))
 
     def addToExerciseExplanation(line: String) =
       copy(currentExercise = currentExercise map (e ⇒ e.copy(explanation = e.explanation.map(_.concat(descLineSep)) |+| line.some)))
 
     def addCodeToExerciseExplanation(line: String) =
-      copy(currentExercise = currentExercise map (e ⇒ e.copy(explanation = e.explanation.map(_.concat(descLineSep).concat(codeLineStart)) |+| line.some)))
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(explanation = e.explanation.map(_.concat(codeLineSep)) |+| line.some)))
 
     def setState(state: ParserState) = copy(state = state)
 
@@ -86,9 +92,10 @@ object ExerciseCodeExtractor {
   private[this] val commentStart = "\\s*\\/\\*\\*(.*)".r
   private[this] val pkgStarts = "\\s*package\\s*object\\s+(\\w+).*".r
   private[this] val classStarts = "\\s*class\\s+(\\w+)\\s+extends.*Exercises.*".r
-  private[this] val inComment = "\\s*\\*([^\\/\\n]+).*".r
+  private[this] val inComment = """(?s)\s*\*([^\n]+[^\/])$""".r
   private[this] val inCommentEmpty = """(?s)\s*\*(\s*)$""".r
-  private[this] val codeInComment = """(?s)\s*\*(\s*)```$""".r
+  private[this] val codeInCommentStart = """(?s)\s*\*(\s*)\{\{\{$""".r
+  private[this] val codeInCommentEnd = """(?s)\s*\*(\s*)\}\}\}$""".r
   private[this] val cologPkg = """(?s)\s*\*\s*Color:\s*(.*)$""".r
   private[this] val commentEnd = "\\s*\\*\\/([^\\/\\n]*).*".r
   private[this] val methodStart = "\\s*def\\s+(\\w+)(\\([^\\)]+\\))?(:\\s+ExerciseResult\\[.*\\])?\\s*=\\s*ExerciseRunner\\(\"(.+)\"\\)\\s*\\{".r
@@ -108,28 +115,28 @@ object ExerciseCodeExtractor {
           val modBuilder = (h, builder.state) match {
             case (commentStart(startLine), DefiningClass) ⇒
               builder.addToCategoryDescription(startLine)
-            case (codeInComment(codeLine), DefiningClass) ⇒
-              builder.addCodeToCategoryDescription(codeLine).setState(AccCodeInDescription)
-            case (codeInComment(codeLine), AccCodeInDescription) ⇒
-              builder.addToCategoryDescription(codeLine).setState(DefiningClass)
+            case (codeInCommentStart(codeLine), DefiningClass) ⇒
+              builder.addCodeToCategoryDescription(codeBlockStart).setState(AccCodeInDescription)
+            case (codeInCommentEnd(codeLine), AccCodeInDescription) ⇒
+              builder.addToCategoryDescription(codeBlockEnd).setState(DefiningClass)
             case (inComment(codeLine), AccCodeInDescription) ⇒
               builder.addCodeToCategoryDescription(codeLine)
+            case (inCommentEmpty(comment), AccCodeInDescription) ⇒
+              builder.addToCategoryDescription(codeLineSep)
             case (inComment(comment), DefiningClass) ⇒
               builder.addToCategoryDescription(comment)
-            case (inCommentEmpty(comment), DefiningClass) ⇒
-              builder.addToCategoryDescription(descLineSep)
             case (classStarts(className), DefiningClass) ⇒
               builder.categoryTitle(className.humanizeCamelCase).setState(AccumulatingExercises)
             case (commentStart(comment), AccumulatingExercises) ⇒
               builder.setCurrentExercise(Exercise()).addToExerciseDesc(comment)
-            case (codeInComment(codeLine), AccumulatingExercises) ⇒
-              builder.addCodeToExerciseDesc(codeLine).setState(AccCodeInExercise)
-            case (codeInComment(codeLine), AccCodeInExercise) ⇒
-              builder.addToExerciseDesc(codeLine).setState(AccumulatingExercises)
+            case (codeInCommentStart(codeLine), AccumulatingExercises) ⇒
+              builder.addCodeToExerciseDesc(codeBlockStart).setState(AccCodeInExercise)
+            case (codeInCommentEnd(codeLine), AccCodeInExercise) ⇒
+              builder.addToExerciseDesc(codeBlockEnd).setState(AccumulatingExercises)
             case (inComment(codeLine), AccCodeInExercise) ⇒
               builder.addCodeToExerciseDesc(codeLine)
-            case (inCommentEmpty(comment), AccumulatingExercises) ⇒
-              builder.addToExerciseDesc(descLineSep)
+            case (inCommentEmpty(comment), AccCodeInExercise) ⇒
+              builder.addToExerciseDesc(codeLineSep)
             case (inComment(comment), AccumulatingExercises) ⇒
               builder.addToExerciseDesc(comment)
             case (methodStart(method, _, _, friendlyDes), AccumulatingExercises) ⇒
@@ -138,14 +145,14 @@ object ExerciseCodeExtractor {
               builder.addCurrentExercise.setState(AccumulatingExercises)
             case (commentStart(comment), ExtractingCode) ⇒
               builder.addToExerciseExplanation(comment)
-            case (codeInComment(codeLine), ExtractingCode) ⇒
-              builder.addCodeToExerciseExplanation(codeLine).setState(AccCodeInExplanation)
-            case (codeInComment(codeLine), AccCodeInExplanation) ⇒
-              builder.addToExerciseExplanation(codeLine).setState(ExtractingCode)
+            case (codeInCommentStart(codeLine), ExtractingCode) ⇒
+              builder.addCodeToExerciseExplanation(codeBlockStart).setState(AccCodeInExplanation)
+            case (codeInCommentEnd(codeLine), AccCodeInExplanation) ⇒
+              builder.addToExerciseExplanation(codeBlockEnd).setState(ExtractingCode)
             case (inComment(codeLine), AccCodeInExplanation) ⇒
               builder.addCodeToExerciseExplanation(codeLine)
-            case (inCommentEmpty(comment), ExtractingCode) ⇒
-              builder.addToExerciseExplanation(descLineSep)
+            case (inCommentEmpty(comment), AccCodeInExplanation) ⇒
+              builder.addToExerciseExplanation(codeLineSep)
             case (inComment(comment), ExtractingCode) ⇒
               builder.addToExerciseExplanation(comment)
             case (commentEnd(comment), ExtractingCode) ⇒
