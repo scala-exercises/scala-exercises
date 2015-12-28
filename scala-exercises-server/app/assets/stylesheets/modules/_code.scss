@@ -2,18 +2,22 @@
 // Code (inline and block)
 // --------------------------------------------------
 
+// Line
+code {
+  color: $gray-dark;
+  background-color: $pre-bg;
+}
 
 // Blocks of code
 pre {
   display: block;
   padding: $line-height-computed;
     margin: {
-        top: ($line-height-computed * 1.5);
-        bottom: ($line-height-computed * 2);
+        top: ($line-height-computed);
+        bottom: ($line-height-computed);
         left: 0;
         right: 0;
     }
   border: none;
   border-radius: 0;
-    height: 210px;
 }

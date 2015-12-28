@@ -4,43 +4,43 @@ import org.scalatest._
 import shared.ExerciseRunner.{ ExerciseResult, ∞ }
 import shared.{ ExerciseRunner, Exercises }
 
-/**
-  * In Scala, patterns can be defined independently of case classes. To this end, a method named `unapply` is defined to yield a so-called extractor.
+/** In Scala, patterns can be defined independently of case classes. To this end, a method named <code>unapply</code> is defined to yield a so-called extractor.
   *
-  * For instance, the following code defines an extractor object `Twice`.
+  * For instance, the following code defines an extractor object <code>Twice</code>.
   *
-  *
+  * {{{
   * object Twice {
-  * def apply(x: Int): Int = x * 2
-  * def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
+  *  def apply(x: Int): Int = x * 2
+  *  def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
   * }
   *
   * object TwiceTest extends Application {
-  * val x = Twice(21)
-  * x match { case Twice(n) => Console.println(n) } // prints 21
+  *  val x = Twice(21)
+  *  x match { case Twice(n) => Console.println(n) } // prints 21
   * }
-  *
+  * }}}
   *
   * There are two syntactic conventions at work here:
   *
-  * * The pattern `case Twice(n)` will cause an invocation of `Twice.unapply`, which is used to match even number; the return value of the `unapply` signals whether the argument has matched or not, and any sub-values that can be used for further matching. Here, the sub-value is `z/2`
-  * * The `apply` method is not necessary for pattern matching. It is only used to mimick a constructor. `val x = Twice(21)` expands to `val x = Twice.apply(21)`.
+  * - The pattern case <code>Twice(n)</code> will cause an invocation of <code>Twice.unapply</code>, which is used to match even number; the return value of the <code>unapply</code> signals whether the argument has matched or not, and any sub-values that can be used for further matching. Here, the sub-value is <code>z/2</code>
+  * - The <code>apply</code> method is not necessary for pattern matching. It is only used to mimick a constructor. <code>val x = Twice(21)</code> expands to <code>val x = Twice.apply(21)</code>.
   *
   * The code in the preceding example would be expanded as follows:
   *
-  *
+  * {{{
   * object TwiceTest extends Application {
   * val x = Twice.apply(21)
   * Twice.unapply(x) match { case Some(n) => Console.println(n) } // prints 21
   * }
+  * }}}
   *
-  * The return type of an `unapply` should be chosen as follows:
+  * The return type of an <code>unapply</code> should be chosen as follows:
   *
-  * * If it is just a test, return a `Boolean`. For instance `case even()`
-  * * If it returns a single sub-value of type `T`, return a `Option[T]`
-  * * If you want to return several sub-values `T1,...,Tn`, group them in an optional tuple `Option[(T1,...,Tn)]`.
+  * * If it is just a test, return a <code>Boolean</code>. For instance <code>case even()</code>
+  * * If it returns a single sub-value of type <code>T</code>, return a <code>Option[T]</code>
+  * * If you want to return several sub-values <code>T1,...,Tn</code>, group them in an optional tuple <code>Option[(T1,...,Tn)]</code>.
   *
-  * Sometimes, the number of sub-values is fixed and we would like to return a sequence. For this reason, you can also define patterns through `unapplySeq`. The last sub-value type `Tn` has to be `Seq[S]`. This mechanism is used for instance in pattern `case List(x1, ..., xn)`.
+  * Sometimes, the number of sub-values is fixed and we would like to return a sequence. For this reason, you can also define patterns through <code>unapplySeq</code>. The last sub-value type <code>Tn</code> has to be <code>Seq[S]</code>. This mechanism is used for instance in pattern <code>case List(x1, ..., xn)</code>.
   *
   */
 class Extractors extends FlatSpec with Matchers with Exercises {
@@ -65,7 +65,7 @@ class Extractors extends FlatSpec with Matchers with Exercises {
 
   }(∞)
 
-  /** What's an extractor? In Scala it's a method in any `object` called `unapply`, and that method is used to disassemble the object given by returning a tuple wrapped in an option.
+  /** What's an extractor? In Scala it's a method in any <code>object</code> called <code>unapply</code>, and that method is used to disassemble the object given by returning a tuple wrapped in an option.
     * Extractors can be used to assign values:
     */
   def forAssigningValues(res0: String, res1: String, res2: Int, res3: Int): ExerciseResult[Unit] = ExerciseRunner("For Assigning Values") {

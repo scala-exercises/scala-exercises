@@ -35,5 +35,23 @@ object Application extends Controller {
 
   }
 
+  def section(sec: String) = Action.async { implicit request ⇒
+    ExercisesService.sections.find(s ⇒ s.title == sec) match {
+      case Some(s) ⇒ Future(Redirect(s"$sec/${s.categories.head}"))
+      case _       ⇒ Future(Ok("Section not found"))
+    }
+  }
+
+  def category(sec: String, cat: String) = Action.async { implicit request ⇒
+    val section = ExercisesService.sections.find(s ⇒ s.title == sec)
+    val category = ExercisesService.category(sec, cat).headOption
+
+    (section, category) match {
+      case (Some(s), Some(c)) ⇒ Future(Ok(views.html.templates.exercises(s, c)))
+      case (Some(s), None)    ⇒ Future(Redirect(s.categories.head))
+      case _                  ⇒ Future(Ok("Category not found"))
+    }
+  }
+
 }
 

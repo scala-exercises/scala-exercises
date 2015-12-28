@@ -1,0 +1,24 @@
+@(section: Section, category: Category, exercise: Exercise)(implicit request: RequestHeader)
+@import com.tristanhunt.knockoff.DefaultDiscounter._
+
+
+  <div class="exercise">
+
+    @(Html(exercise.description.getOrElse("")))
+
+    <div class="highlight">
+
+      <div class="ribbon-wrapper">
+        <div class="ribbon-green" style="background-color: @section.color;">Complete</div>
+      </div>
+
+      <div class="compile">
+        <button type="button" class="btn btn-default btn-xs">Compile</button>
+      </div>
+      <pre><code>@exercise.code</code></pre>
+    </div>
+
+    @(Html(exercise.explanation.getOrElse("")))
+
+  </div>
+

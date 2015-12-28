@@ -53,7 +53,10 @@
             &:hover,
             &:focus,
             &:active {
-                color: $akka;
+                a {
+                    color: #333;
+                    font-weight: bold;
+                }
             }
             &:first-child {
                 padding: 0;
