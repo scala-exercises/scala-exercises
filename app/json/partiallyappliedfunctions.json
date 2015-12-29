@@ -21,13 +21,13 @@
     },
     {
       "preparagraph": "Currying is a technique to transform function with multiple parameters into multiple functions which each take one parameter",
-      "code": "def multiply(x: Int, y: Int) = x * y\n(multiply _).isInstanceOf[Function2[_, _, _]] should be(__)\nval multiplyCurried = (multiply _).curried\nmultiply(4, 5) should be(__)\nmultiplyCurried(3)(2) should be(__)\n val multiplyCurriedFour=multiplyCurried(4) _\n multiplyCurriedFour(2) should be(__)\n multiplyCurriedFour(4) should be(__)",
+      "code": "def multiply(x: Int, y: Int) = x * y\n(multiply _).isInstanceOf[Function2[_, _, _]] should be(__)\nval multiplyCurried = (multiply _).curried\nmultiply(4, 5) should be(__)\nmultiplyCurried(3)(2) should be(__)\n val multiplyCurriedFour=multiplyCurried(4)\n multiplyCurriedFour(2) should be(__)\n multiplyCurriedFour(4) should be(__)",
       "solutions": [
         "true",
         "20",
         "6",
         "8",
-        "12"
+        "16"
       ],
       "postparagraph": ""
     },
