@@ -1,12 +1,8 @@
 import models.ExerciseEvaluation
-import org.junit.runner._
 import org.specs2.mutable._
-import org.specs2.runner._
 import org.specs2.scalaz.DisjunctionMatchers
 import services.parser.ExercisesService
 
-
-@RunWith(classOf[JUnitRunner])
 class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
 
   val expectedTestSection = "stdlib"
