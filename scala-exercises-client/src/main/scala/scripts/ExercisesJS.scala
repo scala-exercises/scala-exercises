@@ -10,7 +10,7 @@ object ExercisesJS extends js.JSApp {
     runHighlight
   }
 
-  def runHighlight = $("pre code").each({ (f: Any, code: dom.Element) ⇒
+  def runHighlight = $("pre code").each({ (_: Any, code: dom.Element) ⇒
     js.Dynamic.global.hljs.highlightBlock(code)
   })
 
