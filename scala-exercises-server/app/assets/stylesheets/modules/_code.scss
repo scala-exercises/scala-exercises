@@ -20,4 +20,8 @@ pre {
     }
   border: none;
   border-radius: 0;
+
+  .hljs {
+    background-color: $pre-bg;
+  }
 }

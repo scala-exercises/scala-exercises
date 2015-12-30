@@ -31,9 +31,9 @@ object ExerciseCodeExtractor {
 
   private[this] val codeLineStart = "    "
 
-  private[this] val codeBlockStart = "<pre><code>"
+  private[this] val codeBlockStart = """<pre><code class="scala">"""
 
-  private[this] val codeBlockEnd = "</code></pre>"
+  private[this] val codeBlockEnd = """</code></pre>"""
 
   private[this] case class CategoryBuilder(
       title: Option[String] = None,
