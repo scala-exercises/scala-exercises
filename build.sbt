@@ -50,6 +50,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
       "org.webjars" % "bootstrap-sass" % "3.2.0",
       "org.webjars" % "jquery" % "2.1.1",
       "org.webjars" % "font-awesome" % "4.1.0",
+      "org.webjars" % "highlightjs" % "8.7",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",

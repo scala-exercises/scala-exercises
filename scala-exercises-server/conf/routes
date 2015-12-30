@@ -11,11 +11,6 @@ GET /exercises/sections/:section/:category    controllers.ExercisesController.ca
 POST /exercises/sections/:section/:category/evaluate   controllers.ExercisesController.evaluate(section : String, category: String)
 
 
-# Exercises
-GET /:sec           controllers.Application.section(sec : String)
-GET /:sec/:cat      controllers.Application.category(sec : String, cat: String)
-
-
 # Map static resources from the /public folder to the /assets URL path
 GET /assets/*file controllers.Assets.at(path="/public", file)
 
@@ -23,3 +18,8 @@ GET /assets/*file controllers.Assets.at(path="/public", file)
 GET /_oauth-callback  utils.OAuth2.callback(code: Option[String], state: Option[String])
 GET /_oauth-success   utils.OAuth2.success
 GET /logout   utils.OAuth2.logout
+
+
+# Exercises
+GET /:sec           controllers.Application.section(sec : String)
+GET /:sec/:cat      controllers.Application.category(sec : String, cat: String)
