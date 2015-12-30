@@ -1,13 +1,12 @@
 import play.PlayImport._
 import sbt.Project.projectToRef
 
-fork in Test := false
-
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.7"
 
 lazy val commonSettings = Seq(
   scalaVersion := scalaV,
+  fork in test := false,
   wartremoverWarnings in (Compile, compile) ++= Warts.unsafe)
 
 lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
