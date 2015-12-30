@@ -6,13 +6,9 @@ scala:
 jdk:
   - oraclejdk8
 
-addons:
-  hosts:
-    - $HOSTNAME
-
 before_script:
   - gem update --system
   - gem install sass
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION test
+  - sbt ++$TRAVIS_SCALA_VERSION -Djava.net.preferIPv4Stack=true test
