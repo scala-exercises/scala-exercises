@@ -6,6 +6,10 @@ scala:
 jdk:
   - oraclejdk8
 
+addons:
+  hosts:
+    - $HOSTNAME
+
 before_script:
   - gem update --system
   - gem install sass
