@@ -6,10 +6,6 @@ scala:
 jdk:
   - oraclejdk8
 
-addons:
-  hosts:
-    - localhost
-
 before_script:
   - gem update --system
   - gem install selenium-webdriver
