@@ -3,8 +3,9 @@ scala:
    - 2.11.7
 jdk:
   - oraclejdk8
-before_install:
+before_script:
   - gem update --system
+  - gem install selenium-webdriver
   - gem install sass
 script:
   - sbt ++$TRAVIS_SCALA_VERSION test
