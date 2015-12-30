@@ -1,9 +1,19 @@
 language: scala
+
 scala:
    - 2.11.7
+
 jdk:
   - oraclejdk8
-install:
+
+addons:
+  hosts:
+    - localhost
+
+before_script:
+  - gem update --system
+  - gem install selenium-webdriver
   - gem install sass
+
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION compile
+  - sbt ++$TRAVIS_SCALA_VERSION test
