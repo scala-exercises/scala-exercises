@@ -65,7 +65,7 @@ lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file(
   .settings(commonSettings: _*)
   .settings(
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "2.2.4",
+//        "org.scalatest" %% "scalatest" % "2.2.4",
         "org.scalaz" %% "scalaz-core" % "7.1.4"
       )
     ).
@@ -79,7 +79,7 @@ lazy val scalaExercisesContent = (project in file("scala-exercises-content"))
   .settings(commonSettings: _*)
   .settings(
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "2.2.4",
+//        "org.scalatest" %% "scalatest" % "2.2.4",
         "org.scalaz" %% "scalaz-core" % "7.1.4"
       ),
       unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala"
