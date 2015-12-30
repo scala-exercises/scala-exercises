@@ -6,9 +6,12 @@ import scalariform.formatter.preferences._
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
 
+def compile   (deps: ModuleID*) = deps map (_ % "compile")
+def test      (deps: ModuleID*) = deps map (_ % "test")
+
 lazy val commonSettings = Seq(
     scalaVersion := "2.11.7",
-    wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
+    wartremoverWarnings in Compile ++= Warts.unsafe
   ) ++ scalariformSettings ++ Seq(
     ScalariformKeys.preferences in Compile := formattingPreferences,
     ScalariformKeys.preferences in Test    := formattingPreferences
@@ -33,14 +36,14 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
-    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-    libraryDependencies <++= (scalaVersion)(scalaVersion => Seq(
+    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases")
+  .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
+    compile(
       filters,
       jdbc,
       evolutions,
       cache,
       ws,
-      specs2 % Test,
       "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
@@ -54,10 +57,11 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
       "com.tristanhunt" %% "knockoff" % "0.8.3",
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
-      "com.toddfast.typeconverter" % "typeconverter" % "1.0",
-      "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test"
-    ))
-  )
+      "com.toddfast.typeconverter" % "typeconverter" % "1.0") ++
+    test(
+      specs2,
+      "org.typelevel" %% "scalaz-specs2" % "0.3.0")
+  ))
 
 
 lazy val scalaExercisesClient = (project in file("scala-exercises-client"))
@@ -84,8 +88,8 @@ lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file(
   .jsConfigure(_ enablePlugins ScalaJSPlay)
   .jsSettings(sourceMapsBase := baseDirectory.value / "..")
   .settings(commonSettings: _*)
-  .settings(
-    libraryDependencies ++= Seq(
+  .settings(libraryDependencies ++=
+    compile(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % "7.1.4"
     )
@@ -98,10 +102,11 @@ lazy val scalaExercisesContent = (project in file("scala-exercises-content"))
   .dependsOn(scalaExercisesSharedJvm)
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies ++= Seq(
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala")
+  .settings(libraryDependencies ++=
+    compile(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % "7.1.4"
-    ),
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala"
+    )
   )
 
