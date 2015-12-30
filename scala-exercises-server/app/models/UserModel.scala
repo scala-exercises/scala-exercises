@@ -34,7 +34,7 @@ trait UserStore {
 object UserSlickStore extends UserStore {
 
   import play.api.db.DB
-  import slick.driver.PostgresDriver.api._
+  import slick.driver.H2Driver.api._
 
   class Users(tag: Tag) extends Table[User](tag, "users"){
     def id   = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
