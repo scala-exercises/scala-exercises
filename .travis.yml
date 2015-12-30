@@ -11,4 +11,4 @@ before_script:
   - gem install sass
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION -Djava.net.preferIPv4Stack=true test
+  - sbt ++$TRAVIS_SCALA_VERSION test

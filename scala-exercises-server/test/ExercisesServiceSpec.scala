@@ -14,9 +14,6 @@ class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
   "ExercisesService" should {
 
     "return at least one section via classpath discovery" in {
-
-      println("----------> " + java.net.InetAddress.getLocalHost.getHostName)
-
       val sections = ExercisesService.sections
       sections must not be empty
       sections.find(_.title == expectedTestSection) must beSome

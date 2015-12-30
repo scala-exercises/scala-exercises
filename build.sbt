@@ -1,6 +1,8 @@
 import play.PlayImport._
 import sbt.Project.projectToRef
 
+fork in Test := false
+
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaV = "2.11.7"
 
