@@ -59,6 +59,9 @@
       "solutions": [
         "Seq(\"olleh\", \"dlrow\")"
       ],
+      "alternatives": [
+        "List(\"olleh\", \"dlrow\")"
+      ],
       "postparagraph": ""
     }
   ]
