@@ -121,7 +121,7 @@
     },
     {
       "preparagraph": "Lists can be *reduced* with a mathematical operation",
-      "code": "val a = List(1, 3, 5, 7)\n// note the two _s below indicate the first and second args respectively\na.reduceLeft(_ + _) should equal(__)\na.reduceLeft(_ * _) should equal(__)",
+      "code": "val a = List(1, 3, 5, 7)\na.reduceLeft(_ + _) should equal(__)\na.reduceLeft(_ * _) should equal(__)",
       "solutions": [
         "16",
         "105"
