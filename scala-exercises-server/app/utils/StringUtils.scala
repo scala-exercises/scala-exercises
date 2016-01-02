@@ -13,8 +13,11 @@ object StringUtils {
     )
   }
 
+  def camelCaseWithoutSpaces(s: String): String = s.replaceAll("""\s""", "")
+
   implicit class CamelCaseString(s: String) {
     def humanizeCamelCase: String = StringUtils.camelCaseToHumanReadable(s)
+    def removeSpaces: String = StringUtils.camelCaseWithoutSpaces(s)
   }
 
 }
