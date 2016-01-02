@@ -1,8 +1,7 @@
 @(section: Section, category: Category, exercise: Exercise)(implicit request: RequestHeader)
-@import com.tristanhunt.knockoff.DefaultDiscounter._
+@import utils.StringUtils._
 
-
-  <div class="exercise">
+  <div class="exercise" data-section="@section.title" data-category="@category.title.removeSpaces" data-exercise="@exercise.method.getOrElse("")">
 
     @(Html(exercise.description.getOrElse("")))
 
@@ -13,9 +12,9 @@
       </div>
 
       <div class="compile">
-        <button type="button" class="btn btn-default btn-xs">Compile</button>
+        @*<button type="button" class="btn btn-default btn-xs">Compile</button>*@
       </div>
-      <pre><code>@exercise.code</code></pre>
+      <pre class="exercise-pre"><code class="exercise-code">@exercise.code</code></pre>
     </div>
 
     @(Html(exercise.explanation.getOrElse("")))
