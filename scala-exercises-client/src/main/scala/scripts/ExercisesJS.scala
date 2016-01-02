@@ -5,14 +5,9 @@ import messages.EvaluationRequest
 import org.scalajs.dom.ext.{ AjaxException, Ajax }
 import common.ExtAjax._
 import upickle._
-
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
-import org.scalajs.jquery.JQueryAjaxSettings
-
-import scala.scalajs.js.Dynamic._
-import scala.scalajs.js.annotation.JSExport
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object ExercisesJS extends js.JSApp {
