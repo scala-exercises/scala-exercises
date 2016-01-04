@@ -1,2 +1,12 @@
 // Functions
 // -----------------------------------------------------
+
+
+@-webkit-keyframes underliner {
+  from{
+    border-bottom: 1px solid $input-underline;
+  }
+  to{
+    border-bottom: 1px solid $gray-lighter;
+  }
+}
