@@ -9,10 +9,11 @@ onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) 
 
 lazy val Exercise = config("exercise") extend(Runtime) describedAs("Exercise dependencies.")
 
-lazy val exerciseSettings: Seq[Setting[_]] = Seq(
-  ivyConfigurations += Exercise,
-  classpathConfiguration in Runtime := Exercise
-)
+lazy val exerciseSettings: Seq[Setting[_]] =
+  inConfig(Exercise)(Defaults.configSettings) ++ Seq(
+    ivyConfigurations += Exercise,
+    classpathConfiguration in Runtime := Exercise
+  )
 
 def compile   (deps: ModuleID*) = deps map (_ % "compile")
 def exercise  (deps: ModuleID*) = deps map (_ % "exercise")
@@ -115,7 +116,9 @@ lazy val scalaExercisesContent = (project in file("scala-exercises-content"))
   .dependsOn(scalaExercisesSharedJvm)
   .settings(commonSettings: _*)
   .settings(
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala")
+    // TODO: leverage a plugin instead of this trick
+    unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "exercises",
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "exercises")
   .settings(libraryDependencies ++=
     compile(
       "org.scalatest" %% "scalatest" % "2.2.4",

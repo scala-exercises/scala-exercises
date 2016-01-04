@@ -7,4 +7,3 @@ import shared.SectionPkg
   * Color:#0f7e8c
   */
 package object stdlib extends SectionPkg
-
