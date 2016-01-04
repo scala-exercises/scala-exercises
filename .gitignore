@@ -33,3 +33,6 @@ scalajvm/upload/*
 bin/
 .ensime
 .ensime_cache
+
+# OSX
+.DS_Store
