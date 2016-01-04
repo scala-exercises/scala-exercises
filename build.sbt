@@ -1,13 +1,23 @@
 import play.PlayImport._
 import sbt.Project.projectToRef
 import scalariform.formatter.preferences._
+import NativePackagerHelper._
 
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
 
+lazy val Exercise = config("exercise") extend(Runtime) describedAs("Exercise dependencies.")
+
+lazy val exerciseSettings: Seq[Setting[_]] = Seq(
+  ivyConfigurations += Exercise,
+  classpathConfiguration in Runtime := Exercise
+)
+
 def compile   (deps: ModuleID*) = deps map (_ % "compile")
+def exercise  (deps: ModuleID*) = deps map (_ % "exercise")
 def test      (deps: ModuleID*) = deps map (_ % "test")
+
 
 lazy val commonSettings = Seq(
     scalaVersion := "2.11.7",
@@ -26,12 +36,15 @@ lazy val formattingPreferences = FormattingPreferences()
   .setPreference(MultilineScaladocCommentsStartOnFirstLine,   true)
   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 
+
+
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(scalaExercisesSharedJvm, scalaExercisesContent)
+  .dependsOn(scalaExercisesSharedJvm, scalaExercisesContent % "exercise")
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
+  .settings(exerciseSettings: _*)
   .settings(
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
