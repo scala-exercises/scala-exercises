@@ -98,12 +98,12 @@
     },
     {
       "preparagraph": "Functions over lists can use _ as shorthand",
-      "code": "val a = List(1, 2, 3)\n\na.map {_ * 2} should equal(List(__, __, __))\n\na.filter {_ % 2 == 0} should equal(List(__))",
+      "code": "val a = List(1, 2, 3)\n\na.map {_ * 2} should equal(List(__, __, __))\n\na.filter {_ % 6 == 0} should equal(List(__))",
       "solutions": [
         "2",
         "4",
         "6",
-        "2"
+        "6"
       ],
       "postparagraph": ""
     },
