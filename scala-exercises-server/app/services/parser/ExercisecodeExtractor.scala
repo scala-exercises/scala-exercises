@@ -1,7 +1,6 @@
 package services.parser
 
-import models.{ Section, Category, Exercise }
-
+import shared.{ Section, Exercise, Category }
 import scala.annotation.tailrec
 import scalaz._, Scalaz._
 

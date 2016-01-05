@@ -1,4 +1,4 @@
-@(status: Int, section: Section)(implicit request: RequestHeader)
+@(status: Int, section: shared.Section)(implicit request: RequestHeader)
 
 @defining( 100*status/section.categories.size ) { percent =>
   <div class="content-progres-bar">

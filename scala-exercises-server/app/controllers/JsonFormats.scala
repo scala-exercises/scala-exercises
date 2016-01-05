@@ -1,6 +1,6 @@
 package controllers
 
-import models.{ ExerciseEvaluation, Section, Category, Exercise }
+import shared.{ ExerciseEvaluation, Section, Category, Exercise }
 import play.api.libs.json.{ Reads, Json, Writes }
 
 trait JsonFormats {

@@ -1,7 +1,9 @@
 package shared
 
+/** A section representing a lib or lang. Ej. stdlib, cats, scalaz...
+  */
 case class Section(
-    id: String,
-    name: String,
+    title: String,
+    description: String,
     color: String,
-    description: String)
+    categories: List[String] = Nil)

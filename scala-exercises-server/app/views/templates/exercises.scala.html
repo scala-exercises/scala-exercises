@@ -1,5 +1,6 @@
-@(section: Section, category: Category)(implicit request: RequestHeader)
+@(section: shared.Section, category: shared.Category)(implicit request: RequestHeader)
 @import play.api.Play
+@import utils.StringUtils._
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +24,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body data-section="@section.title" data-category="@category.title.removeSpaces">
 
 
       <!-- Modal -->

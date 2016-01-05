@@ -4,11 +4,10 @@ import java.io.File
 import java.net.URLClassLoader
 
 import com.toddfast.util.convert.TypeConverter
-import models.{ ExerciseEvaluation, Section, Category }
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
 import play.api.Play
 import shared.ExerciseRunner.ExerciseResult
-import shared.{ SectionPkg, Exercises }
+import shared.{ ExerciseEvaluation, SectionPkg, Exercises, Section, Category }
 
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
