@@ -39,7 +39,7 @@ object ExercisesService {
   }
 
   private[this] def simpleClassName(classInfo: ClassInfo) =
-    Class.forName(classInfo.name).asInstanceOf[Class[_ <: Exercises]].getSimpleName
+    Class.forName(classInfo.name).asInstanceOf[Class[_ <: exercise.Category]].getSimpleName
 
   private[this] def packageObjectSource(classInfo: ClassInfo) = {
     val exerciseClass = Class.forName(classInfo.name)
@@ -70,19 +70,21 @@ object ExercisesService {
     * @see exercises.stdlib
     */
   def sections: List[Section] = for {
-    subclass ← subclassesOf[SectionPkg]
+    subclass ← subclassesOf[exercise.Section]
     section ← ExerciseCodeExtractor.buildSection(packageObjectSource(subclass)).toList
-    categories = subclassesOf[Exercises] filter (e ⇒ sources(e) contains s"package exercises.${section.title}")
+    categories = subclassesOf[exercise.Category] filter (e ⇒ sources(e) contains s"package exercises.${section.title}")
     exerciseClasses = categories map (c ⇒ Class.forName(c.name).getSimpleName)
-  } yield section.copy(categories = exerciseClasses)
+  } yield {
+    section.copy(categories = exerciseClasses)
+  }
 
   /** Scans the classpath returning a list of categories containing exercises for a given section
     */
   def category(section: String, category: String): List[Category] = for {
-    pkg ← subclassesOf[SectionPkg]
+    pkg ← subclassesOf[exercise.Section]
     sct ← ExerciseCodeExtractor.buildSection(packageObjectSource(pkg)).toList
     if sct.title == section
-    subclass ← subclassesOf[Exercises]
+    subclass ← subclassesOf[exercise.Category]
     if simpleClassName(subclass) == category
     category ← ExerciseCodeExtractor.buildCategory(sources(subclass))
   } yield category
@@ -92,10 +94,10 @@ object ExercisesService {
     */
   def evaluate(evaluation: ExerciseEvaluation): ExerciseResult[Unit] = {
     val evalResult = for {
-      pkg ← subclassesOf[SectionPkg]
+      pkg ← subclassesOf[exercise.Section]
       sct ← ExerciseCodeExtractor.buildSection(packageObjectSource(pkg)).toList
       if sct.title == evaluation.section
-      subclass ← subclassesOf[Exercises]
+      subclass ← subclassesOf[exercise.Category]
       if simpleClassName(subclass) == evaluation.category
     } yield evaluate(evaluation, subclass)
     evalResult.headOption match {

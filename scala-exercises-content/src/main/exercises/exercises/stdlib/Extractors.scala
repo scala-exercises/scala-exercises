@@ -2,7 +2,7 @@ package exercises.stdlib
 
 import org.scalatest._
 import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner, Exercises }
+import shared.{ ExerciseRunner }
 
 /** In Scala, patterns can be defined independently of case classes. To this end, a method named <code>unapply</code> is defined to yield a so-called extractor.
   *
@@ -43,7 +43,7 @@ import shared.{ ExerciseRunner, Exercises }
   * Sometimes, the number of sub-values is fixed and we would like to return a sequence. For this reason, you can also define patterns through <code>unapplySeq</code>. The last sub-value type <code>Tn</code> has to be <code>Seq[S]</code>. This mechanism is used for instance in pattern <code>case List(x1, ..., xn)</code>.
   *
   */
-class Extractors extends FlatSpec with Matchers with Exercises {
+class Extractors extends FlatSpec with Matchers with exercise.Category {
 
   /** When you create a case class, it automatically can be used with pattern matching since it has an extractor:
     */
