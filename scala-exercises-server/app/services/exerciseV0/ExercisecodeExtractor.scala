@@ -1,4 +1,4 @@
-package services.parser
+package services.exerciseV0
 
 import shared.{ Section, Exercise, Category }
 import scala.annotation.tailrec

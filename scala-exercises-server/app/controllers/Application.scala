@@ -4,7 +4,7 @@ import java.util.UUID
 
 import services.UserServiceImpl
 import services.messages.GetUserByLoginRequest
-import services.parser.ExercisesService
+import services.ExercisesService
 import utils.OAuth2
 import play.api._
 import play.api.mvc._
@@ -54,4 +54,3 @@ object Application extends Controller {
   }
 
 }
-
