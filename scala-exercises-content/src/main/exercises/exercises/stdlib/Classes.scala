@@ -1,8 +1,6 @@
 package exercises.stdlib
 
 import org.scalatest._
-import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner }
 
 /** Classes in Scala are static templates that can be instantiated into many objects at runtime. Here is a class definition which defines a class Point:
   *

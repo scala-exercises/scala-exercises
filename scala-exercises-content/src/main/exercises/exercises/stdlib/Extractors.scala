@@ -1,8 +1,6 @@
 package exercises.stdlib
 
 import org.scalatest._
-import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner }
 
 /** In Scala, patterns can be defined independently of case classes. To this end, a method named <code>unapply</code> is defined to yield a so-called extractor.
   *
