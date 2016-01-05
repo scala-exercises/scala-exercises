@@ -1,8 +1,6 @@
 package exercises.stdlib
 
 import org.scalatest._
-import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner }
 
 /**
   */

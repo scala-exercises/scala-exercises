@@ -112,8 +112,7 @@ lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file(
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compile(
-      "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalatest" %% "scalatest" % "2.2.4"
     )
   )
 
@@ -124,7 +123,11 @@ lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 // V0 (*insert-better-name-here-pls*) style exercise definition traits etc.
 lazy val scalaExerciseV0Definitions = (project in file("scala-exercises-v0def"))
   .settings(commonSettings: _*)
-
+  .settings(libraryDependencies ++=
+    compile(
+      "org.scalaz" %% "scalaz-core" % "7.1.4"
+    )
+  )
 
 // Locally bundled exercise content projects
 

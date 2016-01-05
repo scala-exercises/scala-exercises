@@ -1,7 +1,7 @@
 package services
 
 import models.{ ExerciseEvaluation, Section, Category }
-import shared.ExerciseRunner.ExerciseResult
+import scalaz.\/
 
 object ExercisesService {
 
@@ -21,7 +21,7 @@ object ExercisesService {
   /** Evaluates an exercise in a given section and category and returns a disjunction
     * containing either an exception or Unit representing success
     */
-  def evaluate(evaluation: ExerciseEvaluation): ExerciseResult[Unit] =
+  def evaluate(evaluation: ExerciseEvaluation): Throwable \/ Unit =
     exerciseV0.ExercisesService.evaluate(evaluation)
 
 }

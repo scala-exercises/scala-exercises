@@ -7,7 +7,6 @@ import com.toddfast.util.convert.TypeConverter
 import models.{ ExerciseEvaluation, Section, Category }
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
 import play.api.Play
-import shared.ExerciseRunner.ExerciseResult
 
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
@@ -49,7 +48,7 @@ object ExercisesService {
     sources
   }
 
-  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): ExerciseResult[Unit] = {
+  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): Throwable \/ Unit = {
     val targetCategoryInstance = Class.forName(classInfo.name).newInstance()
     val mirror = runtimeMirror(getClass.getClassLoader)
     val targetMirror = mirror.reflect(targetCategoryInstance)
@@ -61,7 +60,7 @@ object ExercisesService {
         val argClass = mirror.runtimeClass(symbol.typeSignature.dealias)
         TypeConverter.convert(argClass, arg)
     }
-    methodMirror.apply(argValues: _*).asInstanceOf[ExerciseResult[Unit]]
+    methodMirror.apply(argValues: _*).asInstanceOf[Throwable \/ Unit]
   }
 
   /** Scans the classpath returning a list of all Sections found
@@ -92,7 +91,7 @@ object ExercisesService {
   /** Evaluates an exercise in a given section and category and returns a disjunction
     * containing either an exception or Unit representing success
     */
-  def evaluate(evaluation: ExerciseEvaluation): ExerciseResult[Unit] = {
+  def evaluate(evaluation: ExerciseEvaluation): Throwable \/ Unit = {
     val evalResult = for {
       pkg ← subclassesOf[exercise.Section]
       sct ← ExerciseCodeExtractor.buildSection(packageObjectSource(pkg)).toList
