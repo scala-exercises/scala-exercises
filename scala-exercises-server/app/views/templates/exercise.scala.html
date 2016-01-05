@@ -1,7 +1,6 @@
-@(section: Section, category: Category, exercise: Exercise)(implicit request: RequestHeader)
-@import utils.StringUtils._
+@(section: shared.Section, category: shared.Category, exercise: shared.Exercise)(implicit request: RequestHeader)
 
-  <div class="exercise" data-section="@section.title" data-category="@category.title.removeSpaces" data-exercise="@exercise.method.getOrElse("")">
+  <div class="exercise" data-method="@exercise.method.getOrElse("")">
 
     @(Html(exercise.description.getOrElse("")))
 
