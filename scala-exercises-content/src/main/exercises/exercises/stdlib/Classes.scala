@@ -2,7 +2,7 @@ package exercises.stdlib
 
 import org.scalatest._
 import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner, Exercises }
+import shared.{ ExerciseRunner }
 
 /** Classes in Scala are static templates that can be instantiated into many objects at runtime. Here is a class definition which defines a class Point:
   *
@@ -49,7 +49,7 @@ import shared.{ ExerciseRunner, Exercises }
   * (11, 12)
   * }}}
   */
-class Classes extends FlatSpec with Matchers with Exercises {
+class Classes extends FlatSpec with Matchers with exercise.Category {
 
   /** You can define class with <code>var</code> or <code>val</code> parameters.  <code>val</code> parameters in class definition define getter:
     *

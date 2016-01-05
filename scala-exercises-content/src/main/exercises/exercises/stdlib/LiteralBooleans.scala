@@ -2,11 +2,11 @@ package exercises.stdlib
 
 import org.scalatest._
 import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner, Exercises }
+import shared.{ ExerciseRunner }
 
 /**
   */
-class LiteralBooleans extends FlatSpec with Matchers with Exercises {
+class LiteralBooleans extends FlatSpec with Matchers with exercise.Category {
 
   /** Boolean literals are either true or false, using the true or false keyword
     */
