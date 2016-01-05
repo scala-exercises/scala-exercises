@@ -60,7 +60,7 @@
         "Seq(\"olleh\", \"dlrow\")"
       ],
       "alternatives": [
-        "List(\"olleh\", \"dlrow\")"
+        "^(List|Seq)\\( *\"olleh\" *, *\"dlrow\" *\\)$"
       ],
       "postparagraph": ""
     }
