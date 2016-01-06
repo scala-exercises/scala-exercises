@@ -158,14 +158,14 @@
     <div id="wrapper">
 
       <section id="sidebar">
-        @templates.progress(1, section)
+        @templates.widgets.progress(1, section)
         <ul>
           <li>
             <h3>Categories</h3>
           </li>
 
           @for((cat,index) <- section.categories.zipWithIndex) {
-            @templates.category(index, cat, section.color)
+            @templates.section.categoryRow(index, cat, section.color)
           }
 
         </ul>
@@ -189,7 +189,7 @@
                 @(Html(category.description.getOrElse("")))
 
                 @for(exercise <- category.exercises) {
-                  @templates.exercise(section, category, exercise)
+                  @templates.section.exercise(section, category, exercise)
                 }
 
               </div>
