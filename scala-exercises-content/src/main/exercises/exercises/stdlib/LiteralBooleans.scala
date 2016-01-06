@@ -27,4 +27,3 @@ class LiteralBooleans extends FlatSpec with Matchers with Exercises {
   }(∞)
 
 }
-
