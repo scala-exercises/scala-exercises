@@ -1,16 +1,16 @@
 package models
 
-/** A section representing a lib or lang. Ej. stdlib, cats, scalaz...
+/** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
   */
-case class Section(
+case class Library(
   title: String,
   description: String,
   color: String,
-  categories: List[String] = Nil)
+  sections: List[String] = Nil)
 
-/** A category. For example `Extractors`
+/** A section in a library. For example `Extractors`
   */
-case class Category(
+case class Section(
   title: String,
   description: Option[String] = None,
   exercises: List[Exercise] = Nil)
@@ -27,7 +27,7 @@ case class Exercise(
 /** Input params necessary to evaluate an exercise
   */
 case class ExerciseEvaluation(
+  library: String,
   section: String,
-  category: String,
   method: String,
   args: List[String])

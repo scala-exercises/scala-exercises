@@ -1,9 +1,9 @@
-@(index: Int, category: String, color: String)(implicit request: RequestHeader)
+@(index: Int, sectionName: String, color: String)(implicit request: RequestHeader)
 @import utils.StringUtils._
 
 <li class="actives">
   <span class="bullet-active" style="background-color: @color;"></span>
   @defining( 1+index ) { number =>
-    <a href="@category">@number. @category.humanizeCamelCase</a>
+    <a href="@sectionName">@number. @sectionName.humanizeCamelCase</a>
   }
 </li>

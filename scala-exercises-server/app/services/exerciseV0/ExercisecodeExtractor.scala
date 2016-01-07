@@ -1,11 +1,11 @@
 package services.exerciseV0
 
-import models.{ Section, Category, Exercise }
+import models._
 
 import scala.annotation.tailrec
 import scalaz._, Scalaz._
 
-/** Parses source code extracting section, categories and exercise code.
+/** Parses source code extracting libraries, sections, and exercise code.
   * This should provably be rewritten at some point with Parser Combinators or a more robust solution than
   * top to botton regex matching
   */
@@ -35,7 +35,7 @@ object ExerciseCodeExtractor {
 
   private[this] val codeBlockEnd = """</code></pre>"""
 
-  private[this] case class CategoryBuilder(
+  private[this] case class SectionBuilder(
       title: Option[String] = None,
       description: Option[String] = None,
       currentExercise: Option[Exercise] = None,
@@ -45,10 +45,10 @@ object ExerciseCodeExtractor {
     def categoryTitle(title: String) =
       copy(title = title.some)
 
-    def addToCategoryDescription(line: String) =
+    def addToSectionDescription(line: String) =
       copy(description = description.map(_.concat(descLineSep)) |+| line.some)
 
-    def addCodeToCategoryDescription(line: String) =
+    def addCodeToSectionDescription(line: String) =
       copy(description = description.map(_.concat(codeLineSep)) |+| line.some)
 
     def setCurrentExercise(exercise: Exercise) =
@@ -82,8 +82,8 @@ object ExerciseCodeExtractor {
 
     def setState(state: ParserState) = copy(state = state)
 
-    def build: Option[Category] = (title, description, exercises) match {
-      case (Some(t), Some(d), head :: tail) ⇒ Some(Category(t, Some(d), head :: tail))
+    def build: Option[Section] = (title, description, exercises) match {
+      case (Some(t), Some(d), head :: tail) ⇒ Some(Section(t, Some(d), head :: tail))
       case _                                ⇒ None
     }
 
@@ -91,7 +91,7 @@ object ExerciseCodeExtractor {
 
   private[this] val commentStart = "\\s*\\/\\*\\*(.*)".r
   private[this] val pkgStarts = "\\s*package\\s*object\\s+(\\w+).*".r
-  private[this] val classStarts = "\\s*class\\s+(\\w+)\\s+extends.*exercise\\.Category.*".r
+  private[this] val classStarts = "\\s*class\\s+(\\w+)\\s+extends.*exercise\\.Section.*".r
   private[this] val inComment = """(?s)\s*\*([^\n]+[^\/])$""".r
   private[this] val inCommentEmpty = """(?s)\s*\*(\s*)$""".r
   private[this] val codeInCommentStart = """(?s)\s*\*(\s*)\{\{\{$""".r
@@ -103,28 +103,28 @@ object ExerciseCodeExtractor {
 
   import utils.StringUtils._
 
-  /** Recursively walks the source lines building a Category and it's all contained exercises
+  /** Recursively walks the source lines building a Section and it's all contained exercises
     */
-  def buildCategory(sources: List[String]): Option[Category] = {
+  def buildSection(sources: List[String]): Option[Section] = {
     @tailrec
-    def loop(remaining: List[String], builder: CategoryBuilder): CategoryBuilder =
+    def loop(remaining: List[String], builder: SectionBuilder): SectionBuilder =
       remaining match {
         case Nil ⇒ builder
         case h :: t ⇒
 
           val modBuilder = (h, builder.state) match {
             case (commentStart(startLine), DefiningClass) ⇒
-              builder.addToCategoryDescription(startLine)
+              builder.addToSectionDescription(startLine)
             case (codeInCommentStart(codeLine), DefiningClass) ⇒
-              builder.addCodeToCategoryDescription(codeBlockStart).setState(AccCodeInDescription)
+              builder.addCodeToSectionDescription(codeBlockStart).setState(AccCodeInDescription)
             case (codeInCommentEnd(codeLine), AccCodeInDescription) ⇒
-              builder.addToCategoryDescription(codeBlockEnd).setState(DefiningClass)
+              builder.addToSectionDescription(codeBlockEnd).setState(DefiningClass)
             case (inComment(codeLine), AccCodeInDescription) ⇒
-              builder.addCodeToCategoryDescription(codeLine)
+              builder.addCodeToSectionDescription(codeLine)
             case (inCommentEmpty(comment), AccCodeInDescription) ⇒
-              builder.addToCategoryDescription(codeLineSep)
+              builder.addToSectionDescription(codeLineSep)
             case (inComment(comment), DefiningClass) ⇒
-              builder.addToCategoryDescription(comment)
+              builder.addToSectionDescription(comment)
             case (classStarts(className), DefiningClass) ⇒
               builder.categoryTitle(className.humanizeCamelCase).setState(AccumulatingExercises)
             case (commentStart(comment), AccumulatingExercises) ⇒
@@ -163,28 +163,28 @@ object ExerciseCodeExtractor {
           }
           loop(t, modBuilder)
       }
-    loop(sources, CategoryBuilder()).build
+    loop(sources, SectionBuilder()).build
   }
 
   /** Recursive walks a package object sources parsing section information
     */
-  def buildSection(sources: List[String]): Option[Section] = {
+  def buildLibrary(sources: List[String]): Option[Library] = {
     @tailrec
-    def loop(remaining: List[String], maybeSection: Option[Section] = None): Option[Section] =
+    def loop(remaining: List[String], maybeLibrary: Option[Library] = None): Option[Library] =
       remaining match {
-        case Nil ⇒ maybeSection
+        case Nil ⇒ maybeLibrary
         case h :: t ⇒
-          val modSection = (h, maybeSection) match {
+          val modSection = (h, maybeLibrary) match {
             case (commentStart(startLine), None) ⇒
-              Section(title = "", color = "", description = startLine).some
-            case (cologPkg(color), Some(section)) ⇒
-              section.copy(color = color).some
-            case (inComment(comment), Some(section)) ⇒
-              section.copy(description = section.description.concat(comment)).some
-            case (pkgStarts(pkgName), Some(section)) ⇒
-              section.copy(title = pkgName).some
-            case (_, Some(section)) ⇒
-              section.some
+              Library(title = "", color = "", description = startLine).some
+            case (cologPkg(color), Some(library)) ⇒
+              library.copy(color = color).some
+            case (inComment(comment), Some(library)) ⇒
+              library.copy(description = library.description.concat(comment)).some
+            case (pkgStarts(pkgName), Some(library)) ⇒
+              library.copy(title = pkgName).some
+            case (_, Some(library)) ⇒
+              library.some
             case _ ⇒ None
           }
           loop(t, modSection)
