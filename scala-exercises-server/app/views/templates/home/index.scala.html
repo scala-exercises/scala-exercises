@@ -45,7 +45,7 @@
           <ul class="nav navbar-nav navbar-right">
 
             @user match {
-              case Some(u) => { @templates.logged(u) }
+              case Some(u) => { @templates.home.userInfo(u) }
               case None => { <li><a href="@redirectUrl">Login with GitHub</a></li> }
             }
 
@@ -80,7 +80,7 @@
           <div class="technologies-list">
 
             @for(section <- sections) {
-              @templates.section(section)
+              @templates.home.section(section)
             }
 
           </div>

@@ -7,18 +7,7 @@ import NativePackagerHelper._
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) compose (onLoad in Global).value
 
-lazy val Exercise = config("exercise") extend(Runtime) describedAs("Exercise dependencies.")
-
-lazy val exerciseSettings: Seq[Setting[_]] =
-  inConfig(Exercise)(Defaults.configSettings) ++ Seq(
-    ivyConfigurations += Exercise,
-    classpathConfiguration in Runtime := Exercise
-  )
-
-def compile   (deps: ModuleID*) = deps map (_ % "compile")
-def exercise  (deps: ModuleID*) = deps map (_ % "exercise")
-def test      (deps: ModuleID*) = deps map (_ % "test")
-
+// Common settings
 
 lazy val commonSettings = Seq(
     scalaVersion := "2.11.7",
@@ -38,11 +27,27 @@ lazy val formattingPreferences = FormattingPreferences()
   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 
 
+// Client and Server projects
+
+lazy val Exercise = config("exercise") extend(Runtime) describedAs("Exercise dependencies.")
+
+lazy val exerciseSettings: Seq[Setting[_]] =
+  inConfig(Exercise)(Defaults.configSettings) ++ Seq(
+    ivyConfigurations += Exercise,
+    classpathConfiguration in Runtime := Exercise
+  )
+
+def compile   (deps: ModuleID*) = deps map (_ % "compile")
+def exercise  (deps: ModuleID*) = deps map (_ % "exercise")
+def test      (deps: ModuleID*) = deps map (_ % "test")
 
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(scalaExercisesSharedJvm, scalaExercisesContent % "exercise")
+  .dependsOn(
+    scalaExercisesSharedJvm,
+    scalaExerciseV0Definitions,
+    scalaExercisesContent % "exercise")
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(exerciseSettings: _*)
@@ -98,22 +103,37 @@ lazy val scalaExercisesClient = (project in file("scala-exercises-client"))
     )
   )
 
+
+// Code shared by both the client and server projects
+
 lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file("scala-exercises-shared"))
   .jsConfigure(_ enablePlugins ScalaJSPlay)
   .jsSettings(sourceMapsBase := baseDirectory.value / "..")
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compile(
-      "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalatest" %% "scalatest" % "2.2.4"
     )
   )
 
 lazy val scalaExercisesSharedJvm = scalaExercisesShared.jvm
 lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 
+
+// V0 (*insert-better-name-here-pls*) style exercise definition traits etc.
+lazy val scalaExerciseV0Definitions = (project in file("scala-exercises-v0def"))
+  .settings(commonSettings: _*)
+  .settings(libraryDependencies ++=
+    compile(
+      "org.scalaz" %% "scalaz-core" % "7.1.4"
+    )
+  )
+
+// Locally bundled exercise content projects
+
+
 lazy val scalaExercisesContent = (project in file("scala-exercises-content"))
-  .dependsOn(scalaExercisesSharedJvm)
+  .dependsOn(scalaExercisesSharedJvm, scalaExerciseV0Definitions)
   .settings(commonSettings: _*)
   .settings(
     // TODO: leverage a plugin instead of this trick
