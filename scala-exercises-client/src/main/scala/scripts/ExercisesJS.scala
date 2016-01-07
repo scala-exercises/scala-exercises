@@ -2,10 +2,8 @@ package scripts
 
 import rx._
 import rx.ops._
-import scripts.ExercisesJS.Model.ClientExercise
 import utils.DomHandler._
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExport
 
 object ExercisesJS extends js.JSApp {
 
@@ -15,20 +13,19 @@ object ExercisesJS extends js.JSApp {
       def isFilled = !arguments.exists(_.isEmpty)
     }
 
-    val exercises = Var(List.empty[ClientExercise])
+    val exercises = Var(methodsList.flatMap(addExercise(_)).toList)
 
-    exercises.foreach(e ⇒ println(e)) //Observer
+    exercises.foreach(e ⇒  println(e)) //Observer
 
-    def initExercises() = methodsList.foreach(e ⇒ exercises() = ClientExercise(e, inputsMethod(e)) +: exercises())
+    def addExercise(method: Option[String], args: Seq[Option[String]] = Nil): Option[ClientExercise] = method.map(m => ClientExercise(m, args.map(_.getOrElse(""))))
 
-    def updateExcercise(exercise: ClientExercise) = {
-      val pos = exercises().indexWhere(e ⇒ e.method == exercise.method)
-      exercises() = exercises().updated(pos, exercise)
-    }
+    def updateExcercise(method: Option[String], args: Seq[Option[String]]) = addExercise(method, args).map(e => exercises() = exercises().updated(position(e), e))
+
+    def position(e: ClientExercise): Int = exercises().indexWhere(_.method == e.method)
 
   }
 
-  def inputChanged(method: String, args: Seq[String]): Unit = Model.updateExcercise(ClientExercise(method, args))
+  def inputChanged(method: Option[String], args: Seq[Option[String]]): Unit = Model.updateExcercise(method, args)
 
   def main(): Unit = {
 
