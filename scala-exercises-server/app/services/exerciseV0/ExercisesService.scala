@@ -71,10 +71,10 @@ object ExercisesService {
   def libraries: List[Library] = for {
     subclass ← subclassesOf[exercise.Library]
     library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(subclass)).toList
-    sections = subclassesOf[exercise.Section] filter (e ⇒ sources(e) contains s"package exercises.${library.title}")
+    sections = subclassesOf[exercise.Section] filter (e ⇒ sources(e) contains s"package exercises.${library.name}")
     sectionNames = sections map (s ⇒ Class.forName(s.name).getSimpleName)
   } yield {
-    library.copy(sections = sectionNames)
+    library.copy(sectionNames = sectionNames)
   }
 
   /** Scans the classpath returning a list of sections containing exercises for a given section
@@ -82,7 +82,7 @@ object ExercisesService {
   def section(libraryName: String, sectionName: String): List[Section] = for {
     pkg ← subclassesOf[exercise.Library]
     library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList
-    if library.title == libraryName
+    if library.name == libraryName
     subclass ← subclassesOf[exercise.Section]
     if simpleClassName(subclass) == sectionName
     section ← ExerciseCodeExtractor.buildSection(sources(subclass))
@@ -94,10 +94,10 @@ object ExercisesService {
   def evaluate(evaluation: ExerciseEvaluation): Throwable \/ Unit = {
     val evalResult = for {
       pkg ← subclassesOf[exercise.Library]
-      sct ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList
-      if sct.title == evaluation.section
+      library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList
+      if library.name == evaluation.libraryName
       subclass ← subclassesOf[exercise.Section]
-      if simpleClassName(subclass) == evaluation.section
+      if simpleClassName(subclass) == evaluation.sectionName
     } yield evaluate(evaluation, subclass)
     evalResult.headOption match {
       case None         ⇒ new RuntimeException("Evaluation produced no results").left[Unit]

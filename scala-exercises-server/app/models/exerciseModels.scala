@@ -3,15 +3,15 @@ package models
 /** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
   */
 case class Library(
-  title: String,
+  name: String,
   description: String,
   color: String,
-  sections: List[String] = Nil)
+  sectionNames: List[String] = Nil)
 
 /** A section in a library. For example `Extractors`
   */
 case class Section(
-  title: String,
+  name: String,
   description: Option[String] = None,
   exercises: List[Exercise] = Nil)
 
@@ -19,7 +19,7 @@ case class Section(
   */
 case class Exercise(
   method: Option[String] = None,
-  title: Option[String] = None,
+  name: Option[String] = None,
   description: Option[String] = None,
   code: Option[String] = None,
   explanation: Option[String] = None)
@@ -27,7 +27,7 @@ case class Exercise(
 /** Input params necessary to evaluate an exercise
   */
 case class ExerciseEvaluation(
-  library: String,
-  section: String,
+  libraryName: String,
+  sectionName: String,
   method: String,
   args: List[String])

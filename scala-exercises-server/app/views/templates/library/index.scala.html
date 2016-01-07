@@ -163,7 +163,7 @@
             <h3>Categories</h3>
           </li>
 
-          @for((section, index) <- library.sections.zipWithIndex) {
+          @for((section, index) <- library.sectionNames.zipWithIndex) {
             @templates.library.sectionRow(index, section, library.color)
           }
 
@@ -176,7 +176,7 @@
             <div class="col-lg-12">
 
               <div class="content-header clearfix">
-                <h2 class="pull-left">@section.title</h2>
+                <h2 class="pull-left">@section.name</h2>
                 <div class="add-exercises pull-right">
                   <button type="button" class="btn btn-default btn-sm">Add exercises</button>
                 </div>

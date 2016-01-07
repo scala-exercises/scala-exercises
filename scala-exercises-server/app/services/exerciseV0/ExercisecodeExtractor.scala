@@ -36,14 +36,14 @@ object ExerciseCodeExtractor {
   private[this] val codeBlockEnd = """</code></pre>"""
 
   private[this] case class SectionBuilder(
-      title: Option[String] = None,
+      name: Option[String] = None,
       description: Option[String] = None,
       currentExercise: Option[Exercise] = None,
       exercises: List[Exercise] = Nil,
       state: ParserState = DefiningClass) {
 
-    def categoryTitle(title: String) =
-      copy(title = title.some)
+    def categoryName(name: String) =
+      copy(name = name.some)
 
     def addToSectionDescription(line: String) =
       copy(description = description.map(_.concat(descLineSep)) |+| line.some)
@@ -62,8 +62,8 @@ object ExerciseCodeExtractor {
     def setExerciseMethod(method: String) =
       copy(currentExercise = currentExercise map (e ⇒ e.copy(method = method.some)))
 
-    def setExerciseTitle(title: String) =
-      copy(currentExercise = currentExercise map (e ⇒ e.copy(title = title.some)))
+    def setExerciseName(name: String) =
+      copy(currentExercise = currentExercise map (e ⇒ e.copy(name = name.some)))
 
     def addToExerciseDesc(line: String) =
       copy(currentExercise = currentExercise map (e ⇒ e.copy(description = e.description.map(_.concat(descLineSep)) |+| line.some)))
@@ -82,7 +82,7 @@ object ExerciseCodeExtractor {
 
     def setState(state: ParserState) = copy(state = state)
 
-    def build: Option[Section] = (title, description, exercises) match {
+    def build: Option[Section] = (name, description, exercises) match {
       case (Some(t), Some(d), head :: tail) ⇒ Some(Section(t, Some(d), head :: tail))
       case _                                ⇒ None
     }
@@ -126,7 +126,7 @@ object ExerciseCodeExtractor {
             case (inComment(comment), DefiningClass) ⇒
               builder.addToSectionDescription(comment)
             case (classStarts(className), DefiningClass) ⇒
-              builder.categoryTitle(className.humanizeCamelCase).setState(AccumulatingExercises)
+              builder.categoryName(className.humanizeCamelCase).setState(AccumulatingExercises)
             case (commentStart(comment), AccumulatingExercises) ⇒
               builder.setCurrentExercise(Exercise()).addToExerciseDesc(comment)
             case (codeInCommentStart(codeLine), AccumulatingExercises) ⇒
@@ -140,7 +140,7 @@ object ExerciseCodeExtractor {
             case (inComment(comment), AccumulatingExercises) ⇒
               builder.addToExerciseDesc(comment)
             case (methodStart(method, _, _, friendlyDes), AccumulatingExercises) ⇒
-              builder.setExerciseTitle(friendlyDes).setExerciseMethod(method).setState(ExtractingCode)
+              builder.setExerciseName(friendlyDes).setExerciseMethod(method).setState(ExtractingCode)
             case (methodEnd(), ExtractingCode) ⇒
               builder.addCurrentExercise.setState(AccumulatingExercises)
             case (commentStart(comment), ExtractingCode) ⇒
@@ -176,13 +176,13 @@ object ExerciseCodeExtractor {
         case h :: t ⇒
           val modSection = (h, maybeLibrary) match {
             case (commentStart(startLine), None) ⇒
-              Library(title = "", color = "", description = startLine).some
+              Library(name = "", color = "", description = startLine).some
             case (cologPkg(color), Some(library)) ⇒
               library.copy(color = color).some
             case (inComment(comment), Some(library)) ⇒
               library.copy(description = library.description.concat(comment)).some
             case (pkgStarts(pkgName), Some(library)) ⇒
-              library.copy(title = pkgName).some
+              library.copy(name = pkgName).some
             case (_, Some(library)) ⇒
               library.some
             case _ ⇒ None

@@ -36,20 +36,20 @@ object Application extends Controller {
   }
 
   def library(libraryName: String) = Action.async { implicit request ⇒
-    ExercisesService.libraries.find(_.title == libraryName) match {
-      case Some(library) ⇒ Future(Redirect(s"$libraryName/${library.sections.head}"))
+    ExercisesService.libraries.find(_.name == libraryName) match {
+      case Some(library) ⇒ Future(Redirect(s"$libraryName/${library.sectionNames.head}"))
       case _             ⇒ Future(Ok("Library not found"))
     }
   }
 
   def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
 
-    val library = ExercisesService.libraries.find(_.title == libraryName)
+    val library = ExercisesService.libraries.find(_.name == libraryName)
     val section = ExercisesService.section(libraryName, sectionName).headOption
 
     (library, section) match {
       case (Some(l), Some(s)) ⇒ Future(Ok(views.html.templates.library.index(l, s)))
-      case (Some(l), None)    ⇒ Future(Redirect(l.sections.head))
+      case (Some(l), None)    ⇒ Future(Redirect(l.sectionNames.head))
       case _                  ⇒ Future(Ok("Section not found"))
     }
   }
