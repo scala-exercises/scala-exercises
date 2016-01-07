@@ -47,7 +47,7 @@ import org.scalatest._
   * (11, 12)
   * }}}
   */
-class Classes extends FlatSpec with Matchers with exercise.Category {
+class Classes extends FlatSpec with Matchers with exercise.Section {
 
   /** You can define class with <code>var</code> or <code>val</code> parameters.  <code>val</code> parameters in class definition define getter:
     *
