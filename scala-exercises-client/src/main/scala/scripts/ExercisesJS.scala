@@ -58,8 +58,10 @@ object ExercisesJS extends js.JSApp {
     val request = EvaluationRequest(section, category, method, args)
 
     Ajax.postAsJson(Routes.Exercises.evaluate(section, category), write(request)).map { r ⇒
-      if (r.responseText.contains("Evaluation succeded")) runSucceded(exercise, request)
-      else runFailed(exercise, request)
+      if (r.status == 200)
+        runSucceded(exercise, request)
+      else
+        runFailed(exercise, request)
     }.recover { case e: AjaxException ⇒ runFailed(exercise, request) }
   }
 
