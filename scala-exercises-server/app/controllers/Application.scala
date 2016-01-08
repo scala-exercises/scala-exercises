@@ -7,6 +7,7 @@ import services.messages.GetUserByLoginRequest
 import services.parser.ExercisesService
 import utils.OAuth2
 import play.api._
+import play.api.routing.JavaScriptReverseRouter
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -51,6 +52,16 @@ object Application extends Controller {
       case (Some(s), None)    ⇒ Future(Redirect(s.categories.head))
       case _                  ⇒ Future(Ok("Category not found"))
     }
+  }
+
+  def javascriptRoutes = Action { implicit request ⇒
+    Ok(
+      JavaScriptReverseRouter("jsRoutes")(
+        routes.javascript.ExercisesController.sections,
+        routes.javascript.ExercisesController.category,
+        routes.javascript.ExercisesController.evaluate
+      )
+    ).as("text/javascript")
   }
 
 }

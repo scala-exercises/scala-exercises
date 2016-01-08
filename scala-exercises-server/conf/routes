@@ -19,6 +19,8 @@ GET /_oauth-callback  utils.OAuth2.callback(code: Option[String], state: Option[
 GET /_oauth-success   utils.OAuth2.success
 GET /logout   utils.OAuth2.logout
 
+# Client-side routing
+GET /javascriptRoutes controllers.Application.javascriptRoutes
 
 # Exercises
 GET /:sec           controllers.Application.section(sec : String)
