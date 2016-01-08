@@ -25,11 +25,7 @@ object DomHandler {
           inputsValues = getInputsValues(exercise)
         } yield onkeyup(methodName, inputsValues)
       })
-      .blur((e: dom.Event) ⇒
-        for {
-          methodName ← methodParent(input)
-        } yield onblur(methodName)
-      )
+      .blur((e: dom.Event) ⇒ methodParent(input) map onblur)
   })
 
   val resAssert = """(?s)\((res[0-9]*)\)""".r
