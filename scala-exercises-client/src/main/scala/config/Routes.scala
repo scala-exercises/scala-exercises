@@ -1,10 +1,19 @@
 package config
 
+import scala.scalajs.js
+
 object Routes {
+  private val controllers = js.Dynamic.global.jsRoutes.controllers
 
   object Exercises {
-    val base = "/exercises/sections"
-    def evaluate(section: String, category: String) = base + s"/$section/$category/evaluate"
+    def libraries: String =
+      controllers.ExercisesController.libraries().url.toString
+
+    def section(libraryName: String, sectionName: String): String =
+      controllers.ExercisesController.section(libraryName, sectionName).url.toString
+
+    def evaluate(libraryName: String, sectionName: String) =
+      controllers.ExercisesController.evaluate(libraryName, sectionName).url.toString
   }
 
 }
