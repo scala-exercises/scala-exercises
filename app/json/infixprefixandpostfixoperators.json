@@ -12,7 +12,7 @@
     },
     {
       "preparagraph": "Infix Operators do NOT work if an object has a method that takes two parameters:",
-      "code": "val g: String = \"Check out the big brains on Brad!\"\n\ng indexOf 'o' should be(__) //indexOf(Char) can be used as an infix operator\n\n// g indexOf 'o', 4 should be (6) //indexOf(Char, Int) cannot be used an infix operator\n\ng.indexOf('o', 7) should be(__) //indexOf(Char, Int) must use standard java/scala calls",
+      "code": "val g: String = \"Check out the big brains on Brad!\"\n\ng indexOf 'o' should be(__) //indexOf(Char) can be used as an infix operator\n\n// g indexOf 'o', 4 should be (6) //indexOf(Char, Int) cannot be used as an infix operator\n\ng.indexOf('o', 7) should be(__) //indexOf(Char, Int) must use standard java/scala calls",
       "solutions": [
         "6",
         "25"
