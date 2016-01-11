@@ -1,13 +1,12 @@
-package services.parser
+package services.exerciseV0
 
 import java.io.File
 import java.net.URLClassLoader
 
 import com.toddfast.util.convert.TypeConverter
+import models.{ ExerciseEvaluation, Section, Category }
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
 import play.api.Play
-import shared.ExerciseRunner.ExerciseResult
-import shared.{ ExerciseEvaluation, SectionPkg, Exercises, Section, Category }
 
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
@@ -39,7 +38,7 @@ object ExercisesService {
   }
 
   private[this] def simpleClassName(classInfo: ClassInfo) =
-    Class.forName(classInfo.name).asInstanceOf[Class[_ <: Exercises]].getSimpleName
+    Class.forName(classInfo.name).asInstanceOf[Class[_ <: exercise.Category]].getSimpleName
 
   private[this] def packageObjectSource(classInfo: ClassInfo) = {
     val exerciseClass = Class.forName(classInfo.name)
@@ -49,7 +48,7 @@ object ExercisesService {
     sources
   }
 
-  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): ExerciseResult[Unit] = {
+  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): Throwable \/ Unit = {
     val targetCategoryInstance = Class.forName(classInfo.name).newInstance()
     val mirror = runtimeMirror(getClass.getClassLoader)
     val targetMirror = mirror.reflect(targetCategoryInstance)
@@ -61,7 +60,7 @@ object ExercisesService {
         val argClass = mirror.runtimeClass(symbol.typeSignature.dealias)
         TypeConverter.convert(argClass, arg)
     }
-    methodMirror.apply(argValues: _*).asInstanceOf[ExerciseResult[Unit]]
+    methodMirror.apply(argValues: _*).asInstanceOf[Throwable \/ Unit]
   }
 
   /** Scans the classpath returning a list of all Sections found
@@ -70,19 +69,21 @@ object ExercisesService {
     * @see exercises.stdlib
     */
   def sections: List[Section] = for {
-    subclass ← subclassesOf[SectionPkg]
+    subclass ← subclassesOf[exercise.Section]
     section ← ExerciseCodeExtractor.buildSection(packageObjectSource(subclass)).toList
-    categories = subclassesOf[Exercises] filter (e ⇒ sources(e) contains s"package exercises.${section.title}")
+    categories = subclassesOf[exercise.Category] filter (e ⇒ sources(e) contains s"package exercises.${section.title}")
     exerciseClasses = categories map (c ⇒ Class.forName(c.name).getSimpleName)
-  } yield section.copy(categories = exerciseClasses)
+  } yield {
+    section.copy(categories = exerciseClasses)
+  }
 
   /** Scans the classpath returning a list of categories containing exercises for a given section
     */
   def category(section: String, category: String): List[Category] = for {
-    pkg ← subclassesOf[SectionPkg]
+    pkg ← subclassesOf[exercise.Section]
     sct ← ExerciseCodeExtractor.buildSection(packageObjectSource(pkg)).toList
     if sct.title == section
-    subclass ← subclassesOf[Exercises]
+    subclass ← subclassesOf[exercise.Category]
     if simpleClassName(subclass) == category
     category ← ExerciseCodeExtractor.buildCategory(sources(subclass))
   } yield category
@@ -90,12 +91,12 @@ object ExercisesService {
   /** Evaluates an exercise in a given section and category and returns a disjunction
     * containing either an exception or Unit representing success
     */
-  def evaluate(evaluation: ExerciseEvaluation): ExerciseResult[Unit] = {
+  def evaluate(evaluation: ExerciseEvaluation): Throwable \/ Unit = {
     val evalResult = for {
-      pkg ← subclassesOf[SectionPkg]
+      pkg ← subclassesOf[exercise.Section]
       sct ← ExerciseCodeExtractor.buildSection(packageObjectSource(pkg)).toList
       if sct.title == evaluation.section
-      subclass ← subclassesOf[Exercises]
+      subclass ← subclassesOf[exercise.Category]
       if simpleClassName(subclass) == evaluation.category
     } yield evaluate(evaluation, subclass)
     evalResult.headOption match {

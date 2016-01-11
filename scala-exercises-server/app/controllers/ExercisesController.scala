@@ -1,9 +1,9 @@
 package controllers
 
+import models.ExerciseEvaluation
 import play.api.libs.json.{ JsError, JsSuccess, Json }
 import play.api.mvc.{ Action, BodyParsers, Controller }
-import services.parser.ExercisesService
-import shared.ExerciseEvaluation
+import services.ExercisesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

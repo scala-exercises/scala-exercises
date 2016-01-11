@@ -1,4 +1,4 @@
-package services.parser
+package services.exerciseV0
 
 import shared.{ Section, Exercise, Category }
 import scala.annotation.tailrec
@@ -90,7 +90,7 @@ object ExerciseCodeExtractor {
 
   private[this] val commentStart = "\\s*\\/\\*\\*(.*)".r
   private[this] val pkgStarts = "\\s*package\\s*object\\s+(\\w+).*".r
-  private[this] val classStarts = "\\s*class\\s+(\\w+)\\s+extends.*Exercises.*".r
+  private[this] val classStarts = "\\s*class\\s+(\\w+)\\s+extends.*exercise\\.Category.*".r
   private[this] val inComment = """(?s)\s*\*([^\n]+[^\/])$""".r
   private[this] val inCommentEmpty = """(?s)\s*\*(\s*)$""".r
   private[this] val codeInCommentStart = """(?s)\s*\*(\s*)\{\{\{$""".r

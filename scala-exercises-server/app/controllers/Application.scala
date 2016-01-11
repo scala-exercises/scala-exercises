@@ -4,7 +4,7 @@ import java.util.UUID
 
 import services.UserServiceImpl
 import services.messages.GetUserByLoginRequest
-import services.parser.ExercisesService
+import services.ExercisesService
 import utils.OAuth2
 import play.api._
 import play.api.mvc._
@@ -28,9 +28,9 @@ object Application extends Controller {
     request.session.get("oauth-token").map { token ⇒
       val userService = new UserServiceImpl
       val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
-      user.map(response ⇒ Ok(views.html.templates.home(user = response.user, sections = sections)))
+      user.map(response ⇒ Ok(views.html.templates.home.index(user = response.user, sections = sections)))
     }.getOrElse {
-      Future.successful(Ok(views.html.templates.home(user = None, sections = sections, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
+      Future.successful(Ok(views.html.templates.home.index(user = None, sections = sections, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
     }
 
   }
@@ -47,11 +47,10 @@ object Application extends Controller {
     val category = ExercisesService.category(sec, cat).headOption
 
     (section, category) match {
-      case (Some(s), Some(c)) ⇒ Future(Ok(views.html.templates.exercises(s, c)))
+      case (Some(s), Some(c)) ⇒ Future(Ok(views.html.templates.section.index(s, c)))
       case (Some(s), None)    ⇒ Future(Redirect(s.categories.head))
       case _                  ⇒ Future(Ok("Category not found"))
     }
   }
 
 }
-

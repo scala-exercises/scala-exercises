@@ -5,7 +5,6 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
-import services.parser.ExercisesService
 import upickle._
 
 import scala.concurrent.Future

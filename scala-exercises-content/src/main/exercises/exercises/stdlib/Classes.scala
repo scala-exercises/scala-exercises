@@ -1,8 +1,6 @@
 package exercises.stdlib
 
 import org.scalatest._
-import shared.ExerciseRunner.{ ExerciseResult, ∞ }
-import shared.{ ExerciseRunner, Exercises }
 
 /** Classes in Scala are static templates that can be instantiated into many objects at runtime. Here is a class definition which defines a class Point:
   *
@@ -12,8 +10,8 @@ import shared.{ ExerciseRunner, Exercises }
   * var y: Int = yc
   *
   * def move(dx: Int, dy: Int) {
-  *   x = x + dx
-  *   y = y + dy
+  *  x = x + dx
+  *  y = y + dy
   * }
   *
   * override def toString(): String = "(" + x + ", " + y + ")";
@@ -31,12 +29,12 @@ import shared.{ ExerciseRunner, Exercises }
   *
   * {{{
   * object Classes {
-  *  def main(args: Array[String]) {
-  *    val pt = new Point(1, 2)
-  *    println(pt)
-  *    pt.move(10, 10)
-  *    println(pt)
-  *  }
+  * def main(args: Array[String]) {
+  *   val pt = new Point(1, 2)
+  *   println(pt)
+  *   pt.move(10, 10)
+  *   println(pt)
+  * }
   * }
   * }}}
   *
@@ -49,7 +47,7 @@ import shared.{ ExerciseRunner, Exercises }
   * (11, 12)
   * }}}
   */
-class Classes extends FlatSpec with Matchers with Exercises {
+class Classes extends FlatSpec with Matchers with exercise.Category {
 
   /** You can define class with <code>var</code> or <code>val</code> parameters.  <code>val</code> parameters in class definition define getter:
     *
@@ -90,4 +88,3 @@ class Classes extends FlatSpec with Matchers with Exercises {
   }(∞)
 
 }
-
