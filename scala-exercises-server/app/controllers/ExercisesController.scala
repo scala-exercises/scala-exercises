@@ -1,6 +1,6 @@
 package controllers
 
-import models.ExerciseEvaluation
+import shared.ExerciseEvaluation
 import play.api.libs.json.{ JsError, JsSuccess, Json }
 import play.api.mvc.{ Action, BodyParsers, Controller }
 import services.ExercisesService

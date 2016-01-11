@@ -1,6 +1,6 @@
 package controllers
 
-import models._
+import shared._
 import play.api.libs.json.{ Reads, Json, Writes }
 
 trait JsonFormats {

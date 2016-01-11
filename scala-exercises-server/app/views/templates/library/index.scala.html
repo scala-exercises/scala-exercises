@@ -1,5 +1,6 @@
-@(library: Library, section: Section)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section)(implicit request: RequestHeader)
 @import play.api.Play
+@import utils.StringUtils._
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +24,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body data-library="@library.name" data-section="@section.name.removeSpaces">
 
 
       <!-- Modal -->
