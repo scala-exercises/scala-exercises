@@ -1,4 +1,4 @@
-@(section: Section, category: Category, exercise: Exercise)(implicit request: RequestHeader)
+@(library: Library, section: Section, exercise: Exercise)(implicit request: RequestHeader)
 @import com.tristanhunt.knockoff.DefaultDiscounter._
 
 
@@ -9,7 +9,7 @@
     <div class="highlight">
 
       <div class="ribbon-wrapper">
-        <div class="ribbon-green" style="background-color: @section.color;">Complete</div>
+        <div class="ribbon-green" style="background-color: @library.color;">Complete</div>
       </div>
 
       <div class="compile">
@@ -21,4 +21,3 @@
     @(Html(exercise.explanation.getOrElse("")))
 
   </div>
-

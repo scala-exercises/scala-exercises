@@ -41,7 +41,7 @@ import org.scalatest._
   * Sometimes, the number of sub-values is fixed and we would like to return a sequence. For this reason, you can also define patterns through <code>unapplySeq</code>. The last sub-value type <code>Tn</code> has to be <code>Seq[S]</code>. This mechanism is used for instance in pattern <code>case List(x1, ..., xn)</code>.
   *
   */
-class Extractors extends FlatSpec with Matchers with exercise.Category {
+class Extractors extends FlatSpec with Matchers with exercise.Section {
 
   /** When you create a case class, it automatically can be used with pattern matching since it has an extractor:
     */

@@ -1,15 +1,15 @@
 package services
 
-import models.{ ExerciseEvaluation, Section, Category }
+import models._
 import scalaz.\/
 
 object ExercisesService {
 
-  def sections: List[Section] =
-    exerciseV0.ExercisesService.sections
+  def libraries: List[Library] =
+    exerciseV0.ExercisesService.libraries
 
-  def category(section: String, category: String): List[Category] =
-    exerciseV0.ExercisesService.category(section, category)
+  def section(library: String, name: String): List[Section] =
+    exerciseV0.ExercisesService.section(library, name)
 
   def evaluate(evaluation: ExerciseEvaluation): Throwable \/ Unit =
     exerciseV0.ExercisesService.evaluate(evaluation)

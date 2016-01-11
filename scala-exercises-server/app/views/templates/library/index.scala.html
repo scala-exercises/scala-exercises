@@ -1,4 +1,4 @@
-@(section: Section, category: Category)(implicit request: RequestHeader)
+@(library: Library, section: Section)(implicit request: RequestHeader)
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -118,7 +118,7 @@
         </div>
       </div>
     </div>
-    <header class="navbar navbar-inverse navbar-fixed-top" style="background-color: @section.color;" role="navigation">
+    <header class="navbar navbar-inverse navbar-fixed-top" style="background-color: @library.color;" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -157,14 +157,14 @@
     <div id="wrapper">
 
       <section id="sidebar">
-        @templates.widgets.progress(1, section)
+        @templates.widgets.progress(1, library)
         <ul>
           <li>
             <h3>Categories</h3>
           </li>
 
-          @for((cat,index) <- section.categories.zipWithIndex) {
-            @templates.section.categoryRow(index, cat, section.color)
+          @for((section, index) <- library.sectionNames.zipWithIndex) {
+            @templates.library.sectionRow(index, section, library.color)
           }
 
         </ul>
@@ -176,7 +176,7 @@
             <div class="col-lg-12">
 
               <div class="content-header clearfix">
-                <h2 class="pull-left">@category.title</h2>
+                <h2 class="pull-left">@section.name</h2>
                 <div class="add-exercises pull-right">
                   <button type="button" class="btn btn-default btn-sm">Add exercises</button>
                 </div>
@@ -185,10 +185,10 @@
 
               <div class="exercises-wrapper">
 
-                @(Html(category.description.getOrElse("")))
+                @(Html(section.description.getOrElse("")))
 
-                @for(exercise <- category.exercises) {
-                  @templates.section.exercise(section, category, exercise)
+                @for(exercise <- section.exercises) {
+                  @templates.library.exercise(library, section, exercise)
                 }
 
               </div>

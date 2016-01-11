@@ -1,4 +1,4 @@
-@(user: Option[shared.User] = None, sections: List[models.Section] = Nil, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(user: Option[shared.User] = None, libraries: List[models.Library] = Nil, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -79,8 +79,8 @@
             <!-- List technologies -->
           <div class="technologies-list">
 
-            @for(section <- sections) {
-              @templates.home.section(section)
+            @for(library <- libraries) {
+              @templates.home.libraryGridItem(library)
             }
 
           </div>

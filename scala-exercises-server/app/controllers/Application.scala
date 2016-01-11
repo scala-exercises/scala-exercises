@@ -23,33 +23,34 @@ object Application extends Controller {
     val state = UUID.randomUUID().toString
     val redirectUrl = oauth2.getAuthorizationUrl(callbackUrl, scope, state)
 
-    val sections = ExercisesService.sections
+    val libraries = ExercisesService.libraries
 
     request.session.get("oauth-token").map { token ⇒
       val userService = new UserServiceImpl
       val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
-      user.map(response ⇒ Ok(views.html.templates.home.index(user = response.user, sections = sections)))
+      user.map(response ⇒ Ok(views.html.templates.home.index(user = response.user, libraries = libraries)))
     }.getOrElse {
-      Future.successful(Ok(views.html.templates.home.index(user = None, sections = sections, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
+      Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
     }
 
   }
 
-  def section(sec: String) = Action.async { implicit request ⇒
-    ExercisesService.sections.find(s ⇒ s.title == sec) match {
-      case Some(s) ⇒ Future(Redirect(s"$sec/${s.categories.head}"))
-      case _       ⇒ Future(Ok("Section not found"))
+  def library(libraryName: String) = Action.async { implicit request ⇒
+    ExercisesService.libraries.find(_.name == libraryName) match {
+      case Some(library) ⇒ Future(Redirect(s"$libraryName/${library.sectionNames.head}"))
+      case _             ⇒ Future(Ok("Library not found"))
     }
   }
 
-  def category(sec: String, cat: String) = Action.async { implicit request ⇒
-    val section = ExercisesService.sections.find(s ⇒ s.title == sec)
-    val category = ExercisesService.category(sec, cat).headOption
+  def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
 
-    (section, category) match {
-      case (Some(s), Some(c)) ⇒ Future(Ok(views.html.templates.section.index(s, c)))
-      case (Some(s), None)    ⇒ Future(Redirect(s.categories.head))
-      case _                  ⇒ Future(Ok("Category not found"))
+    val library = ExercisesService.libraries.find(_.name == libraryName)
+    val section = ExercisesService.section(libraryName, sectionName).headOption
+
+    (library, section) match {
+      case (Some(l), Some(s)) ⇒ Future(Ok(views.html.templates.library.index(l, s)))
+      case (Some(l), None)    ⇒ Future(Redirect(l.sectionNames.head))
+      case _                  ⇒ Future(Ok("Section not found"))
     }
   }
 

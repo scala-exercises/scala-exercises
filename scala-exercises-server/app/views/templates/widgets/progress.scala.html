@@ -1,10 +1,10 @@
-@(status: Int, section: Section)(implicit request: RequestHeader)
+@(status: Int, library: Library)(implicit request: RequestHeader)
 
-@defining( 100*status/section.categories.size ) { percent =>
+@defining( 100*status/library.sectionNames.size ) { percent =>
   <div class="content-progres-bar">
     <div class="progress">
-      <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="background-color: @section.color; width : @percent% ;"></div>
+      <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="background-color: @library.color; width : @percent% ;"></div>
     </div>
-    <span>@status/@section.categories.size</span>
+    <span>@status/@library.sectionNames.size</span>
   </div>
 }
