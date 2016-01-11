@@ -11,15 +11,15 @@ import scalaz.{ -\/, \/, \/- }
 
 object ExercisesController extends Controller with JsonFormats {
 
-  def sections = Action.async { implicit request ⇒
-    Future(Ok(Json.toJson(ExercisesService.sections)))
+  def libraries = Action.async { implicit request ⇒
+    Future(Ok(Json.toJson(ExercisesService.libraries)))
   }
 
-  def category(section: String, category: String) = Action.async { implicit request ⇒
-    Future(Ok(Json.toJson(ExercisesService.category(section, category))))
+  def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
+    Future(Ok(Json.toJson(ExercisesService.section(libraryName, sectionName))))
   }
 
-  def evaluate(section: String, category: String) = Action(BodyParsers.parse.json) { request ⇒
+  def evaluate(libraryName: String, sectionName: String) = Action(BodyParsers.parse.json) { request ⇒
     request.body.validate[ExerciseEvaluation] match {
       case JsSuccess(evaluation, _) ⇒
         ExercisesService.evaluate(evaluation) match {

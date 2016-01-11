@@ -4,7 +4,7 @@ import org.scalatest._
 
 /**
   */
-class LiteralBooleans extends FlatSpec with Matchers with exercise.Category {
+class LiteralBooleans extends FlatSpec with Matchers with exercise.Section {
 
   /** Boolean literals are either true or false, using the true or false keyword
     */
