@@ -71,7 +71,7 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
 
     object ChopShop {
-      def unapply(x: Car) = Some(x.make, x.model, x.year, x.topSpeed)
+      def unapply(x: Car) = Some((x.make, x.model, x.year, x.topSpeed))
     }
 
     val ChopShop(a, b, c, d) = new Car("Chevy", "Camaro", 1978, 120)
@@ -89,7 +89,7 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
 
     object ChopShop {
-      def unapply(x: Car) = Some(x.make, x.model, x.year, x.topSpeed)
+      def unapply(x: Car) = Some((x.make, x.model, x.year, x.topSpeed))
     }
 
     val x = new Car("Chevy", "Camaro", 1978, 120) match {
@@ -108,7 +108,7 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
 
     object ChopShop {
-      def unapply(x: Car) = Some(x.make, x.model, x.year, x.topSpeed)
+      def unapply(x: Car) = Some((x.make, x.model, x.year, x.topSpeed))
     }
 
     val x = new Car("Chevy", "Camaro", 1978, 120) match {
@@ -128,9 +128,9 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
     class Employee(val firstName: String, val middleName: Option[String], val lastName: String)
 
     object Tokenizer {
-      def unapply(x: Car) = Some(x.make, x.model, x.year, x.topSpeed)
+      def unapply(x: Car) = Some((x.make, x.model, x.year, x.topSpeed))
 
-      def unapply(x: Employee) = Some(x.firstName, x.lastName)
+      def unapply(x: Employee) = Some((x.firstName, x.lastName))
     }
 
     val result = new Employee("Kurt", None, "Vonnegut") match {
@@ -146,7 +146,7 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
   def classesWithUnapply(res0: String): ExerciseResult[Unit] = ExerciseRunner("Classes with Unapply") {
 
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short) {
-      def unapply(x: Car) = Some(x.make, x.model)
+      def unapply(x: Car) = Some((x.make, x.model))
     }
 
     val camaro = new Car("Chevy", "Camaro", 1978, 122)
@@ -172,7 +172,7 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
       //factory methods, extractors, apply
       //Extractor: Create tokens that represent your object
       def unapply(x: Employee) =
-        Some(x.lastName, x.middleName, x.firstName)
+        Some((x.lastName, x.middleName, x.firstName))
     }
 
     val singri = new Employee("Singri", None, "Keerthi")
@@ -196,7 +196,7 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
       //factory methods, extractors, apply
       //Extractor: Create tokens that represent your object
       def unapply(x: Employee) =
-        Some(x.lastName, x.middleName, x.firstName)
+        Some((x.lastName, x.middleName, x.firstName))
     }
 
     val singri = new Employee("Singri", None, "Keerthi")
