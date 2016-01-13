@@ -3,30 +3,49 @@ package utils
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
+import shared.IO
+
+import cats.data.OptionT
+import cats.syntax.option._
 
 object DomHandler {
 
-  def insertInputs = for {
+  import IO._
+
+  def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
+    nodes foreach { case (n, r) ⇒ $(n).html(r) }
+  }
+
+  def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = io {
+    allInputs foreach (input ⇒ {
+      $(input).keyup((e: dom.Event) ⇒ {
+        (for {
+          _ ← OptionT(setInputWidth(input) map (_.some))
+          methodName ← OptionT(io(methodParent(input)))
+          exercise ← OptionT(io(findExerciseByMethod(methodName)))
+          inputsValues = getInputsValues(exercise)
+          _ ← OptionT(onkeyup(methodName, inputsValues) map (_.some))
+        } yield ()).value.unsafePerformIO()
+      })
+    })
+  }
+
+  def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = io {
+    allInputs foreach (input ⇒ {
+      $(input).blur((e: dom.Event) ⇒ {
+        methodParent(input) foreach onBlur
+      })
+    })
+  }
+
+  def setInputWidth(input: HTMLInputElement): IO[JQuery] =
+    io($(input).width(inputSize(getInputLength(input))))
+
+  def insertInputs: Seq[(HTMLElement, String)] = for {
     code ← getCodeBlocks
     text = getTextInCode(code)
     replaced = replaceInputByRes(text)
-  } yield $(code).html(replaced)
-
-  def activeInputs(
-    onkeyup: (String, Seq[String]) ⇒ Unit,
-    onblur: String ⇒ Unit) = allInputs.map(input ⇒ {
-    setInputWidth(input)
-    $(input)
-      .keyup((e: dom.Event) ⇒ {
-        setInputWidth(input)
-        for {
-          methodName ← methodParent(input)
-          exercise ← findExerciseByMethod(methodName)
-          inputsValues = getInputsValues(exercise)
-        } yield onkeyup(methodName, inputsValues)
-      })
-      .blur((e: dom.Event) ⇒ methodParent(input) map onblur)
-  })
+  } yield (code, replaced)
 
   val resAssert = """(?s)\((res[0-9]*)\)""".r
 
@@ -58,9 +77,7 @@ object DomHandler {
 
   def getInputLength(input: HTMLInputElement): Int = $(input).value.toString.length
 
-  def setInputWidth(input: HTMLInputElement) = $(input).width(inputSize(getInputLength(input)))
-
-  def inputSize(length: Int) = length match {
+  def inputSize(length: Int): Double = length match {
     case 0 ⇒ 12d
     case _ ⇒ (12 + (length + 1) * 7).toDouble
   }
