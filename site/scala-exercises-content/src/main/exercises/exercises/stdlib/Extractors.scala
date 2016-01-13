@@ -164,9 +164,11 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
     */
   def inCompanionObject(res0: String, res1: Option[String], res2: String): ExerciseResult[Unit] = ExerciseRunner("In companion Object") {
 
-    class Employee(val firstName: String,
-                   val middleName: Option[String],
-                   val lastName: String)
+    class Employee(
+      val firstName:  String,
+      val middleName: Option[String],
+      val lastName:   String
+    )
 
     object Employee {
       //factory methods, extractors, apply
@@ -188,9 +190,11 @@ class Extractors extends FlatSpec with Matchers with exercise.Section {
     */
   def unapplyForPatternMatching(res0: String): ExerciseResult[Unit] = ExerciseRunner("Unapply for pattern matching") {
 
-    class Employee(val firstName: String,
-                   val middleName: Option[String],
-                   val lastName: String)
+    class Employee(
+      val firstName:  String,
+      val middleName: Option[String],
+      val lastName:   String
+    )
 
     object Employee {
       //factory methods, extractors, apply

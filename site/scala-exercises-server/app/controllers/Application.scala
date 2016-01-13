@@ -31,7 +31,7 @@ object Application extends Controller {
       val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
       user.map(response ⇒ Ok(views.html.templates.home.index(user = response.user, libraries = libraries)))
     }.getOrElse {
-      Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" -> state))
+      Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
     }
 
   }
