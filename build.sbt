@@ -1,4 +1,5 @@
 import play.PlayImport._
+import sbt.Keys._
 import sbt.Project.projectToRef
 import scalariform.formatter.preferences._
 import NativePackagerHelper._
@@ -10,12 +11,16 @@ onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) 
 // Common settings
 
 lazy val commonSettings = Seq(
-    scalaVersion := "2.11.7",
-    wartremoverWarnings in Compile ++= Warts.unsafe
-  ) ++ scalariformSettings ++ Seq(
-    ScalariformKeys.preferences in Compile := formattingPreferences,
-    ScalariformKeys.preferences in Test    := formattingPreferences
+  scalaVersion := "2.11.7",
+  wartremoverWarnings in Compile ++= Warts.unsafe,
+  resolvers ++= Seq(
+    "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+    Resolver.sonatypeRepo("snapshots")
   )
+) ++ scalariformSettings ++ Seq(
+  ScalariformKeys.preferences in Compile := formattingPreferences,
+  ScalariformKeys.preferences in Test := formattingPreferences
+)
 
 lazy val formattingPreferences = FormattingPreferences()
   .setPreference(RewriteArrowSymbols,                         true)
@@ -54,8 +59,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .settings(
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
-    pipelineStages := Seq(scalaJSProd, gzip),
-    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases")
+    pipelineStages := Seq(scalaJSProd, gzip))
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compile(
       filters,
@@ -99,7 +103,8 @@ lazy val scalaExercisesClient = (project in file("scala-exercises-client"))
       "com.lihaoyi" %%% "scalarx" % "0.2.8",
       "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
-      "com.lihaoyi" %%% "upickle" % "0.2.8"
+      "com.lihaoyi" %%% "upickle" % "0.2.8",
+      "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
     )
   )
 
@@ -112,7 +117,8 @@ lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file(
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compile(
-      "org.scalatest" %% "scalatest" % "2.2.4"
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
     )
   )
 
