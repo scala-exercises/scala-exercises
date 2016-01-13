@@ -12,10 +12,14 @@ object DomHandler {
 
   import IO._
 
+  /** Replaces text matched into html inputs
+    */
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
   }
 
+  /** Assigns behaviors to the keyup event for inputs elements.
+    */
   def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = io {
     allInputs foreach (input ⇒ {
       $(input).keyup((e: dom.Event) ⇒ {
@@ -30,6 +34,8 @@ object DomHandler {
     })
   }
 
+  /** Assigns behaviors to the blur event for inputs elements.
+    */
   def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = io {
     allInputs foreach (input ⇒ {
       $(input).blur((e: dom.Event) ⇒ {
