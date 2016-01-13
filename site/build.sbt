@@ -28,10 +28,6 @@ lazy val exerciseSettings: Seq[Setting[_]] =
     classpathConfiguration in Runtime := Exercise
   )
 
-def compile   (deps: ModuleID*) = deps map (_ % "compile")
-def exercise  (deps: ModuleID*) = deps map (_ % "exercise")
-def test      (deps: ModuleID*) = deps map (_ % "test")
-
 lazy val clients = Seq(scalaExercisesClient)
 lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .aggregate(clients.map(projectToRef): _*)
@@ -47,7 +43,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip))
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
-    compile(
+    compilelibs(
       filters,
       jdbc,
       evolutions,
@@ -67,7 +63,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0") ++
-    test(
+    testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0")
   ))
@@ -102,7 +98,7 @@ lazy val scalaExercisesShared = (crossProject.crossType(CrossType.Pure) in file(
   .jsSettings(sourceMapsBase := baseDirectory.value / "..")
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
-    compile(
+    compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
     )
@@ -116,7 +112,7 @@ lazy val scalaExercisesSharedJs = scalaExercisesShared.js
 lazy val scalaExerciseV0Definitions = (project in file("scala-exercises-v0def"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
-    compile(
+    compilelibs(
       "org.scalaz" %% "scalaz-core" % "7.1.4"
     )
   )
@@ -126,13 +122,14 @@ lazy val scalaExerciseV0Definitions = (project in file("scala-exercises-v0def"))
 
 lazy val scalaExercisesContent = (project in file("scala-exercises-content"))
   .dependsOn(scalaExercisesSharedJvm, scalaExerciseV0Definitions)
+  .enablePlugins(ExerciseCompilerPlugin)
   .settings(commonSettings: _*)
   .settings(
     // TODO: leverage a plugin instead of this trick
     unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "exercises",
     unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "exercises")
   .settings(libraryDependencies ++=
-    compile(
+    compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % "7.1.4"
     )
