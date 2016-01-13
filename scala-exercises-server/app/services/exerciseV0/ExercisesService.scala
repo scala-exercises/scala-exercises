@@ -3,6 +3,7 @@ package services.exerciseV0
 import java.io.File
 import java.net.URLClassLoader
 
+import scalariform.formatter.{ ScalaFormatter }
 import com.toddfast.util.convert.TypeConverter
 import models._
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
@@ -29,12 +30,15 @@ object ExercisesService {
   private[this] def subclassesOf[A: ClassTag] =
     ClassFinder.concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap).toList
 
+  private[this] def formatSources(sources: List[String]): List[String] =
+    ScalaFormatter.format(sources.mkString("\n")).split("\n").toList
+
   private[this] def sources(classInfo: ClassInfo) = {
     val exerciseClass = Class.forName(classInfo.name)
     val sourcesStream = exerciseClass.getResourceAsStream(exerciseClass.getSimpleName + ".scala")
     val sources = scala.io.Source.fromInputStream(sourcesStream).getLines().toList
     sourcesStream.close()
-    sources
+    formatSources(sources)
   }
 
   private[this] def simpleClassName(classInfo: ClassInfo) =
@@ -45,7 +49,7 @@ object ExercisesService {
     val sourcesStream = exerciseClass.getResourceAsStream("package.scala")
     val sources = scala.io.Source.fromInputStream(sourcesStream).getLines().toList
     sourcesStream.close()
-    sources
+    formatSources(sources)
   }
 
   private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): Throwable \/ Unit = {
