@@ -30,8 +30,10 @@ class UserServiceImpl(implicit val executionContext: ExecutionContext) extends U
               github_id = request.github_id,
               picture_url = request.picture_url,
               github_url = request.github_url,
-              email = request.email))
-              .map(_.user))
+              email = request.email
+            ))
+              .map(_.user)
+          )
           .map(GetUserOrCreateResponse)
       }
 
@@ -56,7 +58,8 @@ class UserServiceImpl(implicit val executionContext: ExecutionContext) extends U
         github_id = request.github_id,
         picture_url = request.picture_url,
         github_url = request.github_url,
-        email = request.email)
+        email = request.email
+      )
     } yield CreateUserResponse(user = user)
 
     result recover {

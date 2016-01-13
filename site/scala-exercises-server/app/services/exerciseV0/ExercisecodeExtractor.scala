@@ -36,11 +36,12 @@ object ExerciseCodeExtractor {
   private[this] val codeBlockEnd = """</code></pre>"""
 
   private[this] case class SectionBuilder(
-      name: Option[String] = None,
-      description: Option[String] = None,
+      name:            Option[String]   = None,
+      description:     Option[String]   = None,
       currentExercise: Option[Exercise] = None,
-      exercises: List[Exercise] = Nil,
-      state: ParserState = DefiningClass) {
+      exercises:       List[Exercise]   = Nil,
+      state:           ParserState      = DefiningClass
+  ) {
 
     def categoryName(name: String) =
       copy(name = name.some)

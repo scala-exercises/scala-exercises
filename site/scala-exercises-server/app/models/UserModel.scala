@@ -17,12 +17,13 @@ trait UserStore {
   def getByLogin(login: String): Future[Seq[User]]
 
   def create(
-    login: String,
-    name: String,
-    github_id: String,
+    login:       String,
+    name:        String,
+    github_id:   String,
     picture_url: String,
-    github_url: String,
-    email: String): Future[User]
+    github_url:  String,
+    email:       String
+  ): Future[User]
 
   def update(user: User): Future[Boolean]
 
@@ -63,12 +64,13 @@ object UserSlickStore extends UserStore {
   override def getByLogin(login: String): Future[Seq[User]] = db.run(users.filter(_.login === login).result)
 
   override def create(
-    login: String,
-    name: String,
-    github_id: String,
+    login:       String,
+    name:        String,
+    github_id:   String,
     picture_url: String,
-    github_url: String,
-    email: String): Future[User] = {
+    github_url:  String,
+    email:       String
+  ): Future[User] = {
 
     db.run {
       (users returning users.map(_.id) into ((user, id) ⇒ user.copy(id = id))) += User(
@@ -78,7 +80,8 @@ object UserSlickStore extends UserStore {
         github_id = github_id,
         picture_url = picture_url,
         github_url = github_url,
-        email = email)
+        email = email
+      )
     }
   }
 

@@ -21,10 +21,12 @@ class OAuth2(application: Application) {
 
   def getToken(code: String): Future[String] = {
     val tokenResponse = WS.url("https://github.com/login/oauth/access_token")(application).
-      withQueryString("client_id" -> githubAuthId,
-        "client_secret" -> githubAuthSecret,
-        "code" -> code).
-        withHeaders(HeaderNames.ACCEPT -> MimeTypes.JSON).
+      withQueryString(
+        "client_id" → githubAuthId,
+        "client_secret" → githubAuthSecret,
+        "code" → code
+      ).
+        withHeaders(HeaderNames.ACCEPT → MimeTypes.JSON).
         post(Results.EmptyContent())
 
     tokenResponse.flatMap { response ⇒
@@ -47,7 +49,7 @@ object OAuth2 extends Controller {
 
       if (state == oauthState) {
         oauth2.getToken(code).map { accessToken ⇒
-          Redirect(utils.routes.OAuth2.success()).withSession("oauth-token" -> accessToken)
+          Redirect(utils.routes.OAuth2.success()).withSession("oauth-token" → accessToken)
         }.recover {
           case ex: IllegalStateException ⇒ Unauthorized(ex.getMessage)
         }
@@ -61,7 +63,7 @@ object OAuth2 extends Controller {
     implicit val app = Play.current
     request.session.get("oauth-token").fold(Future.successful(Unauthorized("No way Jose"))) { authToken ⇒
       WS.url("https://api.github.com/user").
-        withHeaders(HeaderNames.AUTHORIZATION -> s"token $authToken").
+        withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
 
           val login = (response.json \ "login").as[String]
@@ -74,15 +76,17 @@ object OAuth2 extends Controller {
           val userService = new UserServiceImpl
 
           val result = for {
-            res ← userService.getUserOrCreate(GetUserOrCreateRequest(login = login,
+            res ← userService.getUserOrCreate(GetUserOrCreateRequest(
+              login = login,
               name = name,
               github_id = github_id.toString,
               picture_url = avatar_url,
               github_url = html_url,
-              email = email))
+              email = email
+            ))
           } yield res.user
 
-          Redirect("/").withSession("oauth-token" -> authToken, "user" -> login)
+          Redirect("/").withSession("oauth-token" → authToken, "user" → login)
 
         }
     }
