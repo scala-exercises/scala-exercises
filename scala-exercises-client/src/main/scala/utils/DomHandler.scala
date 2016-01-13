@@ -38,7 +38,6 @@ object DomHandler {
     */
   def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = io {
     allInputs foreach (input ⇒ {
-      println("1")
       $(input).blur((e: dom.Event) ⇒ {
         methodParent(input) foreach (onBlur(_).unsafePerformIO())
       })
