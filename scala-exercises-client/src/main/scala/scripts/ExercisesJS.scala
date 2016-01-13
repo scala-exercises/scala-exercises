@@ -19,8 +19,6 @@ object ExercisesJS extends js.JSApp {
 
     val exercises = Var(getMethodsList map (m ⇒ ClientExercise(m)) toList)
 
-    exercises foreach (e ⇒ println(e))
-
     def updateExcercise(method: String, args: Seq[String]): List[ClientExercise] =
       exercises().updated(exerciseIndex(method), ClientExercise(method, args))
 
