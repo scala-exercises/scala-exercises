@@ -1,7 +1,6 @@
 import play.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
-import scalariform.formatter.preferences._
 import NativePackagerHelper._
 
 
@@ -17,20 +16,7 @@ lazy val commonSettings = Seq(
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
   )
-) ++ scalariformSettings ++ Seq(
-  ScalariformKeys.preferences in Compile := formattingPreferences,
-  ScalariformKeys.preferences in Test := formattingPreferences
 )
-
-lazy val formattingPreferences = FormattingPreferences()
-  .setPreference(RewriteArrowSymbols,                         true)
-  .setPreference(AlignParameters,                             true)
-  .setPreference(AlignSingleLineCaseStatements,               true)
-  .setPreference(DoubleIndentClassDeclaration,                true)
-  .setPreference(PreserveDanglingCloseParenthesis,            true)
-  .setPreference(MultilineScaladocCommentsStartOnFirstLine,   true)
-  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
-
 
 // Client and Server projects
 
