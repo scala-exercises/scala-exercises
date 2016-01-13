@@ -8,13 +8,13 @@ import org.scalatest._
   *
   * {{{
   * object Twice {
-  * def apply(x: Int): Int = x * 2
-  * def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
+  *   def apply(x: Int): Int = x * 2
+  *   def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
   * }
   *
   * object TwiceTest extends Application {
-  * val x = Twice(21)
-  * x match { case Twice(n) => Console.println(n) } // prints 21
+  *   val x = Twice(21)
+  *   x match { case Twice(n) => Console.println(n) } // prints 21
   * }
   * }}}
   *
@@ -27,8 +27,8 @@ import org.scalatest._
   *
   * {{{
   * object TwiceTest extends Application {
-  * val x = Twice.apply(21)
-  * Twice.unapply(x) match { case Some(n) => Console.println(n) } // prints 21
+  *   val x = Twice.apply(21)
+  *   Twice.unapply(x) match { case Some(n) => Console.println(n) } // prints 21
   * }
   * }}}
   *
