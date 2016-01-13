@@ -36,7 +36,6 @@ object ExercisesJS extends js.JSApp {
     updateExerciseList(updateExcercise(method, args))
 
   def inputBlur(method: String): IO[Unit] = io {
-    println("Holaaaa")
     Model.getExercise(method) foreach (e ⇒ println(e.isFilled))
   }
 
@@ -44,7 +43,7 @@ object ExercisesJS extends js.JSApp {
 
     val program = for {
       _ ← replaceInputs(insertInputs)
-      //      _ ← onInputKeyUp(inputChanged)
+      _ ← onInputKeyUp(inputChanged)
       _ ← onInputBlur(inputBlur)
     } yield ()
 
