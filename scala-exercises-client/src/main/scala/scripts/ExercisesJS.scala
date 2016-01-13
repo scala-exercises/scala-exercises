@@ -4,39 +4,51 @@ import rx._
 import rx.ops._
 import utils.DomHandler._
 import scala.scalajs.js
+import shared.IO
+import IO._
 
 object ExercisesJS extends js.JSApp {
 
   object Model {
 
-    case class ClientExercise(method: String, arguments: Seq[String]) {
-      def isFilled = !arguments.exists(_.isEmpty) && arguments.nonEmpty
+    def updateExerciseList(ex: List[ClientExercise]): IO[Unit] = io(exercises() = ex)
+
+    case class ClientExercise(method: String, arguments: Seq[String] = Nil) {
+      def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
     }
 
-    val exercises = Var(getMethodsList map (addExercise(_)) toList)
+    val exercises = Var(getMethodsList map (m ⇒ ClientExercise(m)) toList)
 
-    exercises.foreach(e ⇒ println(e)) //Observer
+    exercises foreach (e ⇒ println(e))
 
-    def addExercise(method: String, args: Seq[String] = Nil): ClientExercise = ClientExercise(method, args)
+    def updateExcercise(method: String, args: Seq[String]): List[ClientExercise] =
+      exercises().updated(exerciseIndex(method), ClientExercise(method, args))
 
-    def updateExcercise(method: String, args: Seq[String]) = exercises() = exercises().updated(position(method), addExercise(method, args))
+    def getExercise(method: String): Option[ClientExercise] = exercises().lift(exerciseIndex(method))
 
-    def getExercise(method: String): Option[ClientExercise] = exercises().lift(position(method))
-
-    def position(m: String): Int = exercises().indexWhere(_.method == m)
+    def exerciseIndex(m: String): Int = exercises().indexWhere(_.method == m)
 
   }
 
-  def inputChanged(method: String, args: Seq[String]): Unit = Model.updateExcercise(method, args)
+  import Model._
 
-  def inputBlur(method: String): Unit = for {
-    exercise ← Model.getExercise(method)
-  } yield println(exercise.isFilled)
+  def inputChanged(method: String, args: Seq[String]): IO[Unit] =
+    updateExerciseList(updateExcercise(method, args))
+
+  def inputBlur(method: String): IO[Unit] = io {
+    println("Holaaaa")
+    Model.getExercise(method) foreach (e ⇒ println(e.isFilled))
+  }
 
   def main(): Unit = {
 
-    insertInputs
-    activeInputs(inputChanged, inputBlur)
+    val program = for {
+      _ ← replaceInputs(insertInputs)
+      //      _ ← onInputKeyUp(inputChanged)
+      _ ← onInputBlur(inputBlur)
+    } yield ()
+
+    program.unsafePerformIO()
 
   }
 
