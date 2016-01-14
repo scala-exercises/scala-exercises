@@ -10,7 +10,6 @@ onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) 
 // Common settings
 
 lazy val commonSettings = Seq(
-  wartremoverWarnings in Compile ++= Warts.unsafe,
   resolvers ++= Seq(
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
