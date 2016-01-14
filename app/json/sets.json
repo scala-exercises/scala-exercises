@@ -116,7 +116,7 @@
     },
     {
       "preparagraph": "The difference between two sets can be obtained easily:",
-      "code": "val mySet1 = Set(\"Michigan\", \"Ohio\", \"Wisconsin\", \"Iowa\")\nval mySet2 = Set(\"Wisconsin\", \"Michigan\")\nval aNewSet = mySet1 diff mySet2 // Note: you can use the \"&~\" operator if you *really* want to.\n\naNewSet.equals(Set(\"Ohio\", \"Iowa\")) should be(__)",
+      "code": "val mySet1 = Set(\"Michigan\", \"Ohio\", \"Wisconsin\", \"Iowa\")\nval mySet2 = Set(\"Wisconsin\", \"Michigan\")\nval aNewSet = mySet1 diff mySet2 // Note: you can use the \"--\" operator.\n\naNewSet.equals(Set(\"Ohio\", \"Iowa\")) should be(__)",
       "solutions": [
         "true"
       ],
