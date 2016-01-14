@@ -20,10 +20,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
-addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
-
-
 // Build common plugin
+addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
 unmanagedSourceDirectories in Compile += baseDirectory.value.getParentFile.getParentFile / "common"
 
