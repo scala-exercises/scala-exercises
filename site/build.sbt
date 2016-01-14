@@ -10,11 +10,8 @@ onLoad in Global := (Command.process("project scalaExercisesServer", _: State)) 
 // Common settings
 
 lazy val commonSettings = Seq(
-    scalaVersion := "2.11.7",
-    wartremoverWarnings in Compile ++= Warts.unsafe
-) ++ scalariformSettings ++ Seq(
-  ScalariformKeys.preferences in Compile := formattingPreferences,
-  ScalariformKeys.preferences in Test := formattingPreferences
+  wartremoverWarnings in Compile ++= Warts.unsafe,
+  resolvers += Resolver.sonatypeRepo("snapshots")
 )
 
 // Client and Server projects
@@ -40,7 +37,9 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .settings(
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
-    pipelineStages := Seq(scalaJSProd, gzip))
+    pipelineStages := Seq(scalaJSProd, gzip),
+    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+  )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,
