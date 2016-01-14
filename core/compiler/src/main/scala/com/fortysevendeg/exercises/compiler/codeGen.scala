@@ -4,10 +4,10 @@ package compiler
 import scala.language.implicitConversions
 import scala.reflect.api.Universe
 
-case class CodeGen(universe: Universe = scala.reflect.runtime.universe) extends TreeHelpers {
-  import universe._
+case class CodeGen[U <: Universe](override val u: U = scala.reflect.runtime.universe) extends TreeHelpers[U] {
+  import u._
 
-  def exercise(
+  def emitExercise(
     name: Option[String]
   ) = {
     val term = makeTermName("EXC", name)
@@ -18,57 +18,60 @@ case class CodeGen(universe: Universe = scala.reflect.runtime.universe) extends 
       """
   }
 
-  def section(
-    name:        String,
-    description: Option[String] = None,
-    exercises:   List[TermName] = Nil
+  def emitSection(
+    name:          String,
+    description:   Option[String] = None,
+    exerciseTerms: List[TermName] = Nil
   ) = {
     val term = makeTermName("SEC", name)
     term → q"""
       object $term extends Section {
         override val name         = $name
         override val description  = $description
-        override val exercises    = $exercises
+        override val exercises    = $exerciseTerms
       }
       """
   }
 
-  def library(
-    name:        String,
-    description: String,
-    color:       String,
-    sections:    List[TermName] = Nil
-  ) = q"""
-      object ${makeTermName("LIB", name)} extends Library {
+  def emitLibrary(
+    name:         String,
+    description:  String,
+    color:        String,
+    sectionTerms: List[TermName] = Nil
+  ) = {
+    val term = makeTermName("LIB", name)
+    term → q"""
+      object $term extends Library {
         override val name         = $name
         override val description  = $description
         override val color        = $color
-        override val sections     = $sections
+        override val sections     = $sectionTerms
       }
     """
+  }
 
-  def wrap(
-    pkg:       String,
-    library:   Tree,
-    sections:  List[Tree],
-    exercises: List[Tree]
+  def emitPackage(
+    packageName:   String,
+    libraryTree:   Tree,
+    sectionTrees:  List[Tree] = Nil,
+    exerciseTrees: List[Tree] = Nil
   ) = q"""
-      package ${makeRefTree(pkg)} {
+      package ${makeRefTree(packageName)} {
         import com.fortysevendeg.exercises.Exercise
         import com.fortysevendeg.exercises.Library
         import com.fortysevendeg.exercises.Section
 
-        $library
-        ..$sections
-        ..$exercises
+        $libraryTree
+        ..$sectionTrees
+        ..$exerciseTrees
       }
     """
 
 }
 
-sealed trait TreeHelpers {
-  val universe: Universe
-  import universe._
+sealed trait TreeHelpers[U <: Universe] {
+  val u: U
+  import u._
 
   protected def makeTermName(appellation: String, name: String): TermName =
     makeTermName(appellation, Some(name))
@@ -105,6 +108,7 @@ sealed trait TreeHelpers {
 
 object TestApp extends App {
 
+  /*
   val cg = CodeGen()
   import cg.EZTree._
 
@@ -118,7 +122,7 @@ object TestApp extends App {
     exercises = s1e.map(_._1)
   )
 
-  val lib = cg.library(
+  val (libterm, lib) = cg.library(
     name = "MyLibrary",
     description = "This is my library",
     color = "#FFFFFF",
@@ -133,5 +137,6 @@ object TestApp extends App {
   )
 
   println(res.code)
+  */
 
 }
