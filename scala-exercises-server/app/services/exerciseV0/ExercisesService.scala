@@ -4,7 +4,7 @@ import java.io.File
 import java.net.URLClassLoader
 
 import com.toddfast.util.convert.TypeConverter
-import models._
+import shared._
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
 import play.api.Play
 

@@ -1,6 +1,6 @@
 package services.exerciseV0
 
-import models._
+import shared._
 
 import scala.annotation.tailrec
 import scalaz._, Scalaz._

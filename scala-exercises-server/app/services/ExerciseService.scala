@@ -1,6 +1,6 @@
 package services
 
-import models._
+import shared._
 import scalaz.\/
 
 object ExercisesService {

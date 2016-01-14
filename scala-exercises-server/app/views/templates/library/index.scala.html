@@ -1,5 +1,6 @@
-@(library: Library, section: Section)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section)(implicit request: RequestHeader)
 @import play.api.Play
+@import utils.StringUtils._
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +24,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body data-library="@library.name" data-section="@section.name.removeSpaces">
 
 
       <!-- Modal -->
@@ -224,10 +225,9 @@
     <script src="@routes.Assets.at("lib/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/highlight.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/languages/scala.min.js")" type="text/javascript"></script>
+    <script src="@routes.Application.javascriptRoutes" type="text/javascript"></script>
     @playscalajs.html.scripts("scalaExercisesClient", "/assets")
       <!-- Symbolset -->
     <script src="//cdn.symbolset.com/8ee4d327be084fc7d7153262a0f1f49a20e3cc19/symbolset.js"></script>
-
-
   </body>
 </html>
