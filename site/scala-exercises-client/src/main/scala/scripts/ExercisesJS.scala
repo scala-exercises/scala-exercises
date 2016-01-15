@@ -41,6 +41,7 @@ object ExercisesJS extends js.JSApp {
 
     val program = for {
       _ ← replaceInputs(insertInputs)
+      _ ← highlightCodeBlocks
       _ ← onInputKeyUp(inputChanged)
       _ ← onInputBlur(inputBlur)
     } yield ()

@@ -1,5 +1,6 @@
 package utils
 
+import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
@@ -16,6 +17,14 @@ object DomHandler {
     */
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
+  }
+
+  /** Searchs for preformatted code blocks and highlights their syntax.
+    */
+  def highlightCodeBlocks: IO[Unit] = io {
+    $("pre code").each((_: Any, code: dom.Element) ⇒ {
+      js.Dynamic.global.hljs.highlightBlock(code)
+    })
   }
 
   /** Assigns behaviors to the keyup event for inputs elements.
