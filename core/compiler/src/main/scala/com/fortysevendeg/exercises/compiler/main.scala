@@ -1,6 +1,10 @@
 package com.fortysevendeg.exercises
 package compiler
 
+import cats._
+import cats.std.all._
+import cats.syntax.flatMap._
+
 import scala.reflect.internal.util.FakePos
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc.ast.parser.SyntaxAnalyzer
@@ -13,22 +17,6 @@ import scala.tools.nsc.doc.base.LinkToExternal
 import scala.tools.nsc.doc.base.MemberLookupBase
 import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.reporters.Reporter
-
-/*
-object TestApp extends App {
-
-  val exampleCode = io.Source.fromInputStream(
-    getClass.getResourceAsStream("/example.scala")
-  ).mkString
-
-  val parser = ScalaExerciseParser()
-  val res = parser.parse(exampleCode)
-
-  import sext._
-  println(res.treeString)
-
-}
-*/
 
 /** Global for compiling exercises. We piggyback on the `ScalaDocGlobal`,
   * and let it do most of the heavy lifting. Otherwise it'd be a lot more work
@@ -68,7 +56,7 @@ object ScalaExerciseParser {
   type Doc = scala.tools.nsc.doc.base.comment.Comment
 
   case class Category(
-    doc:       Option[Doc]    = None,
+    doc:       Option[Doc],
     className: String,
     exercises: List[Exercise]
   )
@@ -86,17 +74,6 @@ case class ScalaExerciseParser() {
   private val reporter = new ConsoleReporter(settings)
   private[compiler] val compiler = new ScalaExerciseGlobal(settings, reporter)
   import compiler._
-
-  /*
-  // TODO: use this for something useful, like finding usages of the params
-  def findTerms(tree: Tree) {
-    tree match {
-      case ident @ Ident(TermName(name)) ⇒
-        println(">> " + name + " @ " + ident.pos)
-      case _: Tree ⇒ tree.children.foreach(findTerms)
-    }
-  }
-  */
 
   def parse(code: String) = {
     val scanner = compiler.newUnitParser(code)
@@ -119,7 +96,7 @@ case class ScalaExerciseParser() {
   private[compiler] def traverseRootTree(tree: Tree): List[Category] = tree match {
 
     // Dive into packages
-    case q"package $ref { ..$topstats }" ⇒ topstats.flatMap(traverseRootTree)
+    case q"package $ref { ..$topstats }" ⇒ topstats >>= traverseRootTree
 
     // An exercise preceeded by header doc comments
     case DocDef(comment, ClassDef(mods, name, Nil, impl)) ⇒
@@ -127,20 +104,20 @@ case class ScalaExerciseParser() {
       Category(
         doc = Some(compiler.parseComment(comment)),
         className = name.toString(),
-        exercises = impl.body.flatMap(traverseExerciseBodyTree)
+        exercises = impl.body >>= traverseExerciseBodyTree
       ) :: Nil
 
     // An exercise without any header comments
     case ClassDef(mods, name, Nil, impl) ⇒
 
       Category(
+        doc = None,
         className = name.toString(),
-        exercises = impl.body.flatMap(traverseExerciseBodyTree)
+        exercises = impl.body >>= traverseExerciseBodyTree
       ) :: Nil
 
     // Unhandled items
     case tree: Tree ⇒
-      //println(s"unknown top tree ${showRaw(tree)}")
       Nil
   }
 

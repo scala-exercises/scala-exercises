@@ -8,8 +8,11 @@ lazy val compiler = (project in file("compiler"))
   .settings(testSettings: _*)
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
-      "org.scala-lang"             % "scala-compiler" % scalaVersion,
-      "com.github.nikita-volkov"   % "sext"           % "0.2.4")
+      "org.scala-lang" % "scala-compiler" % scalaVersion,
+      "org.spire-math" %% "cats" % "0.3.0") ++
+    testlibs(
+      "com.github.nikita-volkov" % "sext" % "0.2.4"
+    )
   ))
 
 lazy val definitions = (project in file("definitions"))

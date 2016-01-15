@@ -1,22 +1,30 @@
 package com.fortysevendeg.exercises
 package compiler
 
+import scala.tools.reflect.ToolBox
+
 import org.scalatest._
 
 class GenCodeSpec extends FunSpec with Matchers {
 
-  describe("it") {
-    it("should work") {
+  val toolbox = scala.reflect.runtime.currentMirror.mkToolBox()
+  val cg = CodeGen[toolbox.u.type](toolbox.u)
 
-      import scala.tools.reflect.ToolBox
-      import scala.reflect.runtime.{ currentMirror ⇒ m }
+  import toolbox.u._
 
-      val toolbox = m.mkToolBox()
+  def evalLibrary(tree: Tree) = {
+    val evalableTree = (tree match {
+      case q"package $name { ..$stats }" ⇒
+        stats
+          .collectFirst { case ModuleDef(_, libraryTerm, _) ⇒ q"..$stats;$libraryTerm" }
+      case _ ⇒ None
+    }).getOrElse(EmptyTree)
 
-      println(toolbox)
+    toolbox.eval(evalableTree).asInstanceOf[Library]
+  }
 
-      val cg = CodeGen[toolbox.u.type](toolbox.u)
-      import toolbox.u._
+  describe("code generation") {
+    it("should generate a tree that can be eval'd") {
 
       val exercises = List(
         cg.emitExercise(Some("Example1")),
@@ -26,10 +34,13 @@ class GenCodeSpec extends FunSpec with Matchers {
       val sections = List(
         cg.emitSection(
           name = "Section 1",
+          description = Some("This is section 1"),
           exerciseTerms = exercises.map(_._1)
         ),
         cg.emitSection(
-          name = "Section 2"
+          name = "Section 2",
+          description = Some("This is section 2"),
+          exerciseTerms = Nil
         )
       )
 
@@ -47,21 +58,8 @@ class GenCodeSpec extends FunSpec with Matchers {
         exerciseTrees = exercises.map(_._2)
       )
 
-      def transmogrify(tree: Tree): Tree = (tree match {
-        case q"package $name { ..$stats }" ⇒
-          stats
-            .collectFirst { case ModuleDef(_, libraryTerm, _) ⇒ q"..$stats;$libraryTerm" }
-        case _ ⇒ None
-      }).getOrElse(EmptyTree)
-
-      val runtimeLibrary = toolbox.eval(transmogrify(tree)).asInstanceOf[Library]
-
-      import cg.EZTree._
-      println(tree.code)
-      println("~" * 20)
-      println(runtimeLibrary.name)
-      println(runtimeLibrary.description)
-
+      val runtimeLibrary = evalLibrary(tree)
+      runtimeLibrary.name should equal("MyLibrary")
     }
 
   }
