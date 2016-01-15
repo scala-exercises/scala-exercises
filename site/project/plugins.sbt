@@ -27,4 +27,4 @@ unmanagedSourceDirectories in Compile += baseDirectory.value.getParentFile.getPa
 
 // Exercise compiler plugin
 lazy val build = (project in file("."))
-  .dependsOn(ProjectRef(file("../../core"), "plugin"))
+  .dependsOn(ProjectRef(file("../../core"), "sbt-exercise"))

@@ -1,0 +1,59 @@
+//
+// Code (inline and block)
+// --------------------------------------------------
+
+// Line
+code {
+  color: $gray-dark;
+  background-color: $pre-bg;
+}
+
+// Blocks of code
+pre {
+  display: block;
+  padding: $line-height-computed;
+    margin: {
+        top: ($line-height-computed);
+        bottom: ($line-height-computed);
+        left: 0;
+        right: 0;
+    }
+  border: none;
+  border-radius: 0;
+
+  .hljs {
+    background-color: $pre-bg;
+  }
+
+  code.exercise-code {
+
+    input {
+      color: $input-underline;
+      background-color: $pre-bg;
+      font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+      font-size: 12px;
+      text-align: left;
+      line-height: 11px;
+      vertical-align: middle;
+      padding: 2px 0px;
+      margin-left: 4px;
+      margin-right: 4px;
+      border: 0px solid #999;
+      border-bottom: 1px solid $input-underline;
+      -webkit-animation: underliner 2s linear infinite;
+    }
+
+    input.success{
+      color: #859900;
+      border-bottom: 1px solid #859900;
+      -webkit-animation: none;
+    }
+
+    input:hover,
+    input:focus,
+    input:active {
+      outline:none;
+    }
+
+  }
+}

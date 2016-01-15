@@ -1,0 +1,99 @@
+// Sidebar
+// -----------------------------------------------------
+#wrapper {
+    padding: {
+        left: 0;
+        top: 60px;
+    }
+    @include transition(all 0.5s ease);
+    @media (min-width: $screen-sm-min) {
+        padding-left: 260px;
+    }
+}
+
+#sidebar {
+    padding: 0;
+    position: fixed;
+    left: 260px;
+    height: 100%;
+    width: 260px;
+    margin-left: -520px;
+    overflow-y: auto;
+    background: $gray-light;
+    z-index: 1000;
+    @include transition(all 0.5s ease);
+    @media (min-width: $screen-sm-min) {
+        margin-left: -260px;
+    }
+    
+    ul {
+        padding: 0 25px;
+        position: absolute;
+        width: 280px;
+        li {
+            display: block;
+            list-style: none;
+            padding: 8px 0;
+            span {
+                width: 8px;
+                height: 8px;
+                display: inline-block;
+                background: #E0E0E0;
+                @include border-radius (50px);
+            }
+            .bullet-active {
+                background: $brand-primary;
+            }
+            a {
+                padding-left: 5px;
+                display: inline-block;
+                color: $sidebar-link-color;
+            }
+            &.active,
+            &:hover,
+            &:focus,
+            &:active {
+                a {
+                    color: #333;
+                    font-weight: bold;
+                }
+            }
+            &:first-child {
+                padding: 0;
+            }
+        }
+    }
+    .sources {
+        position: absolute;
+        left: 30px;
+        bottom: 70px;
+        a {
+            color: $gray-dark;
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
+    a {
+        &:hover, &:focus, &:active {
+            text-decoration: none;
+            color: $sidebar-link-color-hover;
+        }
+    }
+}
+
+#content-detail {
+    position: absolute;
+    width: 100%;
+    padding: 0;
+    @media (min-width: $screen-sm-min) {
+        position: relative;
+        padding: 15px;
+    }
+}
+
+#wrapper.toggled {
+    #sidebar {
+        margin-left: -260px;
+    }
+}
