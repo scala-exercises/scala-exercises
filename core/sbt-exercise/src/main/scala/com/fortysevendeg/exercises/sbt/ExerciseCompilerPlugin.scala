@@ -6,8 +6,10 @@ import _root_.sbt._
 import _root_.sbt.Keys._
 
 import scala.io.Codec
+import scala.util.{ Try, Success, Failure }
 
-// This was based off of the twirl sbt plugin
+import java.io.File
+import java.net.URLClassLoader
 
 object ExerciseCompilerPlugin extends AutoPlugin {
 
@@ -15,13 +17,11 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   override def trigger = noTrigger
 
-  object Keys {
-    val compileExercises = TaskKey[Seq[File]]("47-compile-exercises", "Compile scala exercises")
+  object ExerciseCompilerKeys {
+    val compileExercises = TaskKey[Seq[File]]("compileExercises", "Compile scala exercises")
   }
 
-  import Keys._
-
-  println("WAHOO: exercise compiler plugin says hi")
+  import ExerciseCompilerKeys._
 
   def scalacEncoding(options: Seq[String]): String = {
     val i = options.indexOf("-encoding") + 1
@@ -30,7 +30,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   def compileExercisesTask = Def.task {
     ExerciseCompiler.compile(
-      (sourceDirectories in compileExercises).value,
+      (sources in compileExercises).value,
       (target in compileExercises).value,
       (includeFilter in compileExercises).value,
       (excludeFilter in compileExercises).value,
@@ -67,6 +67,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 }
 
 object ExerciseCompiler {
+
+  private val COMPILER_MAIN = "com.fortysevendeg.exercises.compiler.CompilerMain"
+
   def compile(
     sourceDirectories: Seq[File],
     targetDirectory:   File,
@@ -75,7 +78,52 @@ object ExerciseCompiler {
     codec:             Codec,
     log:               Logger
   ) = {
-    println("insert forked compilation here")
+
+    val exercises = collectExercises(
+      sourceDirectories, includeFilter, excludeFilter
+    )
+
+    val exercisePaths = exercises.map(_._1.getPath)
+
+    log.info("~" * 20)
+    log.info("Launching exercise compiler via new classloader:")
+    Meta.compilerClasspath.foreach { entry ⇒
+      log.info(s"~ $entry")
+    }
+    log.info("~" * 20)
+
+    val loader = new URLClassLoader(Meta.compilerClasspath.toArray, null)
+    val result = for {
+      compilerMainClass ← Try(loader.loadClass(COMPILER_MAIN))
+      compilerMain ← Try(compilerMainClass.getMethod("main", classOf[Array[String]]))
+    } yield compilerMain.invoke(null, exercisePaths.toArray[String].asInstanceOf[Array[String]])
+
+    result match {
+      case Success(v) ⇒ log.info(s"~ result $v")
+      case Failure(e) ⇒ log.error(s"~ error ${e.getMessage}")
+    }
+
+    log.info("~" * 20)
+    log.info("Launching exercise compiler via forked java:")
+    log.info("~" * 20)
+
+    val options = ForkOptions(bootJars = Meta.compilerClasspath.map { url ⇒ new File(url.toURI) })
+    val exitCode: Int = Fork.java(options, COMPILER_MAIN +: exercisePaths)
+
+    log.info(s"~ forked exit code $exitCode")
+
     Nil
   }
+
+  def collectExercises(sourceDirectories: Seq[File], includeFilter: FileFilter, excludeFilter: FileFilter): Seq[(File, File)] = {
+    sourceDirectories flatMap { sourceDirectory ⇒
+      (sourceDirectory ** includeFilter).get flatMap { file ⇒
+        if (!excludeFilter.accept(file))
+          Some(file → sourceDirectory)
+        else
+          None
+      }
+    }
+  }
+
 }
