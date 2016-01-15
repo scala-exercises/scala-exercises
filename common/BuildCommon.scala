@@ -8,6 +8,7 @@ import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import wartremover._
 
 import scala.{ Console => C }
+import scala.util.Try
 
 object BuildCommon extends AutoPlugin {
   override def requires = plugins.JvmPlugin && SbtScalariform
@@ -31,9 +32,14 @@ object BuildCommon extends AutoPlugin {
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
   )
 
-  def wartSettings = Seq(
-    wartremoverWarnings in Compile ++= Warts.unsafe
-  )
+
+  // `WARTING=false sbt` to drop into SBT w/ wart checking off
+  def warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
+
+  def wartSettings =
+    if (warting)
+      Seq(wartremoverWarnings in Compile ++= Warts.unsafe)
+    else Nil
 
   def miscSettings = Seq(
     shellPrompt := { s => s"${C.BLUE}${Project.extract(s).currentProject.id}>${C.RESET} " }
