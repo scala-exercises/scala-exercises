@@ -117,7 +117,6 @@ lazy val v0def = (project in file("v0def"))
 
 // Locally bundled exercise content projects
 
-
 lazy val content = (project in file("content"))
   .dependsOn(sharedJvm, v0def)
   .enablePlugins(ExerciseCompilerPlugin)
