@@ -2,7 +2,7 @@
   "title": "Range",
   "modules": [
     {
-      "preparagraph": "Range are not inclusive at end of range:",
+      "preparagraph": "Ranges are not inclusive at end of range:",
       "code": "val someNumbers = Range(0, 10)\nval second = someNumbers(1)\nval last = someNumbers.last\n\nsomeNumbers.size should be(__)\nsecond should be(__)\nlast should be(__)",
       "solutions": [
         "10",

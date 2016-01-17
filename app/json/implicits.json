@@ -32,7 +32,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Implicits can be used declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:",
+      "preparagraph": "Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:",
       "code": "def howMuchCanIMake_?(hours: Int)(implicit dollarsPerHour: BigDecimal) = dollarsPerHour * hours\n\nimplicit var hourlyRate = BigDecimal(34.00)\n\nhowMuchCanIMake_?(30) should be(__)\n\nhourlyRate = BigDecimal(95.00)\nhowMuchCanIMake_?(95) should be(__)",
       "solutions": [
         "1020.0",
