@@ -34,6 +34,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       (target in compileExercises).value,
       (includeFilter in compileExercises).value,
       (excludeFilter in compileExercises).value,
+      (fork in compileExercises).value,
       Codec(scalacEncoding(scalacOptions.value)),
       streams.value.log
     )
@@ -54,15 +55,18 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     target in compileExercises := crossTarget.value / "exercises" / Defaults.nameForSrc(configuration.value.name),
     compileExercises := compileExercisesTask.value,
     sourceGenerators <+= compileExercises,
-    managedSourceDirectories <+= target in compileExercises
+    managedSourceDirectories <+= target in compileExercises,
+
+    fork in compileExercises := false
   )
 
   def dependencySettings: Seq[Setting[_]] = Nil
 
   override def projectSettings: Seq[Setting[_]] =
     inConfig(Compile)(exerciseSettings) ++
-      inConfig(Test)(exerciseSettings) ++
       dependencySettings
+
+  val autoImport = ExerciseCompilerKeys
 
 }
 
@@ -70,11 +74,26 @@ object ExerciseCompiler {
 
   private val COMPILER_MAIN = "com.fortysevendeg.exercises.compiler.CompilerMain"
 
+  private val NullLogger = new AbstractLogger {
+    def getLevel: Level.Value = Level.Error
+    def setLevel(newLevel: Level.Value) {}
+    def getTrace = 0
+    def setTrace(flag: Int) {}
+    def successEnabled = false
+    def setSuccessEnabled(flag: Boolean) {}
+    def control(event: ControlEvent.Value, message: ⇒ String) {}
+    def logAll(events: Seq[LogEvent]) {}
+    def trace(t: ⇒ Throwable) {}
+    def success(message: ⇒ String) {}
+    def log(level: Level.Value, message: ⇒ String) {}
+  }
+
   def compile(
     sourceDirectories: Seq[File],
     targetDirectory:   File,
     includeFilter:     FileFilter,
     excludeFilter:     FileFilter,
+    fork:              Boolean,
     codec:             Codec,
     log:               Logger
   ) = {
@@ -85,32 +104,42 @@ object ExerciseCompiler {
 
     val exercisePaths = exercises.map(_._1.getPath)
 
-    log.info("~" * 20)
-    log.info("Launching exercise compiler via new classloader:")
+    log.info(s"Launching exercise compiler (fork = $fork), classpath:")
     Meta.compilerClasspath.foreach { entry ⇒
       log.info(s"~ $entry")
     }
-    log.info("~" * 20)
 
-    val loader = new URLClassLoader(Meta.compilerClasspath.toArray, null)
-    val result = for {
-      compilerMainClass ← Try(loader.loadClass(COMPILER_MAIN))
-      compilerMain ← Try(compilerMainClass.getMethod("main", classOf[Array[String]]))
-    } yield compilerMain.invoke(null, exercisePaths.toArray[String].asInstanceOf[Array[String]])
-
-    result match {
-      case Success(v) ⇒ log.info(s"~ result $v")
-      case Failure(e) ⇒ log.error(s"~ error ${e.getMessage}")
+    def logExitCode(exitCode: Int) {
+      log.info(s"~> exit code $exitCode")
     }
 
-    log.info("~" * 20)
-    log.info("Launching exercise compiler via forked java:")
-    log.info("~" * 20)
+    fork match {
+      case true ⇒
+        val options = ForkOptions(bootJars = Meta.compilerClasspath)
+        val exitCode = Fork.java(options, COMPILER_MAIN +: exercisePaths)
 
-    val options = ForkOptions(bootJars = Meta.compilerClasspath.map { url ⇒ new File(url.toURI) })
-    val exitCode: Int = Fork.java(options, COMPILER_MAIN +: exercisePaths)
+        logExitCode(exitCode)
 
-    log.info(s"~ forked exit code $exitCode")
+      case false ⇒
+        val loader = new URLClassLoader(Path.toURLs(Meta.compilerClasspath), null)
+        val res = for {
+          compilerMainClass ← Try(loader.loadClass(COMPILER_MAIN))
+          compilerMain ← Try(compilerMainClass.getMethod("main", classOf[Array[String]]))
+        } yield {
+          val previous = TrapExit.installManager()
+          val exitCode = TrapExit(compilerMain.invoke(
+            null, exercisePaths.toArray[String].asInstanceOf[Array[String]]
+          ), NullLogger)
+          TrapExit.uninstallManager(previous)
+
+          logExitCode(exitCode)
+        }
+
+        res match {
+          case Failure(e) ⇒ log.error(s"~ error ${e.getMessage}")
+          case _          ⇒
+        }
+    }
 
     Nil
   }
