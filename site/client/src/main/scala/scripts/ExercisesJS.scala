@@ -21,6 +21,7 @@ object Ajax {
 
 object Program {
   def updateState(s: State, a: Action): State = a match {
+    case SetState(newState) => newState
     case UpdateExercise(method, args) ⇒ updateByMethod(s, method, args)
     case _                            ⇒ s
   }
