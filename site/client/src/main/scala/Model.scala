@@ -12,9 +12,11 @@ case class ClientExercise(
   def canBeCompiled: Boolean = isFilled && !isSolved
 }
 
-class ExerciseState extends Enumeration {
-  val Unsolved, Evaluating, Errored, Solved = Value
-}
+sealed trait ExerciseState
+case object Unsolved extends ExerciseState
+case object Evaluating extends ExerciseState
+case object Errored extends ExerciseState
+case object Solved extends ExerciseState
 
 object Exercises {
   type State = List[ClientExercise]
