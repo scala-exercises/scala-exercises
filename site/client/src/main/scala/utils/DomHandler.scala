@@ -18,6 +18,12 @@ object DomHandler {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
   }
 
+  /** Disables the compilation button of the given exercise.
+    */
+  def disableCompileButton(e: HTMLElement): IO[Unit] = io {
+    $(e).find(".compile input[type='button']").prop("disabled", true)
+  }
+
   /** Assigns behaviors to the keyup event for inputs elements.
     */
   def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = io {
