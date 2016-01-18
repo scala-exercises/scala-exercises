@@ -1,4 +1,9 @@
 > compile
 
+> clean
+
+> set fork in compileExercises in Compile := true
+> compile
+
 # make sure compiled exercises exist
 # $ exists target/insert_actual_path_here

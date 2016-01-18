@@ -59,7 +59,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     buildInfoPackage  := "com.fortysevendeg.exercises.sbt",
     buildInfoKeys     := Seq(
       BuildInfoKey.map(fullClasspath in (compiler, Compile)) {
-        case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data.toURI.toURL))
+        case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
       }
     )
   )
