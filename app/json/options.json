@@ -53,7 +53,7 @@
         "Some(4.5)",
         "None"
       ],
-      "postparagraph": ""
+      "postparagraph": "Note that the type of result1 is now Option[Double], thanks to the scala type inference."
     },
     {
       "preparagraph": "Another operation is `fold`. this operation will extract the value from the option, or provide a default if the value is `None`",
@@ -62,7 +62,7 @@
         "9",
         "0"
       ],
-      "postparagraph": "Note that the type of result1 is now Option[Double], thanks to the scala type inference."
+      "postparagraph": ""
     }
   ]
 }
