@@ -1,22 +1,26 @@
 package model
 
-case class ClientExercise(
-    method:    String,
-    arguments: Seq[String] = Nil
-) {
-
-  def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
-
-  def isSolved: Boolean = false
-
-  def canBeCompiled: Boolean = isFilled && !isSolved
-}
-
 sealed trait ExerciseState
 case object Unsolved extends ExerciseState
 case object Evaluating extends ExerciseState
 case object Errored extends ExerciseState
 case object Solved extends ExerciseState
+
+case class ClientExercise(
+  method:    String,
+  arguments: Seq[String] = Nil,
+  state: ExerciseState = Unsolved
+) {
+
+  def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
+
+  def isSolved: Boolean = state == Solved
+
+  def isBeingEvaluated: Boolean = state == Evaluating
+
+  def canBeCompiled: Boolean = isFilled && !isSolved && !isBeingEvaluated
+}
+
 
 object Exercises {
   type State = List[ClientExercise]
@@ -24,11 +28,16 @@ object Exercises {
   def findByMethod(s: State, method: String): Option[ClientExercise] =
     s.find(_.method == method)
 
-  def updateByMethod(s: State, method: String, args: Seq[String]): State =
+  def applyByMethod(s: State, method: String, f: ClientExercise => ClientExercise): State =
     s.map(ex ⇒ {
       if (ex.method == method)
-        ex.copy(arguments = args)
+        f(ex)
       else
         ex
     })
+
+  def updateByMethod(s: State, method: String, args: Seq[String]): State =
+    applyByMethod(s, method, _.copy(arguments=args))
+
 }
+
