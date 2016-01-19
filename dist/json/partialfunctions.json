@@ -2,7 +2,7 @@
   "title": "Partial Functions",
   "modules": [
     {
-      "preparagraph": "A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait PartialFunction requires that the method `isDefinedAt` and `apply` be implemented.",
+      "preparagraph": "A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait `PartialFunction` requires that the method `isDefinedAt` and `apply` be implemented.",
       "code": "val doubleEvens: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {\n  //States that this partial function will take on the task\n  def isDefinedAt(x: Int) = x % 2 == 0\n\n  //What we do if this partial function matches\n  def apply(v1: Int) = v1 * 2\n}\n\nval tripleOdds: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {\n  def isDefinedAt(x: Int) = x % 2 != 0\n\n  def apply(v1: Int) = v1 * 3\n}\n\nval whatToDo = doubleEvens orElse tripleOdds //Here we chain the partial functions together\n\nwhatToDo(3) should be(__)\nwhatToDo(4) should be(__)",
       "solutions": [
         "9",
