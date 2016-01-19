@@ -19,7 +19,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Using getOrElse we can provide a default value ("No value") when the optional argument (`None`) does not exist:",
+      "preparagraph": "Using `getOrElse` we can provide a default value ("No value") when the optional argument (`None`) does not exist:",
       "code": "val value1 = maybeItWillReturnSomething(true)\nval value2 = maybeItWillReturnSomething(false)\n\nvalue1 getOrElse \"No value\" should be(__)\nvalue2 getOrElse \"No value\" should be(__)\nvalue2 getOrElse {\n  \"default function\"\n} should be(__)\n",
       "solutions": [
         "\"Found value\"",
