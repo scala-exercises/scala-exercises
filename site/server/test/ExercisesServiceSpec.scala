@@ -1,35 +1,35 @@
-import models.ExerciseEvaluation
+import com.fortysevendeg.exercises.models._
 import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
 import org.specs2.scalaz.DisjunctionMatchers
-import services.parser.ExercisesService
+import com.fortysevendeg.exercises.services._
+import shared._
 
 @RunWith(classOf[JUnitRunner])
 class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
 
-  val expectedTestSection = "stdlib"
-  val expectedTestCategory = "Extractors"
+  val expectedLibrary = "stdlib"
+  val expectedTestSection = "Extractors"
   val expectedTestExercise = "forAssigningValues"
   val expectedTestSuccesArgs = List("Chevy", "Camaro", "1978", "120")
   val expectedTestFailedArgs = List("a", "b", "1", "2")
 
   "ExercisesService" should {
 
-    "return at least one section via classpath discovery" in {
-      val sections = ExercisesService.sections
-      sections must not be empty
-      sections.find(_.title == expectedTestSection) must beSome
+    "return at least one library via classpath discovery" in {
+      val libraries = ExercisesService.libraries
+      libraries must not be empty
+      libraries.find(_.description == expectedLibrary) must beSome
     }
 
     "return at least one category via classpath discovery" in {
-      val foundCategories = for {
-        section ← ExercisesService.sections
-        categoryS ← section.categories
-        category ← ExercisesService.category(section.title, categoryS)
-      } yield category
-      foundCategories must not be empty
-      val expectedCat = foundCategories.find(_.title == expectedTestCategory)
+      val foundSections = for {
+        library ← ExercisesService.libraries
+        section ← ExercisesService.section(library.description, expectedTestSection)
+      } yield section
+      foundSections must not be empty
+      val expectedCat = foundSections.find(_.description == expectedTestSection)
       expectedCat must beSome
       val category = expectedCat.get
       category.exercises must not be empty
@@ -38,18 +38,20 @@ class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
 
     "evaluate a known exercise type coercing it's parameters and get a successful result" in {
       ExercisesService.evaluate(ExerciseEvaluation(
-        section = expectedTestSection,
-        category = expectedTestCategory,
+        libraryName = expectedLibrary,
+        sectionName = expectedTestSection,
         method = expectedTestExercise,
-        args = expectedTestSuccesArgs)) must beRightDisjunction
+        args = expectedTestSuccesArgs
+      )).isRight must beTrue
     }
 
     "evaluate a known exercise type coercing it's parameters and get a failed result" in {
       ExercisesService.evaluate(ExerciseEvaluation(
-        section = expectedTestSection,
-        category = expectedTestCategory,
+        libraryName = expectedLibrary,
+        sectionName = expectedTestSection,
         method = expectedTestExercise,
-        args = expectedTestFailedArgs)) must beLeftDisjunction
+        args = expectedTestFailedArgs
+      )).isLeft must beTrue
     }
 
   }

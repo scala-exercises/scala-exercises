@@ -60,7 +60,8 @@ lazy val server = (project in file("server"))
       "com.tristanhunt" %% "knockoff" % "0.8.3",
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
-      "com.toddfast.typeconverter" % "typeconverter" % "1.0") ++
+      "com.toddfast.typeconverter" % "typeconverter" % "1.0",
+      "org.scalaz" %% "scalaz-concurrent" % "7.2.0") ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0")
