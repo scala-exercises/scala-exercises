@@ -1,14 +1,14 @@
-package utils
+package com.fortysevendeg.exercises.utils
 
 import play.api.{ Application, Play }
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.mvc.{ Action, Controller, Results }
 import play.api.libs.ws.WS
-import services.messages.GetUserOrCreateRequest
 import scala.concurrent.ExecutionContext.Implicits.global
+import com.fortysevendeg.exercises.services._
+import com.fortysevendeg.exercises.services.messages._
 
 import scala.concurrent.Future
-import services.UserServiceImpl
 
 class OAuth2(application: Application) {
   lazy val githubAuthId = application.configuration.getString("github.client.id").get
@@ -49,7 +49,7 @@ object OAuth2 extends Controller {
 
       if (state == oauthState) {
         oauth2.getToken(code).map { accessToken ⇒
-          Redirect(utils.routes.OAuth2.success()).withSession("oauth-token" → accessToken)
+          Redirect(com.fortysevendeg.exercises.utils.routes.OAuth2.success()).withSession("oauth-token" → accessToken)
         }.recover {
           case ex: IllegalStateException ⇒ Unauthorized(ex.getMessage)
         }
@@ -74,7 +74,6 @@ object OAuth2 extends Controller {
           val email = (response.json \ "email").as[String]
 
           val userService = new UserServiceImpl
-
           val result = for {
             res ← userService.getUserOrCreate(GetUserOrCreateRequest(
               login = login,

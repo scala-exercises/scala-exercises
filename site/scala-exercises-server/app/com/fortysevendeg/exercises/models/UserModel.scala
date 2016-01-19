@@ -1,4 +1,4 @@
-package models
+package com.fortysevendeg.exercises.models
 
 import scala.concurrent.Future
 import shared.User

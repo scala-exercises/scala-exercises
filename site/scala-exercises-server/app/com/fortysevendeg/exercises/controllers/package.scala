@@ -1,4 +1,4 @@
-package controllers
+package com.fortysevendeg.exercises.controllers
 
 import play.api.http.{ ContentTypeOf, ContentTypes, Writeable }
 import play.api.libs.json.JsError

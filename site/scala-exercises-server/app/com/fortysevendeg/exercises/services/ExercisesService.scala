@@ -1,5 +1,6 @@
-package services.exerciseV0
+package com.fortysevendeg.exercises.services
 
+import cats.data.Xor
 import java.io.File
 import java.net.URLClassLoader
 
@@ -12,7 +13,7 @@ import scala.language.implicitConversions
 import scala.reflect.ClassTag
 import scala.reflect.runtime.{ universe ⇒ ru }
 import ru._
-import scalaz._, Scalaz._
+import cats.syntax.xor._
 
 /** Main entry point and service for libraries, categories and exercises discovery + evaluation
   */
@@ -48,7 +49,7 @@ object ExercisesService {
     sources
   }
 
-  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): Throwable \/ Unit = {
+  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): Throwable Xor Unit = {
     val targetSectionInstance = Class.forName(classInfo.name).newInstance()
     val mirror = runtimeMirror(getClass.getClassLoader)
     val targetMirror = mirror.reflect(targetSectionInstance)
@@ -60,7 +61,7 @@ object ExercisesService {
         val argClass = mirror.runtimeClass(symbol.typeSignature.dealias)
         TypeConverter.convert(argClass, arg)
     }
-    methodMirror.apply(argValues: _*).asInstanceOf[Throwable \/ Unit]
+    methodMirror.apply(argValues: _*).asInstanceOf[Throwable Xor Unit]
   }
 
   /** Scans the classpath returning a list of all libraries found
@@ -77,13 +78,13 @@ object ExercisesService {
     library.copy(sectionNames = sectionNames)
   }
 
-  /** Scans the classpath returning a list of sections containing exercises for a given section
+  /** Scans the classpath returning a list of sections containing exercises for a given library
     */
-  def section(libraryName: String, sectionName: String): List[Section] = for {
-    pkg ← subclassesOf[exercise.Library]
-    library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList
+  def section(libraryName: String, sectionName: String): Option[Section] = for {
+    pkg ← subclassesOf[exercise.Library].headOption
+    library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg))
     if library.name == libraryName
-    subclass ← subclassesOf[exercise.Section]
+    subclass ← subclassesOf[exercise.Section].headOption
     if simpleClassName(subclass) == sectionName
     section ← ExerciseCodeExtractor.buildSection(sources(subclass))
   } yield section
@@ -91,7 +92,7 @@ object ExercisesService {
   /** Evaluates an exercise in a given section and category and returns a disjunction
     * containing either an exception or Unit representing success
     */
-  def evaluate(evaluation: ExerciseEvaluation): Throwable \/ Unit = {
+  def evaluate(evaluation: ExerciseEvaluation): Throwable Xor Unit = {
     val evalResult = for {
       pkg ← subclassesOf[exercise.Library]
       library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList

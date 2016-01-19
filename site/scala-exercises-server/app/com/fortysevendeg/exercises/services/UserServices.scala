@@ -1,7 +1,7 @@
-package services
+package com.fortysevendeg.exercises.services
 
-import models.UserModel
-import services.messages._
+import com.fortysevendeg.exercises.models.UserModel
+import com.fortysevendeg.exercises.services.messages._
 
 import scala.concurrent.{ Future, ExecutionContext }
 

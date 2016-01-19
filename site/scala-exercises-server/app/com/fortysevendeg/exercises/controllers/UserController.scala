@@ -1,6 +1,6 @@
-package controllers
+package com.fortysevendeg.exercises.controllers
 
-import models.UserModel
+import com.fortysevendeg.exercises.models.UserModel
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Reads._
 import play.api.libs.json._
