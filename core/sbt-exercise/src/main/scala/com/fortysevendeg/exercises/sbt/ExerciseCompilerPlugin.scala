@@ -11,66 +11,19 @@ import scala.util.{ Try, Success, Failure }
 import java.io.File
 import java.net.URLClassLoader
 
+object ExerciseCompilerKeys {
+  val compileExercises = TaskKey[Seq[File]]("compileExercises", "Compile scala exercises")
+  val CompileExercises = config("compile-exercises") extend (Compile) hide
+}
+
 object ExerciseCompilerPlugin extends AutoPlugin {
+  import ExerciseCompilerKeys._
 
   override def requires = plugins.JvmPlugin
 
   override def trigger = noTrigger
 
-  object ExerciseCompilerKeys {
-    val compileExercises = TaskKey[Seq[File]]("compileExercises", "Compile scala exercises")
-
-    val CompileExercises = config("compile-exercises") extend (Compile) hide
-
-  }
-
-  import ExerciseCompilerKeys._
-
-  def scalacEncoding(options: Seq[String]): String = {
-    val i = options.indexOf("-encoding") + 1
-    if (i > 0 && i < options.length) options(i) else "UTF-8"
-  }
-
-  def compileExercisesTask = Def.task {
-
-    (compile in CompileExercises).value
-
-    ExerciseCompiler.compile(
-      (sources in compileExercises).value,
-      (target in compileExercises).value,
-      (includeFilter in compileExercises).value,
-      (excludeFilter in compileExercises).value,
-      (fork in compileExercises).value,
-      Codec(scalacEncoding(scalacOptions.value)),
-      streams.value.log
-    )
-
-    Nil
-  }
-
-  def exerciseSettings: Seq[Setting[_]] = Seq(
-    includeFilter in compileExercises := "*.scala",
-    excludeFilter in compileExercises := HiddenFileFilter,
-    sourceDirectories in compileExercises := Seq(sourceDirectory.value / "exercises"),
-
-    sources in compileExercises <<= Defaults.collectFiles(
-      sourceDirectories in compileExercises,
-      includeFilter in compileExercises,
-      excludeFilter in compileExercises
-    ),
-
-    watchSources in Defaults.ConfigGlobal <++= sources in compileExercises,
-    target in compileExercises := crossTarget.value / "exercises" / Defaults.nameForSrc(configuration.value.name),
-    compileExercises := compileExercisesTask.value,
-    sourceGenerators <+= compileExercises,
-    managedSourceDirectories <+= target in compileExercises,
-
-    fork in compileExercises := false
-  )
-
-  def dependencySettings: Seq[Setting[_]] = Seq(
-    libraryDependencies += "com.47deg" %% "definitions" % "0.0.0"
-  )
+  val autoImport = ExerciseCompilerKeys
 
   override def projectSettings: Seq[Setting[_]] =
     inConfig(Compile)(exerciseSettings) ++
@@ -78,7 +31,37 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       inConfig(CompileExercises)(unmanagedSourceDirectories in Compile <++= sourceDirectories in (Compile, compileExercises)) ++
       dependencySettings
 
-  val autoImport = ExerciseCompilerKeys
+  private def scalacEncoding(options: Seq[String]): String = {
+    val i = options.indexOf("-encoding") + 1
+    if (i > 0 && i < options.length) options(i) else "UTF-8"
+  }
+
+  def compileExercisesTask = Def.task {
+    (compile in CompileExercises).value
+    ExerciseCompiler.compile(
+      (sourceDirectories in compileExercises).value,
+      (target in compileExercises).value,
+      (fork in compileExercises).value,
+      Codec(scalacEncoding(scalacOptions.value)),
+      streams.value.log
+    )
+    Nil
+  }
+
+  def exerciseSettings: Seq[Setting[_]] = Seq(
+    sourceDirectories in compileExercises := Seq(sourceDirectory.value / "exercises"),
+    sources in compileExercises <<= (sourceDirectories in compileExercises) map (_ ** "*" get),
+    watchSources in Defaults.ConfigGlobal <++= sources in compileExercises,
+    target in compileExercises := crossTarget.value / "exercises" / Defaults.nameForSrc(configuration.value.name),
+    compileExercises := compileExercisesTask.value,
+    sourceGenerators <+= compileExercises,
+    managedSourceDirectories <+= target in compileExercises,
+    fork in compileExercises := false
+  )
+
+  def dependencySettings: Seq[Setting[_]] = Seq(
+    libraryDependencies += "com.47deg" %% "definitions" % "0.0.0"
+  )
 
 }
 
@@ -103,18 +86,12 @@ object ExerciseCompiler {
   def compile(
     sourceDirectories: Seq[File],
     targetDirectory:   File,
-    includeFilter:     FileFilter,
-    excludeFilter:     FileFilter,
     fork:              Boolean,
     codec:             Codec,
     log:               Logger
   ) {
 
-    val exercises = collectExercises(
-      sourceDirectories, includeFilter, excludeFilter
-    )
-
-    val exercisePaths = exercises.map(_._1.getPath)
+    val exercisePaths = sourceDirectories.map(_.getPath)
 
     log.info(s"Launching exercise compiler (fork = $fork), classpath:")
     Meta.compilerClasspath.foreach { entry ⇒
@@ -151,17 +128,6 @@ object ExerciseCompiler {
           case Failure(e) ⇒ log.error(s"~ error ${e.getMessage}")
           case _          ⇒
         }
-    }
-  }
-
-  def collectExercises(sourceDirectories: Seq[File], includeFilter: FileFilter, excludeFilter: FileFilter): Seq[(File, File)] = {
-    sourceDirectories flatMap { sourceDirectory ⇒
-      (sourceDirectory ** includeFilter).get flatMap { file ⇒
-        if (!excludeFilter.accept(file))
-          Some(file → sourceDirectory)
-        else
-          None
-      }
     }
   }
 
