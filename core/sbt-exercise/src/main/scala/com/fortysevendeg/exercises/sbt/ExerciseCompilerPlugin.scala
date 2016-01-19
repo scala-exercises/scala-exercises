@@ -19,6 +19,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   object ExerciseCompilerKeys {
     val compileExercises = TaskKey[Seq[File]]("compileExercises", "Compile scala exercises")
+
+    val CompileExercises = config("compile-exercises") extend (Compile) hide
+
   }
 
   import ExerciseCompilerKeys._
@@ -29,6 +32,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   }
 
   def compileExercisesTask = Def.task {
+
+    (compile in CompileExercises).value
+
     ExerciseCompiler.compile(
       (sources in compileExercises).value,
       (target in compileExercises).value,
@@ -38,6 +44,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       Codec(scalacEncoding(scalacOptions.value)),
       streams.value.log
     )
+
+    Nil
   }
 
   def exerciseSettings: Seq[Setting[_]] = Seq(
@@ -60,10 +68,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     fork in compileExercises := false
   )
 
-  def dependencySettings: Seq[Setting[_]] = Nil
+  def dependencySettings: Seq[Setting[_]] = Seq(
+    libraryDependencies += "com.47deg" %% "definitions" % "0.0.0"
+  )
 
   override def projectSettings: Seq[Setting[_]] =
     inConfig(Compile)(exerciseSettings) ++
+      inConfig(CompileExercises)(Defaults.configSettings) ++
+      inConfig(CompileExercises)(unmanagedSourceDirectories in Compile <++= sourceDirectories in (Compile, compileExercises)) ++
       dependencySettings
 
   val autoImport = ExerciseCompilerKeys
@@ -96,7 +108,7 @@ object ExerciseCompiler {
     fork:              Boolean,
     codec:             Codec,
     log:               Logger
-  ) = {
+  ) {
 
     val exercises = collectExercises(
       sourceDirectories, includeFilter, excludeFilter
@@ -140,8 +152,6 @@ object ExerciseCompiler {
           case _          ⇒
         }
     }
-
-    Nil
   }
 
   def collectExercises(sourceDirectories: Seq[File], includeFilter: FileFilter, excludeFilter: FileFilter): Seq[(File, File)] = {

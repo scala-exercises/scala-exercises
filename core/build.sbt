@@ -83,3 +83,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       }
     }
   )
+  // Publish definitions before running scripted
+  .settings(
+    scriptedDependencies <<= (publishLocal in definitions, scriptedDependencies) map { (_, _) => Unit }
+  )
