@@ -10,7 +10,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Character Literals can be an a single character:",
+      "preparagraph": "Character Literals can be a single character:",
       "code": "val a = 'a'\nval b = 'B'\n\n\n//format(a) is a string format, meaning the \"%c\".format(x)\n//will return the string representation of the char.\n\n\"%c\".format(a) should be(__)\n\"%c\".format(b) should be(__)",
       "solutions": [
         "\"a\"",
