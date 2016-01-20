@@ -8,13 +8,13 @@ import scripts.{ Program }
 
 object UpdateStateSpec extends TestSuite {
   def tests = TestSuite {
-    'SetState {
+    'SetState{
       val newState = List(ClientExercise("foo", Seq("", "")))
       val action = SetState(newState)
       val state = List()
       assert(Program.updateState(state, action) == newState)
     }
-    'UpdateExercise {
+    'UpdateExercise{
       val action = UpdateExercise("foo", Seq("one", "two"))
       val state = List(ClientExercise("foo", Seq("", "")))
       val newState = Program.updateState(state, action)
