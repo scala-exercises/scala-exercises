@@ -7,6 +7,8 @@ import shared.IO
 
 import cats.data.OptionT
 import cats.syntax.option._
+import cats.std.list._
+import cats.syntax.traverse._
 
 object DomHandler {
 
@@ -18,70 +20,93 @@ object DomHandler {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
   }
 
-  /** Disables the compilation button of the given exercise.
-    */
-  def disableCompileButton(e: HTMLElement): IO[Unit] = io {
-    $(e).find(".compile input[type='button']").prop("disabled", true)
+  /** Enables the compilation button of the given exercise.
+   */
+  def enableCompileButton(e: HTMLElement): IO[Unit] = io {
+    $(e).find(".compile button").prop("disabled", false)
   }
 
-  /** Assigns behaviors to the keyup event for inputs elements.
-    */
-  def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = io {
-    allInputs foreach (input ⇒ {
-      $(input).keyup((e: dom.Event) ⇒ {
-        (for {
-          _ ← OptionT(setInputWidth(input) map (_.some))
-          methodName ← OptionT(io(methodParent(input)))
-          exercise ← OptionT(io(findExerciseByMethod(methodName)))
-          inputsValues = getInputsValues(exercise)
-          _ ← OptionT(onkeyup(methodName, inputsValues) map (_.some))
-        } yield ()).value.unsafePerformIO()
-      })
+  /** Disables the compilation button of the given exercise.
+   */
+  def disableCompileButton(e: HTMLElement): IO[Unit] = io {
+    $(e).find(".compile button").prop("disabled", true)
+  }
+
+  /**
+   * Given a method name, return the node corresponds to such method.
+   */
+  def nodeByMethod(method: String): IO[Option[HTMLElement]] = for {
+    exercises <- allExercises
+  } yield exercises.find(getMethodAttr(_) == method)
+
+  /**
+   * Assigns behaviors to the keyup event for inputs elements.
+   */
+  def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = for {
+    inputs <- allInputs
+    _ <- inputs.map(input => attachKeyUpHandler(input, onkeyup)).sequence
+  } yield ()
+
+  def attachKeyUpHandler(input: HTMLInputElement, onkeyup: (String, Seq[String]) => IO[Unit]): IO[Unit] = io {
+    $(input).keyup((e: dom.Event) => {
+      (for {
+        _ ← OptionT(setInputWidth(input) map (_.some))
+        methodName ← OptionT(io(methodParent(input)))
+        exercise ← OptionT(findExerciseByMethod(methodName))
+        inputsValues = getInputsValues(exercise)
+        _ ← OptionT(onkeyup(methodName, inputsValues) map (_.some))
+      } yield ()).value.unsafePerformIO()
     })
   }
 
-  /** Assigns behaviors to the blur event for inputs elements.
-    */
-  def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = io {
-    allInputs foreach (input ⇒ {
-      $(input).blur((e: dom.Event) ⇒ {
-        methodParent(input) foreach (onBlur(_).unsafePerformIO())
-      })
+  /**
+   * Assigns behaviors to the blur event for inputs elements.
+   */
+  def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = for {
+    inputs <- allInputs
+    _ <- inputs.map(attachBlurHandler(_, onBlur)).sequence
+  } yield ()
+
+  def attachBlurHandler(input: HTMLInputElement, onBlur: String => IO[Unit]): IO[Unit] = io {
+    $(input).blur((e: dom.Event) ⇒ {
+      methodParent(input) foreach (onBlur(_).unsafePerformIO())
     })
   }
 
   def setInputWidth(input: HTMLInputElement): IO[JQuery] =
     io($(input).width(inputSize(getInputLength(input))))
 
-  def insertInputs: Seq[(HTMLElement, String)] = for {
-    code ← getCodeBlocks
-    text = getTextInCode(code)
-    replaced = replaceInputByRes(text)
-  } yield (code, replaced)
+  def inputReplacements: IO[Seq[(HTMLElement, String)]] = for {
+    blocks ← getCodeBlocks
+  } yield blocks.map(code => code -> replaceInputByRes(getTextInCode(code)))
 
   val resAssert = """(?s)\((res[0-9]*)\)""".r
 
-  def allExercises: Seq[HTMLElement] = $(".exercise").divs filter isMethodDefined
+  def allExercises: IO[Seq[HTMLElement]] = io {
+    $(".exercise").divs filter isMethodDefined
+  }
 
   def getMethodAttr(e: HTMLElement): String = $(e).attr("data-method").trim
 
   def isMethodDefined(e: HTMLElement): Boolean = getMethodAttr(e).nonEmpty
 
-  def getMethodsList: Seq[String] = allExercises map getMethodAttr
+  def getMethodsList: IO[Seq[String]] = allExercises.map(_.map(getMethodAttr))
 
   def methodName(e: HTMLElement): Option[String] = Option(getMethodAttr(e)) filter (_.nonEmpty)
 
   def methodParent(input: HTMLInputElement): Option[String] = methodName($(input).closest(".exercise").getDiv)
 
-  def allInputs: Seq[HTMLInputElement] = $(".exercise-code>input").inputs
+  def allInputs: IO[List[HTMLInputElement]] = io { $(".exercise-code>input").inputs.toList }
 
-  def findExerciseByMethod(method: String): Option[HTMLElement] = allExercises.find(methodName(_) == Option(method))
+  def findExerciseByMethod(method: String): IO[Option[HTMLElement]] = for {
+    exercises <- allExercises
+  } yield exercises.find(methodName(_) == Option(method))
 
   def getInputsValues(exercise: HTMLElement): Seq[String] = inputsInExercise(exercise).map(_.value)
 
   def inputsInExercise(exercise: HTMLElement): Seq[HTMLInputElement] = $(exercise).find("input").inputs
 
-  def getCodeBlocks: Seq[HTMLElement] = $("pre code").elements
+  def getCodeBlocks: IO[Seq[HTMLElement]] = io { $("pre code").elements }
 
   def getTextInCode(code: HTMLElement): String = $(code).text
 

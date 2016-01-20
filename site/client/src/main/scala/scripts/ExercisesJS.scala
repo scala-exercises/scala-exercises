@@ -13,6 +13,7 @@ import IO._
 import model._
 import model.Exercises._
 import actions._
+import ui.{ UI }
 
 object Ajax {
   def compileExercise(e: ClientExercise): Future[Option[Action]] =
@@ -23,29 +24,28 @@ object Program {
   def updateState(s: State, a: Action): State = a match {
     case SetState(newState) => newState
     case UpdateExercise(method, args) ⇒ updateByMethod(s, method, args)
-    case _                            ⇒ s
+    case _ ⇒ s
   }
   def runEffect(s: State, a: Action): Future[Option[Action]] = a match {
     case CompileExercise(method) ⇒ {
       findByMethod(s, method) match {
         case Some(exercise) if exercise.canBeCompiled ⇒ Ajax.compileExercise(exercise)
-        case _                                        ⇒ Future(None)
+        case _ ⇒ Future(None)
       }
     }
     case _ ⇒ Future(None)
   }
   def updateUI(s: State, a: Action): IO[Unit] = a match {
-    case UpdateExercise(method, args) ⇒ io { println("Exercise updated") }
-    case CompileExercise(method)      ⇒ io { println("Exercise being compiled") }
-    case _                            ⇒ io {}
+    case UpdateExercise(method, args) ⇒ UI.toggleCompileButton(s, method)
+    case CompileExercise(method) ⇒ io { println("Exercise being compiled") }
+    case _ ⇒ io {}
   }
 }
 
 object ExercisesJS extends js.JSApp {
 
-  def loadInitialData: IO[State] = io {
-    getMethodsList map (m ⇒ ClientExercise(m)) toList
-  }
+  def loadInitialData: IO[State] =
+    getMethodsList.map(_.map(m ⇒ ClientExercise(m)).toList)
 
   def main(): Unit = {
     val states: Var[State] = Var(Nil)
@@ -73,8 +73,8 @@ object ExercisesJS extends js.JSApp {
 
     val program = for {
       initialState ← loadInitialData flatMap setState
-      // TODO: reflect initial state in DOM
-      _ ← replaceInputs(insertInputs)
+      replacements <- inputReplacements
+      _ ← replaceInputs(replacements)
       _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
         triggerAction(UpdateExercise(method, arguments))
       })
