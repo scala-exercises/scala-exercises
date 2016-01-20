@@ -5,12 +5,13 @@ import cats.free.Free
 import scalaz.concurrent.Task
 import scala.language.higherKinds
 import com.fortysevendeg.shared.free._
+import com.fortysevendeg.exercises.services.free.UserOp
 
 object ProdInterpreters {
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def prodInterpreter: ExerciseOp ~> Task = new (ExerciseOp ~> Task) {
+  implicit def exerciseOpsInterpreter: ExerciseOp ~> Task = new (ExerciseOp ~> Task) {
 
     import com.fortysevendeg.exercises.services.ExercisesService._
 
@@ -22,15 +23,9 @@ object ProdInterpreters {
 
   }
 
-}
+  implicit def userOpsInterpreter: UserOp ~> Task = new (UserOp ~> Task) {
 
-object syntax {
-
-  implicit class FreeOps[F[_], A](f: Free[F, A]) {
-
-    /** Run this Free structure folding over it with an implicit available interpreter */
-    def run[G[_]: Monad](implicit interpreter: (F ~> G)): G[A] =
-      f foldMap interpreter
+    def apply[A](fa: UserOp[A]): Task[A] = ???
 
   }
 

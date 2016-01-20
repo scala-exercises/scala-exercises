@@ -39,6 +39,7 @@ lazy val scalaExercisesServer = (project in file("scala-exercises-server"))
   .settings(commonSettings: _*)
   .settings(exerciseSettings: _*)
   .settings(
+    routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip))

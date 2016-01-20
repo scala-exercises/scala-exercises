@@ -1,5 +1,7 @@
 package com.fortysevendeg.exercises.controllers
 
+import cats.data.Xor
+import com.fortysevendeg.shared.free.ExerciseOps
 import java.util.UUID
 
 import com.fortysevendeg.exercises.services.UserServiceImpl
@@ -11,10 +13,13 @@ import play.api.routing.JavaScriptReverseRouter
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import com.fortysevendeg.exercises.services._
+import com.fortysevendeg.exercises.app._
+import scalaz.concurrent.Task
+import scalaz.\/-
 
 import scala.concurrent.Future
 
-object Application extends Controller {
+class ApplicationController(implicit exerciseOps: ExerciseOps[ExercisesApp]) extends Controller {
 
   def index = Action.async { implicit request ⇒
 
@@ -38,9 +43,11 @@ object Application extends Controller {
   }
 
   def library(libraryName: String) = Action.async { implicit request ⇒
-    ExercisesService.libraries.find(_.name == libraryName) match {
-      case Some(library) ⇒ Future(Redirect(s"$libraryName/${library.sectionNames.head}"))
-      case _             ⇒ Future(Ok("Library not found"))
+    Future {
+      exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runTask match {
+        case \/-(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
+        case _                  ⇒ Ok("Library not found")
+      }
     }
   }
 

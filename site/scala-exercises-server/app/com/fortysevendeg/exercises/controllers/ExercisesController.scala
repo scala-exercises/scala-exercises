@@ -10,15 +10,17 @@ import scala.concurrent.Future
 import scalaz.{ -\/, \/, \/- }
 
 import com.fortysevendeg.exercises.services._
+import com.fortysevendeg.shared.free.ExerciseOps
+import com.fortysevendeg.exercises.app._
 
-object ExercisesController extends Controller with JsonFormats {
+class ExercisesController(implicit exerciseOps: ExerciseOps[ExercisesApp]) extends Controller with JsonFormats {
 
   def evaluate(libraryName: String, sectionName: String) = Action(BodyParsers.parse.json) { request ⇒
     request.body.validate[ExerciseEvaluation] match {
       case JsSuccess(evaluation, _) ⇒
-        ExercisesService.evaluate(evaluation) match {
-          case Xor.Right(result) ⇒ Ok("Evaluation succeded : " + result)
-          case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
+        exerciseOps.evaluate(evaluation).runTask match {
+          case \/-(result) ⇒ Ok("Evaluation succeded : " + result)
+          case -\/(error)  ⇒ BadRequest("Evaluation failed : " + error)
         }
       case JsError(errors) ⇒
         BadRequest(JsError.toJson(errors))
