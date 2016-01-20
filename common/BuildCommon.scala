@@ -5,6 +5,8 @@ import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
+import wartremover._
+
 import scala.{ Console => C }
 
 object BuildCommon extends AutoPlugin {
@@ -29,6 +31,10 @@ object BuildCommon extends AutoPlugin {
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
   )
 
+  def wartSettings = Seq(
+    wartremoverWarnings in Compile ++= Warts.unsafe
+  )
+
   def miscSettings = Seq(
     shellPrompt := { s => s"${C.BLUE}${Project.extract(s).currentProject.id}>${C.RESET} " }
   )
@@ -39,7 +45,10 @@ object BuildCommon extends AutoPlugin {
     )
   )
 
-  override def projectSettings = baseSettings ++ miscSettings ++ formatSettings ++ dependencySettings
+  override def projectSettings =
+    baseSettings ++ dependencySettings ++
+    formatSettings ++ wartSettings ++
+    miscSettings
 
   object autoImport {
     def compilelibs(deps: ModuleID*) = deps map (_ % "compile")

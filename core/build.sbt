@@ -8,11 +8,11 @@ lazy val runtime = (project in file("runtime"))
     )
   )
 
-lazy val plugin = (project in file("sbt-exercise"))
+lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(
     name            := "sbt-exercise",
     sbtPlugin       := true
   )
 
 lazy val root = (project in file("."))
-  .aggregate(runtime, plugin)
+  .aggregate(runtime, `sbt-exercise`)

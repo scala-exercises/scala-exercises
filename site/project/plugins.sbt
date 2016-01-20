@@ -20,15 +20,11 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
-addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
-
-
 // Build common plugin
-// This override is a nasty hack to circumvent some dependency bug in SBT
-dependencyOverrides += "org.scalariform" %% "scalariform" % "0.1.8"
+addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
 unmanagedSourceDirectories in Compile += baseDirectory.value.getParentFile.getParentFile / "common"
 
 // Exercise compiler plugin
 lazy val build = (project in file("."))
-  .dependsOn(ProjectRef(file("../../core"), "plugin"))
+  .dependsOn(ProjectRef(file("../../core"), "sbt-exercise"))
