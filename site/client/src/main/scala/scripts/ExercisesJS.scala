@@ -57,15 +57,17 @@ object ExercisesJS extends js.JSApp {
 
     def triggerAction(action: Action): IO[Unit] = io {
       actions() = action
-      setState(Program.updateState(states(), action))
+      val oldState = states()
+      val newState = Program.updateState(oldState, action)
+      setState(newState).unsafePerformIO()
     }
 
-    val effects = Obs(actions, skipInitial = true) {
+    val effects = Obs(states, skipInitial = true) {
       Program.runEffect(states(), actions()).foreach(m ⇒ {
         m.foreach(triggerAction(_))
       })
     }
-    val ui = Obs(actions, skipInitial = true) {
+    val ui = Obs(states, skipInitial = true) {
       Program.updateUI(states(), actions()).unsafePerformIO()
     }
 
