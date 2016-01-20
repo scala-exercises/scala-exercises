@@ -10,18 +10,21 @@ import scala.tools.nsc.doc.{ Settings ⇒ _, _ }
 
 class DocExtractionGlobalSpec extends FunSpec with Matchers {
 
+  val code = """
+    /** This is a comment that gets ignored */
+    package myPackage {
+      /** This is Foo */
+      object Foo { val value = 1 }
+      /** This is Bar */
+      object Bar {
+        /** This is Bar.bar */
+        def bar() {}
+      }
+    }
+    """
+
   describe("doc comment searching") {
     it("should find doc comments on objects") {
-
-      val code = """
-        /** This is a comment that gets ignored */
-        package myPackage {
-          /** This is Foo */
-          object Foo { val bar = 1 }
-          /** This is Bar */
-          object Bar
-        }
-        """
 
       val g = new DocExtractionGlobal()
 
@@ -41,5 +44,18 @@ class DocExtractionGlobalSpec extends FunSpec with Matchers {
       ))
 
     }
+
+    it("should do the same via the java facade") {
+
+      val global = new DocExtractionGlobal.Java()
+      val res = global.find(code, Array("myPackage.Foo", "doesnt.exit", "myPackage.Bar"))
+      res.toList should equal(List(
+        "/** This is Foo */",
+        null,
+        "/** This is Bar */"
+      ))
+
+    }
+
   }
 }
