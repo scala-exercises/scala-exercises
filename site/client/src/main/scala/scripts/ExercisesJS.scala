@@ -3,86 +3,50 @@ package scripts
 import rx._
 import rx.ops._
 import utils.DomHandler._
-
 import scala.scalajs.js
-import scala.concurrent.{ Future }
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import shared.IO
 import IO._
-import model._
-import model.Exercises._
-import actions._
-import ui.{ UI }
-
-object Ajax {
-  def compileExercise(e: ClientExercise): Future[Option[Action]] =
-    Future(Some(NoOp()))
-}
-
-object Program {
-  def updateState(s: State, a: Action): State = a match {
-    case SetState(newState) => newState
-    case UpdateExercise(method, args) ⇒ updateByMethod(s, method, args)
-    case _ ⇒ s
-  }
-  def runEffect(s: State, a: Action): Future[Option[Action]] = a match {
-    case CompileExercise(method) ⇒ {
-      findByMethod(s, method) match {
-        case Some(exercise) if exercise.canBeCompiled ⇒ Ajax.compileExercise(exercise)
-        case _ ⇒ Future(None)
-      }
-    }
-    case _ ⇒ Future(None)
-  }
-  def updateUI(s: State, a: Action): IO[Unit] = a match {
-    case UpdateExercise(method, args) ⇒ UI.toggleCompileButton(s, method)
-    case CompileExercise(method) ⇒ io { println("Exercise being compiled") }
-    case _ ⇒ io {}
-  }
-}
 
 object ExercisesJS extends js.JSApp {
 
-  def loadInitialData: IO[State] =
-    getMethodsList.map(_.map(m ⇒ ClientExercise(m)).toList)
+  object Model {
+
+    def updateExerciseList(ex: List[ClientExercise]): IO[Unit] = io(exercises() = ex)
+
+    case class ClientExercise(method: String, arguments: Seq[String] = Nil) {
+      def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
+    }
+
+    val exercises = Var(getMethodsList map (m ⇒ ClientExercise(m)) toList)
+
+    def updateExcercise(method: String, args: Seq[String]): List[ClientExercise] =
+      exercises().updated(exerciseIndex(method), ClientExercise(method, args))
+
+    def getExercise(method: String): Option[ClientExercise] = exercises().lift(exerciseIndex(method))
+
+    def exerciseIndex(m: String): Int = exercises().indexWhere(_.method == m)
+
+  }
+
+  import Model._
+
+  def inputChanged(method: String, args: Seq[String]): IO[Unit] =
+    updateExerciseList(updateExcercise(method, args))
+
+  def inputBlur(method: String): IO[Unit] = io {
+    Model.getExercise(method) foreach (e ⇒ println(e.isFilled))
+  }
 
   def main(): Unit = {
-    val states: Var[State] = Var(Nil)
-    val actions: Var[Action] = Var(NoOp())
-
-    def setState(s: State): IO[Unit] = io {
-      states() = s
-    }
-
-    def triggerAction(action: Action): IO[Unit] = io {
-      actions() = action
-      val oldState = states()
-      val newState = Program.updateState(oldState, action)
-      setState(newState).unsafePerformIO()
-    }
-
-    val effects = Obs(states, skipInitial = true) {
-      Program.runEffect(states(), actions()).foreach(m ⇒ {
-        m.foreach(triggerAction(_))
-      })
-    }
-    val ui = Obs(states, skipInitial = true) {
-      Program.updateUI(states(), actions()).unsafePerformIO()
-    }
 
     val program = for {
-      initialState ← loadInitialData flatMap setState
-      replacements <- inputReplacements
-      _ ← replaceInputs(replacements)
-      _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
-        triggerAction(UpdateExercise(method, arguments))
-      })
-      _ ← onInputBlur((method: String) ⇒ {
-        triggerAction(CompileExercise(method))
-      })
+      _ ← replaceInputs(insertInputs)
+      _ ← onInputKeyUp(inputChanged)
+      _ ← onInputBlur(inputBlur)
     } yield ()
 
     program.unsafePerformIO()
+
   }
+
 }
