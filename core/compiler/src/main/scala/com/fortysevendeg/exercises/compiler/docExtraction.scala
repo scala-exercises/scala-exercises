@@ -5,6 +5,7 @@ import cats._
 import cats.std.all._
 import cats.syntax.flatMap._
 
+import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc._
 import scala.tools.nsc.doc.{ Settings ⇒ _, _ }
 import scala.tools.nsc.plugins._
@@ -27,6 +28,26 @@ class DocExtractionGlobal(settings: Settings = new Settings { embeddedDefaults[D
 
 }
 
+object DocExtractionGlobal {
+  class Java extends DocExtractionGlobal() {
+    private val findByName = DocCommentFinder.findByName(this) _
+
+    def find(code: String, symbols: Array[String]): Array[String] = {
+
+      new Run() compileSources List(
+        new BatchSourceFile("hot-sauce", code)
+      )
+      val rootTree = currentRun.units.toList.head.body
+
+      val res = findByName(rootTree, symbols)
+        .mapValues(_.raw)
+
+      symbols.map(name ⇒ res.get(name).getOrElse(null))
+
+    }
+  }
+}
+
 object DocCommentFinder {
 
   def findByName[G <: Global](g: G)(rootTree: g.Tree, searchNames: Iterable[String]): Map[String, g.DocComment] = {
@@ -41,16 +62,21 @@ object DocCommentFinder {
     class DocCommentSearchTraverser(searchSymbols: Iterable[Symbol], root: Tree) extends Traverser {
       val remainingItems = collection.mutable.HashSet[Symbol]() ++ searchSymbols
       val found = collection.mutable.HashMap[Symbol, DocComment]()
-      def done = remainingItems.isEmpty
+      def done = false // remainingItems.isEmpty
       traverse(root)
       override def traverse(tree: Tree) {
         if (!done) {
           tree match {
+            case DocDef(comment, q"def $tname(...$paramss): $tpt = $expr") ⇒
+            //
+
             case DocDef(comment, subTree) if remainingItems.contains(subTree.symbol) ⇒
               remainingItems -= subTree.symbol
               found += subTree.symbol → comment
               super.traverse(subTree)
-            case _ ⇒ super.traverse(tree)
+
+            case _ ⇒
+              super.traverse(tree)
           }
         }
       }
