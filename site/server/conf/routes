@@ -3,11 +3,11 @@
 # ~~~~
 
 # Home page
-GET / com.fortysevendeg.exercises.controllers.Application.index
+GET / @com.fortysevendeg.exercises.controllers.ApplicationController.index
 
 GET /users/all    com.fortysevendeg.exercises.controllers.UserController.all
 
-POST /exercises/sections/:libraryName/:sectionName/evaluate com.fortysevendeg.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
+POST /exercises/sections/:libraryName/:sectionName/evaluate @com.fortysevendeg.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
@@ -19,8 +19,8 @@ GET /_oauth-success   com.fortysevendeg.exercises.utils.OAuth2.success
 GET /logout   com.fortysevendeg.exercises.utils.OAuth2.logout
 
 # Client-side routing
-GET /javascriptRoutes com.fortysevendeg.exercises.controllers.Application.javascriptRoutes
+GET /javascriptRoutes @com.fortysevendeg.exercises.controllers.ApplicationController.javascriptRoutes
 
 # Exercises
-GET /:libraryName               com.fortysevendeg.exercises.controllers.Application.library(libraryName: String)
-GET /:libraryName/:sectionName  com.fortysevendeg.exercises.controllers.Application.section(libraryName: String, sectionName: String)
+GET /:libraryName               @com.fortysevendeg.exercises.controllers.ApplicationController.library(libraryName: String)
+GET /:libraryName/:sectionName  @com.fortysevendeg.exercises.controllers.ApplicationController.section(libraryName: String, sectionName: String)
