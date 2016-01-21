@@ -1,6 +1,8 @@
 package com.fortysevendeg.exercises
 package compiler
 
+import scala.annotation.tailrec
+
 import cats._
 import cats.std.all._
 import cats.syntax.flatMap._
@@ -30,26 +32,88 @@ class DocExtractionGlobal(settings: Settings = new Settings { embeddedDefaults[D
 
 object DocExtractionGlobal {
   class Java extends DocExtractionGlobal() {
+
+    import scala.collection.JavaConverters._
+    import java.{ util ⇒ ju }
+
     private val findByName = DocCommentFinder.findByName(this) _
 
-    def find(code: String, symbols: Array[String]): Array[String] = {
-
+    def findAll(code: String): ju.Map[String, String] = {
       new Run() compileSources List(
         new BatchSourceFile("hot-sauce", code)
       )
       val rootTree = currentRun.units.toList.head.body
 
+      val res = DocCommentFinder.findAll(this)(rootTree)
+        .map { case (k, v) ⇒ k.mkString(".") → v.raw }
+        .toMap
+
+      res.asJava
+
+    }
+
+    // TODO: potentially remove this, since it probably isnt' needed
+    def find(code: String, symbols: Array[String]): Array[String] = {
+      new Run() compileSources List(
+        new BatchSourceFile("hot-sauce", code)
+      )
+      val rootTree = currentRun.units.toList.head.body
       val res = findByName(rootTree, symbols)
         .mapValues(_.raw)
-
       symbols.map(name ⇒ res.get(name).getOrElse(null))
-
     }
   }
 }
 
 object DocCommentFinder {
 
+  type Path[G <: Global] = List[G#Name]
+  type Acc[G <: Global] = List[(Path[G], G#DocComment)]
+
+  def findAll[G <: Global](g: G)(rootTree: g.Tree): Acc[g.type] = {
+
+    import g._
+
+    @tailrec def traverseAcc(trees: List[(Path[g.type], Tree)], acc: Acc[g.type]): Acc[g.type] = trees match {
+      case Nil ⇒ acc
+      case (path, tree) :: rs ⇒ tree match {
+
+        case DocDef(comment, moduleDef @ ModuleDef(mods, _, impl)) ⇒
+          val nextPath = moduleDef.name :: path
+          traverseAcc(impl.body.map(nextPath → _) ::: rs, (nextPath.reverse → comment) :: acc)
+
+        case DocDef(comment, classDef @ ClassDef(mods, _, Nil, impl)) ⇒
+          val nextPath = classDef.name :: path
+          traverseAcc(impl.body.map(nextPath → _) ::: rs, (nextPath.reverse → comment) :: acc)
+
+        case DocDef(comment, q"def $tname(...$paramss): $tpt = $expr") ⇒
+          val nextPath = tname :: path
+          traverseAcc(rs, (nextPath.reverse → comment) :: acc)
+
+        case moduleDef @ ModuleDef(mods, _, impl) ⇒
+          val nextPath = moduleDef.name :: path
+          traverseAcc(impl.body.map(nextPath → _) ::: rs, acc)
+
+        case classDef @ ClassDef(mods, _, Nil, impl) ⇒
+          val nextPath = classDef.name :: path
+          traverseAcc(impl.body.map(nextPath → _) ::: rs, acc)
+
+        case q"def $tname(...$paramss): $tpt = $expr" ⇒
+          val nextPath = tname :: path
+          traverseAcc((nextPath → expr) :: rs, acc)
+
+        case q"package $ref { ..$topstats }" ⇒
+          val nextPath = ref.name :: path
+          traverseAcc(topstats.map(nextPath → _) ::: rs, acc)
+
+        case _ ⇒
+          traverseAcc(rs, acc)
+      }
+    }
+    traverseAcc(List(Nil → rootTree), Nil)
+  }
+
+  // TODO: potentially remove this, since it probably isnt' needed
   def findByName[G <: Global](g: G)(rootTree: g.Tree, searchNames: Iterable[String]): Map[String, g.DocComment] = {
     import g.{ Try ⇒ _, _ }
     val searchSymbolsMap: Map[Symbol, String] = searchNames.flatMap(name ⇒ Try(g.rootMirror.staticModule(name) → name).toOption)(collection.breakOut)
@@ -57,6 +121,7 @@ object DocCommentFinder {
       .map(kv ⇒ searchSymbolsMap(kv._1) → kv._2)
   }
 
+  // TODO: potentially remove this, since it probably isnt' needed
   def findBySymbol[G <: Global](g: G)(rootTree: g.Tree, searchSymbols: Iterable[g.Symbol]): Map[g.Symbol, g.DocComment] = {
     import g._
     class DocCommentSearchTraverser(searchSymbols: Iterable[Symbol], root: Tree) extends Traverser {
