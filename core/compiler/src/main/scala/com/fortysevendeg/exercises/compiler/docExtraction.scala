@@ -13,7 +13,7 @@ import scala.tools.nsc.doc.{ Settings ⇒ _, _ }
 import scala.tools.nsc.plugins._
 import scala.util.Try
 
-class DocExtractionGlobal(settings: Settings = new Settings { embeddedDefaults[DocExtractionGlobal] }) extends Global(settings) {
+class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettings) extends Global(settings) {
 
   override lazy val syntaxAnalyzer = new ScaladocSyntaxAnalyzer[this.type](this) {
     val runsAfter = List[String]()
@@ -31,6 +31,11 @@ class DocExtractionGlobal(settings: Settings = new Settings { embeddedDefaults[D
 }
 
 object DocExtractionGlobal {
+
+  def defaultSettings = new Settings {
+    embeddedDefaults[DocExtractionGlobal.type]
+  }
+
   class Java extends DocExtractionGlobal() {
 
     import scala.collection.JavaConverters._
@@ -43,13 +48,10 @@ object DocExtractionGlobal {
         new BatchSourceFile("hot-sauce", code)
       )
       val rootTree = currentRun.units.toList.head.body
-
       val res = DocCommentFinder.findAll(this)(rootTree)
         .map { case (k, v) ⇒ k.mkString(".") → v.raw }
         .toMap
-
       res.asJava
-
     }
 
     // TODO: potentially remove this, since it probably isnt' needed

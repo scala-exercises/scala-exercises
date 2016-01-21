@@ -27,8 +27,18 @@ class GenCodeSpec extends FunSpec with Matchers {
     it("should generate a tree that can be eval'd") {
 
       val exercises = List(
-        cg.emitExercise(Some("Example1")),
-        cg.emitExercise(Some("Example2"))
+        cg.emitExercise(
+          name = Some("Example1"),
+          description = None,
+          code = None,
+          explanation = None
+        ),
+        cg.emitExercise(
+          name = Some("Example2"),
+          description = None,
+          code = None,
+          explanation = None
+        )
       )
 
       val sections = List(

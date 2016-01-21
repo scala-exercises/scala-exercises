@@ -55,10 +55,11 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   // the compiler, which requires Scala 2.11.x.
   .enablePlugins(BuildInfoPlugin)
   .settings(
+    compilerClasspath <<= fullClasspath in (compiler, Compile),
     buildInfoObject   := "Meta",
-    buildInfoPackage  := "com.fortysevendeg.exercises.sbt",
+    buildInfoPackage  := "com.fortysevendeg.exercises.sbtexercise",
     buildInfoKeys     := Seq(
-      BuildInfoKey.map(fullClasspath in (compiler, Compile)) {
+      BuildInfoKey.map(compilerClasspath) {
         case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
       }
     )
@@ -85,5 +86,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   )
   // Publish definitions before running scripted
   .settings(
-    scriptedDependencies <<= (publishLocal in definitions, scriptedDependencies) map { (_, _) => Unit }
+    scriptedDependencies <<= (publishLocal in definitions, publishLocal in runtime, scriptedDependencies) map { (_, _, _) => Unit }
   )
+
+lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
