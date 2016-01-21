@@ -1,7 +1,6 @@
 package scripts
 
 import rx._
-import rx.ops._
 import utils.DomHandler._
 
 import scala.scalajs.js
@@ -14,38 +13,16 @@ import model._
 import model.Exercises._
 import actions._
 import ui.{ UI }
-
-object Ajax {
-  def compileExercise(e: ClientExercise): Future[Option[Action]] =
-    Future(Some(NoOp()))
-}
-
-object Program {
-  def updateState(s: State, a: Action): State = a match {
-    case SetState(newState) => newState
-    case UpdateExercise(method, args) ⇒ updateByMethod(s, method, args)
-    case _ ⇒ s
-  }
-  def runEffect(s: State, a: Action): Future[Option[Action]] = a match {
-    case CompileExercise(method) ⇒ {
-      findByMethod(s, method) match {
-        case Some(exercise) if exercise.canBeCompiled ⇒ Ajax.compileExercise(exercise)
-        case _ ⇒ Future(None)
-      }
-    }
-    case _ ⇒ Future(None)
-  }
-  def updateUI(s: State, a: Action): IO[Unit] = a match {
-    case UpdateExercise(method, args) ⇒ UI.toggleCompileButton(s, method)
-    case CompileExercise(method) ⇒ io { println("Exercise being compiled") }
-    case _ ⇒ io {}
-  }
-}
+import state.{ State }
+import effects.{ Effects }
 
 object ExercisesJS extends js.JSApp {
 
-  def loadInitialData: IO[State] =
-    getMethodsList.map(_.map(m ⇒ ClientExercise(m)).toList)
+  def loadInitialData: IO[State] = for {
+    library ← getLibrary
+    section ← getSection
+    methods ← getMethodsList
+  } yield methods.map(m ⇒ ClientExercise(library = library, section = section, method = m))
 
   def main(): Unit = {
     val states: Var[State] = Var(Nil)
@@ -58,28 +35,31 @@ object ExercisesJS extends js.JSApp {
     def triggerAction(action: Action): IO[Unit] = io {
       actions() = action
       val oldState = states()
-      val newState = Program.updateState(oldState, action)
+      val newState = State.update(oldState, action)
       setState(newState).unsafePerformIO()
     }
 
     val effects = Obs(states, skipInitial = true) {
-      Program.runEffect(states(), actions()).foreach(m ⇒ {
-        m.foreach(triggerAction(_))
+      Effects.perform(states(), actions()).foreach(m ⇒ {
+        m.foreach(triggerAction(_).unsafePerformIO())
       })
     }
     val ui = Obs(states, skipInitial = true) {
-      Program.updateUI(states(), actions()).unsafePerformIO()
+      UI.update(states(), actions()).unsafePerformIO()
     }
 
     val program = for {
       initialState ← loadInitialData flatMap setState
-      replacements <- inputReplacements
+      replacements ← inputReplacements
       _ ← replaceInputs(replacements)
       _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
         triggerAction(UpdateExercise(method, arguments))
       })
-      _ ← onInputBlur((method: String) ⇒ {
+      _ ← onButtonClick((method: String) ⇒ {
         triggerAction(CompileExercise(method))
+      })
+      _ ← onInputBlur((method: String) ⇒ io {
+        // TODO: when exercise canbecompiled ~> Compileit
       })
     } yield ()
 

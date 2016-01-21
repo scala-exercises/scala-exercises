@@ -7,12 +7,14 @@ case object Errored extends ExerciseState
 case object Solved extends ExerciseState
 
 case class ClientExercise(
-  method:    String,
-  arguments: Seq[String] = Nil,
-  state: ExerciseState = Unsolved
+    library:   String,
+    section:   String,
+    method:    String,
+    arguments: Seq[String]   = Nil,
+    state:     ExerciseState = Unsolved
 ) {
 
-  def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
+  def isFilled: Boolean = !arguments.exists(_.trim.isEmpty) && arguments.nonEmpty
 
   def isSolved: Boolean = state == Solved
 
@@ -21,14 +23,13 @@ case class ClientExercise(
   def canBeCompiled: Boolean = isFilled && !isSolved && !isBeingEvaluated
 }
 
-
 object Exercises {
   type State = List[ClientExercise]
 
   def findByMethod(s: State, method: String): Option[ClientExercise] =
     s.find(_.method == method)
 
-  def applyByMethod(s: State, method: String, f: ClientExercise => ClientExercise): State =
+  def applyByMethod(s: State, method: String, f: ClientExercise ⇒ ClientExercise): State =
     s.map(ex ⇒ {
       if (ex.method == method)
         f(ex)
@@ -37,7 +38,15 @@ object Exercises {
     })
 
   def updateByMethod(s: State, method: String, args: Seq[String]): State =
-    applyByMethod(s, method, _.copy(arguments=args))
+    applyByMethod(s, method, _.copy(arguments = args))
 
+  def evaluate(s: State, method: String): State =
+    applyByMethod(s, method, _.copy(state = Evaluating))
+
+  def setAsSolved(s: State, method: String): State =
+    applyByMethod(s, method, _.copy(state = Solved))
+
+  def setAsErrored(s: State, method: String): State =
+    applyByMethod(s, method, _.copy(state = Errored))
 }
 
