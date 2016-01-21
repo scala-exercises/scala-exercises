@@ -1,10 +1,7 @@
 package common
 
-import upickle._
-
 import org.scalajs.dom.XMLHttpRequest
 import org.scalajs.dom.ext.Ajax
-import shared._
 
 class ExtAjax(ajax: Ajax.type) {
 

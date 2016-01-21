@@ -1,15 +1,25 @@
 package scripts
 
 import rx._
-import rx.ops._
 import utils.DomHandler._
 import scala.scalajs.js
 import shared.IO
 import IO._
 
+import model._
+import model.Exercises._
+import actions._
+import ui.{ UI }
+import state.{ State }
+import effects.{ Effects }
+
 object ExercisesJS extends js.JSApp {
 
-  object Model {
+  def loadInitialData: IO[State] = for {
+    library ← getLibrary
+    section ← getSection
+    methods ← getMethodsList
+  } yield methods.map(m ⇒ ClientExercise(library = library, section = section, method = m))
 
     def updateExerciseList(ex: List[ClientExercise]): IO[Unit] = io(exercises() = ex)
 
@@ -17,36 +27,37 @@ object ExercisesJS extends js.JSApp {
       def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
     }
 
-    val exercises = Var(getMethodsList map (m ⇒ ClientExercise(m)) toList)
+    def triggerAction(action: Action): IO[Unit] = io {
+      actions() = action
+      val oldState = states()
+      val newState = State.update(oldState, action)
+      setState(newState).unsafePerformIO()
+    }
 
-    def updateExcercise(method: String, args: Seq[String]): List[ClientExercise] =
-      exercises().updated(exerciseIndex(method), ClientExercise(method, args))
-
-    def getExercise(method: String): Option[ClientExercise] = exercises().lift(exerciseIndex(method))
-
-    def exerciseIndex(m: String): Int = exercises().indexWhere(_.method == m)
-
-  }
-
-  import Model._
-
-  def inputChanged(method: String, args: Seq[String]): IO[Unit] =
-    updateExerciseList(updateExcercise(method, args))
-
-  def inputBlur(method: String): IO[Unit] = io {
-    Model.getExercise(method) foreach (e ⇒ println(e.isFilled))
-  }
-
-  def main(): Unit = {
+    val effects = Obs(states, skipInitial = true) {
+      Effects.perform(states(), actions()).foreach(m ⇒ {
+        m.foreach(triggerAction(_).unsafePerformIO())
+      })
+    }
+    val ui = Obs(states, skipInitial = true) {
+      UI.update(states(), actions()).unsafePerformIO()
+    }
 
     val program = for {
-      _ ← replaceInputs(insertInputs)
-      _ ← onInputKeyUp(inputChanged)
-      _ ← onInputBlur(inputBlur)
+      initialState ← loadInitialData flatMap setState
+      replacements ← inputReplacements
+      _ ← replaceInputs(replacements)
+      _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
+        triggerAction(UpdateExercise(method, arguments))
+      })
+      _ ← onButtonClick((method: String) ⇒ {
+        triggerAction(CompileExercise(method))
+      })
+      _ ← onInputBlur((method: String) ⇒ io {
+        // TODO: when exercise canbecompiled ~> Compileit
+      })
     } yield ()
 
     program.unsafePerformIO()
 
   }
-
-}
