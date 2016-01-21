@@ -28,13 +28,3 @@ unmanagedSourceDirectories in Compile += baseDirectory.value.getParentFile.getPa
 // Exercise compiler plugin
 lazy val build = (project in file("."))
   .dependsOn(ProjectRef(file("../../core"), "sbt-exercise"))
-
-// **Note**
-// This is only here so that the site project can be tricked into finding
-// the compiler project when building the sbt-exercise plugin.
-// For some reason SBT barfs when loading site with:
-//   'compiler/compile:fullClasspath is undefined'
-// ...unless of course we spoof the project with this BS proxy...
-lazy val compiler = (project in file(".compiler-proxy"))
-  .settings(scalaVersion := "2.11.7") // *@@*!! qq
-  .dependsOn(ProjectRef(file("../../core"), "compiler"))

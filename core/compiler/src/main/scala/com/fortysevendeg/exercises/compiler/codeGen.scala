@@ -9,11 +9,17 @@ case class CodeGen[U <: Universe](
 ) extends TreeHelpers[U] {
   import u._
 
-  def emitExercise(name: Option[String]) = {
+  def emitExercise(name: Option[String], description: Option[String], code: Option[String], explanation: Option[String]) = {
     val term = makeTermName("EXC", name)
     term → q"""
       object $term extends Exercise {
-        override val name = $name
+        override val name         = $name
+        override val description  = $description
+        override val code         = $code
+        override val explanation  = $explanation
+
+        override type Input       = Unit
+        override val eval         = None
       }"""
   }
 

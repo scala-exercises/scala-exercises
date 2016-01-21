@@ -18,14 +18,6 @@ lazy val commonSettings = Seq(
 
 // Client and Server projects
 
-lazy val Exercise = config("exercise") extend(Runtime) describedAs("Exercise dependencies.")
-
-lazy val exerciseSettings: Seq[Setting[_]] =
-  inConfig(Exercise)(Defaults.configSettings) ++ Seq(
-    ivyConfigurations += Exercise,
-    classpathConfiguration in Runtime := Exercise
-  )
-
 lazy val clients = Seq(client)
 lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
@@ -33,11 +25,10 @@ lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
     sharedJvm,
-    v0def,
-    content % "exercise")
+    content)
+  .dependsOn(ProjectRef(file("../core"), "runtime"))
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
-  .settings(exerciseSettings: _*)
   .settings(
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
@@ -111,26 +102,12 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
-
-// V0 (*insert-better-name-here-pls*) style exercise definition traits etc.
-lazy val v0def = (project in file("v0def"))
-  .settings(commonSettings: _*)
-  .settings(libraryDependencies ++=
-    compilelibs(
-      "org.scalaz" %% "scalaz-core" % scalazVersion
-    )
-  )
-
 // Locally bundled exercise content projects
 
 lazy val content = (project in file("content"))
-  .dependsOn(sharedJvm, v0def)
+  .dependsOn(sharedJvm)
   .enablePlugins(ExerciseCompilerPlugin)
   .settings(commonSettings: _*)
-  .settings(
-    // TODO: leverage a plugin instead of this trick
-    unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "exercises",
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "exercises")
   .settings(libraryDependencies ++=
     compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
