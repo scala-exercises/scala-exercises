@@ -1,5 +1,7 @@
 package ui
 
+import cats.data.OptionT
+import cats.syntax.option._
 import shared.IO
 import IO._
 import actions._
@@ -9,21 +11,38 @@ import utils.DomHandler._
 
 object UI {
 
-  sealed trait ExerciseStyle { def className: String }
-  case object Unsolved extends ExerciseStyle { val className = "unsolved" }
-  case object Filled extends ExerciseStyle { val className = "filled" }
-  case object Evaluating extends ExerciseStyle { val className = "evaluating" }
-  case object Errored extends ExerciseStyle { val className = "errored" }
-  case object Solved extends ExerciseStyle { val className = "solved" }
+  sealed trait ExerciseStyle {
+    def className: String
+  }
+
+  case object Unsolved extends ExerciseStyle {
+    val className = "unsolved"
+  }
+
+  case object Filled extends ExerciseStyle {
+    val className = "filled"
+  }
+
+  case object Evaluating extends ExerciseStyle {
+    val className = "evaluating"
+  }
+
+  case object Errored extends ExerciseStyle {
+    val className = "errored"
+  }
+
+  case object Solved extends ExerciseStyle {
+    val className = "solved"
+  }
 
   def noop: IO[Unit] = io {}
 
   def update(s: State, a: Action): IO[Unit] = a match {
     case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
-    case CompileExercise(method)      ⇒ startCompilation(s, method)
-    case CompilationOk(method)        ⇒ setAsSolved(s, method)
+    case CompileExercise(method) ⇒ startCompilation(s, method)
+    case CompilationOk(method) ⇒ setAsSolved(s, method)
     case CompilationFail(method, msg) ⇒ setAsErrored(s, method, msg)
-    case _                            ⇒ noop
+    case _ ⇒ noop
   }
 
   def toggleExerciseClass(s: State, method: String): IO[Unit] = {
@@ -38,16 +57,19 @@ object UI {
     }
   }
 
-  def setClassToExercise(method: String, style: String): IO[Unit] = findExerciseByMethod(method)
-    .map(_.foreach(setClass(_, style).unsafePerformIO()))
+  def setClassToExercise(method: String, style: String): IO[Unit] = (for {
+    exercise <- OptionT(findExerciseByMethod(method))
+    _ <- OptionT(setClass(exercise, style) map (_.some))
+  } yield ()).value.map(_.getOrElse(()))
 
-  def addLogToExercise(method: String, msg: String): IO[Unit] = {
-    findExerciseByMethod(method).map(_.foreach(writeLog(_, msg).unsafePerformIO()))
-  }
+  def addLogToExercise(method: String, msg: String): IO[Unit] = (for {
+    exercise <- OptionT(findExerciseByMethod(method))
+    _ <- OptionT(writeLog(exercise, msg) map (_.some))
+  } yield ()).value.map(_.getOrElse(()))
 
   def startCompilation(s: State, method: String): IO[Unit] = findByMethod(s, method) match {
     case Some(exercise) if exercise.isFilled ⇒ setClassToExercise(method, Evaluating.className)
-    case _                                   ⇒ noop
+    case _ ⇒ noop
   }
 
   def setAsSolved(s: State, method: String): IO[Unit] = for {
