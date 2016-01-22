@@ -4,7 +4,6 @@ import rx._
 import utils.DomHandler._
 
 import scala.scalajs.js
-import scala.concurrent.{ Future }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import shared.IO
@@ -12,9 +11,9 @@ import IO._
 import model._
 import model.Exercises._
 import actions._
-import ui.{ UI }
-import state.{ State }
-import effects.{ Effects }
+import ui.UI
+import state.State
+import effects.Effects
 
 object ExercisesJS extends js.JSApp {
 
@@ -55,6 +54,8 @@ object ExercisesJS extends js.JSApp {
       _ ← highlightCodeBlocks
       _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
         triggerAction(UpdateExercise(method, arguments))
+      }, (method: String) ⇒ {
+        triggerAction(CompileExercise(method))
       })
       _ ← onButtonClick((method: String) ⇒ {
         triggerAction(CompileExercise(method))

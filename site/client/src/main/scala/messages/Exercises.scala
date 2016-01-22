@@ -10,5 +10,6 @@ case class EvaluationRequest(
 // TODO: moar info
 case class EvaluationResult(
   ok:     Boolean,
-  method: String
+  method: String,
+  msg:    String  = ""
 )

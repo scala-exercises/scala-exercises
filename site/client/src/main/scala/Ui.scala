@@ -1,58 +1,83 @@
 package ui
 
+import cats.data.OptionT
+import cats.syntax.option._
 import shared.IO
 import IO._
 import actions._
 import model._
 import model.Exercises._
-import utils.{ DomHandler }
+import utils.DomHandler._
 
 object UI {
+
+  sealed trait ExerciseStyle {
+    def className: String
+  }
+
+  case object Unsolved extends ExerciseStyle {
+    val className = "unsolved"
+  }
+
+  case object Filled extends ExerciseStyle {
+    val className = "filled"
+  }
+
+  case object Evaluating extends ExerciseStyle {
+    val className = "evaluating"
+  }
+
+  case object Errored extends ExerciseStyle {
+    val className = "errored"
+  }
+
+  case object Solved extends ExerciseStyle {
+    val className = "solved"
+  }
+
   def noop: IO[Unit] = io {}
 
   def update(s: State, a: Action): IO[Unit] = a match {
-    case UpdateExercise(method, args) ⇒ toggleCompileButton(s, method)
-    case CompileExercise(method)      ⇒ startCompilation(s, method)
-    case CompilationOk(method)        ⇒ setAsSolved(s, method)
-    case CompilationFail(method)      ⇒ setAsErrored(s, method)
-    case _                            ⇒ noop
+    case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
+    case CompileExercise(method) ⇒ startCompilation(s, method)
+    case CompilationOk(method) ⇒ setAsSolved(s, method)
+    case CompilationFail(method, msg) ⇒ setAsErrored(s, method, msg)
+    case _ ⇒ noop
   }
 
-  def toggleCompileButton(s: State, method: String): IO[Unit] = {
+  def toggleExerciseClass(s: State, method: String): IO[Unit] = {
     Exercises.findByMethod(s, method) match {
       case Some(exercise) ⇒ {
         if (exercise.isFilled)
-          enableCompileButton(method)
+          setClassToExercise(method, Filled.className)
         else
-          disableCompileButton(method)
+          setClassToExercise(method, Unsolved.className)
       }
       case _ ⇒ noop
     }
   }
 
-  def enableCompileButton(method: String): IO[Unit] = {
-    DomHandler.nodeByMethod(method)
-      .map(s ⇒ s.foreach(
-        (node ⇒ DomHandler.enableCompileButton(node).unsafePerformIO())
-      ))
-  }
+  def setClassToExercise(method: String, style: String): IO[Unit] = (for {
+    exercise <- OptionT(findExerciseByMethod(method))
+    _ <- OptionT(setClass(exercise, style) map (_.some))
+  } yield ()).value.map(_.getOrElse(()))
 
-  def disableCompileButton(method: String): IO[Unit] = {
-    DomHandler.nodeByMethod(method)
-      .map(s ⇒ s.foreach(
-        (node ⇒ DomHandler.disableCompileButton(node).unsafePerformIO())
-      ))
-  }
+  def addLogToExercise(method: String, msg: String): IO[Unit] = (for {
+    exercise <- OptionT(findExerciseByMethod(method))
+    _ <- OptionT(writeLog(exercise, msg) map (_.some))
+  } yield ()).value.map(_.getOrElse(()))
 
-  def startCompilation(s: State, method: String): IO[Unit] = disableCompileButton(method)
+  def startCompilation(s: State, method: String): IO[Unit] = findByMethod(s, method) match {
+    case Some(exercise) if exercise.isFilled ⇒ setClassToExercise(method, Evaluating.className)
+    case _ ⇒ noop
+  }
 
   def setAsSolved(s: State, method: String): IO[Unit] = for {
-    _ ← disableCompileButton(method)
-    _ = println(s"EXERCISE SOLVED $method")
+    _ ← setClassToExercise(method, Solved.className)
   } yield ()
 
-  def setAsErrored(s: State, method: String): IO[Unit] = for {
-    _ ← enableCompileButton(method)
-    _ = println(s"EXERCISE ERRORED $method")
+  def setAsErrored(s: State, method: String, msg: String): IO[Unit] = for {
+    _ ← addLogToExercise(method, msg)
+    _ ← setClassToExercise(method, Errored.className)
   } yield ()
 }
