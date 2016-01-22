@@ -32,11 +32,11 @@ object ExercisesJS extends js.JSApp {
       states() = s
     }
 
-    def triggerAction(action: Action): IO[Unit] = io {
+    def triggerAction(action: Action): IO[Unit] = {
       actions() = action
       val oldState = states()
       val newState = State.update(oldState, action)
-      setState(newState).unsafePerformIO()
+      setState(newState)
     }
 
     val effects = Obs(states, skipInitial = true) {
