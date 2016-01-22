@@ -28,7 +28,6 @@ pre {
   code.exercise-code {
 
     input {
-      color: $input-underline;
       background-color: $pre-bg;
       font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
       font-size: 12px;
@@ -39,14 +38,7 @@ pre {
       margin-left: 4px;
       margin-right: 4px;
       border: 0px solid #999;
-      border-bottom: 1px solid $input-underline;
-      -webkit-animation: underliner 2s linear infinite;
-    }
-
-    input.success{
-      color: #859900;
-      border-bottom: 1px solid #859900;
-      -webkit-animation: none;
+      width: 12px;
     }
 
     input:hover,
@@ -56,4 +48,8 @@ pre {
     }
 
   }
+}
+
+pre.exercise-pre {
+  margin-bottom: 0;
 }

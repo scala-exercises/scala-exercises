@@ -25,7 +25,25 @@
                 position: absolute;
                 right: 10px;
                 bottom: 10px;
+
+                button {
+                    opacity: 0;
+                    transition: opacity 0.5s linear;
+                }
+
+                button:hover,
+                button:focus,
+                button:active {
+                    outline:none;
+                }
+
             }
+        }
+
+        input {
+            color: $input-unsolved;
+            border-bottom: 1px solid $input-unsolved;
+            -webkit-animation: underliner_unsolved 2s linear infinite;
         }
 
         ul.list-sources {
@@ -62,7 +80,8 @@
             position: absolute;
             top: -4px;
             right: -4px;
-            display: none;
+            opacity: 0;
+            transition: opacity 0.5s linear;
             .ribbon-green {
                 //font: bold 15px Sans-Serif;
                 font-size: $font-size-small;
@@ -97,8 +116,116 @@
                 right: 0;
             }
         }
+
+        .log {
+            background-color: $gray-soft;
+            color: $gray-light;
+            font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 30px;
+            vertical-align: middle;
+            padding: 0px 12px;
+            margin-top: 0px;
+            margin-bottom: ($line-height-computed);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s linear;
+        }
+    }
+
+    .exercise.unsolved {
+        .compile {
+            button {
+                opacity: 0;
+            }
+        }
+        input {
+            color: $input-unsolved;
+            border-bottom: 1px solid $input-unsolved;
+            -webkit-animation: underliner_unsolved 2s linear infinite;
+        }
+        .log {
+            max-height: 0;
+        }
+    }
+
+    .exercise.filled {
+        .compile {
+            button {
+                opacity: 1;
+            }
+        }
+        .log {
+            max-height: 0;
+        }
     }
     
+    .exercise.evaluating {
+        .compile {
+            button {
+                opacity: 1;
+                background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -webkit-linear-gradient(top, #f6f5f0, #e1e0dc);
+                background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -moz-linear-gradient(top, #f6f5f0, #e1e0dc);
+                background: -ms-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -ms-linear-gradient(top, #f6f5f0, #e1e0dc);
+                background: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -o-linear-gradient(top, #f6f5f0, #e1e0dc);
+                background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), linear-gradient(top, #f6f5f0, #e1e0dc);
+                -pie-background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), linear-gradient(top, #f6f5f0, #e1e0dc);
+                background-repeat: repeat;
+                -webkit-background-size: 40px 40px, 100% 100%;
+                -moz-background-size: 40px 40px, 100% 100%;
+                -ms-background-size: 40px 40px, 100% 100%;
+                -o-background-size: 40px 40px, 100% 100%;
+                background-size: 40px 40px, 100% 100%;
+                -webkit-animation: progress-bar-stripes 2s linear infinite;
+                -moz-animation: progress-bar-stripes 2s linear infinite;
+                -ms-animation: progress-bar-stripes 2s linear infinite;
+                -o-animation: progress-bar-stripes 2s linear infinite;
+                animation: progress-bar-stripes 2s linear infinite;
+            }
+        }
+        .log {
+            max-height: 0;
+        }
+    }
+
+    .exercise.errored {
+        .compile {
+            button {
+                opacity: 1;
+            }
+        }
+        input {
+            color: $input-errored;
+            border-bottom: 1px solid $input-errored;
+            -webkit-animation: underliner_errored 2s linear infinite;
+        }
+        .ribbon-wrapper {
+            opacity: 0;
+        }
+        .log {
+            max-height: 40px;
+        }
+    }
+
+    .exercise.solved {
+        .compile {
+            button {
+                opacity: 1;
+            }
+        }
+        input {
+            color: $input-solved;
+            border-bottom: 1px solid $input-solved;
+            -webkit-animation: underliner_solved 8s linear infinite;
+        }
+        .ribbon-wrapper {
+            opacity: 1;
+        }
+        .log {
+            max-height: 0;
+        }
+    }
+
 
 }
 
