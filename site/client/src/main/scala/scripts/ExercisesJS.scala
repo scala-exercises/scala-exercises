@@ -29,11 +29,11 @@ object ExercisesJS extends js.JSApp {
       def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
     }
 
-    def triggerAction(action: Action): IO[Unit] = io {
+    def triggerAction(action: Action): IO[Unit] = {
       actions() = action
       val oldState = states()
       val newState = State.update(oldState, action)
-      setState(newState).unsafePerformIO()
+      setState(newState)
     }
 
     val effects = Obs(states, skipInitial = true) {
