@@ -17,7 +17,7 @@ object Effects {
           if (result.ok)
             Some(CompilationOk(result.method))
           else
-            Some(CompilationFail(result.method))
+            Some(CompilationFail(result.method, result.msg))
         })
         case _ ⇒ noop
       }

@@ -1,6 +1,6 @@
 package api
 
-import scala.concurrent.{ Future }
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import model._
@@ -20,7 +20,7 @@ object Client {
       if (r.ok)
         EvaluationResult(true, e.method)
       else
-        EvaluationResult(false, e.method)
-    }).recover({ case exc: AjaxException ⇒ EvaluationResult(false, e.method) })
+        EvaluationResult(false, e.method, r.responseText)
+    }).recover({ case exc: AjaxException ⇒ EvaluationResult(false, e.method, exc.xhr.responseText) })
   }
 }

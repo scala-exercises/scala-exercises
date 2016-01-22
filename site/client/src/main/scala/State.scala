@@ -9,7 +9,7 @@ object State {
     case UpdateExercise(method, args) ⇒ updateByMethod(s, method, args)
     case CompileExercise(method)      ⇒ evaluate(s, method)
     case CompilationOk(method)        ⇒ setAsSolved(s, method)
-    case CompilationFail(method)      ⇒ setAsErrored(s, method)
+    case CompilationFail(method, msg) ⇒ setAsErrored(s, method)
     case _                            ⇒ s
   }
 }

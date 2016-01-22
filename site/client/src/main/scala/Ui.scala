@@ -14,7 +14,7 @@ object UI {
     case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
     case CompileExercise(method)      ⇒ startCompilation(s, method)
     case CompilationOk(method)        ⇒ setAsSolved(s, method)
-    case CompilationFail(method)      ⇒ setAsErrored(s, method)
+    case CompilationFail(method, msg) ⇒ setAsErrored(s, method, msg)
     case _                            ⇒ noop
   }
 
@@ -33,7 +33,11 @@ object UI {
   def setClassToExercise(method: String, style: String): IO[Unit] = findExerciseByMethod(method)
     .map(_.foreach(setClass(_, style).unsafePerformIO()))
 
-  def addLogToExercise(method: String, msg: String): IO[Unit] = findExerciseByMethod(method).map(_.foreach(writeLog(_, msg).unsafePerformIO()))
+  def addLogToExercise(method: String, msg: String): IO[Unit] = {
+    println("######")
+    println(msg)
+    findExerciseByMethod(method).map(_.foreach(writeLog(_, msg).unsafePerformIO()))
+  }
 
   def startCompilation(s: State, method: String): IO[Unit] = findByMethod(s, method) match {
     case Some(exercise) if exercise.isFilled ⇒ setClassToExercise(method, "evaluating")
@@ -45,8 +49,8 @@ object UI {
     _ = println(s"EXERCISE SOLVED $method")
   } yield ()
 
-  def setAsErrored(s: State, method: String): IO[Unit] = for {
-    _ ← addLogToExercise(method, "Failed compilation")
+  def setAsErrored(s: State, method: String, msg: String): IO[Unit] = for {
+    _ ← addLogToExercise(method, msg)
     _ ← setClassToExercise(method, "errored")
     _ = println(s"EXERCISE ERRORED $method")
   } yield ()
