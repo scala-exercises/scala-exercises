@@ -1,16 +1,20 @@
 package com.fortysevendeg.exercises.utils
 
+import com.fortysevendeg.exercises.services.UserServices
 import play.api.{ Application, Play }
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.mvc.{ Action, Controller, Results }
-import play.api.libs.ws.WS
+import play.api.libs.ws._
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.fortysevendeg.exercises.services._
 import com.fortysevendeg.exercises.services.messages._
 
 import scala.concurrent.Future
 
-class OAuth2(application: Application) {
+object OAuth2 {
+
+  implicit def application: Application = Play.current
+
   lazy val githubAuthId = application.configuration.getString("github.client.id").get
   lazy val githubAuthSecret = application.configuration.getString("github.client.secret").get
 
@@ -18,10 +22,15 @@ class OAuth2(application: Application) {
     val baseUrl = application.configuration.getString("github.redirect.url").get
     baseUrl.format(githubAuthId, redirectUri, scope, state)
   }
+}
+
+class OAuth2Controller(ws: WSClient, userService: UserServices) extends Controller {
+
+  import OAuth2._
 
   def getToken(code: String): Future[String] = {
-    val tokenResponse = WS.url("https://github.com/login/oauth/access_token")(application).
-      withQueryString(
+    val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
+      .withQueryString(
         "client_id" → githubAuthId,
         "client_secret" → githubAuthSecret,
         "code" → code
@@ -35,10 +44,6 @@ class OAuth2(application: Application) {
       }
     }
   }
-}
-
-object OAuth2 extends Controller {
-  lazy val oauth2 = new OAuth2(Play.current)
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
     (for {
@@ -48,8 +53,8 @@ object OAuth2 extends Controller {
     } yield {
 
       if (state == oauthState) {
-        oauth2.getToken(code).map { accessToken ⇒
-          Redirect(com.fortysevendeg.exercises.utils.routes.OAuth2.success()).withSession("oauth-token" → accessToken)
+        getToken(code).map { accessToken ⇒
+          Redirect(com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()).withSession("oauth-token" → accessToken)
         }.recover {
           case ex: IllegalStateException ⇒ Unauthorized(ex.getMessage)
         }
@@ -60,9 +65,8 @@ object OAuth2 extends Controller {
   }
 
   def success() = Action.async { request ⇒
-    implicit val app = Play.current
     request.session.get("oauth-token").fold(Future.successful(Unauthorized("No way Jose"))) { authToken ⇒
-      WS.url("https://api.github.com/user").
+      ws.url("https://api.github.com/user").
         withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
 
@@ -73,7 +77,6 @@ object OAuth2 extends Controller {
           val html_url = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").as[String]
 
-          val userService = new UserServiceImpl
           val result = for {
             res ← userService.getUserOrCreate(GetUserOrCreateRequest(
               login = login,

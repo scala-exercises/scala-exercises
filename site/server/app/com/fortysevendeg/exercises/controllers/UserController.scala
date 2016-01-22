@@ -1,6 +1,6 @@
 package com.fortysevendeg.exercises.controllers
 
-import com.fortysevendeg.exercises.models.UserModel
+import com.fortysevendeg.exercises.models.UserStore
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -9,7 +9,7 @@ import upickle._
 
 import scala.concurrent.Future
 
-object UserController extends Controller {
+class UserController(userStore: UserStore) extends Controller {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
@@ -18,7 +18,7 @@ object UserController extends Controller {
   }
 
   def all = Action.async { implicit request ⇒
-    UserModel.store.all.map { r ⇒
+    userStore.all.map { r ⇒
       Ok(write(r))
     }.recover {
       case err ⇒

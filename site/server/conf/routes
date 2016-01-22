@@ -3,26 +3,24 @@
 # ~~~~
 
 # Home page
-GET / controllers.Application.index
+GET / com.fortysevendeg.exercises.controllers.ApplicationController.index
 
-GET /users/all    controllers.UserController.all
+GET /users/all    com.fortysevendeg.exercises.controllers.UserController.all
 
-GET /exercises/libraries                                    controllers.ExercisesController.libraries
-GET /exercises/libraries/:libraryName/:sectionName          controllers.ExercisesController.section(libraryName: String, sectionName: String)
-POST /exercises/sections/:libraryName/:sectionName/evaluate controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
+POST /exercises/sections/:libraryName/:sectionName/evaluate com.fortysevendeg.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
 GET /assets/*file controllers.Assets.at(path="/public", file)
 
 # OAuth2 Stuff
-GET /_oauth-callback  utils.OAuth2.callback(code: Option[String], state: Option[String])
-GET /_oauth-success   utils.OAuth2.success
-GET /logout   utils.OAuth2.logout
+GET /_oauth-callback  com.fortysevendeg.exercises.utils.OAuth2Controller.callback(code: Option[String], state: Option[String])
+GET /_oauth-success   com.fortysevendeg.exercises.utils.OAuth2Controller.success
+GET /logout   com.fortysevendeg.exercises.utils.OAuth2Controller.logout
 
 # Client-side routing
-GET /javascriptRoutes controllers.Application.javascriptRoutes
+GET /javascriptRoutes com.fortysevendeg.exercises.controllers.ApplicationController.javascriptRoutes
 
 # Exercises
-GET /:libraryName               controllers.Application.library(libraryName: String)
-GET /:libraryName/:sectionName  controllers.Application.section(libraryName: String, sectionName: String)
+GET /:libraryName               com.fortysevendeg.exercises.controllers.ApplicationController.library(libraryName: String)
+GET /:libraryName/:sectionName  com.fortysevendeg.exercises.controllers.ApplicationController.section(libraryName: String, sectionName: String)

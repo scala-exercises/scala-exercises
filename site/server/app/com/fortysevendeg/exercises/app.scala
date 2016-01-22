@@ -16,18 +16,6 @@ object app {
 
   implicit val interpreters: ExercisesApp ~> Task = exerciseOpsInterpreter or userOpsInterpreter
 
-  implicit val taskMonad: Monad[Task] = new Monad[Task] {
-
-    def pure[A](x: A): Task[A] = Task.now(x)
-
-    override def map[A, B](fa: Task[A])(f: A ⇒ B): Task[B] =
-      fa map f
-
-    override def flatMap[A, B](fa: Task[A])(f: A ⇒ Task[B]): Task[B] =
-      fa flatMap f
-
-  }
-
   implicit class FreeOps[A](f: Free[ExercisesApp, A]) {
 
     /** Run this Free structure folding it's ops to an effect capturing task */
