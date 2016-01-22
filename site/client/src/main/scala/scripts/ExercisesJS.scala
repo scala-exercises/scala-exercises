@@ -52,6 +52,7 @@ object ExercisesJS extends js.JSApp {
       initialState ← loadInitialData flatMap setState
       replacements ← inputReplacements
       _ ← replaceInputs(replacements)
+      _ ← highlightCodeBlocks
       _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
         triggerAction(UpdateExercise(method, arguments))
       })
