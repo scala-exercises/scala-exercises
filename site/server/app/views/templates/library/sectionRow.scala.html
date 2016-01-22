@@ -1,9 +1,11 @@
-@(index: Int, sectionName: String, color: String)(implicit request: RequestHeader)
+@(index: Int, sectionName: String, color: String, highlight: Boolean)(implicit request: RequestHeader)
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
 <li class="actives">
   <span class="bullet-active" style="background-color: @color;"></span>
   @defining( 1+index ) { number =>
-    <a href="@sectionName">@number. @sectionName.humanizeCamelCase</a>
+    <a href="@sectionName" @if(highlight){ style="color: @color; font-weight: bold;" } >
+      @number. @sectionName.humanizeCamelCase
+    </a>
   }
 </li>
