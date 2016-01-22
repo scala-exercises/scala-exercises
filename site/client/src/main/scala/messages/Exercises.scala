@@ -1,8 +1,15 @@
 package messages
 
 case class EvaluationRequest(
-  section:  String,
-  category: String,
-  method:   String,
-  args:     Seq[String]
+  libraryName: String,
+  sectionName: String,
+  method:      String,
+  args:        Seq[String]
+)
+
+// TODO: moar info
+case class EvaluationResult(
+  ok:     Boolean,
+  method: String,
+  msg:    String  = ""
 )
