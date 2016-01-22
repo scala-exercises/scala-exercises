@@ -1,6 +1,6 @@
 package com.fortysevendeg.exercises.services
 
-import com.fortysevendeg.exercises.models.UserModel
+import com.fortysevendeg.exercises.models.UserStore
 import com.fortysevendeg.exercises.services.messages._
 
 import scala.concurrent.{ Future, ExecutionContext }
@@ -15,7 +15,7 @@ trait UserServices {
 
 }
 
-class UserServiceImpl(implicit val executionContext: ExecutionContext) extends UserServices {
+class UserServiceImpl(userStore: UserStore)(implicit val executionContext: ExecutionContext) extends UserServices {
 
   override def getUserOrCreate(request: GetUserOrCreateRequest): Future[GetUserOrCreateResponse] =
 
@@ -40,7 +40,7 @@ class UserServiceImpl(implicit val executionContext: ExecutionContext) extends U
   override def getUserByLogin(request: GetUserByLoginRequest): Future[GetUserByLoginResponse] = {
 
     val result = for {
-      user ← UserModel.store.getByLogin(login = request.login)
+      user ← userStore.getByLogin(login = request.login)
     } yield GetUserByLoginResponse(user = user.headOption)
 
     result recover {
@@ -52,7 +52,7 @@ class UserServiceImpl(implicit val executionContext: ExecutionContext) extends U
   override def createUser(request: CreateUserRequest): Future[CreateUserResponse] = {
 
     val result = for {
-      user ← UserModel.store.create(
+      user ← userStore.create(
         login = request.login,
         name = request.name,
         github_id = request.github_id,
