@@ -49,7 +49,7 @@ object ExercisesJS extends js.JSApp {
     }
 
     val program = for {
-      initialState ← loadInitialData flatMap setState
+      _ ← loadInitialData flatMap setState
       replacements ← inputReplacements
       _ ← replaceInputs(replacements)
       _ ← highlightCodeBlocks
