@@ -1,6 +1,7 @@
 package utils
 
 import org.scalajs.dom
+import org.scalajs.dom.ext.KeyCode
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
 import shared.IO
@@ -32,39 +33,45 @@ object DomHandler {
         } yield ()).value.unsafePerformIO()
       })
 
-  /** Enables the compilation button of the given exercise.
+  /** Set the class attribute to an exercise node
     */
-  def enableCompileButton(e: HTMLElement): IO[Unit] = io {
-    $(e).find(".compile button").prop("disabled", false)
+  def setClass(e: HTMLElement, style: String): IO[Unit] = io {
+    $(e).attr("class", s"exercise $style")
   }
 
-  /** Disables the compilation button of the given exercise.
+  /** Write a message in the log of an exercise
     */
-  def disableCompileButton(e: HTMLElement): IO[Unit] = io {
-    $(e).find(".compile button").prop("disabled", true)
+  def writeLog(e: HTMLElement, msg: String): IO[Unit] = io {
+    $(e).find(".log").text(msg)
   }
-
-  /** Given a method name, return the node corresponds to such method.
-    */
-  def nodeByMethod(method: String): IO[Option[HTMLElement]] = for {
-    exercises ← allExercises
-  } yield exercises.find(getMethodAttr(_) == method)
 
   /** Assigns behaviors to the keyup event for inputs elements.
     */
-  def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = for {
+  def onInputKeyUp(
+    onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
+    onEnterPressed: String ⇒ IO[Unit]
+  ): IO[Unit] = for {
     inputs ← allInputs
-    _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup)).sequence
+    _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
   } yield ()
 
-  def attachKeyUpHandler(input: HTMLInputElement, onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = io {
-    $(input).keyup((e: dom.Event) ⇒ {
+  def attachKeyUpHandler(
+    input:          HTMLInputElement,
+    onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
+    onEnterPressed: String ⇒ IO[Unit]
+  ): IO[Unit] = io {
+    $(input).keyup((e: dom.KeyboardEvent) ⇒ {
       (for {
         _ ← OptionT(setInputWidth(input) map (_.some))
         methodName ← OptionT(io(methodParent(input)))
         exercise ← OptionT(findExerciseByMethod(methodName))
         inputsValues = getInputsValues(exercise)
-        _ ← OptionT(onkeyup(methodName, inputsValues) map (_.some))
+        _ ← {
+          if (e.keyCode == KeyCode.enter)
+            OptionT(onEnterPressed(methodName) map (_.some))
+          else
+            OptionT(onkeyup(methodName, inputsValues) map (_.some))
+        }
       } yield ()).value.unsafePerformIO()
     })
   }

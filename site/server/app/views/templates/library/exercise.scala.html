@@ -11,10 +11,11 @@
       </div>
 
       <div class="compile">
-        <button type="button" class="btn btn-default btn-xs" disabled>Compile</button>
+        <button type="button" class="btn btn-default btn-xs">Compile</button>
       </div>
       <pre class="exercise-pre"><code class="exercise-code">@exercise.code</code></pre>
     </div>
+    <div class="log"></div>
 
     @(Html(exercise.explanation.getOrElse("")))
 
