@@ -54,12 +54,10 @@ object DomHandler {
         methodName ← OptionT(io(methodParent(input)))
         exercise ← OptionT(findExerciseByMethod(methodName))
         inputsValues = getInputsValues(exercise)
-        _ ← {
-          if (e.keyCode == KeyCode.enter)
-            OptionT(onEnterPressed(methodName) map (_.some))
-          else
-            OptionT(onkeyup(methodName, inputsValues) map (_.some))
-        }
+        _ ← OptionT((e.keyCode match {
+          case KeyCode.enter ⇒ onEnterPressed(methodName)
+          case _             ⇒ onkeyup(methodName, inputsValues)
+        }).map(_.some))
       } yield ()).value.unsafePerformIO()
     })
   }
