@@ -1,5 +1,7 @@
 package utils
 
+import org.scalajs.dom.ext.KeyCode
+
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.ext.KeyCode
