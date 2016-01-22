@@ -31,11 +31,11 @@ object ExercisesJS extends js.JSApp {
       states() = s
     }
 
-    def triggerAction(action: Action): IO[Unit] = io {
+    def triggerAction(action: Action): IO[Unit] = {
       actions() = action
       val oldState = states()
       val newState = State.update(oldState, action)
-      setState(newState).unsafePerformIO()
+      setState(newState)
     }
 
     val effects = Obs(states, skipInitial = true) {
@@ -48,9 +48,10 @@ object ExercisesJS extends js.JSApp {
     }
 
     val program = for {
-      initialState ← loadInitialData flatMap setState
+      _ ← loadInitialData flatMap setState
       replacements ← inputReplacements
       _ ← replaceInputs(replacements)
+      _ ← highlightCodeBlocks
       _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
         triggerAction(UpdateExercise(method, arguments))
       }, (method: String) ⇒ {

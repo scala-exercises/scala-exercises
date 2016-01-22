@@ -1,7 +1,7 @@
 package utils
 
+import scala.scalajs.js
 import org.scalajs.dom
-import org.scalajs.dom.ext.KeyCode
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
 import shared.IO
@@ -19,6 +19,14 @@ object DomHandler {
     */
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
+  }
+
+  /** Highlights every preformatted code block.
+    */
+  def highlightCodeBlocks: IO[Unit] = io {
+    $("pre code").each((_: Any, code: dom.Element) ⇒ {
+      js.Dynamic.global.hljs.highlightBlock(code)
+    })
   }
 
   /** Set the class attribute to an exercise node
