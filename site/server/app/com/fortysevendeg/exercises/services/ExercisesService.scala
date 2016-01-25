@@ -4,6 +4,7 @@ import cats.data.Xor
 import java.io.File
 import java.net.URLClassLoader
 
+import services.exercisev0.BooleanTypeConversion
 import com.toddfast.util.convert.TypeConverter
 import shared._
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
@@ -18,6 +19,7 @@ import cats.syntax.xor._
 /** Main entry point and service for libraries, categories and exercises discovery + evaluation
   */
 object ExercisesService {
+  TypeConverter.registerTypeConversion(new BooleanTypeConversion())
 
   private[this] lazy val classMap = {
     val cl = Play.maybeApplication map (_.classloader) getOrElse ClassLoader.getSystemClassLoader
