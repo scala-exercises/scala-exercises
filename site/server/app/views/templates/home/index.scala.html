@@ -163,33 +163,9 @@
         </div>
       </div>
     </section>
-    <footer id="bottom" class="dark">
-      <div class="container">
-        <div class="col-md-8">
-          <svg viewBox="0 24 30 19" width="30" height="19">
-            <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand-light")"/>
-          </svg>
-          <p><span>Scala Exercises is handcrafted by <a href="#">47 Degrees</a></span></p>
-          <ul>
-            <li>
-              <a href="#">Contact us</a>
-            </li>
-            <li>·</li>
-            <li>
-              <a href="#">Term of use</a>
-            </li>
-            <li>·</li>
-            <li>
-              <a href="#">Privaty policy</a>
-            </li>
-          </ul>
-
-        </div>
-        <div class="col-md-4">
-          <p class="text-right"><a href="#">View on GitHub</a></p>
-        </div>
-      </div>
-    </footer>
+    
+    @templates.footer()
+    
       <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="@routes.Assets.at("javascripts/parallax.js")"></script>
