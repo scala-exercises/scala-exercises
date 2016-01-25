@@ -1,4 +1,4 @@
-package services.messages
+package com.fortysevendeg.exercises.services.messages
 
 import shared.User
 

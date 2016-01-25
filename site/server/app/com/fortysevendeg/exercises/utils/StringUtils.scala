@@ -1,4 +1,4 @@
-package utils
+package com.fortysevendeg.exercises.utils
 
 object StringUtils {
 

@@ -1,14 +1,11 @@
-package models
+package com.fortysevendeg.exercises.models
 
 import scala.concurrent.Future
 import shared.User
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
 import slick.driver._
-
-object UserModel {
-  val store: UserStore = UserSlickStore
-}
+import slick.jdbc.JdbcBackend.Database
 
 trait UserStore {
 
@@ -30,9 +27,9 @@ trait UserStore {
   def delete(ids: Long*): Future[Boolean]
 }
 
-object UserSlickStore extends UserStore {
+class UserSlickStore(db: Database) extends UserStore {
 
-  val profile = current.configuration.getString("db.default.driver").collect {
+  lazy val profile = current.configuration.getString("db.default.driver").collect {
     case "org.h2.Driver"         ⇒ H2Driver
     case "org.postgresql.Driver" ⇒ PostgresDriver
     case "com.mysql.jdbc.Driver" ⇒ MySQLDriver
@@ -52,8 +49,6 @@ object UserSlickStore extends UserStore {
     def email = column[String]("email")
     def * = (id, login, name, github_id, picture_url, github_url, email) <> (User.tupled, User.unapply)
   }
-
-  private def db: Database = Database.forDataSource(DB.getDataSource())
 
   val users = TableQuery[Users]
 

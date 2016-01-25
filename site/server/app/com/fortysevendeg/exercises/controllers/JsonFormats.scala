@@ -1,4 +1,4 @@
-package controllers
+package com.fortysevendeg.exercises.controllers
 
 import shared._
 import play.api.libs.json.{ Reads, Json, Writes }

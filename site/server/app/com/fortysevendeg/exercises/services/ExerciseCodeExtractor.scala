@@ -1,4 +1,4 @@
-package services.exerciseV0
+package com.fortysevendeg.exercises.services
 
 import shared._
 
@@ -102,7 +102,7 @@ object ExerciseCodeExtractor {
   private[this] val methodStart = "\\s*def\\s+(\\w+)(\\([^\\)]+\\))?(:\\s+ExerciseResult\\[.*\\])?\\s*=\\s*ExerciseRunner\\(\"(.+)\"\\)\\s*\\{".r
   private[this] val methodEnd = "\\s*\\}\\(∞\\).*".r
 
-  import utils.StringUtils._
+  import com.fortysevendeg.exercises.utils.StringUtils._
 
   /** Recursively walks the source lines building a Section and it's all contained exercises
     */
