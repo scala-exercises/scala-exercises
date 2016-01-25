@@ -1,0 +1,33 @@
+@(variant: String = "dark")
+
+@defining(if (variant == "dark") "brand-light" else "brand-dark"){ branding =>
+
+<footer id="bottom" class="@variant">
+  <div class="container">
+    <div class="col-md-8">
+      <svg viewBox="0 24 30 19" width="30" height="19">
+        <use xlink:href="@routes.Assets.at(s"images/sprite-images.svg#$branding")"/>
+      </svg>
+      <p><span>Scala Exercises is handcrafted by <a href="#">47 Degrees</a></span></p>
+      <ul>
+        <li>
+          <a href="#">Contact us</a>
+        </li>
+        <li>·</li>
+        <li>
+          <a href="#">Term of use</a>
+        </li>
+        <li>·</li>
+        <li>
+          <a href="#">Privacy policy</a>
+        </li>
+      </ul>
+     </div>
+    <div class="col-md-4">
+      <p class="text-right"><a href="#">View on GitHub</a></p>
+    </div>
+  </div>
+</footer>
+  
+}
+

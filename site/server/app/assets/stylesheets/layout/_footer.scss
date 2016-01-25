@@ -47,3 +47,18 @@
         }
     }
 }
+
+.light {
+    background: $gray-lighter;
+    color: $gray-dark;
+    
+    a {
+        text-decoration: underline;
+	color: $light-link-color;
+    
+        &:hover {
+            text-decoration: none;
+            color: $light-link-color-hover;
+        }
+    }
+}
