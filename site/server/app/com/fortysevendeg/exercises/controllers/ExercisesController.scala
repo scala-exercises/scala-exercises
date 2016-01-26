@@ -10,10 +10,11 @@ import scala.concurrent.Future
 import scalaz.{ -\/, \/, \/- }
 
 import com.fortysevendeg.exercises.services._
-import com.fortysevendeg.shared.free.ExerciseOps
 import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.shared.free.ExerciseOps
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
-class ExercisesController(implicit exerciseOps: ExerciseOps[ExercisesApp]) extends Controller with JsonFormats {
+class ExercisesController(implicit exerciseOps: ExerciseOps[ExercisesApp], userServices: UserServices) extends Controller with JsonFormats {
 
   def evaluate(libraryName: String, sectionName: String) = Action(BodyParsers.parse.json) { request ⇒
     request.body.validate[ExerciseEvaluation] match {

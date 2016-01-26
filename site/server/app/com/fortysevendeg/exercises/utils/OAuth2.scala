@@ -5,6 +5,7 @@ import play.api.{ Application, Play }
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.mvc.{ Action, Controller, Results }
 import play.api.libs.ws._
+import play.api.libs.ws.ning.NingWSClient
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.fortysevendeg.exercises.services._
 import com.fortysevendeg.exercises.services.messages._
@@ -24,9 +25,11 @@ object OAuth2 {
   }
 }
 
-class OAuth2Controller(ws: WSClient, userService: UserServices) extends Controller {
+class OAuth2Controller(implicit userService: UserServices) extends Controller {
 
   import OAuth2._
+
+  val ws = NingWSClient()
 
   def getToken(code: String): Future[String] = {
     val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
@@ -77,16 +80,14 @@ class OAuth2Controller(ws: WSClient, userService: UserServices) extends Controll
           val html_url = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").as[String]
 
-          val result = for {
-            res ← userService.getUserOrCreate(GetUserOrCreateRequest(
-              login = login,
-              name = name,
-              github_id = github_id.toString,
-              picture_url = avatar_url,
-              github_url = html_url,
-              email = email
-            ))
-          } yield res.user
+          val result = userService.getUserOrCreate(
+            login,
+            name,
+            github_id.toString,
+            avatar_url,
+            html_url,
+            email
+          )
 
           Redirect("/").withSession("oauth-token" → authToken, "user" → login)
 

@@ -1,13 +1,15 @@
 package com.fortysevendeg.exercises.models
 
+import doobie.imports._
 import scala.concurrent.Future
 import shared.User
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
 import slick.driver._
 import slick.jdbc.JdbcBackend.Database
+import scalaz.concurrent.Task
 
-trait UserStore {
+trait OldUserStore {
 
   def all: Future[Seq[User]]
 
@@ -27,7 +29,11 @@ trait UserStore {
   def delete(ids: Long*): Future[Boolean]
 }
 
-class UserSlickStore(db: Database) extends UserStore {
+trait UserStore {
+  def all: List[User]
+}
+
+class UserSlickStore(db: Database) extends OldUserStore {
 
   lazy val profile = current.configuration.getString("db.default.driver").collect {
     case "org.h2.Driver"         ⇒ H2Driver
@@ -97,4 +103,18 @@ class UserSlickStore(db: Database) extends UserStore {
     }.map(!_.exists(i ⇒ !i))
   }
 
+}
+import com.fortysevendeg.exercises.services.persistence.Persistence
+
+class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
+  def all: List[User] = {
+    val query = Persistence.fetchList[User](
+      "select id, login, name, github_id, picture_url, github_url, email from users"
+    )
+    query.transact(transactor).run
+  }
+}
+
+object UserStore {
+  implicit def instance(implicit transactor: Transactor[Task]): UserStore = new UserDoobieStore
 }

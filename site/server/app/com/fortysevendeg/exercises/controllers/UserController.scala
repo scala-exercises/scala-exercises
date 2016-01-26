@@ -6,13 +6,15 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import upickle._
-
+import com.fortysevendeg.exercises.services._
 import com.fortysevendeg.exercises.services.free.UserOps
 import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
 import scala.concurrent.Future
+import scalaz.{ -\/, \/, \/- }
 
-class UserController(userStore: UserStore) extends Controller {
+class UserController(implicit userOps: UserOps[ExercisesApp], userServices: UserServices) extends Controller {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
@@ -20,25 +22,11 @@ class UserController(userStore: UserStore) extends Controller {
     Redirect("/")
   }
 
-  def all = Action.async { implicit request ⇒
-    userStore.all.map { r ⇒
-      Ok(write(r))
-    }.recover {
-      case err ⇒
-        InternalServerError(err.getMessage)
+  def all = Action { implicit request ⇒
+    userOps.getUsers runTask match {
+      case \/-(users) ⇒ Ok(write(users))
+      case -\/(error) ⇒ InternalServerError(error.getMessage)
     }
-  }
-}
 
-class FreeUserController(implicit userOps: UserOps[ExercisesApp]) extends Controller {
-
-  implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
-
-  def index = Action { implicit request ⇒
-    Redirect("/")
-  }
-
-  def all = Action.async { implicit request ⇒
-    Ok("TODO")
   }
 }
