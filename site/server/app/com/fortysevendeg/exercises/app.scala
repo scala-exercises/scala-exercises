@@ -20,7 +20,7 @@ object app {
 
     /** Run this Free structure folding it's ops to an effect capturing task */
     def runTask: Throwable \/ A =
-      f.foldMap(interpreters).unsafePerformSyncAttempt
+      f.foldMap(interpreters).attemptRun
 
   }
 

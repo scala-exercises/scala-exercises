@@ -27,6 +27,7 @@ lazy val exerciseSettings: Seq[Setting[_]] =
   )
 
 lazy val clients = Seq(client)
+lazy val doobieVersion = "0.2.3"
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
@@ -48,6 +49,7 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
+      // FIXME: get rid of the Slick dependency
       "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
@@ -62,7 +64,8 @@ lazy val server = (project in file("server"))
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0",
-      "org.scalaz" %% "scalaz-concurrent" % "7.2.0") ++
+      "org.scalaz" %% "scalaz-concurrent" % "7.1.2",
+      "org.tpolecat" %% "doobie-core" % doobieVersion) ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
