@@ -48,7 +48,7 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
   */
 object UserOps {
 
-  implicit def instance[F[_]](implicit I: Inject[UserOp, F]) = new UserOps[F]
+  implicit def instance[F[_]](implicit I: Inject[UserOp, F]): UserOps[F] = new UserOps[F]
 
 }
 

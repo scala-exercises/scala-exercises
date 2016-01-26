@@ -18,13 +18,14 @@ import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import com.fortysevendeg.exercises.services._
 import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+
 import scalaz.concurrent.Task
 import scalaz.{ \/-, -\/ }
 
 import scala.concurrent.Future
 
-class ApplicationController(userService: UserServices)(implicit exerciseOps: ExerciseOps[ExercisesApp]) extends Controller {
-
+class ApplicationController(implicit exerciseOps: ExerciseOps[ExercisesApp], userService: UserServices) extends Controller {
   def index = Action.async { implicit request ⇒
 
     val scope = "user"
@@ -35,8 +36,8 @@ class ApplicationController(userService: UserServices)(implicit exerciseOps: Exe
     exerciseOps.getLibraries.runTask match {
       case \/-(libraries) ⇒
         request.session.get("oauth-token") map { token ⇒
-          val user = userService.getUserByLogin(GetUserByLoginRequest(login = request.session.get("user").getOrElse("")))
-          user.map(response ⇒ Ok(views.html.templates.home.index(user = response.user, libraries = libraries)))
+          val user = userService.getUserByLogin(request.session.get("user").getOrElse(""))
+          Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries)))
         } getOrElse {
           Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
         }
