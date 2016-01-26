@@ -7,6 +7,9 @@ import play.api.libs.json._
 import play.api.mvc._
 import upickle._
 
+import com.fortysevendeg.exercises.services.free.UserOps
+import com.fortysevendeg.exercises.app._
+
 import scala.concurrent.Future
 
 class UserController(userStore: UserStore) extends Controller {
@@ -25,5 +28,17 @@ class UserController(userStore: UserStore) extends Controller {
         InternalServerError(err.getMessage)
     }
   }
+}
 
+class FreeUserController(implicit userOps: UserOps[ExercisesApp]) extends Controller {
+
+  implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
+
+  def index = Action { implicit request ⇒
+    Redirect("/")
+  }
+
+  def all = Action.async { implicit request ⇒
+    Ok("TODO")
+  }
 }
