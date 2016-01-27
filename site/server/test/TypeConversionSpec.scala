@@ -1,31 +1,42 @@
-import org.specs2._
-import org.specs2.runner._
-import org.junit.runner._
+import org.scalacheck.{ Gen, Properties }
+import org.scalacheck.Prop.{ throws, forAll }
 
 import com.toddfast.util.convert.TypeConverter
 import services.exercisev0.BooleanTypeConversion
 
-@RunWith(classOf[JUnitRunner])
-class TypeConversionSpec extends Specification {
-  TypeConverter.registerTypeConversion(new BooleanTypeConversion())
+object BooleanConversionProperties extends Properties("BooleanTypeConversion") {
+  def convert(s: String): Boolean = {
+    TypeConverter.registerTypeConversion(new BooleanTypeConversion())
+    TypeConverter.convert(java.lang.Boolean.TYPE, s)
+  }
 
-  def is = s2"""
-With our custom boolean type conversion
+  val trueGen = for {
+    t ← Gen.oneOf("t", "T")
+    r ← Gen.oneOf("r", "R")
+    u ← Gen.oneOf("u", "U")
+    e ← Gen.oneOf("e", "E")
+  } yield (t + r + u + e)
 
-  the `true` string is converted to a truthy boolean $e1
-  the `TRUE` string is converted to a truthy boolean $e2
-  the `false` string is converted to a truthy boolean $e3
-  the `FALSE` string is converted to a truthy boolean $e4
-  an empty string is not a legal argument $e5
-  a string that isn't `true` is not a truthy boolean $e6
-  a string that isn't `false` is not a falsy boolean $e7
-"""
+  property("`true` strings yield `true` regardless of case") = forAll(trueGen) { t ⇒
+    convert(t)
+  }
 
-  def e1 = TypeConverter.convert(java.lang.Boolean.TYPE, "true") must beEqualTo(true)
-  def e2 = TypeConverter.convert(java.lang.Boolean.TYPE, "TRUE") must beEqualTo(true)
-  def e3 = TypeConverter.convert(java.lang.Boolean.TYPE, "false") must beEqualTo(false)
-  def e4 = TypeConverter.convert(java.lang.Boolean.TYPE, "FALSE") must beEqualTo(false)
-  def e5 = TypeConverter.convert(java.lang.Boolean.TYPE, "") must throwA[IllegalArgumentException]
-  def e6 = TypeConverter.convert(java.lang.Boolean.TYPE, "tr") must throwA[IllegalArgumentException]
-  def e7 = TypeConverter.convert(java.lang.Boolean.TYPE, "fa") must throwA[IllegalArgumentException]
+  val falseGen = for {
+    f ← Gen.oneOf("f", "F")
+    a ← Gen.oneOf("a", "A")
+    l ← Gen.oneOf("l", "L")
+    s ← Gen.oneOf("s", "S")
+    e ← Gen.oneOf("e", "E")
+  } yield (f + a + l + s + e)
+
+  property("`false` strings yield `false` regardless of case") = forAll(falseGen) { f ⇒
+    !convert(f)
+  }
+
+  val trueAndFalse = Set("true", "false")
+  val notTrueNorFalseGen = Gen.identifier suchThat { (s: String) ⇒ !trueAndFalse.contains(s.toLowerCase()) }
+
+  property("malformed strings throw an `IllegalArgumentException`") = forAll(notTrueNorFalseGen) { s ⇒
+    throws(classOf[IllegalArgumentException])(convert(s))
+  }
 }
