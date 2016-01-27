@@ -65,7 +65,8 @@ lazy val server = (project in file("server"))
       "org.scalaz" %% "scalaz-concurrent" % "7.2.0") ++
     testlibs(
       specs2,
-      "org.typelevel" %% "scalaz-specs2" % "0.3.0")
+      "org.typelevel" %% "scalaz-specs2" % "0.3.0",
+      "org.scalacheck" %% "scalacheck" % "1.12.5")
   ))
 
 
