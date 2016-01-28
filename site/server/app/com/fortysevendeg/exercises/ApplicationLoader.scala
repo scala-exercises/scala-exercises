@@ -15,7 +15,6 @@ import com.fortysevendeg.exercises.models.{ UserDoobieStore }
 import com.fortysevendeg.exercises.services.UserServiceImpl
 
 import router.Routes
-import cats.~>
 import cats.Monad
 import cats.free.Free
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,8 +40,8 @@ class Components(context: Context)
   val exercisesController = new ExercisesController
   val userController = new UserController
   val OAuthController = new OAuth2Controller
+
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
   val router = new Routes(httpErrorHandler, applicationController, userController, exercisesController, assets, OAuthController)
-
 }
