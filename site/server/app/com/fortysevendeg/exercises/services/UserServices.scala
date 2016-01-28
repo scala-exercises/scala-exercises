@@ -18,7 +18,20 @@ trait UserServices {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): User
+  ): Throwable Xor User
+
+  def createUser(
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Throwable Xor User
+
+  def update(user: User): Boolean
+
+  def delete(user: User): Boolean
 }
 
 class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
@@ -35,8 +48,12 @@ class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): User =
-    getUserByLogin(login).getOrElse(createUser(login, name, github_id, picture_url, github_url, email))
+  ): Throwable Xor User = {
+    getUserByLogin(login) match {
+      case Some(user) ⇒ Xor.Right(user)
+      case _          ⇒ createUser(login, name, github_id, picture_url, github_url, email)
+    }
+  }
 
   def createUser(
     login:       String,
@@ -45,13 +62,15 @@ class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): User =
+  ): Throwable Xor User = {
+    val user = User(None, login, name, github_id, picture_url, github_url, email)
+    Xor.fromOption(userStore.create(user), new Exception("Couldn't create user"))
+  }
+
+  def update(user: User): Boolean =
     ???
 
-  def updateUser(user: User): Boolean =
-    ???
-
-  def deleteUser(user: User): Boolean =
+  def delete(user: User): Boolean =
     ???
 }
 

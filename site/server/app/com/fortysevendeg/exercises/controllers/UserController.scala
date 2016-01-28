@@ -18,10 +18,6 @@ class UserController(implicit userOps: UserOps[ExercisesApp], userServices: User
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
-  def index = Action { implicit request ⇒
-    Redirect("/")
-  }
-
   def all = Action { implicit request ⇒
     userOps.getUsers runTask match {
       case \/-(users) ⇒ Ok(write(users))

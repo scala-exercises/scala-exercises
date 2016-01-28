@@ -8,8 +8,8 @@ import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.fortysevendeg.exercises.services._
-import com.fortysevendeg.exercises.services.messages._
 
+import cats.data.Xor
 import scala.concurrent.Future
 
 object OAuth2 {
@@ -88,8 +88,10 @@ class OAuth2Controller(implicit userService: UserServices) extends Controller {
             html_url,
             email
           )
-
-          Redirect("/").withSession("oauth-token" → authToken, "user" → login)
+          result match {
+            case Xor.Right(_) ⇒ Redirect("/").withSession("oauth-token" → authToken, "user" → login)
+            case Xor.Left(_)  ⇒ InternalServerError("Failed to save user information")
+          }
 
         }
     }
