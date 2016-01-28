@@ -17,30 +17,35 @@ trait UserStore {
 }
 
 class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
+  val TABLE = "users"
+  val ALL_FIELDS = "id, login, name, github_id, picture_url, github_url, email"
+
   def queryAll: ConnectionIO[List[User]] =
-    Persistence.fetchList[User](
-      "select id, login, name, github_id, picture_url, github_url, email from users"
-    )
+    Persistence.fetchList[User](s"""
+SELECT $ALL_FIELDS
+FROM $TABLE
+""")
 
   def all: List[User] = {
     queryAll transact (transactor) run
   }
 
   def queryByLogin(login: String): ConnectionIO[Option[User]] =
-    Persistence.fetchOption[String, User](
-      "select id, login, name, github_id, picture_url, github_url, email from users where login = ?",
-      login
-    )
+    Persistence.fetchOption[String, User](s"""
+SELECT $ALL_FIELDS
+FROM $TABLE
+WHERE login = ?
+""", login)
 
   def getByLogin(login: String): Option[User] = {
     queryByLogin(login).transact(transactor).run
   }
 
   def queryById(id: Int): ConnectionIO[Option[User]] = {
-    Persistence.fetchOption[Int, User](
-      "select id, login, name, github_id, picture_url, github_url, email from users where id = ?",
-      id
-    )
+    Persistence.fetchOption[Int, User](s"""
+SELECT $ALL_FIELDS
+FROM $TABLE
+WHERE id = ?""", id)
   }
 
   def getById(id: Int): Option[User] = {
