@@ -1,37 +1,76 @@
 package com.fortysevendeg.exercises.models
 
-import doobie.imports._
-
 import shared.User
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import scalaz.concurrent.Task
-
 import com.fortysevendeg.exercises.services.persistence.Persistence
+
+import doobie.imports._
+import scalaz.concurrent.Task
 
 trait UserStore {
   def all: List[User]
 
   def getByLogin(login: String): Option[User]
+
+  def create(user: User): Option[User]
+
+  // TODO: update, delete
 }
 
 class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
-  def all: List[User] = {
-    val query = Persistence.fetchList[User](
+  def queryAll: ConnectionIO[List[User]] =
+    Persistence.fetchList[User](
       "select id, login, name, github_id, picture_url, github_url, email from users"
     )
-    query.transact(transactor).run
+
+  def all: List[User] = {
+    queryAll transact (transactor) run
   }
 
-  def getByLogin(login: String): Option[User] = {
-    val query = Persistence.fetchOption[String, User](
+  def queryByLogin(login: String): ConnectionIO[Option[User]] =
+    Persistence.fetchOption[String, User](
       "select id, login, name, github_id, picture_url, github_url, email from users where login = ?",
       login
     )
-    query.transact(transactor).run
+
+  def getByLogin(login: String): Option[User] = {
+    queryByLogin(login).transact(transactor).run
   }
 
+  def queryById(id: Int): ConnectionIO[Option[User]] = {
+    Persistence.fetchOption[Int, User](
+      "select id, login, name, github_id, picture_url, github_url, email from users where id = ?",
+      id
+    )
+  }
+
+  def getById(id: Int): Option[User] = {
+    queryById(id).transact(transactor).run
+  }
+
+  def insert(
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): ConnectionIO[Option[User]] = {
+    Persistence.update("""
+INSERT INTO users (login, name, github_id, picture_url, github_url, email)
+           VALUES ($login, $name, $github_id, $picture_url, $github_url, $email)
+""").flatMap(queryById)
+  }
+
+  def create(user: User): Option[User] = {
+    insert(
+      user.login,
+      user.name,
+      user.github_id,
+      user.picture_url,
+      user.github_url,
+      user.email
+    ).transact(transactor).run
+  }
 }
 
 object UserStore {
