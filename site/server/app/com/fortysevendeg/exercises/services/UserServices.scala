@@ -1,13 +1,10 @@
 package com.fortysevendeg.exercises.services
 
 import cats.data.Xor
+import scala.concurrent.{ Future, ExecutionContext }
 
 import com.fortysevendeg.exercises.models.{ UserStore }
-import com.fortysevendeg.exercises.services.messages._
-
 import shared.User
-
-import scala.concurrent.{ Future, ExecutionContext }
 
 trait UserServices {
   def all: List[User]
@@ -29,7 +26,7 @@ class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
     userStore.all
 
   def getUserByLogin(login: String): Option[User] =
-    None // TODO
+    userStore.getByLogin(login)
 
   def getUserOrCreate(
     login:       String,
@@ -49,7 +46,7 @@ class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
     github_url:  String,
     email:       String
   ): User =
-    User(None, login, name, github_id, picture_url, github_url, email)
+    ???
 
   def updateUser(user: User): Boolean =
     ???

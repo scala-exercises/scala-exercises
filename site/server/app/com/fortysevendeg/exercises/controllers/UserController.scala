@@ -27,6 +27,15 @@ class UserController(implicit userOps: UserOps[ExercisesApp], userServices: User
       case \/-(users) ⇒ Ok(write(users))
       case -\/(error) ⇒ InternalServerError(error.getMessage)
     }
+  }
 
+  def byLogin(login: String) = Action { implicit request ⇒
+    userOps.getUserByLogin(login) runTask match {
+      case \/-(user) ⇒ user match {
+        case Some(user) ⇒ Ok(write(user))
+        case None       ⇒ NotFound("The user doesn't exist")
+      }
+      case -\/(error) ⇒ InternalServerError(error.getMessage)
+    }
   }
 }
