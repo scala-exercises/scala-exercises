@@ -49,8 +49,6 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
-      // FIXME: get rid of the Slick dependency
-      "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
