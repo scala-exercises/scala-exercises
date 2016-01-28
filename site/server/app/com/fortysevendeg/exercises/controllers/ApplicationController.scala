@@ -25,7 +25,11 @@ import scalaz.{ \/-, -\/ }
 
 import scala.concurrent.Future
 
-class ApplicationController(implicit exerciseOps: ExerciseOps[ExercisesApp], userService: UserServices) extends Controller {
+class ApplicationController(
+    implicit
+    exerciseOps: ExerciseOps[ExercisesApp],
+    userService: UserServices
+) extends Controller {
   def index = Action.async { implicit request ⇒
 
     val scope = "user"

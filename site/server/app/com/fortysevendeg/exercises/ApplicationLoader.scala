@@ -39,9 +39,9 @@ class Components(context: Context)
   val applicationController = new ApplicationController
   val exercisesController = new ExercisesController
   val userController = new UserController
-  val OAuthController = new OAuth2Controller
+  val oauthController = new OAuth2Controller
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
-  val router = new Routes(httpErrorHandler, applicationController, userController, exercisesController, assets, OAuthController)
+  val router = new Routes(httpErrorHandler, applicationController, userController, exercisesController, assets, oauthController)
 }
