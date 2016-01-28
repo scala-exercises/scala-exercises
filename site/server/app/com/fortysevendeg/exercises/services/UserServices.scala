@@ -68,10 +68,10 @@ class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
   }
 
   def update(user: User): Boolean =
-    ???
+    userStore.update(user).isDefined
 
   def delete(user: User): Boolean =
-    ???
+    userStore.delete(user)
 }
 
 object UserServices {
