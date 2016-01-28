@@ -28,6 +28,7 @@ lazy val exerciseSettings: Seq[Setting[_]] =
 
 lazy val clients = Seq(client)
 lazy val doobieVersion = "0.2.3"
+lazy val scalazVersion = "7.1.4"
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
@@ -62,8 +63,8 @@ lazy val server = (project in file("server"))
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0",
-      "org.scalaz" %% "scalaz-concurrent" % "7.1.2",
-      "org.tpolecat" %% "doobie-core" % doobieVersion) ++
+      "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
+      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0")
@@ -114,7 +115,7 @@ lazy val v0def = (project in file("v0def"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalaz" %% "scalaz-core" % scalazVersion
     )
   )
 
@@ -132,6 +133,6 @@ lazy val content = (project in file("content"))
   .settings(libraryDependencies ++=
     compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalaz" %% "scalaz-core" % scalazVersion
     )
   )
