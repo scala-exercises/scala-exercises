@@ -68,7 +68,8 @@ lazy val server = (project in file("server"))
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
-      "org.scalacheck" %% "scalacheck" % "1.12.5")
+      "org.scalacheck" %% "scalacheck" % "1.12.5",
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion)
   ))
 
 
