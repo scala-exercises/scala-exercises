@@ -3,7 +3,7 @@ package shared
 // TODO: is any of this actually used/needed by the client js code?
 
 case class User(
-  id:          Option[Long],
+  id:          Option[Int],
   login:       String,
   name:        String,
   github_id:   String,
