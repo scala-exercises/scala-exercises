@@ -67,7 +67,8 @@ lazy val server = (project in file("server"))
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
     testlibs(
       specs2,
-      "org.typelevel" %% "scalaz-specs2" % "0.3.0")
+      "org.typelevel" %% "scalaz-specs2" % "0.3.0",
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion)
   ))
 
 
