@@ -22,7 +22,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Case classes have a convenient way they can be created:",
+      "preparagraph": "Case classes can be created in a convenient way:",
       "code": "case class Dog(name: String, breed: String)\n\nval d1 = Dog(\"Scooby\", \"Doberman\")\nval d2 = Dog(\"Rex\", \"Custom\")\nval d3 = new Dog(\"Scooby\", \"Doberman\") // the old way of creating using new\n\n(d1 == d3) should be(__)\n(d1 == d2) should be(__)\n(d2 == d3) should be(__)",
       "solutions": [
         "true",
