@@ -92,7 +92,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Same koan as above, but we are pattern matching of a list with only one item!",
+      "preparagraph": "Same koan as above, but we are pattern matching a list with only one item!",
       "code": "val secondElement = List(1) match {\n  case x :: y :: xs => y\n  case _ => 0\n}\n\nsecondElement should be(__)",
       "solutions": [
         "0"
