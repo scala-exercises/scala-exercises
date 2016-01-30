@@ -60,7 +60,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Safer alternatives exist for altering case classes:",
+      "preparagraph": "There are safer alternatives for altering case classes:",
       "code": "case class Dog(name: String, breed: String) // Doberman\n\nval d1 = Dog(\"Scooby\", \"Doberman\")\n\nval d2 = d1.copy(name = \"Scooby Doo\") // copy the case class but change the name in the copy\n\nd1.name should be(__) // original left alone\nd1.breed should be(__)\n\nd2.name should be(__)\nd2.breed should be(__) // copied from the original",
       "solutions": [
         "\"Scooby\"",
