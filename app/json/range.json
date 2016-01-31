@@ -39,7 +39,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Range can specify to include the last value",
+      "preparagraph": "Range can specify to include its upper bound value",
       "code": "val someNumbers = Range(0, 34).inclusive\n\nsomeNumbers.contains(34) should be(__)",
       "solutions": [
         "true"
