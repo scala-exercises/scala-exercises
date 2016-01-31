@@ -11,7 +11,7 @@
       ],
       "postparagraph": ""
     },
-    {ev
+    {
       "preparagraph": "Ranges can be specified using 'until'.",
       "code": "val someNumbers = Range(0, 10)\nval otherRange = 0 until 10\n\n(someNumbers == otherRange) should be(__)",
       "solutions": [
