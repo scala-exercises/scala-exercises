@@ -27,7 +27,6 @@ WHERE id = $id
 """.query[User]
 
   def insert(
-    id:          Int,
     login:       String,
     name:        String,
     github_id:   String,
@@ -36,14 +35,24 @@ WHERE id = $id
     email:       String
   ) =
     sql"""
-INSERT INTO users
-VALUES ($id, $login, $name, $github_id, $picture_url, $github_url, $email)
+INSERT INTO users (login, name, github_id, picture_url, github_url, email)
+VALUES ($login, $name, $github_id, $picture_url, $github_url, $email)
 """.update
 
-  def delete(id: Int) =
+  def deleteById(id: Int) =
     sql"""
 DELETE FROM users
       WHERE id = $id
+    """.update
+
+  def delete(id: Int): ConnectionIO[Boolean] = for {
+    beforeDeletion ← byId(id).option
+    _ ← deleteById(id).run
+  } yield beforeDeletion.isDefined
+
+  def deleteAll =
+    sql"""
+DELETE FROM users
     """.update
 
   def update(
