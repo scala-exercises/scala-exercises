@@ -42,8 +42,24 @@ class ProdInterpreters(implicit userService: UserServices) {
         picture_url,
         github_url,
         email) ⇒ Task.delay(userService.createUser(login, name, github_id, picture_url, github_url, email))
-      case UpdateUser(user) ⇒ Task.delay(userService.update(user))
-      case DeleteUser(user) ⇒ Task.delay(userService.delete(user))
+      case UpdateUser(
+        id,
+        login,
+        name,
+        github_id,
+        picture_url,
+        github_url,
+        email
+        ) ⇒ Task.delay(userService.update(
+        id,
+        login,
+        name,
+        github_id,
+        picture_url,
+        github_url,
+        email
+      ))
+      case DeleteUser(id) ⇒ Task.delay(userService.delete(id))
     }
   }
 }

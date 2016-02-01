@@ -29,9 +29,17 @@ trait UserServices {
     email:       String
   ): Throwable Xor User
 
-  def update(user: User): Boolean
+  def update(
+    id:          Int,
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Boolean
 
-  def delete(user: User): Boolean
+  def delete(id: Int): Boolean
 }
 
 class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
@@ -63,15 +71,37 @@ class UserServiceImpl(implicit userStore: UserStore) extends UserServices {
     github_url:  String,
     email:       String
   ): Throwable Xor User = {
-    val user = User(None, login, name, github_id, picture_url, github_url, email)
-    Xor.fromOption(userStore.create(user), new Exception("Couldn't create user"))
+    Xor.fromOption(userStore.create(
+      login,
+      name,
+      github_id,
+      picture_url,
+      github_url,
+      email
+    ), new Exception("Couldn't create user"))
   }
 
-  def update(user: User): Boolean =
-    userStore.update(user).isDefined
+  def update(
+    id:          Int,
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Boolean =
+    userStore.update(
+      id,
+      login,
+      name,
+      github_id,
+      picture_url,
+      github_url,
+      email
+    ).isDefined
 
-  def delete(user: User): Boolean =
-    userStore.delete(user)
+  def delete(id: Int): Boolean =
+    userStore.delete(id)
 }
 
 object UserServices {

@@ -12,11 +12,28 @@ trait UserStore {
 
   def getByLogin(login: String): Option[User]
 
-  def create(user: User): Option[User]
+  def getById(id: Int): Option[User]
 
-  def delete(user: User): Boolean
+  def create(
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Option[User]
 
-  def update(user: User): Option[User]
+  def delete(id: Int): Boolean
+
+  def update(
+    id:          Int,
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Option[User]
 }
 
 class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
@@ -32,14 +49,19 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
     Queries.byId(id).option.transact(transactor).run
   }
 
-  def create(user: User): Option[User] = {
-    user.id match {
-      case Some(id) ⇒ (for {
-        _ ← Queries.insert(id, user.login, user.name, user.github_id, user.picture_url, user.github_url, user.email).run
-        user ← Queries.byId(id).option
-      } yield user).transact(transactor).run
-      case None ⇒ None
-    }
+  // TODO: beware of the constraint violations
+  def create(
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Option[User] = {
+    (for {
+      _ ← Queries.insert(login, name, github_id, picture_url, github_url, email).run
+      user ← Queries.byLogin(login).option
+    } yield user).transact(transactor).run
   }
 
   def deleteQuery(login: String): ConnectionIO[Boolean] = {
@@ -57,8 +79,11 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
     })
   }
 
-  def delete(user: User): Boolean =
-    deleteQuery(user.login).transact(transactor).run
+  def delete(id: Int): Boolean =
+    Queries.delete(id) transact (transactor) run
+
+  def deleteAll =
+    Queries.deleteAll.run transact (transactor) run
 
   def updateQuery(user: User): ConnectionIO[Int] = {
     require(user.id.isDefined, "Can only update existing users")
@@ -74,8 +99,25 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
     ).run
   }
 
-  def update(user: User): Option[User] =
-    updateQuery(user).transact(transactor).map(_ ⇒ Some(user)).run
+  def update(
+    id:          Int,
+    login:       String,
+    name:        String,
+    github_id:   String,
+    picture_url: String,
+    github_url:  String,
+    email:       String
+  ): Option[User] = {
+    Queries.update(
+      id,
+      login,
+      name,
+      github_id,
+      picture_url,
+      github_url,
+      email
+    ).run.flatMap(_ ⇒ Queries.byId(id).option) transact (transactor) run
+  }
 }
 
 object UserStore {

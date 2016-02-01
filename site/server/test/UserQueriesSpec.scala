@@ -22,8 +22,8 @@ class UserQueriesSpec extends Specification with AnalysisSpec {
   check(Queries.all)
   check(Queries.byLogin("47deg"))
   check(Queries.byId(47))
-  check(Queries.insert(47, "47deg", "47", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hello@47deg.com"))
-  check(Queries.delete(47))
+  check(Queries.insert("47deg", "47", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hello@47deg.com"))
+  check(Queries.deleteById(47))
   check(Queries.update(47, "47deg", "47", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hello@47deg.com"))
 
 }
