@@ -1,7 +1,6 @@
 package com.fortysevendeg.exercises.models
 
 import shared.User
-import com.fortysevendeg.exercises.services.persistence.Persistence
 import com.fortysevendeg.exercises.models.queries.Queries
 
 import doobie.imports._
