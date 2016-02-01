@@ -46,7 +46,7 @@
       "postparagraph": ""
     },
     {
-      "preparagraph": "Pattern matching can done on regular expression groups:",
+      "preparagraph": "Pattern matching can be done on regular expression groups:",
       "code": "val EatingRegularExpression = \"\"\"Eating Alert: bear=([^,]+),\\s+source=(.+)\"\"\".r //.r turns a String to a regular expression\nval SittingRegularExpression = \"\"\"Sitting Alert: bear=([^,]+),\\s+source=(.+)\"\"\".r\nval SleepingRegularExpression = \"\"\"Sleeping Alert: bear=([^,]+),\\s+source=(.+)\"\"\".r\n\ndef goldilocks(expr: String) = expr match {\n  case (EatingRegularExpression(bear, source)) => \"%s said someone's been eating my %s\".format(bear, source)\n  case (SittingRegularExpression(bear, source)) => \"%s said someone's been sitting on my %s\".format(bear, source)\n  case (SleepingRegularExpression(bear, source)) => \"%s said someone's been sleeping in my %s\".format(bear, source)\n  case _ => \"what?\"\n}\n\ngoldilocks(\"Eating Alert: bear=Papa, source=porridge\") should be(__)\ngoldilocks(\"Sitting Alert: bear=Mama, source=chair\") should be(__)",
       "solutions": [
         "\"Papa said someone's been eating my porridge\"",
