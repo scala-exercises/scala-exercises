@@ -8,11 +8,11 @@ import doobie.imports._
 import scalaz.concurrent.Task
 
 trait UserStore {
-  def all: List[User]
+  def all: ConnectionIO[List[User]]
 
-  def getByLogin(login: String): Option[User]
+  def getByLogin(login: String): ConnectionIO[Option[User]]
 
-  def getById(id: Int): Option[User]
+  def getById(id: Int): ConnectionIO[Option[User]]
 
   def create(
     login:       String,
@@ -21,9 +21,9 @@ trait UserStore {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): Option[User]
+  ): ConnectionIO[Option[User]]
 
-  def delete(id: Int): Boolean
+  def delete(id: Int): ConnectionIO[Boolean]
 
   def update(
     id:          Int,
@@ -33,23 +33,22 @@ trait UserStore {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): Option[User]
+  ): ConnectionIO[Option[User]]
 }
 
-class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
-  def all: List[User] = {
-    Queries.all.list transact (transactor) run
+object UserDoobieStore extends UserStore {
+  def all: ConnectionIO[List[User]] = {
+    Queries.all.list
   }
 
-  def getByLogin(login: String): Option[User] = {
-    Queries.byLogin(login).option.transact(transactor).run
+  def getByLogin(login: String): ConnectionIO[Option[User]] = {
+    Queries.byLogin(login).option
   }
 
-  def getById(id: Int): Option[User] = {
-    Queries.byId(id).option.transact(transactor).run
+  def getById(id: Int): ConnectionIO[Option[User]] = {
+    Queries.byId(id).option
   }
 
-  // TODO: beware of the constraint violations
   def create(
     login:       String,
     name:        String,
@@ -57,12 +56,10 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): Option[User] = {
-    (for {
-      _ ← Queries.insert(login, name, github_id, picture_url, github_url, email).run
-      user ← Queries.byLogin(login).option
-    } yield user).transact(transactor).run
-  }
+  ): ConnectionIO[Option[User]] = for {
+    _ ← Queries.insert(login, name, github_id, picture_url, github_url, email).run
+    user ← getByLogin(login)
+  } yield user
 
   def deleteQuery(login: String): ConnectionIO[Boolean] = {
     Queries.byLogin(login).option.flatMap({
@@ -79,11 +76,11 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
     })
   }
 
-  def delete(id: Int): Boolean =
-    Queries.delete(id) transact (transactor) run
+  def delete(id: Int): ConnectionIO[Boolean] =
+    Queries.delete(id)
 
-  def deleteAll =
-    Queries.deleteAll.run transact (transactor) run
+  def deleteAll: ConnectionIO[Int] =
+    Queries.deleteAll.run
 
   def updateQuery(user: User): ConnectionIO[Int] = {
     require(user.id.isDefined, "Can only update existing users")
@@ -107,8 +104,8 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
     picture_url: String,
     github_url:  String,
     email:       String
-  ): Option[User] = {
-    Queries.update(
+  ): ConnectionIO[Option[User]] = for {
+    _ ← Queries.update(
       id,
       login,
       name,
@@ -116,10 +113,7 @@ class UserDoobieStore(implicit transactor: Transactor[Task]) extends UserStore {
       picture_url,
       github_url,
       email
-    ).run.flatMap(_ ⇒ Queries.byId(id).option) transact (transactor) run
-  }
-}
-
-object UserStore {
-  implicit def instance(implicit transactor: Transactor[Task]): UserStore = new UserDoobieStore
+    ).run
+    maybeUser ← getById(id)
+  } yield maybeUser
 }

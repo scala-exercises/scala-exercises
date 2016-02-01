@@ -35,7 +35,6 @@ class Components(context: Context)
 
   val dataSource = dbApi.database("default").dataSource
   implicit val transactor: Transactor[Task] = DataSourceTransactor[Task](dataSource)
-
   val applicationController = new ApplicationController
   val exercisesController = new ExercisesController
   val userController = new UserController
