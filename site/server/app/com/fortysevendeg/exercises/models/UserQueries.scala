@@ -4,9 +4,6 @@ import shared.User
 import doobie.imports._
 
 object Queries {
-  val TABLE = "users"
-  val ALL_FIELDS = "id, login, name, github_id, picture_url, github_url, email"
-
   val all = sql"""
 SELECT id, login, name, github_id, picture_url, github_url, email
 FROM users
