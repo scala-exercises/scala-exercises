@@ -20,86 +20,86 @@ class UserStoreSpec extends Specification with BeforeEach {
     )
 
   Evolutions.applyEvolutions(db)
-  implicit val transactor: Transactor[Task] = DataSourceTransactor[Task](db.dataSource)
-  val store = new UserDoobieStore
+  val transactor: Transactor[Task] = DataSourceTransactor[Task](db.dataSource)
+  import transactor.yolo._
 
-  def before = store.deleteAll
+  def before = UserDoobieStore.deleteAll.quick.run
 
   "UserDoobieStore" should {
     "create a new User and retrieve it afterwards" in {
       val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
-      val storedUser = store.create(
+      val storedUser = UserDoobieStore.create(
         aUser.login,
         aUser.name,
         aUser.github_id,
         aUser.picture_url,
         aUser.github_url,
         aUser.email
-      ).get
+      ).transact(transactor).run.get
 
       storedUser must beEqualTo(aUser.copy(id = storedUser.id))
     }
 
     "query users by login" in {
       val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
-      store.create(
+      UserDoobieStore.create(
         aUser.login,
         aUser.name,
         aUser.github_id,
         aUser.picture_url,
         aUser.github_url,
         aUser.email
-      )
+      ).quick.run
 
-      val storedUser = store.getByLogin(aUser.login).get
+      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
       storedUser must beEqualTo(aUser.copy(id = storedUser.id))
     }
 
     "query users by id" in {
       val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
-      store.create(
+      UserDoobieStore.create(
         aUser.login,
         aUser.name,
         aUser.github_id,
         aUser.picture_url,
         aUser.github_url,
         aUser.email
-      )
+      ).quick.run
 
-      val storedUser = store.getByLogin(aUser.login).get
+      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
       storedUser must beEqualTo(aUser.copy(id = storedUser.id))
     }
 
     "delete users" in {
       val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
-      store.create(
+      UserDoobieStore.create(
         aUser.login,
         aUser.name,
         aUser.github_id,
         aUser.picture_url,
         aUser.github_url,
         aUser.email
-      )
+      ).quick.run
 
-      val storedUser = store.getByLogin(aUser.login).get
-      store.delete(storedUser.id.get)
-      store.getByLogin(aUser.login) must beNone
+      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
+      UserDoobieStore.delete(storedUser.id.get).quick.run
+      UserDoobieStore.getByLogin(aUser.login).transact(transactor).run must beNone
     }
 
     "update users" in {
       val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
-      store.create(
+      UserDoobieStore.create(
         aUser.login,
         aUser.name,
         aUser.github_id,
         aUser.picture_url,
         aUser.github_url,
         aUser.email
-      )
+      ).quick.run
 
-      val storedUser = store.getByLogin(aUser.login).get
+      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
       val modifiedUser = storedUser.copy(email = "hello@47deg.com")
-      store.update(
+      UserDoobieStore.update(
         modifiedUser.id.get,
         modifiedUser.login,
         modifiedUser.name,
@@ -107,9 +107,9 @@ class UserStoreSpec extends Specification with BeforeEach {
         modifiedUser.picture_url,
         modifiedUser.github_url,
         modifiedUser.email
-      )
+      ).quick.run
 
-      store.getByLogin(aUser.login).get must beEqualTo(modifiedUser)
+      UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get must beEqualTo(modifiedUser)
     }
   }
 }
