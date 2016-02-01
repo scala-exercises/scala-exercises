@@ -1,26 +1,13 @@
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeEach
-import java.io.File
-import play.api.db.evolutions._
-import play.api.db.{ Database, Databases }
-
+import test.database.TestDatabase
 import doobie.imports._
-import shared.User
 import scalaz.concurrent.Task
+import shared.User
 import com.fortysevendeg.exercises.models.UserDoobieStore
 
 class UserStoreSpec extends Specification with BeforeEach {
-  val dbFile = File.createTempFile("temporary-db", ".tmp").getAbsolutePath()
-
-  val db =
-    Databases(
-      driver = "org.h2.Driver",
-      url = s"jdbc:h2:file:$dbFile;DATABASE_TO_UPPER=false",
-      config = Map("user" → "sa", "password" → "")
-    )
-
-  Evolutions.applyEvolutions(db)
-  val transactor: Transactor[Task] = DataSourceTransactor[Task](db.dataSource)
+  val transactor: Transactor[Task] = TestDatabase.transactor
   import transactor.yolo._
 
   def before = UserDoobieStore.deleteAll.quick.run
