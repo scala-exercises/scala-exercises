@@ -35,17 +35,14 @@ trait UserStore {
 }
 
 object UserDoobieStore extends UserStore {
-  def all: ConnectionIO[List[User]] = {
+  def all: ConnectionIO[List[User]] =
     Queries.all.list
-  }
 
-  def getByLogin(login: String): ConnectionIO[Option[User]] = {
+  def getByLogin(login: String): ConnectionIO[Option[User]] =
     Queries.byLogin(login).option
-  }
 
-  def getById(id: Long): ConnectionIO[Option[User]] = {
+  def getById(id: Long): ConnectionIO[Option[User]] =
     Queries.byId(id).option
-  }
 
   def create(user: NewUser): ConnectionIO[Option[User]] = for {
     _ ← Queries.insert(user).run
