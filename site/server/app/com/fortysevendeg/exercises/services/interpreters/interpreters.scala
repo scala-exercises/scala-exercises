@@ -35,31 +35,9 @@ class ProdInterpreters(implicit userService: UserServices) {
     def apply[A](fa: UserOp[A]): Task[A] = fa match {
       case GetUsers()            ⇒ Task.delay(userService.all)
       case GetUserByLogin(login) ⇒ Task.delay(userService.getUserByLogin(login))
-      case CreateUser(
-        login,
-        name,
-        githubId,
-        pictureUrl,
-        githubUrl,
-        email) ⇒ Task.delay(userService.createUser(login, name, githubId, pictureUrl, githubUrl, email))
-      case UpdateUser(
-        id,
-        login,
-        name,
-        githubId,
-        pictureUrl,
-        githubUrl,
-        email
-        ) ⇒ Task.delay(userService.update(
-        id,
-        login,
-        name,
-        githubId,
-        pictureUrl,
-        githubUrl,
-        email
-      ))
-      case DeleteUser(id) ⇒ Task.delay(userService.delete(id))
+      case CreateUser(newUser)   ⇒ Task.delay(userService.createUser(newUser))
+      case UpdateUser(user)      ⇒ Task.delay(userService.update(user))
+      case DeleteUser(user)      ⇒ Task.delay(userService.delete(user.id))
     }
   }
 }
