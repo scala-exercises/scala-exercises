@@ -16,17 +16,17 @@ object TestDatabase {
   val testUsername = "sa"
   val testPassword = ""
 
-  def db: Database = {
-    val db = Databases(
+  def create: Database = {
+    Databases(
       driver = testDriver,
       url = testUrl,
       config = Map("user" → testUsername, "password" → testPassword)
     )
-    Evolutions.applyEvolutions(db)
-    db
   }
 
-  def dataSource: DataSource = db.dataSource
+  def update(db: Database): Unit =
+    Evolutions.applyEvolutions(db)
 
-  def transactor: Transactor[Task] = DataSourceTransactor[Task](dataSource)
+  def transactor(db: Database): Transactor[Task] =
+    DataSourceTransactor[Task](db.dataSource)
 }

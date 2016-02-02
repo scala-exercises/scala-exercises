@@ -7,7 +7,10 @@ import shared.User
 import com.fortysevendeg.exercises.models.UserDoobieStore
 
 class UserStoreSpec extends Specification with BeforeEach {
-  val transactor: Transactor[Task] = TestDatabase.transactor
+  val db = TestDatabase.create
+  TestDatabase.update(db)
+
+  val transactor: Transactor[Task] = TestDatabase.transactor(db)
   import transactor.yolo._
 
   def before = UserDoobieStore.deleteAll.quick.run
