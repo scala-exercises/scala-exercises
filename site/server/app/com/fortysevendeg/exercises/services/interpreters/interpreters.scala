@@ -2,6 +2,7 @@ package com.fortysevendeg.exercises.services.interpreters
 
 import play.api.{ Play }
 import cats.data.Coproduct
+import doobie.imports._
 import cats.Id
 import cats.{ ~>, Monad }
 import cats.free.Free
@@ -10,10 +11,10 @@ import scalaz.concurrent.Task
 import scala.language.higherKinds
 import com.fortysevendeg.shared.free._
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services.{ UserServices }
+import com.fortysevendeg.exercises.models.{ UserDoobieStore }
 import com.fortysevendeg.exercises.services.free._
 
-class ProdInterpreters(implicit userService: UserServices) {
+class ProdInterpreters(implicit transactor: Transactor[Task]) {
   val interpreters: ExercisesApp ~> Task = exerciseOpsInterpreter or userOpsInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
@@ -33,17 +34,17 @@ class ProdInterpreters(implicit userService: UserServices) {
   def userOpsInterpreter: UserOp ~> Task = new (UserOp ~> Task) {
 
     def apply[A](fa: UserOp[A]): Task[A] = fa match {
-      case GetUsers()            ⇒ Task.delay(userService.all)
-      case GetUserByLogin(login) ⇒ Task.delay(userService.getUserByLogin(login))
-      case CreateUser(newUser)   ⇒ Task.delay(userService.createUser(newUser))
-      case UpdateUser(user)      ⇒ Task.delay(userService.update(user))
-      case DeleteUser(user)      ⇒ Task.delay(userService.delete(user.id))
+      case GetUsers() ⇒ UserDoobieStore.all.transact(transactor)
+      // case GetUserByLogin(login) ⇒ Task.delay(userService.getUserByLogin(login))
+      // case CreateUser(newUser)   ⇒ Task.delay(userService.createUser(newUser))
+      // case UpdateUser(user)      ⇒ Task.delay(userService.update(user))
+      // case DeleteUser(user)      ⇒ Task.delay(userService.delete(user.id))
     }
   }
 }
 
 object ProdInterpreters {
-  implicit def instance(implicit U: UserServices): ProdInterpreters = new ProdInterpreters
+  implicit def instance(implicit T: Transactor[Task]): ProdInterpreters = new ProdInterpreters
 
   implicit val taskMonad: Monad[Task] = new Monad[Task] {
 
@@ -60,7 +61,7 @@ object ProdInterpreters {
   implicit class FreeOps[A](f: Free[ExercisesApp, A]) {
 
     /** Run this Free structure folding it's ops to an effect capturing task */
-    def runTask(implicit U: UserServices): Throwable \/ A = {
+    def runTask(implicit T: Transactor[Task]): Throwable \/ A = {
       f.foldMap(instance.interpreters).attemptRun
     }
   }

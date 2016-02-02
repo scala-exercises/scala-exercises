@@ -1,6 +1,8 @@
 package com.fortysevendeg.exercises.controllers
 
 import com.fortysevendeg.exercises.models.UserStore
+import doobie.imports._
+import scalaz.concurrent.Task
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -14,7 +16,11 @@ import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 import scala.concurrent.Future
 import scalaz.{ -\/, \/, \/- }
 
-class UserController(implicit userOps: UserOps[ExercisesApp], userServices: UserServices) extends Controller {
+class UserController(
+    implicit
+    userOps:    UserOps[ExercisesApp],
+    transactor: Transactor[Task]
+) extends Controller {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 

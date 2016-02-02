@@ -4,11 +4,11 @@ import cats.Monad
 import cats.data.NonEmptyList
 import cats.data.Xor
 import cats.free.Free
-import com.fortysevendeg.exercises.services.UserServices
 import com.fortysevendeg.shared.free.ExerciseOps
+import com.fortysevendeg.exercises.services.free.UserOps
 import java.util.UUID
+import doobie.imports._
 
-import com.fortysevendeg.exercises.services.UserServiceImpl
 import com.fortysevendeg.exercises.services.messages.GetUserByLoginRequest
 import com.fortysevendeg.exercises.services.ExercisesService
 import com.fortysevendeg.exercises.utils.OAuth2
@@ -28,8 +28,10 @@ import scala.concurrent.Future
 class ApplicationController(
     implicit
     exerciseOps: ExerciseOps[ExercisesApp],
-    userService: UserServices
+    userOps:     UserOps[ExercisesApp],
+    T:           Transactor[Task]
 ) extends Controller {
+
   def index = Action.async { implicit request ⇒
 
     val scope = "user"
@@ -37,10 +39,15 @@ class ApplicationController(
     val callbackUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.callback(None, None).absoluteURL()
     val logoutUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.logout().absoluteURL()
     val redirectUrl = OAuth2.getAuthorizationUrl(callbackUrl, scope, state)
-    exerciseOps.getLibraries.runTask match {
-      case \/-(libraries) ⇒
+
+    val ops = for {
+      libraries ← exerciseOps.getLibraries
+      user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+    } yield (libraries, user)
+
+    ops.runTask match {
+      case \/-((libraries, user)) ⇒
         request.session.get("oauth-token") map { token ⇒
-          val user = userService.getUserByLogin(request.session.get("user").getOrElse(""))
           Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries)))
         } getOrElse {
           Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
