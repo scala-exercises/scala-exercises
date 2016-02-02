@@ -14,24 +14,24 @@ trait UserStore {
   def getById(id: Int): ConnectionIO[Option[User]]
 
   def create(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): ConnectionIO[Option[User]]
 
   def delete(id: Int): ConnectionIO[Boolean]
 
   def update(
-    id:          Int,
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    id:         Int,
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): ConnectionIO[Option[User]]
 }
 
@@ -49,14 +49,14 @@ object UserDoobieStore extends UserStore {
   }
 
   def create(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): ConnectionIO[Option[User]] = for {
-    _ ← Queries.insert(login, name, github_id, picture_url, github_url, email).run
+    _ ← Queries.insert(login, name, githubId, pictureUrl, githubUrl, email).run
     user ← getByLogin(login)
   } yield user
 
@@ -67,9 +67,9 @@ object UserDoobieStore extends UserStore {
         u.id.get,
         u.login,
         u.name,
-        u.github_id,
-        u.picture_url,
-        u.github_url,
+        u.githubId,
+        u.pictureUrl,
+        u.githubUrl,
         u.email
       ).run.map(_ ⇒ true)
     })
@@ -88,29 +88,29 @@ object UserDoobieStore extends UserStore {
       user.id.get,
       user.login,
       user.name,
-      user.github_id,
-      user.picture_url,
-      user.github_url,
+      user.githubId,
+      user.pictureUrl,
+      user.githubUrl,
       user.email
     ).run
   }
 
   def update(
-    id:          Int,
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    id:         Int,
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): ConnectionIO[Option[User]] = for {
     _ ← Queries.update(
       id,
       login,
       name,
-      github_id,
-      picture_url,
-      github_url,
+      githubId,
+      pictureUrl,
+      githubUrl,
       email
     ).run
     maybeUser ← getById(id)

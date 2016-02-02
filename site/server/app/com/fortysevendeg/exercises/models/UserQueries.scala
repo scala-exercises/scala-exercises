@@ -5,40 +5,40 @@ import doobie.imports._
 
 object Queries {
   val all = sql"""
-SELECT id, login, name, github_id, picture_url, github_url, email
-FROM users
+SELECT id, login, name, githubId, pictureUrl, githubUrl, email
+FROM User
 """.query[User]
 
   def byLogin(login: String) =
     sql"""
-SELECT id, login, name, github_id, picture_url, github_url, email
-FROM users
+SELECT id, login, name, githubId, pictureUrl, githubUrl, email
+FROM User
 WHERE login = $login
 """.query[User]
 
   def byId(id: Int) =
     sql"""
-SELECT id, login, name, github_id, picture_url, github_url, email
-FROM users
+SELECT id, login, name, githubId, pictureUrl, githubUrl, email
+FROM User
 WHERE id = $id
 """.query[User]
 
   def insert(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ) =
     sql"""
-INSERT INTO users (login, name, github_id, picture_url, github_url, email)
-VALUES ($login, $name, $github_id, $picture_url, $github_url, $email)
+INSERT INTO User (login, name, githubId, pictureUrl, githubUrl, email)
+VALUES ($login, $name, $githubId, $pictureUrl, $githubUrl, $email)
 """.update
 
   def deleteById(id: Int) =
     sql"""
-DELETE FROM users
+DELETE FROM User
       WHERE id = $id
     """.update
 
@@ -49,26 +49,25 @@ DELETE FROM users
 
   def deleteAll =
     sql"""
-DELETE FROM users
+DELETE FROM User
     """.update
 
   def update(
-    id:          Int,
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    id:         Int,
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ) =
     sql"""
-UPDATE users
+UPDATE User
 SET    name = $name,
-       github_id = $github_id,
-       picture_url = $picture_url,
-       github_url = $github_url,
+       githubId = $githubId,
+       pictureUrl = $pictureUrl,
+       githubUrl = $githubUrl,
        email = $email
 WHERE id = $id;
 """.update
-
 }

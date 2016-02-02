@@ -16,31 +16,31 @@ trait UserServices {
   def getUserByLogin(login: String): Option[User]
 
   def getUserOrCreate(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Throwable Xor User
 
   def createUser(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Throwable Xor User
 
   def update(
-    id:          Int,
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    id:         Int,
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Boolean
 
   def delete(id: Int): Boolean
@@ -63,59 +63,59 @@ class UserServiceImpl(
     UserDoobieStore.getByLogin(login) transact (transactor) run
 
   def getUserOrCreate(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Throwable Xor User = {
     (for {
       maybeUser ← UserDoobieStore.getByLogin(login)
       theUser ← if (maybeUser.isDefined) maybeUser.point[ConnectionIO] else UserDoobieStore.create(
         login,
         name,
-        github_id,
-        picture_url,
-        github_url,
+        githubId,
+        pictureUrl,
+        githubUrl,
         email
       )
     } yield theUser.get).transact(transactor).attempt.run
   }
 
   def createUser(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Throwable Xor User =
     UserDoobieStore.create(
       login,
       name,
-      github_id,
-      picture_url,
-      github_url,
+      githubId,
+      pictureUrl,
+      githubUrl,
       email
     ).map(_.get).transact(transactor).attempt.run
 
   def update(
-    id:          Int,
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    id:         Int,
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Boolean =
     UserDoobieStore.update(
       id,
       login,
       name,
-      github_id,
-      picture_url,
-      github_url,
+      githubId,
+      pictureUrl,
+      githubUrl,
       email
     ).map(_.isDefined).transact(transactor).run
 
