@@ -12,9 +12,20 @@ class UserStoreSpec extends Specification with BeforeEach {
 
   def before = UserDoobieStore.deleteAll.quick.run
 
+  def newUser(
+    login:      String = "47deg",
+    name:       String = "47 degrees",
+    githubId:   String = "47deg",
+    pictureUrl: String = "http://placekitten.com/50/50",
+    githubUrl:  String = "http://github.com/47deg",
+    email:      String = "hi@47deg.com"
+  ): User = {
+    User(None, login, name, githubId, pictureUrl, githubUrl, email)
+  }
+
   "UserDoobieStore" should {
     "create a new User and retrieve it afterwards" in {
-      val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
+      val aUser = newUser()
       val storedUser = UserDoobieStore.create(
         aUser.login,
         aUser.name,
@@ -28,7 +39,7 @@ class UserStoreSpec extends Specification with BeforeEach {
     }
 
     "query users by login" in {
-      val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
+      val aUser = newUser()
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
@@ -43,7 +54,7 @@ class UserStoreSpec extends Specification with BeforeEach {
     }
 
     "query users by id" in {
-      val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
+      val aUser = newUser()
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
@@ -58,7 +69,7 @@ class UserStoreSpec extends Specification with BeforeEach {
     }
 
     "delete users" in {
-      val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
+      val aUser = newUser()
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
@@ -74,7 +85,7 @@ class UserStoreSpec extends Specification with BeforeEach {
     }
 
     "update users" in {
-      val aUser = User(None, "47deg", "47 degrees", "47deg", "http://placekitten.com/50/50", "http://github.com/47deg", "hi@47deg.com")
+      val aUser = newUser()
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
@@ -85,7 +96,7 @@ class UserStoreSpec extends Specification with BeforeEach {
       ).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      val modifiedUser = storedUser.copy(email = "hello@47deg.com")
+      val modifiedUser = storedUser.copy(email = "alice+spam@example.com")
       UserDoobieStore.update(
         modifiedUser.id.get,
         modifiedUser.login,
