@@ -1,6 +1,7 @@
 package com.fortysevendeg.exercises.models.queries
 
 import shared.User
+import com.fortysevendeg.exercises.models.NewUser
 import doobie.imports._
 
 object Queries {
@@ -23,18 +24,13 @@ FROM User
 WHERE id = $id
 """.query[User]
 
-  def insert(
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-  ) =
+  def insert(user: NewUser) = {
+    val NewUser(login, name, githubId, pictureUrl, githubUrl, email) = user
     sql"""
 INSERT INTO User (login, name, githubId, pictureUrl, githubUrl, email)
 VALUES ($login, $name, $githubId, $pictureUrl, $githubUrl, $email)
 """.update
+  }
 
   def deleteById(id: Long) =
     sql"""
@@ -52,15 +48,8 @@ DELETE FROM User
 DELETE FROM User
     """.update
 
-  def update(
-    id:         Long,
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-  ) =
+  def update(user: User) = {
+    val User(id, _, name, githubId, pictureUrl, githubUrl, email) = user
     sql"""
 UPDATE User
 SET    name = $name,
@@ -70,4 +59,5 @@ SET    name = $name,
        email = $email
 WHERE id = $id;
 """.update
+  }
 }

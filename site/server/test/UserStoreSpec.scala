@@ -4,7 +4,7 @@ import test.database.TestDatabase
 import doobie.imports._
 import scalaz.concurrent.Task
 import shared.User
-import com.fortysevendeg.exercises.models.UserDoobieStore
+import com.fortysevendeg.exercises.models.{ NewUser, UserDoobieStore }
 
 class UserStoreSpec extends Specification with BeforeEach {
   val db = TestDatabase.create
@@ -22,93 +22,49 @@ class UserStoreSpec extends Specification with BeforeEach {
     pictureUrl: String = "http://placekitten.com/50/50",
     githubUrl:  String = "http://github.com/47deg",
     email:      String = "hi@47deg.com"
-  ): User = {
-    User(None, login, name, githubId, pictureUrl, githubUrl, email)
+  ): NewUser = {
+    NewUser(login, name, githubId, pictureUrl, githubUrl, email)
   }
 
   "UserDoobieStore" should {
     "create a new User and retrieve it afterwards" in {
       val aUser = newUser()
-      val storedUser = UserDoobieStore.create(
-        aUser.login,
-        aUser.name,
-        aUser.githubId,
-        aUser.pictureUrl,
-        aUser.githubUrl,
-        aUser.email
-      ).transact(transactor).run.get
-
-      storedUser must beEqualTo(aUser.copy(id = storedUser.id))
+      val storedUser = UserDoobieStore.create(aUser).transact(transactor).run.get
+      storedUser must beEqualTo(aUser.withId(storedUser.id))
     }
 
     "query users by login" in {
       val aUser = newUser()
-      UserDoobieStore.create(
-        aUser.login,
-        aUser.name,
-        aUser.githubId,
-        aUser.pictureUrl,
-        aUser.githubUrl,
-        aUser.email
-      ).quick.run
+      UserDoobieStore.create(aUser).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      storedUser must beEqualTo(aUser.copy(id = storedUser.id))
+      storedUser must beEqualTo(aUser.withId(storedUser.id))
     }
 
     "query users by id" in {
       val aUser = newUser()
-      UserDoobieStore.create(
-        aUser.login,
-        aUser.name,
-        aUser.githubId,
-        aUser.pictureUrl,
-        aUser.githubUrl,
-        aUser.email
-      ).quick.run
+      UserDoobieStore.create(aUser).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      storedUser must beEqualTo(aUser.copy(id = storedUser.id))
+      storedUser must beEqualTo(aUser.withId(storedUser.id))
     }
 
     "delete users" in {
       val aUser = newUser()
-      UserDoobieStore.create(
-        aUser.login,
-        aUser.name,
-        aUser.githubId,
-        aUser.pictureUrl,
-        aUser.githubUrl,
-        aUser.email
-      ).quick.run
+      UserDoobieStore.create(aUser).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      UserDoobieStore.delete(storedUser.id.get).quick.run
+      UserDoobieStore.delete(storedUser.id).quick.run
       UserDoobieStore.getByLogin(aUser.login).transact(transactor).run must beNone
     }
 
     "update users" in {
       val aUser = newUser()
-      UserDoobieStore.create(
-        aUser.login,
-        aUser.name,
-        aUser.githubId,
-        aUser.pictureUrl,
-        aUser.githubUrl,
-        aUser.email
-      ).quick.run
+      UserDoobieStore.create(aUser).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
       val modifiedUser = storedUser.copy(email = "alice+spam@example.com")
-      UserDoobieStore.update(
-        modifiedUser.id.get,
-        modifiedUser.login,
-        modifiedUser.name,
-        modifiedUser.githubId,
-        modifiedUser.pictureUrl,
-        modifiedUser.githubUrl,
-        modifiedUser.email
-      ).quick.run
+      UserDoobieStore.update(modifiedUser).quick.run
 
       UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get must beEqualTo(modifiedUser)
     }

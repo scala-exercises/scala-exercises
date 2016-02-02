@@ -7,7 +7,7 @@ import doobie.imports._
 import scalaz._, Scalaz._
 import scalaz.concurrent.Task
 import scala.concurrent.{ Future, ExecutionContext }
-import com.fortysevendeg.exercises.models.{ UserDoobieStore }
+import com.fortysevendeg.exercises.models.{ UserDoobieStore, NewUser }
 import shared.User
 
 trait UserServices {
@@ -73,12 +73,14 @@ class UserServiceImpl(
     (for {
       maybeUser ← UserDoobieStore.getByLogin(login)
       theUser ← if (maybeUser.isDefined) maybeUser.point[ConnectionIO] else UserDoobieStore.create(
-        login,
-        name,
-        githubId,
-        pictureUrl,
-        githubUrl,
-        email
+        NewUser(
+          login,
+          name,
+          githubId,
+          pictureUrl,
+          githubUrl,
+          email
+        )
       )
     } yield theUser.get).transact(transactor).attempt.run
   }
@@ -92,12 +94,14 @@ class UserServiceImpl(
     email:      String
   ): Throwable Xor User =
     UserDoobieStore.create(
-      login,
-      name,
-      githubId,
-      pictureUrl,
-      githubUrl,
-      email
+      NewUser(
+        login,
+        name,
+        githubId,
+        pictureUrl,
+        githubUrl,
+        email
+      )
     ).map(_.get).transact(transactor).attempt.run
 
   def update(
@@ -109,7 +113,7 @@ class UserServiceImpl(
     githubUrl:  String,
     email:      String
   ): Boolean =
-    UserDoobieStore.update(
+    UserDoobieStore.update(User(
       id,
       login,
       name,
@@ -117,7 +121,7 @@ class UserServiceImpl(
       pictureUrl,
       githubUrl,
       email
-    ).map(_.isDefined).transact(transactor).run
+    )).map(_.isDefined).transact(transactor).run
 
   def delete(id: Int): Boolean =
     UserDoobieStore.delete(id).transact(transactor).run
