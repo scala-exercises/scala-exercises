@@ -6,7 +6,10 @@ import test.database.TestDatabase
 import com.fortysevendeg.exercises.models.queries.Queries
 
 class UserQueriesSpec extends Specification with AnalysisSpec {
-  val transactor: Transactor[Task] = TestDatabase.transactor
+  val db = TestDatabase.create
+  TestDatabase.update(db)
+
+  val transactor: Transactor[Task] = TestDatabase.transactor(db)
 
   check(Queries.all)
   check(Queries.byLogin("47deg"))
