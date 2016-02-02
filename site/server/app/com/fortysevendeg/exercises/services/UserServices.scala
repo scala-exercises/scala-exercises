@@ -24,26 +24,11 @@ trait UserServices {
     email:      String
   ): Throwable Xor User
 
-  def createUser(
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-  ): Throwable Xor User
+  def createUser(user: NewUser): Throwable Xor User
 
-  def update(
-    id:         Int,
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-  ): Boolean
+  def update(user: User): Boolean
 
-  def delete(id: Int): Boolean
+  def delete(id: Long): Boolean
 }
 
 class UserServiceImpl(
@@ -85,45 +70,13 @@ class UserServiceImpl(
     } yield theUser.get).transact(transactor).attempt.run
   }
 
-  def createUser(
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-  ): Throwable Xor User =
-    UserDoobieStore.create(
-      NewUser(
-        login,
-        name,
-        githubId,
-        pictureUrl,
-        githubUrl,
-        email
-      )
-    ).map(_.get).transact(transactor).attempt.run
+  def createUser(user: NewUser): Throwable Xor User =
+    UserDoobieStore.create(user).map(_.get).transact(transactor).attempt.run
 
-  def update(
-    id:         Int,
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-  ): Boolean =
-    UserDoobieStore.update(User(
-      id,
-      login,
-      name,
-      githubId,
-      pictureUrl,
-      githubUrl,
-      email
-    )).map(_.isDefined).transact(transactor).run
+  def update(user: User): Boolean =
+    UserDoobieStore.update(user).map(_.isDefined).transact(transactor).run
 
-  def delete(id: Int): Boolean =
+  def delete(id: Long): Boolean =
     UserDoobieStore.delete(id).transact(transactor).run
 
 }
