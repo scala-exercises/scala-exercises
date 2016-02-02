@@ -14,21 +14,21 @@ sealed trait UserOp[A]
 final case class GetUsers() extends UserOp[List[User]]
 final case class GetUserByLogin(login: String) extends UserOp[Option[User]]
 final case class CreateUser(
-  login:       String,
-  name:        String,
-  github_id:   String,
-  picture_url: String,
-  github_url:  String,
-  email:       String
+  login:      String,
+  name:       String,
+  githubId:   String,
+  pictureUrl: String,
+  githubUrl:  String,
+  email:      String
 ) extends UserOp[Throwable Xor User]
 final case class UpdateUser(
-  id:          Int,
-  login:       String,
-  name:        String,
-  github_id:   String,
-  picture_url: String,
-  github_url:  String,
-  email:       String
+  id:         Int,
+  login:      String,
+  name:       String,
+  githubId:   String,
+  pictureUrl: String,
+  githubUrl:  String,
+  email:      String
 ) extends UserOp[Boolean]
 final case class DeleteUser(id: Int) extends UserOp[Boolean]
 
@@ -43,31 +43,31 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
     Free.inject[UserOp, F](GetUserByLogin(login))
 
   def createUser(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Free[F, Throwable Xor User] =
-    Free.inject[UserOp, F](CreateUser(login, name, github_id, picture_url, github_url, email))
+    Free.inject[UserOp, F](CreateUser(login, name, githubId, pictureUrl, githubUrl, email))
 
   def updateUser(
-    id:          Int,
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
+    id:         Int,
+    login:      String,
+    name:       String,
+    githubId:   String,
+    pictureUrl: String,
+    githubUrl:  String,
+    email:      String
   ): Free[F, Boolean] =
     Free.inject[UserOp, F](UpdateUser(
       id: Int,
       login: String,
       name: String,
-      github_id: String,
-      picture_url: String,
-      github_url: String,
+      githubId: String,
+      pictureUrl: String,
+      githubUrl: String,
       email: String
     ))
 

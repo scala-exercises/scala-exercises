@@ -75,17 +75,17 @@ class OAuth2Controller(implicit userService: UserServices) extends Controller {
 
           val login = (response.json \ "login").as[String]
           val name = (response.json \ "name").as[String]
-          val github_id = (response.json \ "id").as[Long]
-          val avatar_url = (response.json \ "avatar_url").as[String]
-          val html_url = (response.json \ "html_url").as[String]
+          val githubId = (response.json \ "id").as[Long]
+          val avatarUrl = (response.json \ "avatar_url").as[String]
+          val htmlUrl = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").as[String]
 
           val result = userService.getUserOrCreate(
             login,
             name,
-            github_id.toString,
-            avatar_url,
-            html_url,
+            githubId.toString,
+            avatarUrl,
+            htmlUrl,
             email
           )
           result match {

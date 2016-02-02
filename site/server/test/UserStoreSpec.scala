@@ -32,9 +32,9 @@ class UserStoreSpec extends Specification with BeforeEach {
       val storedUser = UserDoobieStore.create(
         aUser.login,
         aUser.name,
-        aUser.github_id,
-        aUser.picture_url,
-        aUser.github_url,
+        aUser.githubId,
+        aUser.pictureUrl,
+        aUser.githubUrl,
         aUser.email
       ).transact(transactor).run.get
 
@@ -46,9 +46,9 @@ class UserStoreSpec extends Specification with BeforeEach {
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
-        aUser.github_id,
-        aUser.picture_url,
-        aUser.github_url,
+        aUser.githubId,
+        aUser.pictureUrl,
+        aUser.githubUrl,
         aUser.email
       ).quick.run
 
@@ -61,9 +61,9 @@ class UserStoreSpec extends Specification with BeforeEach {
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
-        aUser.github_id,
-        aUser.picture_url,
-        aUser.github_url,
+        aUser.githubId,
+        aUser.pictureUrl,
+        aUser.githubUrl,
         aUser.email
       ).quick.run
 
@@ -76,9 +76,9 @@ class UserStoreSpec extends Specification with BeforeEach {
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
-        aUser.github_id,
-        aUser.picture_url,
-        aUser.github_url,
+        aUser.githubId,
+        aUser.pictureUrl,
+        aUser.githubUrl,
         aUser.email
       ).quick.run
 
@@ -92,9 +92,9 @@ class UserStoreSpec extends Specification with BeforeEach {
       UserDoobieStore.create(
         aUser.login,
         aUser.name,
-        aUser.github_id,
-        aUser.picture_url,
-        aUser.github_url,
+        aUser.githubId,
+        aUser.pictureUrl,
+        aUser.githubUrl,
         aUser.email
       ).quick.run
 
@@ -104,9 +104,9 @@ class UserStoreSpec extends Specification with BeforeEach {
         modifiedUser.id.get,
         modifiedUser.login,
         modifiedUser.name,
-        modifiedUser.github_id,
-        modifiedUser.picture_url,
-        modifiedUser.github_url,
+        modifiedUser.githubId,
+        modifiedUser.pictureUrl,
+        modifiedUser.githubUrl,
         modifiedUser.email
       ).quick.run
 
