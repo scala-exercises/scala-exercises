@@ -16,7 +16,7 @@ FROM User
 WHERE login = $login
 """.query[User]
 
-  def byId(id: Int) =
+  def byId(id: Long) =
     sql"""
 SELECT id, login, name, githubId, pictureUrl, githubUrl, email
 FROM User
@@ -36,13 +36,13 @@ INSERT INTO User (login, name, githubId, pictureUrl, githubUrl, email)
 VALUES ($login, $name, $githubId, $pictureUrl, $githubUrl, $email)
 """.update
 
-  def deleteById(id: Int) =
+  def deleteById(id: Long) =
     sql"""
 DELETE FROM User
       WHERE id = $id
     """.update
 
-  def delete(id: Int): ConnectionIO[Boolean] = for {
+  def delete(id: Long): ConnectionIO[Boolean] = for {
     beforeDeletion ← byId(id).option
     _ ← deleteById(id).run
   } yield beforeDeletion.isDefined
@@ -53,7 +53,7 @@ DELETE FROM User
     """.update
 
   def update(
-    id:         Int,
+    id:         Long,
     login:      String,
     name:       String,
     githubId:   String,

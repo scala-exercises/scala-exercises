@@ -1,6 +1,7 @@
 package com.fortysevendeg.exercises.models
 
 import shared.User
+
 import com.fortysevendeg.exercises.models.queries.Queries
 
 import doobie.imports._
@@ -11,7 +12,7 @@ trait UserStore {
 
   def getByLogin(login: String): ConnectionIO[Option[User]]
 
-  def getById(id: Int): ConnectionIO[Option[User]]
+  def getById(id: Long): ConnectionIO[Option[User]]
 
   def create(
     login:      String,
@@ -22,10 +23,10 @@ trait UserStore {
     email:      String
   ): ConnectionIO[Option[User]]
 
-  def delete(id: Int): ConnectionIO[Boolean]
+  def delete(id: Long): ConnectionIO[Boolean]
 
   def update(
-    id:         Int,
+    id:         Long,
     login:      String,
     name:       String,
     githubId:   String,
@@ -44,7 +45,7 @@ object UserDoobieStore extends UserStore {
     Queries.byLogin(login).option
   }
 
-  def getById(id: Int): ConnectionIO[Option[User]] = {
+  def getById(id: Long): ConnectionIO[Option[User]] = {
     Queries.byId(id).option
   }
 
@@ -75,7 +76,7 @@ object UserDoobieStore extends UserStore {
     })
   }
 
-  def delete(id: Int): ConnectionIO[Boolean] =
+  def delete(id: Long): ConnectionIO[Boolean] =
     Queries.delete(id)
 
   def deleteAll: ConnectionIO[Int] =
@@ -96,7 +97,7 @@ object UserDoobieStore extends UserStore {
   }
 
   def update(
-    id:         Int,
+    id:         Long,
     login:      String,
     name:       String,
     githubId:   String,
