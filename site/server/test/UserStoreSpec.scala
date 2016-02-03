@@ -4,7 +4,7 @@ import test.database.TestDatabase
 import doobie.imports._
 import scalaz.concurrent.Task
 import shared.User
-import com.fortysevendeg.exercises.models.{ NewUser, UserDoobieStore }
+import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
 
 class UserStoreSpec extends Specification with BeforeEach {
   val db = TestDatabase.create
@@ -22,15 +22,15 @@ class UserStoreSpec extends Specification with BeforeEach {
     pictureUrl: String = "http://placekitten.com/50/50",
     githubUrl:  String = "http://github.com/47deg",
     email:      String = "hi@47deg.com"
-  ): NewUser = {
-    NewUser(login, name, githubId, pictureUrl, githubUrl, email)
+  ): UserCreation.Request = {
+    UserCreation.Request(login, name, githubId, pictureUrl, githubUrl, email)
   }
 
   "UserDoobieStore" should {
     "create a new User and retrieve it afterwards" in {
       val aUser = newUser()
-      val storedUser = UserDoobieStore.create(aUser).transact(transactor).run.get
-      storedUser must beEqualTo(aUser.withId(storedUser.id))
+      val storedUser = UserDoobieStore.create(aUser).transact(transactor).run.toOption.get
+      storedUser must beEqualTo(aUser.asUser(storedUser.id))
     }
 
     "query users by login" in {
@@ -38,7 +38,7 @@ class UserStoreSpec extends Specification with BeforeEach {
       UserDoobieStore.create(aUser).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      storedUser must beEqualTo(aUser.withId(storedUser.id))
+      storedUser must beEqualTo(aUser.asUser(storedUser.id))
     }
 
     "query users by id" in {
@@ -46,7 +46,8 @@ class UserStoreSpec extends Specification with BeforeEach {
       UserDoobieStore.create(aUser).quick.run
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      storedUser must beEqualTo(aUser.withId(storedUser.id))
+
+      storedUser must beEqualTo(aUser.asUser(storedUser.id))
     }
 
     "delete users" in {
@@ -55,6 +56,7 @@ class UserStoreSpec extends Specification with BeforeEach {
 
       val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
       UserDoobieStore.delete(storedUser.id).quick.run
+
       UserDoobieStore.getByLogin(aUser.login).transact(transactor).run must beNone
     }
 
