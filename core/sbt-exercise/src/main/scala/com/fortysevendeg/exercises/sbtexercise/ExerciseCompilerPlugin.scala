@@ -143,8 +143,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       // library dependences have to be declared at the root level
       ivyConfigurations   := overrideConfigs(CompileMain, CompileExercisesSource, CompileExercises)(ivyConfigurations.value),
-      libraryDependencies += "com.47deg" %% "definitions" % "0.0.0" % CompileExercisesSource.name,
-      libraryDependencies += "com.47deg" %% "runtime" % "0.0.0" % CompileExercises.name
+      libraryDependencies += "com.47deg" %% "definitions" % Meta.version % CompileExercisesSource.name,
+      libraryDependencies += "com.47deg" %% "runtime" % Meta.version % CompileExercises.name
     )
   // format: ON
 

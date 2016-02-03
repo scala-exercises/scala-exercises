@@ -59,6 +59,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     buildInfoObject   := "Meta",
     buildInfoPackage  := "com.fortysevendeg.exercises.sbtexercise",
     buildInfoKeys     := Seq(
+      version,
       BuildInfoKey.map(compilerClasspath) {
         case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
       }
