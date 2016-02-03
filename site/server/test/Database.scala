@@ -9,10 +9,7 @@ import scalaz.concurrent.Task
 
 object TestDatabase {
   val testDriver = "org.h2.Driver"
-  def testUrl = {
-    val dbFile = File.createTempFile("temporary-db", ".tmp").getAbsolutePath()
-    s"jdbc:h2:file:$dbFile;DATABASE_TO_UPPER=false"
-  }
+  def testUrl = "jdbc:h2:mem:test-mem"
   val testUsername = "sa"
   val testPassword = ""
 
