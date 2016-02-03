@@ -3,6 +3,11 @@ scala:
    - 2.11.7
 jdk:
   - oraclejdk8
+sudo: false
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
 install:
   - gem install sass
 env:
@@ -11,3 +16,5 @@ env:
 script:
   - cd $DIR
   - echo ${TASKS/,/ } | xargs sbt
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
