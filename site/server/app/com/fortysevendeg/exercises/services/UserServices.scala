@@ -7,7 +7,7 @@ import doobie.imports._
 import scalaz._, Scalaz._
 import scalaz.concurrent.Task
 import scala.concurrent.{ Future, ExecutionContext }
-import com.fortysevendeg.exercises.models.{ UserDoobieStore, NewUser }
+import com.fortysevendeg.exercises.models.{ UserDoobieStore, UserCreation }
 import shared.User
 
 trait UserServices {
@@ -22,7 +22,7 @@ trait UserServices {
     pictureUrl: String,
     githubUrl:  String,
     email:      String
-  ): Throwable Xor User
+  ): UserCreation.Response
 
   def createUser(user: NewUser): Throwable Xor User
 
@@ -54,20 +54,17 @@ class UserServiceImpl(
     pictureUrl: String,
     githubUrl:  String,
     email:      String
-  ): Throwable Xor User = {
-    (for {
-      maybeUser ← UserDoobieStore.getByLogin(login)
-      theUser ← if (maybeUser.isDefined) maybeUser.point[ConnectionIO] else UserDoobieStore.create(
-        NewUser(
-          login,
-          name,
-          githubId,
-          pictureUrl,
-          githubUrl,
-          email
-        )
+  ): UserCreation.Response = {
+    UserDoobieStore.getOrCreate(
+      UserCreation.Request(
+        login,
+        name,
+        githubId,
+        pictureUrl,
+        githubUrl,
+        email
       )
-    } yield theUser.get).transact(transactor).attempt.run
+    ).transact(transactor).run
   }
 
   def createUser(user: NewUser): Throwable Xor User =

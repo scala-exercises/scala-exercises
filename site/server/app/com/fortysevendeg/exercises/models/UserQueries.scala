@@ -1,8 +1,9 @@
 package com.fortysevendeg.exercises.models.queries
 
-import shared.User
-import com.fortysevendeg.exercises.models.NewUser
 import doobie.imports._
+
+import shared.User
+import com.fortysevendeg.exercises.models.UserCreation
 
 object Queries {
   val all = sql"""
@@ -24,8 +25,8 @@ FROM User
 WHERE id = $id
 """.query[User]
 
-  def insert(user: NewUser) = {
-    val NewUser(login, name, githubId, pictureUrl, githubUrl, email) = user
+  def insert(user: UserCreation.Request) = {
+    val UserCreation.Request(login, name, githubId, pictureUrl, githubUrl, email) = user
     sql"""
 INSERT INTO User (login, name, githubId, pictureUrl, githubUrl, email)
 VALUES ($login, $name, $githubId, $pictureUrl, $githubUrl, $email)

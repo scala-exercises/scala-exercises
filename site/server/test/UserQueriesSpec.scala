@@ -5,7 +5,7 @@ import doobie.contrib.specs2.analysisspec.AnalysisSpec
 import test.database.TestDatabase
 import com.fortysevendeg.exercises.models.queries.Queries
 import shared.User
-import com.fortysevendeg.exercises.models.NewUser
+import com.fortysevendeg.exercises.models.UserCreation
 
 class UserQueriesSpec extends Specification with AnalysisSpec {
   val db = TestDatabase.create
@@ -17,7 +17,7 @@ class UserQueriesSpec extends Specification with AnalysisSpec {
   check(Queries.byLogin("47deg"))
   check(Queries.byId(47))
   check(Queries.insert(
-    NewUser(
+    UserCreation.Request(
       "47deg",
       "47",
       "47deg",

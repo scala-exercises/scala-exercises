@@ -7,14 +7,14 @@ import cats.free.Free
 import cats.free.Inject
 
 import shared.User
-import com.fortysevendeg.exercises.models.NewUser
+import com.fortysevendeg.exercises.models.UserCreation
 
 /** Exercise Ops GADT
   */
 sealed trait UserOp[A]
 final case class GetUsers() extends UserOp[List[User]]
 final case class GetUserByLogin(login: String) extends UserOp[Option[User]]
-final case class CreateUser(user: NewUser) extends UserOp[Throwable Xor User]
+final case class CreateUser(user: UserCreation.Request) extends UserOp[UserCreation.Response]
 final case class UpdateUser(user: User) extends UserOp[Boolean]
 final case class DeleteUser(user: User) extends UserOp[Boolean]
 
@@ -28,7 +28,7 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
   def getUserByLogin(login: String): Free[F, Option[User]] =
     Free.inject[UserOp, F](GetUserByLogin(login))
 
-  def createUser(user: NewUser): Free[F, Throwable Xor User] =
+  def createUser(user: UserCreation.Request): Free[F, UserCreation.Response] =
     Free.inject[UserOp, F](CreateUser(user))
 
   def updateUser(user: User): Free[F, Boolean] =

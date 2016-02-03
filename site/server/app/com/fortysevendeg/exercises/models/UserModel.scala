@@ -1,23 +1,32 @@
 package com.fortysevendeg.exercises.models
 
 import shared.User
-
+import cats.data.Xor
 import com.fortysevendeg.exercises.models.queries.Queries
+import scalaz.syntax.applicative._
 
 import doobie.imports._
 import scalaz.concurrent.Task
 
-case class NewUser(
-    login:      String,
-    name:       String,
-    githubId:   String,
-    pictureUrl: String,
-    githubUrl:  String,
-    email:      String
-) {
+object UserCreation {
+  // TODO: add proper case objects with errors when switching to Postgres
+  sealed trait Error
+  case object DuplicateName extends Error
 
-  def withId(id: Long): User =
-    User(id, login, name, githubId, pictureUrl, githubUrl, email)
+  case class Request(
+      login:      String,
+      name:       String,
+      githubId:   String,
+      pictureUrl: String,
+      githubUrl:  String,
+      email:      String
+  ) {
+
+    def asUser(id: Long): User =
+      User(id, login, name, githubId, pictureUrl, githubUrl, email)
+  }
+
+  type Response = Error Xor User
 }
 
 trait UserStore {
@@ -27,7 +36,7 @@ trait UserStore {
 
   def getById(id: Long): ConnectionIO[Option[User]]
 
-  def create(user: NewUser): ConnectionIO[Option[User]]
+  def create(user: UserCreation.Request): ConnectionIO[UserCreation.Response]
 
   def delete(id: Long): ConnectionIO[Boolean]
 
@@ -44,10 +53,17 @@ object UserDoobieStore extends UserStore {
   def getById(id: Long): ConnectionIO[Option[User]] =
     Queries.byId(id).option
 
-  def create(user: NewUser): ConnectionIO[Option[User]] = for {
+  def create(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
     _ ← Queries.insert(user).run
     user ← getByLogin(user.login)
-  } yield user
+  } yield if (user.isDefined) Xor.Right(user.get) else Xor.Left(UserCreation.DuplicateName)
+
+  def getOrCreate(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
+    maybeUser ← getByLogin(user.login)
+    theUser ← if (maybeUser.isDefined)
+      Xor.Right(maybeUser.get).point[ConnectionIO]
+    else create(user)
+  } yield theUser
 
   def delete(id: Long): ConnectionIO[Boolean] =
     Queries.delete(id)
