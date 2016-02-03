@@ -107,6 +107,8 @@ lazy val sharedJs = shared.js
 lazy val content = (project in file("content"))
   .dependsOn(sharedJvm)
   .enablePlugins(ExerciseCompilerPlugin)
+  .dependsOn(ProjectRef(file("../core"), "runtime"))
+  .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
