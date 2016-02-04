@@ -10,8 +10,8 @@ import scalaz.concurrent.Task
 
 object UserCreation {
   // TODO: add proper case objects with errors when switching to Postgres
-  sealed trait Error
-  case object DuplicateName extends Error
+  sealed trait CreationError
+  case object DuplicateName extends CreationError
 
   case class Request(
       login:      String,
@@ -26,7 +26,7 @@ object UserCreation {
       User(id, login, name, githubId, pictureUrl, githubUrl, email)
   }
 
-  type Response = Error Xor User
+  type Response = CreationError Xor User
 }
 
 trait UserStore {
