@@ -39,6 +39,7 @@ lazy val server = (project in file("server"))
   .settings(commonSettings: _*)
   .settings(exerciseSettings: _*)
   .settings(
+    javaOptions += "-Xmx1G",
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
@@ -78,6 +79,7 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .settings(commonSettings: _*)
   .settings(
+    javaOptions += "-Xmx1G",
     persistLauncher := true,
     persistLauncher in Test := false,
     sourceMapsDirectories += sharedJs.base / "..",
