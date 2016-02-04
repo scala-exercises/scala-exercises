@@ -34,11 +34,11 @@ class ProdInterpreters(implicit transactor: Transactor[Task]) {
   def userOpsInterpreter: UserOp ~> Task = new (UserOp ~> Task) {
 
     def apply[A](fa: UserOp[A]): Task[A] = fa match {
-      case GetUsers() ⇒ UserDoobieStore.all.transact(transactor)
-      // case GetUserByLogin(login) ⇒ Task.delay(userService.getUserByLogin(login))
-      // case CreateUser(newUser)   ⇒ Task.delay(userService.createUser(newUser))
-      // case UpdateUser(user)      ⇒ Task.delay(userService.update(user))
-      // case DeleteUser(user)      ⇒ Task.delay(userService.delete(user.id))
+      case GetUsers()            ⇒ UserDoobieStore.all.transact(transactor)
+      case GetUserByLogin(login) ⇒ UserDoobieStore.getByLogin(login).transact(transactor)
+      case CreateUser(newUser)   ⇒ UserDoobieStore.create(newUser).transact(transactor)
+      case UpdateUser(user)      ⇒ UserDoobieStore.update(user).map(_.isDefined).transact(transactor)
+      case DeleteUser(user)      ⇒ UserDoobieStore.delete(user.id).transact(transactor)
     }
   }
 }
