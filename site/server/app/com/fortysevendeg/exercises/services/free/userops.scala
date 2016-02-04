@@ -34,6 +34,18 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
   def updateUser(user: User): Free[F, Boolean] =
     Free.inject[UserOp, F](UpdateUser(user))
 
+  def getOrCreateUser(
+    login:     String,
+    name:      String,
+    githubId:  String,
+    avatarUrl: String,
+    htmlUrl:   String,
+    email:     String
+  ): Free[F, UserCreation.Response] = for {
+    maybeUser ← getUserByLogin(login)
+    //    theUser <- if (maybeUser.isDefined) Xor.Right(maybeUser.get) else createUser()
+  } yield ???
+
   def deleteUser(user: User): Free[F, Boolean] =
     Free.inject[UserOp, F](DeleteUser(user))
 }

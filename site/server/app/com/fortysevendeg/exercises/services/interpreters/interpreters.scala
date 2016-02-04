@@ -15,7 +15,8 @@ import com.fortysevendeg.exercises.models.{ UserDoobieStore }
 import com.fortysevendeg.exercises.services.free._
 
 class ProdInterpreters(implicit transactor: Transactor[Task]) {
-  val interpreters: ExercisesApp ~> Task = exerciseOpsInterpreter or userOpsInterpreter
+  val interpreters: ExercisesApp ~> Task =
+    exerciseOpsInterpreter or userOpsInterpreter or dbOpsInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
@@ -39,6 +40,14 @@ class ProdInterpreters(implicit transactor: Transactor[Task]) {
       case CreateUser(newUser)   ⇒ UserDoobieStore.create(newUser).transact(transactor)
       case UpdateUser(user)      ⇒ UserDoobieStore.update(user).map(_.isDefined).transact(transactor)
       case DeleteUser(user)      ⇒ UserDoobieStore.delete(user.id).transact(transactor)
+    }
+  }
+
+  def dbOpsInterpreter: DBResult ~> Task = new (DBResult ~> Task) {
+
+    def apply[A](fa: DBResult[A]): Task[A] = fa match {
+      case DBSuccess(value) ⇒ Task.now(value)
+      case DBFailure(error) ⇒ Task.fail(error)
     }
   }
 }
