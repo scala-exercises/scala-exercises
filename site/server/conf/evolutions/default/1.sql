@@ -1,24 +1,15 @@
 # --- !Ups
 
-CREATE TABLE users (
-    id serial primary key,
-    login text,
-    name text,
-    github_id text,
-    picture_url text,
-    github_url text,
-    email text
+CREATE TABLE User (
+    id bigint primary key auto_increment,
+    login varchar(255) unique not null,
+    name varchar(255) not null,
+    githubId varchar(255) not null,
+    pictureUrl varchar(255) not null,
+    githubUrl varchar(255) not null,
+    email varchar(255) not null
 );
-
-INSERT INTO users(login, name, github_id, picture_url, github_url, email) VALUES(
-    'test_user',
-    'Test User',
-    '40239432',
-    'https://randomuser.me/api/portraits/med/men/23.jpg',
-    'https://github.com/rafaparadela',
-    'testuser@example.com');
-
 
 # --- !Downs
 
-DROP TABLE users;
+DROP TABLE User;
