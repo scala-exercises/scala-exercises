@@ -24,7 +24,7 @@ trait UserServices {
     email:      String
   ): UserCreation.Response
 
-  def createUser(user: NewUser): Throwable Xor User
+  def createUser(user: UserCreation.Request): UserCreation.Response
 
   def update(user: User): Boolean
 
@@ -67,8 +67,8 @@ class UserServiceImpl(
     ).transact(transactor).run
   }
 
-  def createUser(user: NewUser): Throwable Xor User =
-    UserDoobieStore.create(user).map(_.get).transact(transactor).attempt.run
+  def createUser(user: UserCreation.Request): UserCreation.Response =
+    UserDoobieStore.create(user).transact(transactor).run
 
   def update(user: User): Boolean =
     UserDoobieStore.update(user).map(_.isDefined).transact(transactor).run
