@@ -70,6 +70,21 @@ class UserStoreSpec extends Specification with BeforeEach {
 
       UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get must beEqualTo(modifiedUser)
     }
+
+    "get or create users doesn't duplicate users with the same login" in {
+      val aUser = newUser()
+      UserDoobieStore.create(aUser).quick.run
+      UserDoobieStore.getOrCreate(aUser).quick.run
+
+      UserDoobieStore.all.transact(transactor).run.length must beEqualTo(1)
+    }
+
+    "get or create users creates the user when not found" in {
+      val aUser = newUser()
+      UserDoobieStore.getOrCreate(aUser).quick.run
+
+      UserDoobieStore.all.transact(transactor).run.length must beEqualTo(1)
+    }
   }
 }
 
