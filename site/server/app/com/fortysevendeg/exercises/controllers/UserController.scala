@@ -19,8 +19,8 @@ import scalaz.{ -\/, \/, \/- }
 
 class UserController(
     implicit
-    userOps:    UserOps[ExercisesApp],
-    transactor: Transactor[Task]
+    userOps: UserOps[ExercisesApp],
+    T:       Transactor[Task]
 ) extends Controller {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
