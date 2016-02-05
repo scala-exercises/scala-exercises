@@ -15,8 +15,11 @@ import com.fortysevendeg.exercises.models.{ UserDoobieStore }
 import com.fortysevendeg.exercises.services.free._
 
 class ProdInterpreters(implicit transactor: Transactor[Task]) {
+  val exerciseAndUserInterpreter: ExercisesAndUserOps ~> Task =
+    exerciseOpsInterpreter or userOpsInterpreter
+
   val interpreters: ExercisesApp ~> Task =
-    exerciseOpsInterpreter or userOpsInterpreter or dbOpsInterpreter
+    dbOpsInterpreter or exerciseAndUserInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */

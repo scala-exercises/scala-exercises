@@ -25,23 +25,13 @@ import scalaz.concurrent.Task
 import scalaz.\/
 import doobie.util.transactor.{ Transactor, DataSourceTransactor }
 
-class ExercisesApplicationLoader(
-    implicit
-    IE: Inject[ExerciseOp, ExercisesApp],
-    IU: Inject[UserOp, ExercisesApp],
-    ID: Inject[DBResult, ExercisesApp]
-) extends ApplicationLoader {
+class ExercisesApplicationLoader() extends ApplicationLoader {
   def load(context: Context) = {
     new Components(context).application
   }
 }
 
-class Components(context: Context)(
-  implicit
-  IE: Inject[ExerciseOp, ExercisesApp],
-  IU: Inject[UserOp, ExercisesApp],
-  ID: Inject[DBResult, ExercisesApp]
-)
+class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
     with HikariCPComponents {
@@ -58,3 +48,4 @@ class Components(context: Context)(
 
   val router = new Routes(httpErrorHandler, applicationController, userController, exercisesController, assets, oauthController)
 }
+
