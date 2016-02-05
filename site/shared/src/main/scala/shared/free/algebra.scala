@@ -36,7 +36,7 @@ class ExerciseOps[F[_]](implicit I: Inject[ExerciseOp, F]) {
   */
 object ExerciseOps {
 
-  implicit def instance[F[_]](implicit I: Inject[ExerciseOp, F]) = new ExerciseOps[F]
+  implicit def instance[F[_]](implicit I: Inject[ExerciseOp, F]): ExerciseOps[F] = new ExerciseOps[F]
 
 }
 
