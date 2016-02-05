@@ -1,21 +1,18 @@
 package com.fortysevendeg.exercises
 package compiler
 
-import scala.language.implicitConversions
 import scala.reflect.api.Universe
 
-case class CodeGen[U <: Universe](
-    override val u: U = scala.reflect.runtime.universe
-) extends TreeEmitters[U] {
+/** This is responsible for generating exercise code. It generates
+  * scala compiler trees, which can be evaluated or rendered to
+  * source code.
+  */
+case class TreeGen[U <: Universe](
+    u: U = scala.reflect.runtime.universe
+) {
   import u._
 
-}
-
-trait TreeEmitters[U <: Universe] extends TreeHelpers[U] {
-  val u: U
-  import u._
-
-  def emitExercise(name: Option[String], description: Option[String], code: Option[String], explanation: Option[String]) = {
+  def makeExercise(name: Option[String], description: Option[String], code: Option[String], explanation: Option[String]) = {
     val term = makeTermName("Exercise", name)
     term → q"""
         object $term extends Exercise {
@@ -29,7 +26,7 @@ trait TreeEmitters[U <: Universe] extends TreeHelpers[U] {
         }"""
   }
 
-  def emitSection(
+  def makeSection(
     name: String, description: Option[String], exerciseTerms: List[TermName]
   ) = {
     val term = makeTermName("Section", name)
@@ -41,7 +38,7 @@ trait TreeEmitters[U <: Universe] extends TreeHelpers[U] {
         }"""
   }
 
-  def emitLibrary(
+  def makeLibrary(
     name: String, description: String, color: String,
     sectionTerms: List[TermName]
   ) = {
@@ -55,7 +52,7 @@ trait TreeEmitters[U <: Universe] extends TreeHelpers[U] {
         }"""
   }
 
-  def emitPackage(
+  def makePackage(
     packageName: String, trees: List[Tree]
   ) = q"""
         package ${makeRefTree(packageName)} {
@@ -64,23 +61,18 @@ trait TreeEmitters[U <: Universe] extends TreeHelpers[U] {
           import com.fortysevendeg.exercises.Section
           ..$trees
         }"""
-}
 
-sealed trait TreeHelpers[U <: Universe] {
-  val u: U
-  import u._
-
-  protected def makeTermName(appellation: String, name: String): TermName =
+  private def makeTermName(appellation: String, name: String): TermName =
     makeTermName(appellation, Some(name))
 
-  protected def makeTermName(appellation: String, name: Option[String]): TermName = {
+  private def makeTermName(appellation: String, name: Option[String]): TermName = {
     val nameSanSymbols = name.map(_.trim.replaceAll("[^0-9a-zA-Z]+", ""))
     internal.reificationSupport.freshTermName(
       appellation + nameSanSymbols.map("_" + _ + "$").getOrElse("")
     )
   }
 
-  protected def makeRefTree(path: String): RefTree = {
+  private def makeRefTree(path: String): RefTree = {
     def go(rem: List[String]): RefTree = rem match {
       case head :: Nil  ⇒ Ident(TermName(head))
       case head :: tail ⇒ Select(go(tail), TermName(head))

@@ -5,27 +5,25 @@ import scala.tools.reflect.ToolBox
 
 import org.scalatest._
 
-class GenCodeSpec extends FunSpec with Matchers {
+class TreeGenSpec extends FunSpec with Matchers {
 
   val toolbox = scala.reflect.runtime.currentMirror.mkToolBox()
   import toolbox.u._
 
-  describe("code tree emission") {
+  describe("code tree generation") {
 
-    val emitter = new TreeEmitters[toolbox.u.type] {
-      override val u = toolbox.u
-    }
+    val treeGen = new TreeGen[toolbox.u.type](toolbox.u)
 
     it("should generate a tree that can be eval'd") {
 
       val exercises = List(
-        emitter.emitExercise(
+        treeGen.makeExercise(
           name = Some("Example1"),
           description = None,
           code = None,
           explanation = None
         ),
-        emitter.emitExercise(
+        treeGen.makeExercise(
           name = Some("Example2"),
           description = None,
           code = None,
@@ -34,26 +32,26 @@ class GenCodeSpec extends FunSpec with Matchers {
       )
 
       val sections = List(
-        emitter.emitSection(
+        treeGen.makeSection(
           name = "Section 1",
           description = Some("This is section 1"),
           exerciseTerms = exercises.map(_._1)
         ),
-        emitter.emitSection(
+        treeGen.makeSection(
           name = "Section 2",
           description = Some("This is section 2"),
           exerciseTerms = Nil
         )
       )
 
-      val library = emitter.emitLibrary(
+      val library = treeGen.makeLibrary(
         name = "MyLibrary",
         description = "This is my library",
         color = "#FFFFFF",
         sectionTerms = sections.map(_._1)
       )
 
-      val tree = emitter.emitPackage(
+      val tree = treeGen.makePackage(
         packageName = "fail.sauce",
         trees = library._2 :: sections.map(_._2) ::: exercises.map(_._2)
       )

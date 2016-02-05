@@ -1,8 +1,6 @@
 package com.fortysevendeg.exercises
 package compiler
 
-import scala.language.existentials
-
 import scala.reflect.internal.util.AbstractFileClassLoader
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc.{ Global, Settings }
@@ -46,7 +44,7 @@ class CompilerSpec extends FunSpec with Matchers {
         .getField("MODULE$").get(null)
         .asInstanceOf[exercise.Library]
 
-      val res = Compiler.compile(library, code :: Nil, "sample")
+      val res = Compiler().compile(library, code :: Nil, "sample")
 
       assert(res.isRight)
 
