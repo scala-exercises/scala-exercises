@@ -29,6 +29,7 @@ lazy val compiler = (project in file("compiler"))
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.spire-math" %% "cats" % "0.3.0")
   ))
+  .dependsOn(definitions)
   .dependsOn(runtime % "test")
 
 // ~ Exercise Runtime
@@ -39,7 +40,7 @@ lazy val runtime = (project in file("runtime"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
-      "org.spire-math" %% "cats" % "0.3.0"
+      "org.typelevel" %% "cats" % "0.4.0"
     )
   )
 
@@ -50,6 +51,11 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     sbtPlugin       := true
   )
   .settings(commonSettings: _*)
+  .settings(libraryDependencies ++=
+    compilelibs(
+      "org.typelevel" %% "cats" % "0.4.0"
+    )
+  )
   // Leverage build info to populate compiler classpath--
   // This allows SBT, which currently requires Scala 2.10.x, to load and run
   // the compiler, which requires Scala 2.11.x.

@@ -2,8 +2,9 @@
 package com.fortysevendeg.exercises
 package sbtexercise
 
-import _root_.sbt.{ `package` ⇒ _, _ }
-import _root_.sbt.Keys._
+import sbt.{ `package` ⇒ _, _ }
+import sbt.Keys._
+import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
 
 import scala.io.Codec
@@ -11,6 +12,10 @@ import scala.util.{ Try, Success, Failure }
 
 import java.io.File
 import java.net.URLClassLoader
+
+import cats._
+import cats.data.Xor
+import cats.syntax.flatMap._
 
 object ExerciseCompilerPlugin extends AutoPlugin {
   import Def.Initialize
@@ -24,6 +29,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   val CompileExercises = config("compile")
 
+  type PreGenEx = Seq[String]
+  val preGenEx = TaskKey[PreGenEx]("pregen-exercises")
+
   object autoImport {
     def CompileExercises = ExerciseCompilerPlugin.CompileExercises
   }
@@ -31,18 +39,51 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   /** Given an Analysis output from a compile run, this will
     * identify all modules implementing `exercise.Library`.
     */
-  def discoveryLibraries(analysis: inc.Analysis): Seq[String] =
+  def discoverLibraries(analysis: inc.Analysis): Seq[String] =
     Discovery(Set("exercise.Library"), Set.empty)(Tests.allDefs(analysis))
       .collect({
         case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
       }).sorted
 
+  def preGenExTask = Def.task {
+    val log = streams.value.log
+    log.warn("doing pregen task!")
+    lazy val analysisIn = (compile in CompileExercisesSource).value
+
+    val libraryNames = discoverLibraries(analysisIn)
+
+    val nativeTmp = taskTemporaryDirectory.value
+    val instance = scalaInstance.value
+    val classpath = Attributed.data((fullClasspath in CompileExercisesSource).value)
+    val loader = ClasspathUtilities.makeLoader(classpath, instance, nativeTmp)
+
+    def catching[A](f: ⇒ A)(msg: ⇒ String) =
+      Xor.catchNonFatal(f).leftMap(_ ⇒ msg)
+
+    val foo = libraryNames.map { name ⇒
+
+      val module = for {
+        loadedClass ← catching(Class.forName(name, true, loader))(s"${name} not found")
+        loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
+      } yield loadedModule
+
+      println("MODULE " + module)
+    }
+
+    println(foo)
+    log.warn("FOO " + foo)
+
+
+    libraryNames
+  }
+
   def generateExerciseSourcesTask = Def.task {
     val log = streams.value.log
 
-    lazy val analysisIn = (compile in CompileExercisesSource).value
+    lazy val preGen = preGenEx.value
 
-    val libraries = discoveryLibraries(analysisIn)
+    log.warn("Pregen info!")
+    log.warn("> " + preGen)
 
     val dir = (sourceManaged in CompileExercises).value
 
@@ -91,7 +132,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   def generateExerciseDescriptorTask = Def.task {
     val log = streams.value.log
 
-    lazy val analysisIn = (compile in CompileExercisesSource).value
+    lazy val preGen = preGenEx.value
+
+    log.warn("Pregen info!")
+    log.warn("> " + preGen)
 
     val qualifiedLibraryInstancies =
       "foo.libFoo$" :: "foo.libBar$" :: Nil
@@ -132,7 +176,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       // we only want to compile the generated files
       unmanagedSourceDirectories := Nil,
       sourceGenerators <+= generateExerciseSourcesTask,
-      resourceGenerators <+= generateExerciseDescriptorTask
+      resourceGenerators <+= generateExerciseDescriptorTask,
+
+      preGenEx <<= preGenExTask
     )) ++
     inConfig(Compile)(
       // All your base are belong to us!! (take over standard compile)
