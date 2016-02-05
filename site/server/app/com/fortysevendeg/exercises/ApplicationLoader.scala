@@ -16,7 +16,6 @@ import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.controllers._
 import com.fortysevendeg.exercises.utils._
 import com.fortysevendeg.exercises.models.{ UserDoobieStore }
-import com.fortysevendeg.exercises.services.UserServiceImpl
 
 import router.Routes
 import cats.Monad

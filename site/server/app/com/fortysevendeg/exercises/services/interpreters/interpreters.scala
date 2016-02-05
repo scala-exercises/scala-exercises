@@ -11,7 +11,7 @@ import scalaz.concurrent.Task
 import scala.language.higherKinds
 import com.fortysevendeg.shared.free._
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.models.{ UserDoobieStore }
+import com.fortysevendeg.exercises.services.UserServiceImpl
 import com.fortysevendeg.exercises.services.free._
 
 class ProdInterpreters(implicit transactor: Transactor[Task]) {
@@ -36,13 +36,14 @@ class ProdInterpreters(implicit transactor: Transactor[Task]) {
   }
 
   def userOpsInterpreter: UserOp ~> Task = new (UserOp ~> Task) {
+    val userService = new UserServiceImpl
 
     def apply[A](fa: UserOp[A]): Task[A] = fa match {
-      case GetUsers()            ⇒ UserDoobieStore.all.transact(transactor)
-      case GetUserByLogin(login) ⇒ UserDoobieStore.getByLogin(login).transact(transactor)
-      case CreateUser(newUser)   ⇒ UserDoobieStore.create(newUser).transact(transactor)
-      case UpdateUser(user)      ⇒ UserDoobieStore.update(user).map(_.isDefined).transact(transactor)
-      case DeleteUser(user)      ⇒ UserDoobieStore.delete(user.id).transact(transactor)
+      case GetUsers()            ⇒ Task.fork(Task.delay(userService.all))
+      case GetUserByLogin(login) ⇒ Task.fork(Task.delay(userService.getByLogin(login)))
+      case CreateUser(newUser)   ⇒ Task.fork(Task.delay(userService.create(newUser)))
+      case UpdateUser(user)      ⇒ Task.fork(Task.delay(userService.update(user)))
+      case DeleteUser(user)      ⇒ Task.fork(Task.delay(userService.delete(user.id)))
     }
   }
 
