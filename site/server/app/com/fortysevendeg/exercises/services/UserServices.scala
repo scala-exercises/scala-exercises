@@ -1,6 +1,6 @@
 package com.fortysevendeg.exercises.services
 
-import scala.language.implicitConversions
+import scala.language.{ implicitConversions, postfixOps }
 
 import cats.data.Xor
 import doobie.imports._
