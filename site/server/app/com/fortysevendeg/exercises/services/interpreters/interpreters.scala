@@ -5,7 +5,9 @@ import cats.free.Free
 import scalaz.concurrent.Task
 import scala.language.higherKinds
 import com.fortysevendeg.shared.free._
-import com.fortysevendeg.exercises.services.free.UserOp
+import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.services.UserServiceImpl
+import com.fortysevendeg.exercises.services.free._
 
 /** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
   */
@@ -25,7 +27,17 @@ trait Interpreters[F[_]] extends InterpreterInstances {
 
   }
 
-  implicit def userOpsInterpreter(implicit A: Applicative[F]): UserOp ~> F = new (UserOp ~> F) {
+  def userOpsInterpreter: UserOp ~> Task = new (UserOp ~> Task) {
+    val userService = new UserServiceImpl
+
+    def apply[A](fa: UserOp[A]): Task[A] = fa match {
+      case GetUsers()            ⇒ Task.fork(Task.delay(userService.all))
+      case GetUserByLogin(login) ⇒ Task.fork(Task.delay(userService.getByLogin(login)))
+      case CreateUser(newUser)   ⇒ Task.fork(Task.delay(userService.create(newUser)))
+      case UpdateUser(user)      ⇒ Task.fork(Task.delay(userService.update(user)))
+      case DeleteUser(user)      ⇒ Task.fork(Task.delay(userService.delete(user.id)))
+    }
+  }
 
     def apply[A](fa: UserOp[A]): F[A] = ???
 

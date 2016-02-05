@@ -13,9 +13,9 @@ import shared.User
 trait UserServices {
   def all: List[User]
 
-  def getUserByLogin(login: String): Option[User]
+  def getByLogin(login: String): Option[User]
 
-  def getUserOrCreate(
+  def getOrCreate(
     login:      String,
     name:       String,
     githubId:   String,
@@ -24,7 +24,7 @@ trait UserServices {
     email:      String
   ): UserCreation.Response
 
-  def createUser(user: UserCreation.Request): UserCreation.Response
+  def create(user: UserCreation.Request): UserCreation.Response
 
   def update(user: User): Boolean
 
@@ -44,10 +44,10 @@ class UserServiceImpl(
   def all: List[User] =
     UserDoobieStore.all transact (transactor) run
 
-  def getUserByLogin(login: String): Option[User] =
+  def getByLogin(login: String): Option[User] =
     UserDoobieStore.getByLogin(login) transact (transactor) run
 
-  def getUserOrCreate(
+  def getOrCreate(
     login:      String,
     name:       String,
     githubId:   String,
@@ -67,7 +67,7 @@ class UserServiceImpl(
     ).transact(transactor).run
   }
 
-  def createUser(user: UserCreation.Request): UserCreation.Response =
+  def create(user: UserCreation.Request): UserCreation.Response =
     UserDoobieStore.create(user).transact(transactor).run
 
   def update(user: User): Boolean =
@@ -75,7 +75,6 @@ class UserServiceImpl(
 
   def delete(id: Long): Boolean =
     UserDoobieStore.delete(id).transact(transactor).run
-
 }
 
 object UserServices {
