@@ -7,16 +7,12 @@
     i {
         color: $books-docs-icons-color;
         font-size: ceil(($font-size-base * 1.6));
-        margin-right: 8px;
-        position: absolute;
-        left: 13px;
-        top: 15px;
     }
 
     
     h3 {
         display: inline-block;
-        padding-left: ($padding-base-horizontal * 2.6);
+        padding-left: ($padding-base-horizontal * 0.4);
         margin-bottom: ($line-height-computed / 1.5);
         color: $books-docs-heading-color;
     }

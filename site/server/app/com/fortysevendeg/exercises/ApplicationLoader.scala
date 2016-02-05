@@ -12,7 +12,7 @@ import play.api.routing.Router
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.shared.free._
 import com.fortysevendeg.exercises.services.free._
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 import com.fortysevendeg.exercises.controllers._
 import com.fortysevendeg.exercises.utils._
 import com.fortysevendeg.exercises.models.{ UserDoobieStore }
