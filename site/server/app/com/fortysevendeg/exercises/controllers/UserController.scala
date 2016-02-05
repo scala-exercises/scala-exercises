@@ -9,7 +9,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import upickle._
-import com.fortysevendeg.exercises.services._
+
 import com.fortysevendeg.exercises.services.free.UserOps
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
