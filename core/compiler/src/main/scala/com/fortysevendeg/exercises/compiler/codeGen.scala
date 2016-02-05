@@ -6,63 +6,64 @@ import scala.reflect.api.Universe
 
 case class CodeGen[U <: Universe](
     override val u: U = scala.reflect.runtime.universe
-) extends TreeHelpers[U] {
+) extends TreeEmitters[U] {
+  import u._
+
+}
+
+trait TreeEmitters[U <: Universe] extends TreeHelpers[U] {
+  val u: U
   import u._
 
   def emitExercise(name: Option[String], description: Option[String], code: Option[String], explanation: Option[String]) = {
-    val term = makeTermName("EXC", name)
+    val term = makeTermName("Exercise", name)
     term → q"""
-      object $term extends Exercise {
-        override val name         = $name
-        override val description  = $description
-        override val code         = $code
-        override val explanation  = $explanation
+        object $term extends Exercise {
+          override val name         = $name
+          override val description  = $description
+          override val code         = $code
+          override val explanation  = $explanation
 
-        override type Input       = Unit
-        override val eval         = None
-      }"""
+          override type Input       = Unit
+          override val eval         = None
+        }"""
   }
 
   def emitSection(
     name: String, description: Option[String], exerciseTerms: List[TermName]
   ) = {
-    val term = makeTermName("SEC", name)
+    val term = makeTermName("Section", name)
     term → q"""
-      object $term extends Section {
-        override val name         = $name
-        override val description  = $description
-        override val exercises    = $exerciseTerms
-      }"""
+        object $term extends Section {
+          override val name         = $name
+          override val description  = $description
+          override val exercises    = $exerciseTerms
+        }"""
   }
 
   def emitLibrary(
     name: String, description: String, color: String,
     sectionTerms: List[TermName]
   ) = {
-    val term = makeTermName("LIB", name)
+    val term = makeTermName("Library", name)
     term → q"""
-      object $term extends Library {
-        override val name         = $name
-        override val description  = $description
-        override val color        = $color
-        override val sections     = $sectionTerms
-      }"""
+        object $term extends Library {
+          override val name         = $name
+          override val description  = $description
+          override val color        = $color
+          override val sections     = $sectionTerms
+        }"""
   }
 
   def emitPackage(
-    packageName: String, libraryTree: Tree, sectionTrees: List[Tree],
-    exerciseTrees: List[Tree]
+    packageName: String, trees: List[Tree]
   ) = q"""
-      package ${makeRefTree(packageName)} {
-        import com.fortysevendeg.exercises.Exercise
-        import com.fortysevendeg.exercises.Library
-        import com.fortysevendeg.exercises.Section
-
-        $libraryTree
-        ..$sectionTrees
-        ..$exerciseTrees
-      }"""
-
+        package ${makeRefTree(packageName)} {
+          import com.fortysevendeg.exercises.Exercise
+          import com.fortysevendeg.exercises.Library
+          import com.fortysevendeg.exercises.Section
+          ..$trees
+        }"""
 }
 
 sealed trait TreeHelpers[U <: Universe] {
@@ -72,10 +73,12 @@ sealed trait TreeHelpers[U <: Universe] {
   protected def makeTermName(appellation: String, name: String): TermName =
     makeTermName(appellation, Some(name))
 
-  protected def makeTermName(appellation: String, name: Option[String]): TermName =
+  protected def makeTermName(appellation: String, name: Option[String]): TermName = {
+    val nameSanSymbols = name.map(_.trim.replaceAll("[^0-9a-zA-Z]+", ""))
     internal.reificationSupport.freshTermName(
-      appellation + name.map("_" + _.trim.replace(" ", "_")).getOrElse("")
+      appellation + nameSanSymbols.map("_" + _ + "$").getOrElse("")
     )
+  }
 
   protected def makeRefTree(path: String): RefTree = {
     def go(rem: List[String]): RefTree = rem match {
@@ -88,12 +91,6 @@ sealed trait TreeHelpers[U <: Universe] {
         Ident(TermName(path))
     }
     go(path.split('.').toList.reverse)
-  }
-
-  protected def unblock(tree: Tree): List[Tree] = tree match {
-    case Block(stats, q"()") ⇒ stats
-    case Block(stats, expr)  ⇒ stats ::: expr :: Nil
-    case other               ⇒ other :: Nil
   }
 
 }

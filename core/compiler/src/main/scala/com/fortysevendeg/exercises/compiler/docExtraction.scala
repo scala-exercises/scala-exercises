@@ -105,7 +105,9 @@ object DocCommentFinder {
           traverseAcc((nextPath → expr) :: rs, acc)
 
         case q"package $ref { ..$topstats }" ⇒
-          val nextPath = ref.name :: path
+          val nextPath =
+            if (ref.name == termNames.EMPTY_PACKAGE_NAME) path
+            else ref.name :: path
           traverseAcc(topstats.map(nextPath → _) ::: rs, acc)
 
         case _ ⇒
