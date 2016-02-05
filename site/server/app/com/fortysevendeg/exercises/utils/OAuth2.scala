@@ -5,7 +5,6 @@ import play.api.{ Application, Play }
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.mvc.{ Action, Controller, Results }
 import play.api.libs.ws._
-import play.api.libs.ws.ning.NingWSClient
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.fortysevendeg.exercises.services._
 
@@ -25,11 +24,13 @@ object OAuth2 {
   }
 }
 
-class OAuth2Controller(implicit userService: UserServices) extends Controller {
+class OAuth2Controller(
+    implicit
+    userService: UserServices,
+    ws:          WSClient
+) extends Controller {
 
   import OAuth2._
-
-  val ws = NingWSClient()
 
   def getToken(code: String): Future[String] = {
     val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
