@@ -13,13 +13,11 @@ import scalaz.{ -\/, \/, \/- }
 
 import com.fortysevendeg.shared.free.ExerciseOps
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
 class ExercisesController(
     implicit
     exerciseOps: ExerciseOps[ExercisesApp],
-    userOps:     UserOps[ExercisesApp],
     T:           Transactor[Task]
 ) extends Controller with JsonFormats {
 
