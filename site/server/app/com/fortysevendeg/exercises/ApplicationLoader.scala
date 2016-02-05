@@ -8,6 +8,9 @@ import play.api.db.HikariCPComponents
 import play.api.libs.ws.ning.NingWSClient
 import play.api.routing.Router
 
+import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.shared.free._
+import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.controllers._
 import com.fortysevendeg.exercises.utils._
@@ -16,19 +19,29 @@ import com.fortysevendeg.exercises.services.UserServiceImpl
 
 import router.Routes
 import cats.Monad
-import cats.free.Free
+import cats.free._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scalaz.concurrent.Task
 import scalaz.\/
 import doobie.util.transactor.{ Transactor, DataSourceTransactor }
 
-class ExercisesApplicationLoader extends ApplicationLoader {
+class ExercisesApplicationLoader(
+    implicit
+    IE: Inject[ExerciseOp, ExercisesApp],
+    IU: Inject[UserOp, ExercisesApp],
+    ID: Inject[DBResult, ExercisesApp]
+) extends ApplicationLoader {
   def load(context: Context) = {
     new Components(context).application
   }
 }
 
-class Components(context: Context)
+class Components(context: Context)(
+  implicit
+  IE: Inject[ExerciseOp, ExercisesApp],
+  IU: Inject[UserOp, ExercisesApp],
+  ID: Inject[DBResult, ExercisesApp]
+)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
     with HikariCPComponents {
