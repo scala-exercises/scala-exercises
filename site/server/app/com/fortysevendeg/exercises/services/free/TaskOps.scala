@@ -1,7 +1,6 @@
 package com.fortysevendeg.exercises.services.free
 
 import cats.free.Free
-import com.fortysevendeg.exercises.services.free.DBOps
 
 import scala.language.{ higherKinds, implicitConversions }
 import scalaz.concurrent.Task

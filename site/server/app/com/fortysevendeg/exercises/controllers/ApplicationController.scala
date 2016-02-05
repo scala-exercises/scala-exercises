@@ -11,14 +11,10 @@ import com.fortysevendeg.exercises.services.free.UserOps
 import java.util.UUID
 import doobie.imports._
 
-import com.fortysevendeg.exercises.services.messages.GetUserByLoginRequest
-import com.fortysevendeg.exercises.services.ExercisesService
 import com.fortysevendeg.exercises.utils.OAuth2
-import play.api._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import com.fortysevendeg.exercises.services._
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 

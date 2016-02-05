@@ -11,10 +11,8 @@ import scala.concurrent.Future
 import scalaz.concurrent.Task
 import scalaz.{ -\/, \/, \/- }
 
-import com.fortysevendeg.exercises.services._
-import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.shared.free.ExerciseOps
-import com.fortysevendeg.exercises.services.free.UserOps
+import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
 class ExercisesController(
