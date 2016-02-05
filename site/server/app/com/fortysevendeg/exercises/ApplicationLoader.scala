@@ -5,6 +5,7 @@ import play.api.ApplicationLoader.Context
 import play.api.db.DBComponents
 import play.api.db.Database
 import play.api.db.HikariCPComponents
+import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
 import play.api.routing.Router
 
@@ -22,6 +23,7 @@ import cats.Monad
 import cats.free._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scalaz.concurrent.Task
+import scala.concurrent.Future
 import scalaz.\/
 import doobie.util.transactor.{ Transactor, DataSourceTransactor }
 
@@ -38,6 +40,7 @@ class Components(context: Context)
 
   val dataSource = dbApi.database("default").dataSource
   implicit val transactor: Transactor[Task] = DataSourceTransactor[Task](dataSource)
+  implicit val wsClient: WSClient = NingWSClient()
 
   val applicationController = new ApplicationController
   val exercisesController = new ExercisesController
@@ -47,5 +50,9 @@ class Components(context: Context)
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
   val router = new Routes(httpErrorHandler, applicationController, userController, exercisesController, assets, oauthController)
+
+  applicationLifecycle.addStopHook({ () ⇒
+    Future(wsClient.close())
+  })
 }
 
