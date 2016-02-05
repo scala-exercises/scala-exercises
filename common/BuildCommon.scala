@@ -18,8 +18,11 @@ object BuildCommon extends AutoPlugin {
     organization    := "com.47deg",
     version         := "0.0.0-SNAPSHOT",
     scalaVersion    <<= (sbtPlugin) { isPlugin => if (isPlugin) "2.10.5" else "2.11.7" },
-    scalacOptions   ++= Seq("-deprecation", "-feature", "-unchecked", "-encoding", "utf8"),
+    scalacOptions   ++= Seq("-deprecation", "-feature", "-unchecked", "-encoding", "utf8", "-Ywarn-unused-import"),
     javacOptions    ++= Seq("-encoding", "UTF-8", "-Xlint:-options")
+  ) ++ Seq(
+    scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
+    scalacOptions in (Test, console)    ~= (_ filterNot (_ == "-Ywarn-unused-import"))
   )
 
   def formatSettings = SbtScalariform.scalariformSettings ++ Seq(

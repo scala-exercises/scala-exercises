@@ -5,7 +5,6 @@ import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
 import scala.reflect.internal.util.BatchSourceFile
 
-import cats._
 import cats.data.Xor
 import cats.std.all._
 import cats.syntax.flatMap._
@@ -13,43 +12,21 @@ import cats.syntax.traverse._
 
 object CompilerJava {
   def compile(library: exercise.Library, sources: Array[String], targetPackage: String): String = {
-    Compiler.compile(library, sources.toList, targetPackage)
+    Compiler().compile(library, sources.toList, targetPackage)
       .fold(error ⇒ throw new Exception(error), `🍺` ⇒ `🍺`)
   }
 }
 
-object Compiler {
+case class Compiler() {
+
+  lazy val docCommentFinder = new DocCommentFinder()
 
   def compile(library: exercise.Library, sources: List[String], targetPackage: String) = {
 
-    val g = new DocExtractionGlobal()
-    new g.Run() compileSources sources.map(code ⇒ new BatchSourceFile("newSource", code))
-    val currentRun = g.currentRun
-
-    val docGlobalHelper = Internal[g.rootMirror.universe.type](g.rootMirror.universe)
-
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
-    def instanceToModuleSymbol(instance: AnyRef) =
-      mirror.classSymbol(instance.getClass).module
 
-    def instanceToClassSymbol(instance: AnyRef) =
-      Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
-        .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
-
-    val runtimeHelper = Internal[mirror.universe.type](mirror.universe)
-
-    val allDocComments = currentRun.units.map(_.body).flatMap(DocCommentFinder.findAll(g)(_))
-      .map { case (k, v) ⇒ k.map(docGlobalHelper.readName) → v.raw }
-      .toMap
-
-    def resolveComment(symbol: mirror.universe.Symbol) = {
-      val path = runtimeHelper.symbolToStringPath(symbol)
-      Xor.fromOption(
-        allDocComments.get(path),
-        s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
-      )
-    }
+    val internal = CompilerInternal(mirror, docCommentFinder.findAll(sources))
 
     case class LibraryInfo(
       symbol:   ClassSymbol,
@@ -69,16 +46,16 @@ object Compiler {
     )
 
     def enhanceDocError(symbol: Symbol)(error: String) =
-      s"""$error in ${runtimeHelper.symbolToStringPath(symbol).mkString(".")}"""
+      s"""$error in ${internal.symbolToPath(symbol).mkString(".")}"""
 
     def maybeMakeLibraryInfo(
       library: exercise.Library
     ) = for {
-      symbol ← instanceToClassSymbol(library)
-      comment ← (resolveComment(symbol) >>= DocParser.parseLibraryDocComment)
+      symbol ← internal.instanceToClassSymbol(library)
+      comment ← (internal.resolveComment(symbol) >>= DocParser.parseLibraryDocComment)
         .leftMap(enhanceDocError(symbol))
       sections ← library.sections.toList
-        .map(instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
+        .map(internal.instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
         .sequenceU
     } yield LibraryInfo(
       symbol = symbol,
@@ -89,7 +66,7 @@ object Compiler {
     def maybeMakeSectionInfo(
       symbol: ClassSymbol
     ) = for {
-      comment ← (resolveComment(symbol) >>= DocParser.parseSectionDocComment)
+      comment ← (internal.resolveComment(symbol) >>= DocParser.parseSectionDocComment)
         .leftMap(enhanceDocError(symbol))
       exercises ← symbol.toType.decls.toList
         .filter(symbol ⇒
@@ -108,7 +85,7 @@ object Compiler {
     def maybeMakeExerciseInfo(
       symbol: MethodSymbol
     ) = for {
-      comment ← (resolveComment(symbol) >>= DocParser.parseExerciseDocComment)
+      comment ← (internal.resolveComment(symbol) >>= DocParser.parseExerciseDocComment)
         .leftMap(enhanceDocError(symbol))
     } yield ExerciseInfo(
       symbol = symbol,
@@ -136,19 +113,16 @@ object Compiler {
       }
     }
 
-    val emitter = new TreeEmitters[mirror.universe.type] {
-      override val u = mirror.universe
-    }
+    val treeGen = TreeGen[mirror.universe.type](mirror.universe)
 
     def generateTree(libraryInfo: LibraryInfo): Tree = {
 
       val (sectionTerms, sectionAndExerciseTrees) =
         libraryInfo.sections.map { sectionInfo ⇒
-
           val (exerciseTerms, exerciseTrees) =
             sectionInfo.exercises
               .map { exerciseInfo ⇒
-                emitter.emitExercise(
+                treeGen.makeExercise(
                   name = exerciseInfo.comment.name,
                   description = exerciseInfo.comment.description,
                   code = Some("// TODO (compiler support)!"),
@@ -157,7 +131,7 @@ object Compiler {
               }.unzip
 
           val (sectionTerm, sectionTree) =
-            emitter.emitSection(
+            treeGen.makeSection(
               name = sectionInfo.comment.name,
               description = Some(sectionInfo.comment.description),
               exerciseTerms = exerciseTerms
@@ -166,14 +140,14 @@ object Compiler {
           (sectionTerm, sectionTree :: exerciseTrees)
         }.unzip
 
-      val (libraryTerm, libraryTree) = emitter.emitLibrary(
+      val (libraryTerm, libraryTree) = treeGen.makeLibrary(
         name = libraryInfo.comment.name,
         description = libraryInfo.comment.description,
         color = "purple", // TODO: where should this get defined?
         sectionTerms = sectionTerms
       )
 
-      emitter.emitPackage(
+      treeGen.makePackage(
         packageName = targetPackage,
         trees = libraryTree :: sectionAndExerciseTrees.flatten
       )
@@ -186,16 +160,23 @@ object Compiler {
 
   }
 
-  private case class Internal[U <: Universe](u: U) {
-    import u._
+  private case class CompilerInternal(mirror: ru.Mirror, docComments: Map[List[String], String]) {
+    import mirror.universe._
 
-    def readName(name: Name): String = name match {
-      case TermName(value) ⇒ value
-      case TypeName(value) ⇒ value
+    def instanceToClassSymbol(instance: AnyRef) =
+      Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
+        .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
+
+    def resolveComment(symbol: Symbol): Xor[String, String] = {
+      val path = symbolToPath(symbol)
+      Xor.fromOption(
+        docComments.get(path),
+        s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
+      )
     }
 
-    def symbolToPath(symbol: u.Symbol): List[u.Name] = {
-      def process(symbol: u.Symbol): List[u.Name] = {
+    def symbolToPath(symbol: Symbol): List[String] = {
+      def process(symbol: Symbol): List[Name] = {
         val owner = symbol.owner
         symbol.name match {
           case TypeName(`EMPTY_PACKAGE_NAME_STRING`) ⇒ Nil
@@ -204,18 +185,18 @@ object Compiler {
           case _                                     ⇒ Nil
         }
       }
-      process(symbol).reverse
+      process(symbol).reverse.collect {
+        case TermName(value) ⇒ value
+        case TypeName(value) ⇒ value
+      }
     }
 
-    def symbolToStringPath(symbol: u.Symbol): List[String] =
-      symbolToPath(symbol).map(readName)
-
     // Not positive why I had to do this...
-    lazy val EMPTY_PACKAGE_NAME_STRING = termNames.EMPTY_PACKAGE_NAME match {
+    private lazy val EMPTY_PACKAGE_NAME_STRING = termNames.EMPTY_PACKAGE_NAME match {
       case TermName(value) ⇒ value
     }
 
-    lazy val ROOTPKG_STRING = termNames.ROOTPKG match {
+    private lazy val ROOTPKG_STRING = termNames.ROOTPKG match {
       case TermName(value) ⇒ value
     }
 

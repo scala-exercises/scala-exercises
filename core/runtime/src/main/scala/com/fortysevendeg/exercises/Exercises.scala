@@ -10,7 +10,6 @@ import java.io.InputStreamReader
 import java.lang.ClassNotFoundException
 import java.nio.charset.StandardCharsets
 
-import cats._
 import cats.data.Xor
 
 object Exercises {
@@ -35,20 +34,12 @@ object Exercises {
       .map(_.trim)
       .filterNot(_.isEmpty)
 
-    type Acc = (List[String], List[Library])
-    val (errors, libraries) = classNames.foldLeft((Nil, Nil): Acc) { (acc, name) ⇒
+    val (errors, libraries) = classNames.foldLeft((Nil: List[String], Nil: List[Library])) { (acc, name) ⇒
 
       val loadedLibrary = for {
-
-        loadedClass ← Xor.catchNonFatal(Class.forName(name, true, cl))
-          .leftMap(_ ⇒ s"${name} not found")
-
-        loadedObject ← Xor.catchNonFatal(loadedClass.getField("MODULE$").get(null))
-          .leftMap(_ ⇒ s"${name} must be defined as an object")
-
-        loadedLibrary ← Xor.catchNonFatal(loadedObject.asInstanceOf[Library])
-          .leftMap(_ ⇒ s"${name} must extend Library")
-
+        loadedClass ← guard(Class.forName(name, true, cl), s"${name} not found")
+        loadedObject ← guard(loadedClass.getField("MODULE$").get(null), s"${name} must be defined as an object")
+        loadedLibrary ← guard(loadedObject.asInstanceOf[Library], s"${name} must extend Library")
       } yield loadedLibrary
 
       // until a bifoldable exists in Cats...
@@ -59,6 +50,9 @@ object Exercises {
     }
 
     (errors, libraries.reverse)
-
   }
+
+  private def guard[A](f: ⇒ A, message: ⇒ String) =
+    Xor.catchNonFatal(f).leftMap(_ ⇒ message)
+
 }
