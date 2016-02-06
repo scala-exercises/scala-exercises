@@ -11,7 +11,7 @@ trait UserProgressRepository {
 
   def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]]
 
-  def create(request: CreateUserProgressRequest): ConnectionIO[UserProgress]
+  def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
 
   def delete(id: Long): ConnectionIO[Boolean]
 
@@ -23,13 +23,13 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceImpl) extend
   def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]] =
     persistence.fetchOption[Long, UserProgress](UserProgressQueries.findByUserId, userId)
 
-  def create(request: CreateUserProgressRequest): ConnectionIO[UserProgress] = {
-    val CreateUserProgressRequest(userId, libraryName, sectionName, method, args, succeeded) = request
+  def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
+    val SaveUserProgress.Request(userId, libraryName, sectionName, method, args, succeeded) = request
 
     findByUserId(userId) flatMap {
       case _@ None ⇒
         persistence
-          .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Option[Boolean]), UserProgress](
+          .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Boolean), UserProgress](
             UserProgressQueries.insert,
             UserProgressQueries.allFields,
             (userId, libraryName, sectionName, method, args, succeeded)
@@ -46,7 +46,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceImpl) extend
     val UserProgress(id, userId, libraryName, sectionName, method, args, succeeded) = userProgress
 
     persistence
-      .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Option[Boolean]), UserProgress](
+      .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Boolean), UserProgress](
         UserProgressQueries.update,
         UserProgressQueries.allFields,
         (userId, libraryName, sectionName, method, args, succeeded)
@@ -56,5 +56,5 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceImpl) extend
 
 object UserProgressDoobieRepository {
 
-  implicit def userProgressRepository(implicit persistence: PersistenceImpl) = new UserProgressDoobieRepository()
+  implicit def instance(implicit persistence: PersistenceImpl) = new UserProgressDoobieRepository()
 }

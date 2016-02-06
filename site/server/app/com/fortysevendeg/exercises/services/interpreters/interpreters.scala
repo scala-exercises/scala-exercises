@@ -2,16 +2,41 @@ package com.fortysevendeg.exercises.services.interpreters
 
 import cats._
 import cats.free.Free
-import scalaz.concurrent.Task
-import scala.language.higherKinds
-import com.fortysevendeg.shared.free._
+
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services.UserServiceImpl
+import com.fortysevendeg.exercises.models.UserDoobieStore
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
 import com.fortysevendeg.exercises.services.free._
+import com.fortysevendeg.shared.free._
+import doobie.imports._
+
+import scala.language.higherKinds
+import scalaz.\/
+import scalaz.concurrent.Task
 
 /** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
   */
-trait Interpreters[F[_]] extends InterpreterInstances {
+trait Interpreters[F[_]] extends InterpreterInstances[F] {
+  def exerciseAndUserInterpreter(
+    implicit
+    A: Applicative[F],
+    T: Transactor[F]
+  ): ExercisesAndUserOps ~> F =
+    exerciseOpsInterpreter or userOpsInterpreter
+
+  def userAndUserProgressInterpreter(
+    implicit
+    A: Applicative[F],
+    T: Transactor[F]
+  ): UserAndUserProgressOps ~> F =
+    userOpsInterpreter or userProgressOpsInterpreter
+
+  def interpreters(
+    implicit
+    A: Applicative[F],
+    T: Transactor[F]
+  ): ExercisesApp ~> F =
+    dbOpsInterpreter or exerciseAndUserInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
@@ -39,8 +64,18 @@ trait Interpreters[F[_]] extends InterpreterInstances {
     }
   }
 
-    def apply[A](fa: UserOp[A]): F[A] = ???
+  implicit def userProgressOpsInterpreter(
+    implicit
+    A: Applicative[F], T: Transactor[F]
+  ): UserProgressOp ~> F = new (UserProgressOp ~> F) {
 
+    def apply[A](fa: UserProgressOp[A]): F[A] = fa match {
+      case UpdateUserProgress(userProgress) ⇒ UserProgressDoobieRepository.instance.create(userProgress).transact(T)
+    }
+  }
+
+  implicit def dbOpsInterpreter(implicit A: Applicative[F]): DBResult ~> F = new (DBResult ~> F) {
+    ???
   }
 
 }

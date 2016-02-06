@@ -7,7 +7,7 @@ import cats.data.NonEmptyList
 import cats.data.Xor
 import cats.free.Free
 import com.fortysevendeg.shared.free.ExerciseOps
-import com.fortysevendeg.exercises.services.free.UserOps
+import com.fortysevendeg.exercises.services.free.{ UserProgressOps, UserOps }
 import java.util.UUID
 import doobie.imports._
 

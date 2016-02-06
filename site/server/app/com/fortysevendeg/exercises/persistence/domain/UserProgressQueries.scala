@@ -1,15 +1,16 @@
 package com.fortysevendeg.exercises.persistence.domain
 
-import shared.UserProgress
+object SaveUserProgress {
 
-case class CreateUserProgressRequest(
-  userId:      Long,
-  libraryName: String,
-  sectionName: String,
-  method:      String,
-  args:        Option[String],
-  succeeded:   Option[Boolean]
-)
+  case class Request(
+    userId:      Long,
+    libraryName: String,
+    sectionName: String,
+    method:      String,
+    args:        Option[String],
+    succeeded:   Boolean
+  )
+}
 
 object UserProgressQueries {
 
