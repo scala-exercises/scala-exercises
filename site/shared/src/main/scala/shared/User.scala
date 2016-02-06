@@ -11,3 +11,13 @@ case class User(
   githubUrl:  String,
   email:      String
 )
+
+case class UserProgress(
+  id:          Long,
+  userId:      Long,
+  libraryName: String,
+  sectionName: String,
+  method:      String,
+  args:        Option[String],
+  succeeded:   Option[Boolean] = Some(false)
+)
