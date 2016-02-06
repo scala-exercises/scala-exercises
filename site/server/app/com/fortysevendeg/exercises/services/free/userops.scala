@@ -2,14 +2,13 @@ package com.fortysevendeg.exercises.services.free
 
 import scala.language.higherKinds
 
-import cats.data.Xor
 import cats.free.Free
 import cats.free.Inject
 
 import shared.User
 import com.fortysevendeg.exercises.models.UserCreation
 
-/** Exercise Ops GADT
+/** Users Ops GADT
   */
 sealed trait UserOp[A]
 final case class GetUsers() extends UserOp[List[User]]

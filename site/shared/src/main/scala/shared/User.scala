@@ -19,5 +19,5 @@ case class UserProgress(
   sectionName: String,
   method:      String,
   args:        Option[String],
-  succeeded:   Option[Boolean] = Some(false)
+  succeeded:   Boolean
 )
