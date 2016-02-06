@@ -30,7 +30,7 @@ class DocExtractionGlobalSpec extends FunSpec with Matchers {
 
     it("should find all doc comments on classes and objects") {
 
-      val res = new DocCommentFinder().findAll(code :: Nil)
+      val res = new SourceTextExtraction().extractAllComments(code :: Nil)
         .map { case (k, v) ⇒ k.mkString(".") → v }
 
       res should equal(Map(

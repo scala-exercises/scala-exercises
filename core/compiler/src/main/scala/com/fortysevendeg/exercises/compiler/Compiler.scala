@@ -19,14 +19,14 @@ object CompilerJava {
 
 case class Compiler() {
 
-  lazy val docCommentFinder = new DocCommentFinder()
+  lazy val sourceTextExtractor = new SourceTextExtraction()
 
   def compile(library: exercise.Library, sources: List[String], targetPackage: String) = {
 
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
-    val internal = CompilerInternal(mirror, docCommentFinder.findAll(sources))
+    val internal = CompilerInternal(mirror, sourceTextExtractor.extractAll(sources))
 
     case class LibraryInfo(
       symbol:   ClassSymbol,
@@ -42,7 +42,8 @@ case class Compiler() {
 
     case class ExerciseInfo(
       symbol:  MethodSymbol,
-      comment: DocParser.ParsedExerciseComment
+      comment: DocParser.ParsedExerciseComment,
+      code:    String
     )
 
     def enhanceDocError(symbol: Symbol)(error: String) =
@@ -87,9 +88,11 @@ case class Compiler() {
     ) = for {
       comment ← (internal.resolveComment(symbol) >>= DocParser.parseExerciseDocComment)
         .leftMap(enhanceDocError(symbol))
+      code ← internal.resolveMethodBody(symbol)
     } yield ExerciseInfo(
       symbol = symbol,
-      comment = comment
+      comment = comment,
+      code = code
     )
 
     // keeping this, as it's very useful for debugging
@@ -125,7 +128,7 @@ case class Compiler() {
                 treeGen.makeExercise(
                   name = exerciseInfo.comment.name,
                   description = exerciseInfo.comment.description,
-                  code = Some("// TODO (compiler support)!"),
+                  code = Some(exerciseInfo.code),
                   explanation = exerciseInfo.comment.explanation
                 )
               }.unzip
@@ -160,7 +163,10 @@ case class Compiler() {
 
   }
 
-  private case class CompilerInternal(mirror: ru.Mirror, docComments: Map[List[String], String]) {
+  private case class CompilerInternal(
+      mirror:          ru.Mirror,
+      sourceExtracted: SourceTextExtraction#Extracted
+  ) {
     import mirror.universe._
 
     def instanceToClassSymbol(instance: AnyRef) =
@@ -170,8 +176,16 @@ case class Compiler() {
     def resolveComment(symbol: Symbol): Xor[String, String] = {
       val path = symbolToPath(symbol)
       Xor.fromOption(
-        docComments.get(path),
+        sourceExtracted.comments.get(path),
         s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
+      )
+    }
+
+    def resolveMethodBody(symbol: Symbol): Xor[String, String] = {
+      val path = symbolToPath(symbol)
+      Xor.fromOption(
+        sourceExtracted.methodBodies.get(path).map(_.code),
+        s"""Unable to retrieve code for method ${path.mkString(".")}"""
       )
     }
 

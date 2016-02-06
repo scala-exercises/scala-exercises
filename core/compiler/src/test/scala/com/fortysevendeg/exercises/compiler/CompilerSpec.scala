@@ -31,10 +31,14 @@ class CompilerSpec extends FunSpec with Matchers {
         */
       object Section1 extends exercise.Section {
         /** This is example exercise 1! */
-        def example1() { }
+        def example1() = { 1 }
 
         /** This is example exercise 2! */
-        def example2() { }
+        def example2() = {
+          println("this is some code!")
+          println("does it work?")
+          (5 + 500)
+        }
       }
       """
 
@@ -45,9 +49,7 @@ class CompilerSpec extends FunSpec with Matchers {
         .asInstanceOf[exercise.Library]
 
       val res = Compiler().compile(library, code :: Nil, "sample")
-
       assert(res.isRight)
-
     }
   }
 
