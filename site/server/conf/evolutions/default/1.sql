@@ -1,7 +1,7 @@
 # --- !Ups
 
-CREATE TABLE User (
-    id bigint primary key auto_increment,
+CREATE TABLE "User" (
+    id serial primary key,
     login varchar(255) unique not null,
     name varchar(255) not null,
     githubId varchar(255) not null,
@@ -12,4 +12,4 @@ CREATE TABLE User (
 
 # --- !Downs
 
-DROP TABLE User;
+DROP TABLE "User";
