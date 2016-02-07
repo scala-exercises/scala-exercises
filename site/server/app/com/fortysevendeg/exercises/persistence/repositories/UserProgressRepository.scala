@@ -1,6 +1,6 @@
 package com.fortysevendeg.exercises.persistence.repositories
 
-import com.fortysevendeg.exercises.persistence.PersistenceModule$
+import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
 import doobie.imports.ConnectionIO
 import shared.UserProgress
