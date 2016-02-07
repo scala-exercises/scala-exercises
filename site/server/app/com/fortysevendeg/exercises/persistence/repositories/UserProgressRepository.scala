@@ -27,7 +27,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceImpl) extend
     val SaveUserProgress.Request(userId, libraryName, sectionName, method, args, succeeded) = request
 
     findByUserId(userId) flatMap {
-      case _@ None ⇒
+      case None ⇒
         persistence
           .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Boolean), UserProgress](
             UserProgressQueries.insert,
