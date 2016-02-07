@@ -1,5 +1,7 @@
 package services
 
+import play.api.Logger
+
 import com.fortysevendeg.exercises.Exercises
 
 import scalaz.\/
@@ -11,14 +13,15 @@ object ExercisesService extends RuntimeSharedConversions {
     lazy val (errors, libraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   }
 
-  def libraries: List[shared.Library] = {
+  def libraries: List[shared.Library] =
     internal.libraries.map(convertLibrary)
-  }
 
   def section(libraryName: String, name: String): List[shared.Section] = {
     internal.libraries.find(_.name == libraryName) match {
       case Some(library) ⇒ library.sections.map(convertSection)
-      case None          ⇒ ??? // TODO: handle error scenario
+      case None ⇒
+        Logger.warn(s"Unable to find exercise $name in library $libraryName")
+        Nil
     }
   }
 

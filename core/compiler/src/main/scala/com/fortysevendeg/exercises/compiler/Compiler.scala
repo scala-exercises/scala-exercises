@@ -10,10 +10,10 @@ import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 
-object CompilerJava {
-  def compile(library: exercise.Library, sources: Array[String], targetPackage: String): String = {
-    Compiler().compile(library, sources.toList, targetPackage)
-      .fold(error ⇒ throw new Exception(error), `🍺` ⇒ `🍺`)
+class CompilerJava {
+  def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String] = {
+    Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, targetPackage)
+      .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
   }
 }
 
@@ -118,7 +118,7 @@ case class Compiler() {
 
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)
 
-    def generateTree(libraryInfo: LibraryInfo): Tree = {
+    def generateTree(libraryInfo: LibraryInfo): (TermName, Tree) = {
 
       val (sectionTerms, sectionAndExerciseTrees) =
         libraryInfo.sections.map { sectionInfo ⇒
@@ -150,7 +150,7 @@ case class Compiler() {
         sectionTerms = sectionTerms
       )
 
-      treeGen.makePackage(
+      libraryTerm → treeGen.makePackage(
         packageName = targetPackage,
         trees = libraryTree :: sectionAndExerciseTrees.flatten
       )
@@ -159,7 +159,7 @@ case class Compiler() {
 
     maybeMakeLibraryInfo(library)
       .map(generateTree)
-      .map(showCode(_))
+      .map { case (TermName(kname), v) ⇒ s"$targetPackage.$kname" → showCode(v) }
 
   }
 
@@ -190,29 +190,27 @@ case class Compiler() {
     }
 
     def symbolToPath(symbol: Symbol): List[String] = {
-      def process(symbol: Symbol): List[Name] = {
-        val owner = symbol.owner
-        symbol.name match {
-          case TypeName(`EMPTY_PACKAGE_NAME_STRING`) ⇒ Nil
-          case TypeName(`ROOTPKG_STRING`)            ⇒ Nil
-          case _ if symbol != owner                  ⇒ symbol.name :: process(owner)
-          case _                                     ⇒ Nil
+      def process(symbol: Symbol): List[String] = {
+        lazy val owner = symbol.owner
+        unapplyRawName(symbol.name) match {
+          case `ROOT`                      ⇒ Nil
+          case `EMPTY_PACKAGE_NAME_STRING` ⇒ Nil
+          case `ROOTPKG_STRING`            ⇒ Nil
+          case value if symbol != owner    ⇒ value :: process(owner)
+          case _                           ⇒ Nil
         }
       }
-      process(symbol).reverse.collect {
-        case TermName(value) ⇒ value
-        case TypeName(value) ⇒ value
-      }
+      process(symbol).reverse
     }
 
-    // Not positive why I had to do this...
-    private lazy val EMPTY_PACKAGE_NAME_STRING = termNames.EMPTY_PACKAGE_NAME match {
+    private def unapplyRawName(name: Name): String = name match {
       case TermName(value) ⇒ value
+      case TypeName(value) ⇒ value
     }
 
-    private lazy val ROOTPKG_STRING = termNames.ROOTPKG match {
-      case TermName(value) ⇒ value
-    }
+    private lazy val EMPTY_PACKAGE_NAME_STRING = unapplyRawName(termNames.EMPTY_PACKAGE_NAME)
+    private lazy val ROOTPKG_STRING = unapplyRawName(termNames.ROOTPKG)
+    private lazy val ROOT = "<root>" // can't find an accessible constant for this
 
   }
 

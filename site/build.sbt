@@ -99,14 +99,13 @@ lazy val sharedJs = shared.js
 // Locally bundled exercise content projects
 
 lazy val content = (project in file("content"))
-  .dependsOn(sharedJvm)
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "definitions"))
+  .dependsOn(ProjectRef(file("../core"), "definitions") % "compile-exercises-source")
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
-      "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalaz" %% "scalaz-core" % "7.1.4",
+      "org.scalatest" %% "scalatest" % "2.2.4"
     )
   )

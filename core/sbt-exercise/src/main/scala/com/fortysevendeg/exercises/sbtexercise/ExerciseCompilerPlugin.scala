@@ -15,7 +15,9 @@ import java.net.URLClassLoader
 
 import cats._
 import cats.data.Xor
+import cats.std.all._
 import cats.syntax.flatMap._
+import cats.syntax.traverse._
 
 object ExerciseCompilerPlugin extends AutoPlugin {
   import Def.Initialize
@@ -29,7 +31,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   val CompileExercises = config("compile")
 
-  type PreGenEx = Seq[String]
+  type PreGenEx = List[(String, String)]
   val preGenEx = TaskKey[PreGenEx]("pregen-exercises")
 
   object autoImport {
@@ -39,111 +41,104 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   /** Given an Analysis output from a compile run, this will
     * identify all modules implementing `exercise.Library`.
     */
-  def discoverLibraries(analysis: inc.Analysis): Seq[String] =
+  private def discoverLibraries(analysis: inc.Analysis): Seq[String] =
     Discovery(Set("exercise.Library"), Set.empty)(Tests.allDefs(analysis))
       .collect({
         case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
       }).sorted
 
+  private def discoverSections(analysis: inc.Analysis): Seq[String] =
+    Discovery(Set("exercise.Section"), Set.empty)(Tests.allDefs(analysis))
+      .collect({
+        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
+      }).sorted
+
+  private def catching[A](f: ⇒ A)(msg: ⇒ String) =
+    Xor.catchNonFatal(f).leftMap(_ ⇒ msg)
+
+  private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
+  private type COMPILER = {
+    def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String]
+  }
+
   def preGenExTask = Def.task {
     val log = streams.value.log
-    log.warn("doing pregen task!")
+    log.info("Compiling exercises")
     lazy val analysisIn = (compile in CompileExercisesSource).value
 
-    val libraryNames = discoverLibraries(analysisIn)
+    lazy val libraryNames = discoverLibraries(analysisIn)
+    lazy val sectionNames = discoverSections(analysisIn)
 
     val nativeTmp = taskTemporaryDirectory.value
-    val instance = scalaInstance.value
-    val classpath = Attributed.data((fullClasspath in CompileExercisesSource).value)
-    val loader = ClasspathUtilities.makeLoader(classpath, instance, nativeTmp)
+    val libraryClasspath = Attributed.data((fullClasspath in CompileExercisesSource).value)
+    val libraryLoader = ClasspathUtilities.makeLoader(libraryClasspath, scalaInstance.value, nativeTmp)
 
-    def catching[A](f: ⇒ A)(msg: ⇒ String) =
-      Xor.catchNonFatal(f).leftMap(_ ⇒ msg)
+    val compilerLoader = ClasspathUtilities.toLoader(
+      Meta.compilerClasspath,
+      libraryLoader,
+      ClasspathUtilities.createClasspathResources(
+        appPaths = Meta.compilerClasspath,
+        bootPaths = Nil
+      )
+    )
 
-    val foo = libraryNames.map { name ⇒
+    // this desperately needs to be cleaned up!
+    val result = for {
+      compilerClass ← catching(compilerLoader.loadClass(COMPILER_CLASS))("Unable to find exercise compiler class")
+      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])("Unable to create instance of exercise compiler")
+      libraries ← libraryNames
+        .map { name ⇒
+          for {
+            loadedClass ← catching(Class.forName(name + "$", true, libraryLoader))(s"${name} not found")
+            loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
+          } yield loadedModule
+        }
+        .toList
+        .sequenceU
+      result ← libraries.map { library ⇒
+        Xor.catchNonFatal(
+          compiler.compile(
+          library,
+          (libraryNames ++ sectionNames).toSet.flatMap(analysisIn.relations.definesClass)
+          .map(file ⇒ IO.read(file)).toArray,
+          "defaultLib"
+        ).toList
+        ).leftMap(_.getMessage).flatMap {
+          _ match {
+            case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
+            case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler")
+          }
+        }
+      }
+        .sequenceU
+    } yield result
 
-      val module = for {
-        loadedClass ← catching(Class.forName(name, true, loader))(s"${name} not found")
-        loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
-      } yield loadedModule
-
-      println("MODULE " + module)
-    }
-
-    println(foo)
-    log.warn("FOO " + foo)
-
-
-    libraryNames
+    result.fold(
+      errorMessage ⇒ throw new Exception(errorMessage), { value ⇒ value }
+    )
   }
 
   def generateExerciseSourcesTask = Def.task {
     val log = streams.value.log
-
     lazy val preGen = preGenEx.value
-
-    log.warn("Pregen info!")
-    log.warn("> " + preGen)
-
     val dir = (sourceManaged in CompileExercises).value
 
-    val file = dir / "demo" / "Test.scala"
-    IO.write(file, """
-      import com.fortysevendeg.exercises._
-      package foo {
-      object libFoo extends Library {
-        def name: String = "Foo"
-        def description: String = "This is my silly library"
-        def color: String = "blue"
-        def sections: List[Section] =
-          DefaultSection(
-            name = "Section 1",
-            description = Some("Description of Section 1"),
-            exercises = DefaultExercise[Unit](
-              name = Some("Exercise 1"),
-              description = Some("Description of Exercies 1"),
-              code = Some("object HelloWorld extends App {\n  println(\"hello world!\")\n}"),
-              explanation = Some("Go away!")
-            ) :: Nil
-          ) ::
-          DefaultSection(
-            name = "Section 2",
-            description = Some("Description of Section 2"),
-            exercises = Nil
-          ) ::
-          DefaultSection(
-            name = "Section 3",
-            description = Some("Description of Section 3"),
-            exercises = Nil
-          ) ::
-          Nil
-      }
-      object libBar extends Library {
-        def name: String = "Bar"
-        def description: String = "Hello, world?"
-        def color: String = "cyan"
-        def sections: List[Section] =  Nil
-      }
-      }
-      """)
-    Seq(file)
+    preGen.map {
+      case (name, code) ⇒
+        val file = dir / (name.replace(".", "/") + ".scala")
+        IO.write(file, code)
+        log.info(s"Generated library at $file")
+        file
+    }
   }
 
   def generateExerciseDescriptorTask = Def.task {
     val log = streams.value.log
-
-    lazy val preGen = preGenEx.value
-
-    log.warn("Pregen info!")
-    log.warn("> " + preGen)
-
-    val qualifiedLibraryInstancies =
-      "foo.libFoo$" :: "foo.libBar$" :: Nil
-
+    val preGen = preGenEx.value
+    val qualifiedLibraryInstancies = preGen.map(_._1 + "$")
     val dir = (resourceManaged in CompileExercises).value
     val resourceFile = dir / "scala-exercises" / "library.47"
     IO.write(resourceFile, qualifiedLibraryInstancies.mkString("\n"))
-
     Seq(resourceFile)
   }
 
