@@ -17,8 +17,12 @@ object BuildCommon extends AutoPlugin {
   def baseSettings = Seq(
     organization    := "com.47deg",
     version         := "0.0.0-SNAPSHOT",
-    scalaVersion    <<= (sbtPlugin) { isPlugin => if (isPlugin) "2.10.5" else "2.11.7" },
-    scalacOptions   ++= Seq("-deprecation", "-feature", "-unchecked", "-encoding", "utf8", "-Ywarn-unused-import"),
+    scalaVersion    := { if (!sbtPlugin.value) "2.11.7" else scalaVersion.value },
+    scalacOptions   ++= Seq("-deprecation", "-feature", "-unchecked", "-encoding", "utf8"),
+    scalacOptions   := {
+      if (!sbtPlugin.value) "-Ywarn-unused-import" +: scalacOptions.value
+      else scalacOptions.value
+    },
     javacOptions    ++= Seq("-encoding", "UTF-8", "-Xlint:-options")
   ) ++ Seq(
     scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
@@ -34,7 +38,6 @@ object BuildCommon extends AutoPlugin {
       .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
   )
-
 
   // `WARTING=false sbt` to drop into SBT w/ wart checking off
   def warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
