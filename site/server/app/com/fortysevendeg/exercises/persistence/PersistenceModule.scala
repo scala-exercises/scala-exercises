@@ -6,7 +6,7 @@ import shapeless.HNil
 import scala.language.higherKinds
 import scalaz.Foldable
 
-class PersistenceImpl {
+class PersistenceModule {
 
   def fetchList[K](sql: String)(implicit ev: Composite[K]): ConnectionIO[List[K]] =
     Query[HNil, K](sql).toQuery0(HNil).to[List]
@@ -53,7 +53,7 @@ class PersistenceImpl {
 
 }
 
-object PersistenceImpl {
+object PersistenceModule {
 
-  implicit def persistenceImpl: PersistenceImpl = new PersistenceImpl
+  implicit def persistenceImpl: PersistenceModule = new PersistenceModule
 }

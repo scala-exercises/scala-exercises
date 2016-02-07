@@ -1,6 +1,6 @@
 package com.fortysevendeg.exercises.persistence.repositories
 
-import com.fortysevendeg.exercises.persistence.PersistenceImpl
+import com.fortysevendeg.exercises.persistence.PersistenceModule$
 import com.fortysevendeg.exercises.persistence.domain._
 import doobie.imports.ConnectionIO
 import shared.UserProgress
@@ -18,7 +18,7 @@ trait UserProgressRepository {
   def update(userProgress: UserProgress): ConnectionIO[UserProgress]
 }
 
-class UserProgressDoobieRepository(implicit persistence: PersistenceImpl) extends UserProgressRepository {
+class UserProgressDoobieRepository(implicit persistence: PersistenceModule) extends UserProgressRepository {
 
   def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]] =
     persistence.fetchOption[Long, UserProgress](UserProgressQueries.findByUserId, userId)
@@ -56,5 +56,5 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceImpl) extend
 
 object UserProgressDoobieRepository {
 
-  implicit def instance(implicit persistence: PersistenceImpl) = new UserProgressDoobieRepository()
+  implicit def instance(implicit persistence: PersistenceModule) = new UserProgressDoobieRepository()
 }
