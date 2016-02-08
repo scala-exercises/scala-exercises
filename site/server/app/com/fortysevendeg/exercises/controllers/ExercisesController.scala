@@ -24,15 +24,9 @@ class ExercisesController(
   def evaluate(libraryName: String, sectionName: String) = Action(BodyParsers.parse.json) { request ⇒
     request.body.validate[ExerciseEvaluation] match {
       case JsSuccess(evaluation, _) ⇒
-
-        val eval = for {
-          exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
-          _ = updateUserProgress(request, evaluation, exerciseEvaluation.isRight)
-        } yield exerciseEvaluation
-
-        eval.runTask match {
-          case \/-(result) ⇒ Ok("Evaluation succeded : " + result)
-          case -\/(error)  ⇒ BadRequest("Evaluation failed : " + error)
+        exerciseOps.evaluate(evaluation).runTask match {
+          case Xor.Right(result) ⇒ Ok("Evaluation succeded : " + result)
+          case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
         }
       case JsError(errors) ⇒
         BadRequest(JsError.toJson(errors))
