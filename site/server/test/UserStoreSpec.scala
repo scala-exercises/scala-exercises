@@ -1,90 +1,92 @@
-import org.specs2.mutable.Specification
-import org.specs2.specification.BeforeEach
+import org.scalacheck._
+import org.scalacheck.Prop.{ throws, forAll }
+
+import org.scalacheck.Shapeless._
+
 import test.database.TestDatabase
 import doobie.imports._
 import scalaz.concurrent.Task
 import shared.User
 import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
 
-class UserStoreSpec extends Specification with BeforeEach {
+class UserStoreSpec extends Properties("UserDoobieStore") {
+  // User creation generator
+  implicitly[Arbitrary[UserCreation.Request]]
+
+  val newUserGen = for {
+    user ← Arbitrary.arbitrary[UserCreation.Request]
+    login ← Gen.identifier
+  } yield user.copy(login = login)
+
+  // Test database setup
   val db = TestDatabase.create
   TestDatabase.update(db)
 
   val transactor: Transactor[Task] = TestDatabase.transactor(db)
   import transactor.yolo._
 
-  def before = UserDoobieStore.deleteAll.quick.run
+  // Properties
+  property("new users can be retrieved") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
 
-  def newUser(
-    login:      String = "47deg",
-    name:       String = "47 degrees",
-    githubId:   String = "47deg",
-    pictureUrl: String = "http://placekitten.com/50/50",
-    githubUrl:  String = "http://github.com/47deg",
-    email:      String = "hi@47deg.com"
-  ): UserCreation.Request = {
-    UserCreation.Request(login, name, githubId, pictureUrl, githubUrl, email)
+    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption.get
+    storedUser == newUser.asUser(storedUser.id)
   }
 
-  "UserDoobieStore" should {
-    "create a new User and retrieve it afterwards" in {
-      val aUser = newUser()
-      val storedUser = UserDoobieStore.create(aUser).transact(transactor).run.toOption.get
-      storedUser must beEqualTo(aUser.asUser(storedUser.id))
-    }
+  property("users can be retrieved given their login") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
 
-    "query users by login" in {
-      val aUser = newUser()
-      UserDoobieStore.create(aUser).quick.run
+    UserDoobieStore.create(newUser).quick.run
 
-      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      storedUser must beEqualTo(aUser.asUser(storedUser.id))
-    }
+    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get
+    storedUser == newUser.asUser(storedUser.id)
+  }
 
-    "query users by id" in {
-      val aUser = newUser()
-      UserDoobieStore.create(aUser).quick.run
+  property("users can be retrieved given their ID") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
 
-      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
+    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption.get
+    val userById = UserDoobieStore.getById(storedUser.id).transact(transactor).run.get
+    storedUser == userById
+  }
 
-      storedUser must beEqualTo(aUser.asUser(storedUser.id))
-    }
+  property("users can be deleted") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
 
-    "delete users" in {
-      val aUser = newUser()
-      UserDoobieStore.create(aUser).quick.run
+    UserDoobieStore.create(newUser).quick.run
 
-      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      UserDoobieStore.delete(storedUser.id).quick.run
+    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get
+    UserDoobieStore.delete(storedUser.id).quick.run
 
-      UserDoobieStore.getByLogin(aUser.login).transact(transactor).run must beNone
-    }
+    UserDoobieStore.getByLogin(newUser.login).transact(transactor).run == None
+  }
 
-    "update users" in {
-      val aUser = newUser()
-      UserDoobieStore.create(aUser).quick.run
+  property("users can be updated") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
 
-      val storedUser = UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get
-      val modifiedUser = storedUser.copy(email = "alice+spam@example.com")
-      UserDoobieStore.update(modifiedUser).quick.run
+    UserDoobieStore.create(newUser).quick.run
 
-      UserDoobieStore.getByLogin(aUser.login).transact(transactor).run.get must beEqualTo(modifiedUser)
-    }
+    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get
+    val modifiedUser = storedUser.copy(email = "alice+spam@example.com")
+    UserDoobieStore.update(modifiedUser).quick.run
 
-    "get or create users doesn't duplicate users with the same login" in {
-      val aUser = newUser()
-      UserDoobieStore.create(aUser).quick.run
-      UserDoobieStore.getOrCreate(aUser).quick.run
+    UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get == modifiedUser
+  }
 
-      UserDoobieStore.all.transact(transactor).run.length must beEqualTo(1)
-    }
+  property("get or create users doesn't duplicate users with the same login") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
 
-    "get or create users creates the user when not found" in {
-      val aUser = newUser()
-      UserDoobieStore.getOrCreate(aUser).quick.run
+    UserDoobieStore.create(newUser).quick.run
+    UserDoobieStore.getOrCreate(newUser).quick.run
 
-      UserDoobieStore.all.transact(transactor).run.length must beEqualTo(1)
-    }
+    UserDoobieStore.all.transact(transactor).run.length == 1
+  }
+
+  property("get or create creates the user when not found") = forAll(newUserGen) { newUser ⇒
+    UserDoobieStore.deleteAll.quick.run
+
+    UserDoobieStore.getOrCreate(newUser).quick.run
+
+    UserDoobieStore.all.transact(transactor).run.length == 0
   }
 }
-
