@@ -6,7 +6,7 @@ import com.fortysevendeg.shared.free.ExerciseOp
 import com.fortysevendeg.exercises.services.free._
 
 object app {
-  type ExercisesAndUserOps[A] = Coproduct[ExerciseOp, UserOp, A]
-  type ExercisesApp[A] = Coproduct[DBResult, ExercisesAndUserOps, A]
+  type C01[A] = Coproduct[ExerciseOp, UserOp, A]
+  type ExercisesApp[A] = Coproduct[DBResult, C01, A]
 }
 

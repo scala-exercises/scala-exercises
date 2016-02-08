@@ -19,7 +19,7 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
     implicit
     A: ApplicativeError[F, Throwable],
     T: Transactor[F]
-  ): ExercisesAndUserOps ~> F =
+  ): C01 ~> F =
     exerciseOpsInterpreter or userOpsInterpreter
 
   def interpreters(
