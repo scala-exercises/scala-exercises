@@ -11,6 +11,14 @@ trait UserProgressRepository {
 
   def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]]
 
+  def findByExerciseVersion(
+    userId:      Long,
+    libraryName: String,
+    sectionName: String,
+    method:      String,
+    version:     Int
+  ): ConnectionIO[Option[UserProgress]]
+
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
 
   def delete(id: Long): ConnectionIO[Boolean]
@@ -20,13 +28,24 @@ trait UserProgressRepository {
 
 class UserProgressDoobieRepository(implicit persistence: PersistenceModule) extends UserProgressRepository {
 
-  def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]] =
+  override def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]] =
     persistence.fetchOption[Long, UserProgress](UserProgressQueries.findByUserId, userId)
 
-  def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
+  override def findByExerciseVersion(
+    userId:      Long,
+    libraryName: String,
+    sectionName: String,
+    method:      String,
+    version:     Int
+  ): ConnectionIO[Option[UserProgress]] =
+    persistence.fetchOption[(Long, String, String, String, Int), UserProgress](
+      UserProgressQueries.findByExerciseVersion, (userId, libraryName, sectionName, method, version)
+    )
+
+  override def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
     val SaveUserProgress.Request(userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = request
 
-    findByUserId(userId) flatMap {
+    findByExerciseVersion(userId, libraryName, sectionName, method, version) flatMap {
       case None ⇒
         persistence
           .updateWithGeneratedKeys[(Long, String, String, String, Int, String, Option[String], Boolean), UserProgress](
@@ -39,10 +58,10 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     }
   }
 
-  def delete(id: Long): ConnectionIO[Boolean] =
+  override def delete(id: Long): ConnectionIO[Boolean] =
     persistence.update(UserProgressQueries.deleteById) map (_ > 0)
 
-  def update(userProgress: UserProgress): ConnectionIO[UserProgress] = {
+  override def update(userProgress: UserProgress): ConnectionIO[UserProgress] = {
     val UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = userProgress
 
     persistence
