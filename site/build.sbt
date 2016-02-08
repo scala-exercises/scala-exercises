@@ -40,7 +40,8 @@ lazy val server = (project in file("server"))
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
-    pipelineStages := Seq(scalaJSProd, gzip))
+    pipelineStages := Seq(scalaJSProd, gzip),
+    herokuAppName in Compile := "scala-exercises")
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,
