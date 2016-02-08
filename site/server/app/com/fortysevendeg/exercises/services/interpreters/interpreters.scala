@@ -111,14 +111,14 @@ trait InterpreterInstances[F[_]] { self: Interpreters[F] ⇒
 
 /** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
 object ProdInterpreters extends Interpreters[Task] {
-  implicit def scalazToCatsDisjunction[A, B](disj: \/[A, B]): Xor[A, B] =
+  def scalazToCatsDisjunction[A, B](disj: \/[A, B]): Xor[A, B] =
     disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
 
   implicit class FreeOps[A](f: Free[ExercisesApp, A]) {
 
     /** Run this Free structure folding it's ops to an effect capturing task */
     def runTask(implicit T: Transactor[Task]): Throwable Xor A = {
-      f.foldMap(interpreters).attemptRun
+      scalazToCatsDisjunction(f.foldMap(interpreters).attemptRun)
     }
   }
 }
