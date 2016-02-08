@@ -6,7 +6,6 @@ import cats.free.Free
 import scalaz.\/
 import scalaz.concurrent.Task
 import com.fortysevendeg.shared.free._
-import com.fortysevendeg.exercises.models.UserDoobieStore
 
 import doobie.imports._
 
@@ -45,12 +44,14 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
 
   implicit def userOpsInterpreter(implicit A: ApplicativeError[F, Throwable], T: Transactor[F]): UserOp ~> F = new (UserOp ~> F) {
 
+    import com.fortysevendeg.exercises.models.UserDoobieStore._
+
     def apply[A](fa: UserOp[A]): F[A] = fa match {
-      case GetUsers()            ⇒ UserDoobieStore.all.transact(T)
-      case GetUserByLogin(login) ⇒ UserDoobieStore.getByLogin(login).transact(T)
-      case CreateUser(newUser)   ⇒ UserDoobieStore.create(newUser).transact(T)
-      case UpdateUser(user)      ⇒ UserDoobieStore.update(user).map(_.isDefined).transact(T)
-      case DeleteUser(user)      ⇒ UserDoobieStore.delete(user.id).transact(T)
+      case GetUsers()            ⇒ all.transact(T)
+      case GetUserByLogin(login) ⇒ getByLogin(login).transact(T)
+      case CreateUser(newUser)   ⇒ create(newUser).transact(T)
+      case UpdateUser(user)      ⇒ update(user).map(_.isDefined).transact(T)
+      case DeleteUser(user)      ⇒ delete(user.id).transact(T)
     }
   }
 
