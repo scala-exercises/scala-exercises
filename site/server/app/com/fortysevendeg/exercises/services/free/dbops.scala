@@ -1,7 +1,5 @@
 package com.fortysevendeg.exercises.services.free
 
-import scala.language.higherKinds
-
 import cats.free.Free
 import cats.free.Inject
 

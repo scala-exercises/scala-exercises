@@ -10,7 +10,6 @@ import shared._
 import org.clapper.classutil.{ ClassInfo, ClassFinder }
 import play.api.Play
 
-import scala.language.implicitConversions
 import scala.reflect.ClassTag
 import scala.reflect.runtime.{ universe ⇒ ru }
 import ru._

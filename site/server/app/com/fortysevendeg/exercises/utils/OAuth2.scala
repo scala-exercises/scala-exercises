@@ -32,8 +32,8 @@ object OAuth2 {
 
 class OAuth2Controller(
     implicit
-    transactor: Transactor[Task],
-    ws:         WSClient
+    T:  Transactor[Task],
+    ws: WSClient
 ) extends Controller {
 
   import OAuth2._
@@ -96,7 +96,7 @@ class OAuth2Controller(
               htmlUrl,
               email
             )
-          ).transact(transactor).run match {
+          ).transact(T).run match {
               case Xor.Right(_) ⇒ Redirect("/").withSession("oauth-token" → authToken, "user" → login)
               case Xor.Left(_)  ⇒ InternalServerError("Failed to save user information")
             }

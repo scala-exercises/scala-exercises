@@ -4,11 +4,14 @@ import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import com.fortysevendeg.exercises.services.free.{ UserProgressOps, UserOps }
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+
+
 import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports._
 import play.api.libs.json.{ JsValue, JsError, JsSuccess }
 import play.api.mvc.{ Request, Action, BodyParsers, Controller }
 import shared.ExerciseEvaluation
+import cats.data.Xor
 
 import scalaz.concurrent.Task
 import scalaz.{ -\/, \/- }
@@ -31,8 +34,8 @@ class ExercisesController(
         } yield exerciseEvaluation
 
         eval.runTask match {
-          case \/-(result) ⇒ Ok("Evaluation succeded : " + result)
-          case -\/(error)  ⇒ BadRequest("Evaluation failed : " + error)
+          case Xor.Right(result) ⇒ Ok("Evaluation succeded : " + result)
+          case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
         }
       case JsError(errors) ⇒
         BadRequest(JsError.toJson(errors))

@@ -1,7 +1,5 @@
 package com.fortysevendeg.exercises.controllers
 
-import scala.language.postfixOps
-
 import cats.Monad
 import cats.data.NonEmptyList
 import cats.data.Xor
@@ -19,8 +17,6 @@ import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
 import scalaz.concurrent.Task
-import scalaz.{ \/-, -\/ }
-
 import scala.concurrent.Future
 
 class ApplicationController(
@@ -44,21 +40,21 @@ class ApplicationController(
     } yield (libraries, user)
 
     ops.runTask match {
-      case \/-((libraries, user)) ⇒
+      case Xor.Right((libraries, user)) ⇒
         request.session.get("oauth-token") map { token ⇒
           Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries)))
         } getOrElse {
           Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
         }
-      case -\/(ex) ⇒ Future.successful(InternalServerError(ex.getMessage))
+      case Xor.Left(ex) ⇒ Future.successful(InternalServerError(ex.getMessage))
     }
   }
 
   def library(libraryName: String) = Action.async { implicit request ⇒
     Future {
       exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runTask match {
-        case \/-(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
-        case _                  ⇒ Ok("Library not found")
+        case Xor.Right(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
+        case _                        ⇒ Ok("Library not found")
       }
     }
   }
@@ -70,9 +66,9 @@ class ApplicationController(
         section ← exerciseOps.getSection(libraryName, sectionName)
       } yield (libraries.headOption, section)
       ops.runTask match {
-        case \/-((Some(l), Some(s))) ⇒ Ok(views.html.templates.library.index(l, s))
-        case \/-((Some(l), None))    ⇒ Redirect(l.sectionNames.head)
-        case _                       ⇒ Ok("Section not found")
+        case Xor.Right((Some(l), Some(s))) ⇒ Ok(views.html.templates.library.index(l, s))
+        case Xor.Right((Some(l), None))    ⇒ Redirect(l.sectionNames.head)
+        case _                             ⇒ Ok("Section not found")
       }
     }
   }

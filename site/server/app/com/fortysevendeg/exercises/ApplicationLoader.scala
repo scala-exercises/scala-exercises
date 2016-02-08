@@ -26,7 +26,7 @@ import scala.concurrent.Future
 import scalaz.\/
 import doobie.util.transactor.{ Transactor, DataSourceTransactor }
 
-class ExercisesApplicationLoader() extends ApplicationLoader {
+class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
     new Components(context).application
   }
