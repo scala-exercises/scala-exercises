@@ -25,17 +25,18 @@ object UserProgressQueries {
 
   val allFields = List("userId", "libraryName", "sectionName", "method", "version", "exerciseType", "args", "succeeded")
 
-  val findByUserId =
-    """
-          SELECT id,
-          userId,
-          libraryName,
-          sectionName,
-          method,
-          args,
-          succeeded
+  private[this] val commonFindBy =
+    s"""
+          SELECT
+          ${allFields.mkString(", ")}
           FROM UserProgress
-          WHERE userId = ?"""
+          WHERE """
+
+  val findByUserId =
+    s"""$commonFindBy userId = ?"""
+
+  val findByExerciseVersion =
+    s"""$commonFindBy userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
 
   val update =
     """
@@ -43,14 +44,16 @@ object UserProgressQueries {
           SET libraryName = ?,
           sectionName = ?,
           method = ?,
+          version = ?,
+          exerciseType = ?,
           args = ?,
           succeeded = ?
           WHERE id = ?
     """
 
   val insert =
-    """
-          INSERT INTO UserProgress(userId, libraryName, sectionName, method, args, succeeded)
+    s"""
+          INSERT INTO UserProgress(${allFields.mkString(", ")})
           VALUES(?, ?, ?, ?, ?, ?)
     """
 
