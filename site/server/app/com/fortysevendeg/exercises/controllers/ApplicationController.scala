@@ -1,7 +1,5 @@
 package com.fortysevendeg.exercises.controllers
 
-import scala.language.postfixOps
-
 import cats.Monad
 import cats.data.NonEmptyList
 import cats.data.Xor

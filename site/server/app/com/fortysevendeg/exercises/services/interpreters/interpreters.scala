@@ -3,6 +3,13 @@ package com.fortysevendeg.exercises.services.interpreters
 import cats._
 import cats.free.Free
 
+import scalaz.\/
+import scalaz.concurrent.Task
+import com.fortysevendeg.shared.free._
+import com.fortysevendeg.exercises.models.UserDoobieStore
+
+import doobie.imports._
+
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.models.UserDoobieStore
 import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
