@@ -2,6 +2,8 @@
 package com.fortysevendeg.exercises
 package sbtexercise
 
+import scala.language.reflectiveCalls
+
 import sbt.{ `package` ⇒ _, _ }
 import sbt.Keys._
 import sbt.classpath.ClasspathUtilities
@@ -31,115 +33,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   val CompileExercises = config("compile")
 
-  type PreGenEx = List[(String, String)]
-  val preGenEx = TaskKey[PreGenEx]("pregen-exercises")
+  val generateExercises = TaskKey[List[(String, String)]]("pregen-exercises")
 
   object autoImport {
     def CompileExercises = ExerciseCompilerPlugin.CompileExercises
-  }
-
-  /** Given an Analysis output from a compile run, this will
-    * identify all modules implementing `exercise.Library`.
-    */
-  private def discoverLibraries(analysis: inc.Analysis): Seq[String] =
-    Discovery(Set("exercise.Library"), Set.empty)(Tests.allDefs(analysis))
-      .collect({
-        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
-      }).sorted
-
-  private def discoverSections(analysis: inc.Analysis): Seq[String] =
-    Discovery(Set("exercise.Section"), Set.empty)(Tests.allDefs(analysis))
-      .collect({
-        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
-      }).sorted
-
-  private def catching[A](f: ⇒ A)(msg: ⇒ String) =
-    Xor.catchNonFatal(f).leftMap(_ ⇒ msg)
-
-  private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
-  private type COMPILER = {
-    def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String]
-  }
-
-  def preGenExTask = Def.task {
-    val log = streams.value.log
-    log.info("Compiling exercises")
-    lazy val analysisIn = (compile in CompileExercisesSource).value
-
-    lazy val libraryNames = discoverLibraries(analysisIn)
-    lazy val sectionNames = discoverSections(analysisIn)
-
-    val nativeTmp = taskTemporaryDirectory.value
-    val libraryClasspath = Attributed.data((fullClasspath in CompileExercisesSource).value)
-    val libraryLoader = ClasspathUtilities.makeLoader(libraryClasspath, scalaInstance.value, nativeTmp)
-
-    val compilerLoader = ClasspathUtilities.toLoader(
-      Meta.compilerClasspath,
-      libraryLoader,
-      ClasspathUtilities.createClasspathResources(
-        appPaths = Meta.compilerClasspath,
-        bootPaths = Nil
-      )
-    )
-
-    // this desperately needs to be cleaned up!
-    val result = for {
-      compilerClass ← catching(compilerLoader.loadClass(COMPILER_CLASS))("Unable to find exercise compiler class")
-      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])("Unable to create instance of exercise compiler")
-      libraries ← libraryNames
-        .map { name ⇒
-          for {
-            loadedClass ← catching(Class.forName(name + "$", true, libraryLoader))(s"${name} not found")
-            loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
-          } yield loadedModule
-        }
-        .toList
-        .sequenceU
-      result ← libraries.map { library ⇒
-        Xor.catchNonFatal(
-          compiler.compile(
-          library,
-          (libraryNames ++ sectionNames).toSet.flatMap(analysisIn.relations.definesClass)
-          .map(file ⇒ IO.read(file)).toArray,
-          "defaultLib"
-        ).toList
-        ).leftMap(_.getMessage).flatMap {
-          _ match {
-            case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
-            case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler")
-          }
-        }
-      }
-        .sequenceU
-    } yield result
-
-    result.fold(
-      errorMessage ⇒ throw new Exception(errorMessage), { value ⇒ value }
-    )
-  }
-
-  def generateExerciseSourcesTask = Def.task {
-    val log = streams.value.log
-    lazy val preGen = preGenEx.value
-    val dir = (sourceManaged in CompileExercises).value
-
-    preGen.map {
-      case (name, code) ⇒
-        val file = dir / (name.replace(".", "/") + ".scala")
-        IO.write(file, code)
-        log.info(s"Generated library at $file")
-        file
-    }
-  }
-
-  def generateExerciseDescriptorTask = Def.task {
-    val log = streams.value.log
-    val preGen = preGenEx.value
-    val qualifiedLibraryInstancies = preGen.map(_._1 + "$")
-    val dir = (resourceManaged in CompileExercises).value
-    val resourceFile = dir / "scala-exercises" / "library.47"
-    IO.write(resourceFile, qualifiedLibraryInstancies.mkString("\n"))
-    Seq(resourceFile)
   }
 
   // format: OFF
@@ -173,7 +70,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       sourceGenerators <+= generateExerciseSourcesTask,
       resourceGenerators <+= generateExerciseDescriptorTask,
 
-      preGenEx <<= preGenExTask
+      generateExercises <<= generateExercisesTask
     )) ++
     inConfig(Compile)(
       // All your base are belong to us!! (take over standard compile)
@@ -203,5 +100,108 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     */
   private def reconfigureSub(key: SettingKey[File]): Initialize[File] =
     (key in ThisScope.copy(config = Global), configuration) { (src, conf) ⇒ src / "main" }
+
+  /** Given an Analysis output from a compile run, this will
+    * identify all modules implementing `exercise.Library`.
+    */
+  private def discoverLibraries(analysis: inc.Analysis): Seq[String] =
+    Discovery(Set("exercise.Library"), Set.empty)(Tests.allDefs(analysis))
+      .collect({
+        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
+      }).sorted
+
+  private def discoverSections(analysis: inc.Analysis): Seq[String] =
+    Discovery(Set("exercise.Section"), Set.empty)(Tests.allDefs(analysis))
+      .collect({
+        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
+      }).sorted
+
+  private def catching[A](f: ⇒ A)(msg: ⇒ String) =
+    Xor.catchNonFatal(f).leftMap(_ ⇒ msg)
+
+  // reflection is used to invoke a java-style interface to the exercise compiler
+  private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
+  private type COMPILER = {
+    def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String]
+  }
+
+  // worker task that invokes the exercise compiler
+  def generateExercisesTask = Def.task {
+    val log = streams.value.log
+    log.info("compiling scala exercises")
+
+    lazy val analysisIn = (compile in CompileExercisesSource).value
+
+    lazy val libraryNames = discoverLibraries(analysisIn)
+    lazy val sectionNames = discoverSections(analysisIn)
+
+    val libraryClasspath = Attributed.data((fullClasspath in CompileExercisesSource).value)
+
+    val loader = ClasspathUtilities.toLoader(
+      (Meta.compilerClasspath ++ libraryClasspath).distinct,
+      null,
+      ClasspathUtilities.createClasspathResources(
+        appPaths = Meta.compilerClasspath,
+        bootPaths = scalaInstance.value.jars
+      )
+    )
+
+    def loadLibraryModule(name: String) = for {
+      loadedClass ← catching(loader.loadClass(name + "$"))(s"${name} not found")
+      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
+    } yield loadedModule
+
+    def invokeCompiler(compiler: COMPILER, library: AnyRef): Xor[String, (String, String)] =
+      Xor.catchNonFatal {
+        val sourceCodes = (libraryNames ++ sectionNames).toSet
+          .flatMap(analysisIn.relations.definesClass)
+          .map(IO.read(_))
+
+        compiler.compile(
+          library = library,
+          sources = sourceCodes.toArray,
+          targetPackage = "defaultLib"
+        ).toList
+      } leftMap (_.getMessage) >>= {
+        _ match {
+          case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
+          case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler")
+        }
+      }
+
+    val result = for {
+      compilerClass ← catching(loader.loadClass(COMPILER_CLASS))("Unable to find exercise compiler class")
+      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])("Unable to create instance of exercise compiler")
+      libraries ← libraryNames.map(loadLibraryModule).toList.sequenceU
+      result ← libraries.map(invokeCompiler(compiler, _)).sequenceU
+    } yield result
+
+    result.fold(message ⇒ throw new Exception(message), { value ⇒ value })
+  }
+
+  // task responsible for outputting the source files
+  def generateExerciseSourcesTask = Def.task {
+    val log = streams.value.log
+    val generated = generateExercises.value
+    val dir = (sourceManaged in CompileExercises).value
+    generated.map {
+      case (name, code) ⇒
+        val file = dir / (name.replace(".", "/") + ".scala")
+        IO.write(file, code)
+        log.info(s"Generated library at $file")
+        file
+    }
+  }
+
+  // task responsible for outputting the exercise descriptor resource
+  def generateExerciseDescriptorTask = Def.task {
+    val log = streams.value.log
+    val generated = generateExercises.value
+    val qualifiedLibraryInstancies = generated.map(_._1 + "$")
+    val dir = (resourceManaged in CompileExercises).value
+    val resourceFile = dir / "scala-exercises" / "library.47"
+    IO.write(resourceFile, qualifiedLibraryInstancies.mkString("\n"))
+    Seq(resourceFile)
+  }
 
 }

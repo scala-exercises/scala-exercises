@@ -2,11 +2,15 @@ package com.fortysevendeg.exercises
 package compiler
 
 import scala.annotation.tailrec
+import scala.language.postfixOps
+
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc._
 import scala.tools.nsc.doc.{ Settings ⇒ _, _ }
 
 import cats._
+import cats.std.all._
+import cats.syntax.flatMap._
 import cats.syntax.semigroup._
 
 class SourceTextExtraction {
@@ -28,7 +32,7 @@ class SourceTextExtraction {
   def extractAll(sources: List[String]): Extracted = {
     new docGlobal.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
     val extractions = docGlobal.currentRun.units.map(_.body).map(boundExtractRaw)
-      .toSeq // only iterable once without this call
+      .toList // only iterable once without this call
 
     def nameToString(name: Name) = name match {
       case TermName(value) ⇒ value
@@ -36,25 +40,12 @@ class SourceTextExtraction {
     }
 
     Extracted(
-      comments = extractions.flatMap {
-        _.comments.map {
-          case (k, v) ⇒ k.collect {
-            case TermName(value) ⇒ value
-            case TypeName(value) ⇒ value
-          } → v.raw
-        }
-      }.toMap,
-      methodBodies = extractions.flatMap {
-        _.methodExprs.map {
-          case (k, v) ⇒
-            k.collect {
-              case TermName(value) ⇒ value
-              case TypeName(value) ⇒ value
-            } → {
-              new MethodBody(boundReadCode(v))
-            }
-        }
-      }.toMap
+      extractions >>= {
+        _.comments.map { kv ⇒ kv._1.map(nameToString) → kv._2.raw }
+      } toMap,
+      extractions >>= {
+        _.methodExprs.map { kv ⇒ kv._1.map(nameToString) → new MethodBody(boundReadCode(kv._2)) }
+      } toMap
     )
 
   }
