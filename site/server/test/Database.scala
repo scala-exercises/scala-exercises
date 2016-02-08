@@ -13,13 +13,12 @@ object TestDatabase {
   val testUsername = "sa"
   val testPassword = ""
 
-  def create: Database = {
+  def create: Database =
     Databases(
       driver = testDriver,
       url = testUrl,
       config = Map("user" → testUsername, "password" → testPassword)
     )
-  }
 
   def update(db: Database): Unit =
     Evolutions.applyEvolutions(db)
