@@ -13,11 +13,13 @@ case class User(
 )
 
 case class UserProgress(
-  id:          Long,
-  userId:      Long,
-  libraryName: String,
-  sectionName: String,
-  method:      String,
-  args:        Option[String],
-  succeeded:   Boolean
+  id:           Long,
+  userId:       Long,
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
+  exerciseType: String         = "Other",
+  args:         Option[String],
+  succeeded:    Boolean
 )

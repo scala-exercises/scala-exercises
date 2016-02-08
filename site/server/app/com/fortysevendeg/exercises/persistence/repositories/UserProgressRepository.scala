@@ -24,15 +24,15 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     persistence.fetchOption[Long, UserProgress](UserProgressQueries.findByUserId, userId)
 
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
-    val SaveUserProgress.Request(userId, libraryName, sectionName, method, args, succeeded) = request
+    val SaveUserProgress.Request(userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = request
 
     findByUserId(userId) flatMap {
       case None ⇒
         persistence
-          .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Boolean), UserProgress](
+          .updateWithGeneratedKeys[(Long, String, String, String, Int, String, Option[String], Boolean), UserProgress](
             UserProgressQueries.insert,
             UserProgressQueries.allFields,
-            (userId, libraryName, sectionName, method, args, succeeded)
+            (userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
           )
       case Some(userP) ⇒
         userP.point[ConnectionIO]
@@ -43,13 +43,13 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     persistence.update(UserProgressQueries.deleteById) map (_ > 0)
 
   def update(userProgress: UserProgress): ConnectionIO[UserProgress] = {
-    val UserProgress(id, userId, libraryName, sectionName, method, args, succeeded) = userProgress
+    val UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = userProgress
 
     persistence
-      .updateWithGeneratedKeys[(Long, String, String, String, Option[String], Boolean), UserProgress](
+      .updateWithGeneratedKeys[(Long, String, String, String, Int, String, Option[String], Boolean), UserProgress](
         UserProgressQueries.update,
         UserProgressQueries.allFields,
-        (userId, libraryName, sectionName, method, args, succeeded)
+        (userId, libraryName, sectionName, method, version, exerciseType, args, succeeded)
       )
   }
 }

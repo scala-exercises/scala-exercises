@@ -30,8 +30,10 @@ case class Exercise(
 /** Input params necessary to evaluate an exercise
   */
 case class ExerciseEvaluation(
-  libraryName: String,
-  sectionName: String,
-  method:      String,
-  args:        List[String]
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
+  exerciseType: String,
+  args:         List[String]
 )
