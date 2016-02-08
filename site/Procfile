@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/server -Dhttp.port=${PORT} ${JAVA_OPTS} -Dconfig.file=conf/prod.conf
+web: target/universal/stage/bin/server -Dhttp.port=${PORT} ${JAVA_OPTS}
