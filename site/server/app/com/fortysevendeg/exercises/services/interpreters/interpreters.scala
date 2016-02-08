@@ -19,21 +19,21 @@ import com.fortysevendeg.exercises.services.free._
 trait Interpreters[F[_]] extends InterpreterInstances[F] {
   def exerciseAndUserInterpreter(
     implicit
-    A: Applicative[F],
+    A: ApplicativeError[F, Throwable],
     T: Transactor[F]
   ): ExercisesAndUserOps ~> F =
     exerciseOpsInterpreter or userOpsInterpreter
 
   def interpreters(
     implicit
-    A: Applicative[F],
+    A: ApplicativeError[F, Throwable],
     T: Transactor[F]
   ): ExercisesApp ~> F =
     dbOpsInterpreter or exerciseAndUserInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def exerciseOpsInterpreter(implicit A: Applicative[F]): ExerciseOp ~> F = new (ExerciseOp ~> F) {
+  implicit def exerciseOpsInterpreter(implicit A: ApplicativeError[F, Throwable]): ExerciseOp ~> F = new (ExerciseOp ~> F) {
 
     import com.fortysevendeg.exercises.services.ExercisesService._
 
@@ -44,7 +44,7 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
     }
   }
 
-  implicit def userOpsInterpreter(implicit A: Applicative[F], T: Transactor[F]): UserOp ~> F = new (UserOp ~> F) {
+  implicit def userOpsInterpreter(implicit A: ApplicativeError[F, Throwable], T: Transactor[F]): UserOp ~> F = new (UserOp ~> F) {
 
     def apply[A](fa: UserOp[A]): F[A] = fa match {
       case GetUsers()            ⇒ UserDoobieStore.all.transact(T)
@@ -55,18 +55,41 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
     }
   }
 
-  implicit def dbOpsInterpreter(implicit A: Applicative[F]): DBResult ~> F = new (DBResult ~> F) {
+  implicit def dbOpsInterpreter(implicit A: ApplicativeError[F, Throwable]): DBResult ~> F = new (DBResult ~> F) {
 
     def apply[A](fa: DBResult[A]): F[A] = fa match {
-      case _ ⇒ ???
-      // case DBSuccess(value) ⇒ Task.now(value)
-      // case DBFailure(error) ⇒ Task.fail(error)
+      case DBSuccess(value) ⇒ A.pure(value)
+      case DBFailure(error) ⇒ A.raiseError(error)
     }
   }
 }
 
 trait InterpreterInstances[F[_]] { self: Interpreters[F] ⇒
-  implicit val taskMonad: Monad[Task] = new Monad[Task] {
+  implicit def idApplicativeError(
+    implicit
+    I: Applicative[Id]
+  ): ApplicativeError[Id, Throwable] = new ApplicativeError[Id, Throwable] {
+    override def pure[A](x: A): Id[A] = I.pure(x)
+
+    override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = I.ap(ff)(fa)
+
+    override def map[A, B](fa: Id[A])(f: Id[A ⇒ B]): Id[B] = I.map(fa)(f)
+
+    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = I.product(fa, fb)
+
+    override def raiseError[A](e: Throwable): Id[A] =
+      throw e
+
+    override def handleErrorWith[A](fa: Id[A])(f: Throwable ⇒ Id[A]): Id[A] = {
+      try {
+        fa
+      } catch {
+        case e: Exception ⇒ f(e)
+      }
+    }
+  }
+
+  implicit val taskMonad: Monad[Task] with ApplicativeError[Task, Throwable] = new Monad[Task] with ApplicativeError[Task, Throwable] {
 
     def pure[A](x: A): Task[A] = Task.now(x)
 
@@ -78,6 +101,12 @@ trait InterpreterInstances[F[_]] { self: Interpreters[F] ⇒
 
     override def pureEval[A](x: Eval[A]): Task[A] =
       Task.fork(Task.delay(x.value))
+
+    override def raiseError[A](e: Throwable): Task[A] =
+      Task.fail(e)
+
+    override def handleErrorWith[A](fa: Task[A])(f: Throwable ⇒ Task[A]): Task[A] =
+      fa.handleWith({ case x ⇒ f(x) })
   }
 }
 
