@@ -5,7 +5,6 @@ import cats._
 import cats.free.Free
 import scalaz.\/
 import scalaz.concurrent.Task
-import scala.language.higherKinds
 import com.fortysevendeg.shared.free._
 import com.fortysevendeg.exercises.models.UserDoobieStore
 

@@ -2,7 +2,6 @@ package com.fortysevendeg.exercises.services.free
 
 import cats.free.Free
 
-import scala.language.{ higherKinds, implicitConversions }
 import scalaz.concurrent.Task
 import scalaz.{ -\/, \/- }
 

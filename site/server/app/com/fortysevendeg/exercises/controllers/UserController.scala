@@ -1,7 +1,5 @@
 package com.fortysevendeg.exercises.controllers
 
-import scala.language.postfixOps
-
 import doobie.imports._
 import scalaz.concurrent.Task
 import play.api.libs.concurrent.Execution.Implicits.defaultContext

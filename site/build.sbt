@@ -7,6 +7,9 @@ import NativePackagerHelper._
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
 
+// Compiler options
+scalacOptions ++= Seq("-feature", "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps")
+
 // Common settings
 
 lazy val commonSettings = Seq(
