@@ -56,13 +56,11 @@ object UserDoobieStore extends UserStore {
   def create(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
     _ ← Queries.insert(user).run
     user ← getByLogin(user.login)
-  } yield if (user.isDefined) Xor.Right(user.get) else Xor.Left(UserCreation.DuplicateName)
+  } yield user.fold(Xor.Left(UserCreation.DuplicateName): UserCreation.Response)(u ⇒ Xor.Right(u))
 
   def getOrCreate(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
     maybeUser ← getByLogin(user.login)
-    theUser ← if (maybeUser.isDefined)
-      Xor.Right(maybeUser.get).point[ConnectionIO]
-    else create(user)
+    theUser ← maybeUser.fold(create(user): ConnectionIO[UserCreation.Response])(u ⇒ (Xor.Right(u): UserCreation.Response).point[ConnectionIO])
   } yield theUser
 
   def delete(id: Long): ConnectionIO[Boolean] =
