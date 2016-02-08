@@ -1,26 +1,24 @@
 package com.fortysevendeg.exercises.controllers
 
+import cats.data.Xor
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
-import com.fortysevendeg.exercises.services.free.{ UserProgressOps, UserOps }
+import com.fortysevendeg.shared.free.ExerciseOps
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
-
-import com.fortysevendeg.shared.free.ExerciseOps
+import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
+import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
 import doobie.imports._
-import play.api.libs.json.{ JsValue, JsError, JsSuccess }
-import play.api.mvc.{ Request, Action, BodyParsers, Controller }
+import play.api.libs.json.{ JsError, JsSuccess, JsValue }
+import play.api.mvc.{ Action, BodyParsers, Controller, Request }
 import shared.ExerciseEvaluation
-import cats.data.Xor
 
 import scalaz.concurrent.Task
-import scalaz.{ -\/, \/- }
 
 class ExercisesController(
     implicit
     exerciseOps:     ExerciseOps[ExercisesApp],
     userOps:         UserOps[ExercisesApp],
-    userProgressOps: UserProgressOps[UserAndUserProgressOps],
+    userProgressOps: UserProgressOps[ExercisesApp],
     T:               Transactor[Task]
 ) extends Controller with JsonFormats {
 

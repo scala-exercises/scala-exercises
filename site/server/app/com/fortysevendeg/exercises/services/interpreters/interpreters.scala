@@ -1,16 +1,9 @@
 package com.fortysevendeg.exercises.services.interpreters
 
-import cats.data.{ Coproduct, Xor }
 import cats._
+import cats.data.Xor
 import cats.free.Free
-import scalaz.\/
-import scalaz.concurrent.Task
-import com.fortysevendeg.shared.free._
-
-import doobie.imports._
-
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.models.UserDoobieStore
 import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
 import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.shared.free._
@@ -23,6 +16,7 @@ import scalaz.concurrent.Task
 /** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
   */
 trait Interpreters[F[_]] extends InterpreterInstances[F] {
+
   def exerciseAndUserInterpreter(
     implicit
     A: ApplicativeError[F, Throwable],
@@ -32,17 +26,24 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
 
   def userAndUserProgressInterpreter(
     implicit
-    A: Applicative[F],
+    A: ApplicativeError[F, Throwable],
     T: Transactor[F]
   ): C02 ~> F =
     userOpsInterpreter or userProgressOpsInterpreter
+
+  def allTogetherInterpreter(
+    implicit
+    A: ApplicativeError[F, Throwable],
+    T: Transactor[F]
+  ): C03 ~> F =
+    exerciseAndUserInterpreter or userAndUserProgressInterpreter
 
   def interpreters(
     implicit
     A: ApplicativeError[F, Throwable],
     T: Transactor[F]
   ): ExercisesApp ~> F =
-    dbOpsInterpreter or exerciseAndUserInterpreter
+    dbOpsInterpreter or allTogetherInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
@@ -72,7 +73,7 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
 
   implicit def userProgressOpsInterpreter(
     implicit
-    A: Applicative[F], T: Transactor[F]
+    A: ApplicativeError[F, Throwable], T: Transactor[F]
   ): UserProgressOp ~> F = new (UserProgressOp ~> F) {
 
     def apply[A](fa: UserProgressOp[A]): F[A] = fa match {

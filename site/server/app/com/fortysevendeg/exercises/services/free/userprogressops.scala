@@ -3,8 +3,6 @@ package com.fortysevendeg.exercises.services.free
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import shared.UserProgress
 
-import scala.language.higherKinds
-
 import cats.free.Free
 import cats.free.Inject
 
