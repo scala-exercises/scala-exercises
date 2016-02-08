@@ -18,24 +18,24 @@ class UserQueriesSpec extends Specification with AnalysisSpec {
   check(Queries.byId(47))
   check(Queries.insert(
     UserCreation.Request(
-      "47deg",
-      "47",
-      "47deg",
-      "http://placekitten.com/50/50",
-      "http://github.com/47deg",
-      "hello@47deg.com"
+      login = "47deg",
+      name = "47",
+      githubId = "47deg",
+      pictureUrl = "http://placekitten.com/50/50",
+      githubUrl = "http://github.com/47deg",
+      email = "hello@47deg.com"
     )
   ))
   check(Queries.deleteById(47))
   check(Queries.update(
     User(
-      47,
-      "47deg",
-      "47",
-      "47deg",
-      "http://placekitten.com/50/50",
-      "http://github.com/47deg",
-      "hello@47deg.com"
+      id = 47,
+      login = "47deg",
+      name = "47",
+      githubId = "47deg",
+      pictureUrl = "http://placekitten.com/50/50",
+      githubUrl = "http://github.com/47deg",
+      email = "hello@47deg.com"
     )
   ))
 }
