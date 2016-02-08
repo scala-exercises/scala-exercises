@@ -2,6 +2,7 @@ package com.fortysevendeg.exercises.controllers
 
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.utils.StringUtils.ExerciseType
 import com.fortysevendeg.shared.free.ExerciseOps
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
@@ -11,6 +12,7 @@ import doobie.imports._
 import play.api.libs.json.{ JsError, JsSuccess, JsValue }
 import play.api.mvc.{ Action, BodyParsers, Controller, Request }
 import shared.ExerciseEvaluation
+import com.fortysevendeg.exercises.utils.StringUtils.ExerciseType._
 
 import scalaz.concurrent.Task
 
@@ -55,6 +57,8 @@ class ExercisesController(
               libraryName = evaluation.libraryName,
               sectionName = evaluation.sectionName,
               method = evaluation.method,
+              version = evaluation.version,
+              exerciseType = ExerciseType fromString evaluation.exerciseType,
               args = evaluation.args.headOption map (_ ⇒ evaluation.args.mkString("[", ",", "]")),
               succeeded = success
             )

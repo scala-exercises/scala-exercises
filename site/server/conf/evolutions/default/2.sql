@@ -6,6 +6,8 @@ CREATE TABLE "UserProgress" (
     libraryName varchar(255) not null,
     sectionName varchar(255) not null,
     method varchar(255) not null,
+    version int not null,
+    exerciseType varchar(255) not null,
     args varchar(255),
     succeeded boolean,
 FOREIGN KEY (userId) REFERENCES "User" (id));
