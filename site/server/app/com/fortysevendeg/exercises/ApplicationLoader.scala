@@ -1,10 +1,11 @@
 package com.fortysevendeg.exercises
 
-import play.api._
+import com.fortysevendeg.exercises.controllers._
+import com.fortysevendeg.exercises.utils._
+import doobie.util.transactor.{ DataSourceTransactor, Transactor }
 import play.api.ApplicationLoader.Context
-import play.api.db.DBComponents
-import play.api.db.Database
-import play.api.db.HikariCPComponents
+import play.api._
+import play.api.db.{ DBComponents, HikariCPComponents }
 import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
 import play.api.routing.Router
@@ -18,13 +19,10 @@ import com.fortysevendeg.exercises.utils._
 import com.fortysevendeg.exercises.models.{ UserDoobieStore }
 
 import router.Routes
-import cats.Monad
-import cats.free._
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scalaz.concurrent.Task
 import scala.concurrent.Future
-import scalaz.\/
-import doobie.util.transactor.{ Transactor, DataSourceTransactor }
+import scalaz.concurrent.Task
 
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {

@@ -1,23 +1,20 @@
 package com.fortysevendeg.exercises.controllers
 
-import cats.Monad
-import cats.data.NonEmptyList
-import cats.data.Xor
-import cats.free.Free
-import com.fortysevendeg.shared.free.ExerciseOps
-import com.fortysevendeg.exercises.services.free.{ UserProgressOps, UserOps }
 import java.util.UUID
-import doobie.imports._
 
-import com.fortysevendeg.exercises.utils.OAuth2
-import play.api.routing.JavaScriptReverseRouter
-import play.api.mvc._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import cats.data.Xor
 import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.services.free.UserOps
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.utils.OAuth2
+import com.fortysevendeg.shared.free.ExerciseOps
+import doobie.imports._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc._
+import play.api.routing.JavaScriptReverseRouter
 
-import scalaz.concurrent.Task
 import scala.concurrent.Future
+import scalaz.concurrent.Task
 
 class ApplicationController(
     implicit

@@ -1,19 +1,16 @@
 package com.fortysevendeg.exercises.controllers
 
+import cats.data.Xor
+import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.services.free.UserOps
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 import doobie.imports._
-import scalaz.concurrent.Task
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import upickle._
-import cats.data.Xor
 
-import com.fortysevendeg.exercises.services.free.UserOps
-import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
-
-import scala.concurrent.Future
+import scalaz.concurrent.Task
 
 class UserController(
     implicit
