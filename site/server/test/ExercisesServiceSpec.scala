@@ -1,4 +1,5 @@
 import com.fortysevendeg.exercises.models._
+import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress.Other
 import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
@@ -11,6 +12,8 @@ class ExercisesServiceSpec extends Specification {
   val expectedLibrary = "stdlib"
   val expectedTestSection = "Extractors"
   val expectedTestExercise = "forAssigningValues"
+  val expectedVersion = 1
+  val expectedType = "Other"
   val expectedTestSuccesArgs = List("Chevy", "Camaro", "1978", "120")
   val expectedTestFailedArgs = List("a", "b", "1", "2")
 
@@ -40,6 +43,8 @@ class ExercisesServiceSpec extends Specification {
         libraryName = expectedLibrary,
         sectionName = expectedTestSection,
         method = expectedTestExercise,
+        version = expectedVersion,
+        exerciseType = expectedType,
         args = expectedTestSuccesArgs
       )).isRight must beTrue
     }
@@ -49,6 +54,8 @@ class ExercisesServiceSpec extends Specification {
         libraryName = expectedLibrary,
         sectionName = expectedTestSection,
         method = expectedTestExercise,
+        version = expectedVersion,
+        exerciseType = expectedType,
         args = expectedTestFailedArgs
       )).isLeft must beTrue
     }
