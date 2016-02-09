@@ -1,15 +1,15 @@
 # --- !Ups
 
-CREATE TABLE User (
-    id bigint primary key auto_increment,
-    login varchar(255) unique not null,
-    name varchar(255) not null,
-    githubId varchar(255) not null,
-    pictureUrl varchar(255) not null,
-    githubUrl varchar(255) not null,
-    email varchar(255) not null
+CREATE TABLE users (
+    id bigserial primary key,
+    login text UNIQUE NOT NULL,
+    name text NOT NULL,
+    githubId text NOT NULL,
+    pictureUrl text NOT NULL,
+    githubUrl text NOT NULL,
+    email text NOT NULL
 );
 
 # --- !Downs
 
-DROP TABLE User;
+DROP TABLE users;
