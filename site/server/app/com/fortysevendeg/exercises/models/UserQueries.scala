@@ -8,34 +8,34 @@ import com.fortysevendeg.exercises.models.UserCreation
 object Queries {
   val all = sql"""
 SELECT id, login, name, githubId, pictureUrl, githubUrl, email
-FROM User
+FROM "User"
 """.query[User]
 
   def byLogin(login: String) =
     sql"""
-SELECT id, login, name, githubId, pictureUrl, githubUrl, email
-FROM User
+SELECT u.id, u.login, u.name, u.githubId, u.pictureUrl, u.githubUrl, u.email
+FROM "User" u
 WHERE login = $login
 """.query[User]
 
   def byId(id: Long) =
     sql"""
 SELECT id, login, name, githubId, pictureUrl, githubUrl, email
-FROM User
+FROM "User"
 WHERE id = $id
 """.query[User]
 
   def insert(user: UserCreation.Request) = {
     val UserCreation.Request(login, name, githubId, pictureUrl, githubUrl, email) = user
     sql"""
-INSERT INTO User (login, name, githubId, pictureUrl, githubUrl, email)
+INSERT INTO "User" (login, name, githubId, pictureUrl, githubUrl, email)
 VALUES ($login, $name, $githubId, $pictureUrl, $githubUrl, $email)
 """.update
   }
 
   def deleteById(id: Long) =
     sql"""
-DELETE FROM User
+DELETE FROM "User"
       WHERE id = $id
     """.update
 
@@ -46,13 +46,13 @@ DELETE FROM User
 
   def deleteAll =
     sql"""
-DELETE FROM User
+DELETE FROM "User"
     """.update
 
   def update(user: User) = {
     val User(id, _, name, githubId, pictureUrl, githubUrl, email) = user
     sql"""
-UPDATE User
+UPDATE "User"
 SET    name = $name,
        githubId = $githubId,
        pictureUrl = $pictureUrl,
