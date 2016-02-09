@@ -10,6 +10,15 @@ onLoad in Global := (Command.process("project server", _: State)) compose (onLoa
 // Compiler options
 scalacOptions ++= Seq("-feature", "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps")
 
+// Disable forking in CI
+fork in Test := (if (System.getenv("CONTINUOUS_INTEGRATION") == null) {
+  println("::> NOT IN CI")
+  true
+} else {
+  println("::> IN CI")
+  false
+})
+
 // Common settings
 
 lazy val commonSettings = Seq(
