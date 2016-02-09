@@ -29,7 +29,7 @@ object UserProgressQueries {
     s"""
           SELECT
           ${allFields.mkString(", ")}
-          FROM UserProgress
+          FROM \"UserProgress\"
           WHERE """
 
   val findByUserId =
@@ -40,7 +40,7 @@ object UserProgressQueries {
 
   val update =
     """
-          UPDATE UserProgress
+          UPDATE \"UserProgress\"
           SET libraryName = ?,
           sectionName = ?,
           method = ?,
@@ -53,10 +53,10 @@ object UserProgressQueries {
 
   val insert =
     s"""
-          INSERT INTO UserProgress(${allFields.mkString(", ")})
+          INSERT INTO \"UserProgress\"(${allFields.mkString(", ")})
           VALUES(?, ?, ?, ?, ?, ?)
     """
 
   val deleteById =
-    "DELETE FROM UserProgress WHERE id = ?"
+    "DELETE FROM \"UserProgress\" WHERE id = ?"
 }
