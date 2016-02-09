@@ -139,7 +139,7 @@ trait InterpreterInstances[F[_]] { self: Interpreters[F] ⇒
 
 /** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
 object ProdInterpreters extends Interpreters[Task] {
-  def scalazToCatsDisjunction[A, B](disj: \/[A, B]): Xor[A, B] =
+  def scalazToCatsDisjunction[A, B](disj: A \/ B): A Xor B =
     disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
 
   implicit class FreeOps[A](f: Free[ExercisesApp, A]) {
