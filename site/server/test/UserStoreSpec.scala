@@ -87,6 +87,6 @@ class UserStoreSpec extends Properties("UserDoobieStore") {
 
     UserDoobieStore.getOrCreate(newUser).quick.run
 
-    UserDoobieStore.all.transact(transactor).run.length == 0
+    UserDoobieStore.all.transact(transactor).run.length == 1
   }
 }
