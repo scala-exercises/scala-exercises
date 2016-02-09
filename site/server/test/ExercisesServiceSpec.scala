@@ -2,12 +2,11 @@ import com.fortysevendeg.exercises.models._
 import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
-import org.specs2.scalaz.DisjunctionMatchers
 import com.fortysevendeg.exercises.services._
 import shared._
 
 @RunWith(classOf[JUnitRunner])
-class ExercisesServiceSpec extends Specification with DisjunctionMatchers {
+class ExercisesServiceSpec extends Specification {
 
   val expectedLibrary = "stdlib"
   val expectedTestSection = "Extractors"

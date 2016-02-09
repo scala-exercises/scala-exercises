@@ -1,100 +1,76 @@
 package com.fortysevendeg.exercises.models
 
-import scala.concurrent.Future
 import shared.User
-import play.api.Play.current
-import scala.concurrent.ExecutionContext.Implicits.global
-import slick.driver._
-import slick.jdbc.JdbcBackend.Database
+import cats.data.Xor
+import com.fortysevendeg.exercises.models.queries.Queries
+import scalaz.syntax.applicative._
 
-trait UserStore {
+import doobie.imports._
+import scalaz.concurrent.Task
 
-  def all: Future[Seq[User]]
+object UserCreation {
+  // TODO: add proper case objects with errors when switching to Postgres
+  sealed trait CreationError
+  case object DuplicateName extends CreationError
 
-  def getByLogin(login: String): Future[Seq[User]]
+  case class Request(
+      login:      String,
+      name:       String,
+      githubId:   String,
+      pictureUrl: String,
+      githubUrl:  String,
+      email:      String
+  ) {
 
-  def create(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
-  ): Future[User]
+    def asUser(id: Long): User =
+      User(id, login, name, githubId, pictureUrl, githubUrl, email)
+  }
 
-  def update(user: User): Future[Boolean]
-
-  def delete(ids: Long*): Future[Boolean]
+  type Response = CreationError Xor User
 }
 
-class UserSlickStore(db: Database) extends UserStore {
+trait UserStore {
+  def all: ConnectionIO[List[User]]
 
-  lazy val profile = current.configuration.getString("db.default.driver").collect {
-    case "org.h2.Driver"         ⇒ H2Driver
-    case "org.postgresql.Driver" ⇒ PostgresDriver
-    case "com.mysql.jdbc.Driver" ⇒ MySQLDriver
-    case other                   ⇒ throw new Exception(s"Unable to discern Slick driver for ${other}")
-  }.get
+  def getByLogin(login: String): ConnectionIO[Option[User]]
 
-  import play.api.db.DB
-  import profile.api._
+  def getById(id: Long): ConnectionIO[Option[User]]
 
-  class Users(tag: Tag) extends Table[User](tag, "users") {
-    def id = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
-    def login = column[String]("login")
-    def name = column[String]("name")
-    def github_id = column[String]("github_id")
-    def picture_url = column[String]("picture_url")
-    def github_url = column[String]("github_url")
-    def email = column[String]("email")
-    def * = (id, login, name, github_id, picture_url, github_url, email) <> (User.tupled, User.unapply)
-  }
+  def create(user: UserCreation.Request): ConnectionIO[UserCreation.Response]
 
-  val users = TableQuery[Users]
+  def delete(id: Long): ConnectionIO[Boolean]
 
-  override def all: Future[Seq[User]] = {
-    db.run(users.sortBy(_.id.desc).result)
-  }
+  def update(user: User): ConnectionIO[Option[User]]
+}
 
-  override def getByLogin(login: String): Future[Seq[User]] = db.run(users.filter(_.login === login).result)
+object UserDoobieStore extends UserStore {
+  def all: ConnectionIO[List[User]] =
+    Queries.all.list
 
-  override def create(
-    login:       String,
-    name:        String,
-    github_id:   String,
-    picture_url: String,
-    github_url:  String,
-    email:       String
-  ): Future[User] = {
+  def getByLogin(login: String): ConnectionIO[Option[User]] =
+    Queries.byLogin(login).option
 
-    db.run {
-      (users returning users.map(_.id) into ((user, id) ⇒ user.copy(id = id))) += User(
-        id = None,
-        login = login,
-        name = name,
-        github_id = github_id,
-        picture_url = picture_url,
-        github_url = github_url,
-        email = email
-      )
-    }
-  }
+  def getById(id: Long): ConnectionIO[Option[User]] =
+    Queries.byId(id).option
 
-  override def update(user: User): Future[Boolean] = {
-    db.run {
-      val q = for {
-        u ← users if u.id === user.id
-      } yield (u.login)
-      q.update(user.login)
-    }.map(_ == 1)
-  }
+  def create(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
+    _ ← Queries.insert(user).run
+    user ← getByLogin(user.login)
+  } yield user.fold(Xor.Left(UserCreation.DuplicateName): UserCreation.Response)(u ⇒ Xor.Right(u))
 
-  override def delete(ids: Long*): Future[Boolean] = {
-    Future.sequence {
-      for {
-        id ← ids
-      } yield { db.run(users.filter(_.id === id).delete).map(_ == 1) }
-    }.map(!_.exists(i ⇒ !i))
-  }
+  def getOrCreate(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
+    maybeUser ← getByLogin(user.login)
+    theUser ← maybeUser.fold(create(user): ConnectionIO[UserCreation.Response])(u ⇒ (Xor.Right(u): UserCreation.Response).point[ConnectionIO])
+  } yield theUser
 
+  def delete(id: Long): ConnectionIO[Boolean] =
+    Queries.delete(id)
+
+  def deleteAll: ConnectionIO[Int] =
+    Queries.deleteAll.run
+
+  def update(user: User): ConnectionIO[Option[User]] = for {
+    _ ← Queries.update(user).run
+    maybeUser ← getById(user.id)
+  } yield maybeUser
 }

@@ -5,7 +5,8 @@
 # Home page
 GET / com.fortysevendeg.exercises.controllers.ApplicationController.index
 
-GET /users/all    com.fortysevendeg.exercises.controllers.UserController.all
+GET /users/       com.fortysevendeg.exercises.controllers.UserController.all
+GET /users/:login com.fortysevendeg.exercises.controllers.UserController.byLogin(login: String)
 
 POST /exercises/sections/:libraryName/:sectionName/evaluate com.fortysevendeg.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
 

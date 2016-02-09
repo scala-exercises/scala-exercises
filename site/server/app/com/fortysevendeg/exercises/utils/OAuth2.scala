@@ -1,15 +1,21 @@
 package com.fortysevendeg.exercises.utils
 
-import com.fortysevendeg.exercises.services.UserServices
 import play.api.{ Application, Play }
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.mvc.{ Action, Controller, Results }
 import play.api.libs.ws._
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.fortysevendeg.exercises.services._
-import com.fortysevendeg.exercises.services.messages._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
 
+import com.fortysevendeg.exercises.models._
+import com.fortysevendeg.exercises.services.free.UserOps
+import com.fortysevendeg.exercises.app._
+import com.fortysevendeg.exercises.services._
+
+import doobie.imports._
+import cats.data.Xor
 import scala.concurrent.Future
+import scalaz.concurrent.Task
 
 object OAuth2 {
 
@@ -24,7 +30,11 @@ object OAuth2 {
   }
 }
 
-class OAuth2Controller(ws: WSClient, userService: UserServices) extends Controller {
+class OAuth2Controller(
+    implicit
+    T:  Transactor[Task],
+    ws: WSClient
+) extends Controller {
 
   import OAuth2._
 
@@ -72,23 +82,24 @@ class OAuth2Controller(ws: WSClient, userService: UserServices) extends Controll
 
           val login = (response.json \ "login").as[String]
           val name = (response.json \ "name").as[String]
-          val github_id = (response.json \ "id").as[Long]
-          val avatar_url = (response.json \ "avatar_url").as[String]
-          val html_url = (response.json \ "html_url").as[String]
+          val githubId = (response.json \ "id").as[Long]
+          val avatarUrl = (response.json \ "avatar_url").as[String]
+          val htmlUrl = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").as[String]
 
-          val result = for {
-            res ← userService.getUserOrCreate(GetUserOrCreateRequest(
-              login = login,
-              name = name,
-              github_id = github_id.toString,
-              picture_url = avatar_url,
-              github_url = html_url,
-              email = email
-            ))
-          } yield res.user
-
-          Redirect("/").withSession("oauth-token" → authToken, "user" → login)
+          UserDoobieStore.getOrCreate(
+            UserCreation.Request(
+              login,
+              name,
+              githubId.toString,
+              avatarUrl,
+              htmlUrl,
+              email
+            )
+          ).transact(T).run match {
+              case Xor.Right(_) ⇒ Redirect("/").withSession("oauth-token" → authToken, "user" → login)
+              case Xor.Left(_)  ⇒ InternalServerError("Failed to save user information")
+            }
 
         }
     }

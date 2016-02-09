@@ -7,6 +7,9 @@ import NativePackagerHelper._
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
 
+// Compiler options
+scalacOptions ++= Seq("-feature", "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps")
+
 // Common settings
 
 lazy val commonSettings = Seq(
@@ -27,6 +30,8 @@ lazy val exerciseSettings: Seq[Setting[_]] =
   )
 
 lazy val clients = Seq(client)
+lazy val doobieVersion = "0.2.3"
+lazy val scalazVersion = "7.1.4"
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
@@ -49,7 +54,6 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
-      "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -63,11 +67,14 @@ lazy val server = (project in file("server"))
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0",
-      "org.scalaz" %% "scalaz-concurrent" % "7.2.0") ++
+      "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
+      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
-      "org.scalacheck" %% "scalacheck" % "1.12.5")
+      "org.scalacheck" %% "scalacheck" % "1.12.5",
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1",
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion)
   ))
 
 
@@ -115,7 +122,7 @@ lazy val v0def = (project in file("v0def"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalaz" %% "scalaz-core" % scalazVersion
     )
   )
 
@@ -133,6 +140,6 @@ lazy val content = (project in file("content"))
   .settings(libraryDependencies ++=
     compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.scalaz" %% "scalaz-core" % "7.1.4"
+      "org.scalaz" %% "scalaz-core" % scalazVersion
     )
   )
