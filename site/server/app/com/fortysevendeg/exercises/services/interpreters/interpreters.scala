@@ -29,21 +29,14 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
     A: ApplicativeError[F, Throwable],
     T: Transactor[F]
   ): C02 ~> F =
-    userOpsInterpreter or userProgressOpsInterpreter
-
-  def allTogetherInterpreter(
-    implicit
-    A: ApplicativeError[F, Throwable],
-    T: Transactor[F]
-  ): C03 ~> F =
-    exerciseAndUserInterpreter or userAndUserProgressInterpreter
+    userProgressOpsInterpreter or exerciseAndUserInterpreter
 
   def interpreters(
     implicit
     A: ApplicativeError[F, Throwable],
     T: Transactor[F]
   ): ExercisesApp ~> F =
-    dbOpsInterpreter or allTogetherInterpreter
+    dbOpsInterpreter or userAndUserProgressInterpreter
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
