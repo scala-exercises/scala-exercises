@@ -13,8 +13,8 @@ FROM "User"
 
   def byLogin(login: String) =
     sql"""
-SELECT u.id, u.login, u.name, u.githubId, u.pictureUrl, u.githubUrl, u.email
-FROM "User" u
+SELECT id, login, name, githubId, pictureUrl, githubUrl, email
+FROM "User"
 WHERE login = $login
 """.query[User]
 
