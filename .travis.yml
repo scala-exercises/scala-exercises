@@ -7,4 +7,4 @@ install:
   - gem install sass
 script:
   - cd site/
-  - sbt ++$TRAVIS_SCALA_VERSION compile
+  - sbt ++$TRAVIS_SCALA_VERSION test
