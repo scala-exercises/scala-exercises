@@ -1,15 +1,15 @@
 # --- !Ups
 
-CREATE TABLE "User" (
-    id serial primary key,
-    login varchar(255) unique not null,
-    name varchar(255) not null,
-    githubId varchar(255) not null,
-    pictureUrl varchar(255) not null,
-    githubUrl varchar(255) not null,
-    email varchar(255) not null
+CREATE TABLE users (
+    id bigserial primary key,
+    login varchar(255) UNIQUE NOT NULL,
+    name varchar(255) NOT NULL,
+    githubId varchar(255) NOT NULL,
+    pictureUrl varchar(255) NOT NULL,
+    githubUrl varchar(255) NOT NULL,
+    email varchar(255) NOT NULL
 );
 
 # --- !Downs
 
-DROP TABLE "User";
+DROP TABLE users;

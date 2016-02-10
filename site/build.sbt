@@ -45,7 +45,8 @@ lazy val server = (project in file("server"))
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
-    pipelineStages := Seq(scalaJSProd, gzip))
+    pipelineStages := Seq(scalaJSProd, gzip),
+    herokuAppName in Compile := "scala-exercises")
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,
@@ -67,7 +68,8 @@ lazy val server = (project in file("server"))
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0",
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
-      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
+      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
