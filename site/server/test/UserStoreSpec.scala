@@ -29,8 +29,10 @@ class UserStoreSpec extends Properties("UserDoobieStore") {
   property("new users can be retrieved") = forAll(newUserGen) { newUser ⇒
     UserDoobieStore.deleteAll.quick.run
 
-    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption.get
-    storedUser == newUser.asUser(storedUser.id)
+    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
+    storedUser.fold(false)(u ⇒ {
+      u == newUser.asUser(u.id)
+    })
   }
 
   property("users can be retrieved given their login") = forAll(newUserGen) { newUser ⇒
@@ -38,27 +40,32 @@ class UserStoreSpec extends Properties("UserDoobieStore") {
 
     UserDoobieStore.create(newUser).quick.run
 
-    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get
-    storedUser == newUser.asUser(storedUser.id)
+    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
+    storedUser.fold(false)(u ⇒ {
+      u == newUser.asUser(u.id)
+    })
   }
 
   property("users can be retrieved given their ID") = forAll(newUserGen) { newUser ⇒
     UserDoobieStore.deleteAll.quick.run
 
-    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption.get
-    val userById = UserDoobieStore.getById(storedUser.id).transact(transactor).run.get
-    storedUser == userById
+    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
+
+    storedUser.fold(false)(u ⇒ {
+      val userById = UserDoobieStore.getById(u.id).transact(transactor).run
+      userById == Some(u)
+    })
   }
 
   property("users can be deleted") = forAll(newUserGen) { newUser ⇒
     UserDoobieStore.deleteAll.quick.run
 
-    UserDoobieStore.create(newUser).quick.run
+    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
 
-    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get
-    UserDoobieStore.delete(storedUser.id).quick.run
-
-    UserDoobieStore.getByLogin(newUser.login).transact(transactor).run == None
+    storedUser.fold(false)(u ⇒ {
+      UserDoobieStore.delete(u.id).quick.run
+      UserDoobieStore.getByLogin(newUser.login).transact(transactor).run == None
+    })
   }
 
   property("users can be updated") = forAll(newUserGen) { newUser ⇒
@@ -66,11 +73,13 @@ class UserStoreSpec extends Properties("UserDoobieStore") {
 
     UserDoobieStore.create(newUser).quick.run
 
-    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get
-    val modifiedUser = storedUser.copy(email = "alice+spam@example.com")
-    UserDoobieStore.update(modifiedUser).quick.run
+    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
+    storedUser.fold(false)(u ⇒ {
+      val modifiedUser = u.copy(email = "alice+spam@example.com")
+      UserDoobieStore.update(modifiedUser).quick.run
 
-    UserDoobieStore.getByLogin(newUser.login).transact(transactor).run.get == modifiedUser
+      UserDoobieStore.getByLogin(u.login).transact(transactor).run == Some(modifiedUser)
+    })
   }
 
   property("get or create users doesn't duplicate users with the same login") = forAll(newUserGen) { newUser ⇒
