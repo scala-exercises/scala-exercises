@@ -27,25 +27,31 @@ class ExercisesController(
     AuthenticationAction(BodyParsers.parse.json) { request ⇒
       request.body.validate[ExerciseEvaluation] match {
         case JsSuccess(evaluation, _) ⇒
-          val eval = for {
-            exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
-            _ ← userProgressOps.saveUserProgress(
-              mkSaveProgressRequest(request.userId, evaluation, exerciseEvaluation.isRight)
-            )
-          } yield exerciseEvaluation
 
-          eval.runTask match {
-            case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
-            case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
+          val c = userOps.getUserByLogin(request.userId).runTask match {
+            case Xor.Right(Some(user)) ⇒
+              val eval = for {
+                exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
+                _ ← userProgressOps.saveUserProgress(
+                  mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
+                )
+              } yield exerciseEvaluation
+
+              eval.runTask match {
+                case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
+                case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
+              }
+            case _ ⇒ BadRequest("User login not found")
           }
+          c
         case JsError(errors) ⇒
           BadRequest(JsError.toJson(errors))
       }
     }
 
-  private[this] def mkSaveProgressRequest(userId: String, evaluation: ExerciseEvaluation, success: Boolean) =
+  private[this] def mkSaveProgressRequest(userId: Long, evaluation: ExerciseEvaluation, success: Boolean) =
     new SaveUserProgress.Request(
-      userId = userId.toLong,
+      userId = userId,
       libraryName = evaluation.libraryName,
       sectionName = evaluation.sectionName,
       method = evaluation.method,
