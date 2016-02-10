@@ -53,7 +53,8 @@ lazy val server = (project in file("server"))
     ),
     herokuProcessTypes in Compile := Map(
       "web" -> "target/universal/stage/bin/server -Dhttp.port=$PORT"
-    )
+    ),
+    herokuSkipSubProjects := false
   )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
