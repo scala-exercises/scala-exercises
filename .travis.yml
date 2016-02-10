@@ -1,10 +1,17 @@
 language: scala
+sudo: required
+addons:
+  - postgresql: "9.3"
+services:
+  - postgresql
+before_script:
+  - ./scripts/create_test_db
 scala:
-   - 2.11.7
+  - 2.11.7
 jdk:
   - oraclejdk8
 install:
   - gem install sass
 script:
   - cd site/
-  - sbt ++$TRAVIS_SCALA_VERSION compile
+  - sbt ++$TRAVIS_SCALA_VERSION test
