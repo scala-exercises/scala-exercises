@@ -1,0 +1,7 @@
+{
+  "name": "Scala Exercises",
+  "description": "Introducing Scala Exercises: Quick lessons that will get you on your way to learning Scala in no time.",
+  "website": "http://scala-exercises.47deg.com",
+  "addons": ["heroku-postgresql:hobby-dev"],
+  "success_url": "/"
+}
