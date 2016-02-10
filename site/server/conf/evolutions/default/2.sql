@@ -1,6 +1,6 @@
 # --- !Ups
 
-CREATE TABLE "UserProgress" (
+CREATE TABLE "userProgress" (
     id bigserial primary key,
     userId bigint not null,
     libraryName varchar(255) not null,
