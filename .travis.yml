@@ -1,7 +1,13 @@
 language: scala
 sudo: required
+addons:
+  - postgresql: "9.3"
+services:
+  - postgresql
+before_script:
+  - ./scripts/create_test_db
 scala:
-   - 2.11.7
+  - 2.11.7
 jdk:
   - oraclejdk8
 sudo: false

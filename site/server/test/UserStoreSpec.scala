@@ -110,7 +110,6 @@ class UserStoreSpec extends PropSpec with GeneratorDrivenPropertyChecks with Mat
 
       UserDoobieStore.getOrCreate(newUser).quick.run
 
-
       UserDoobieStore.all.transact(transactor).run.length shouldBe 1
     }
   }
