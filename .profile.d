@@ -1,1 +1,1 @@
-export APP_DIR="/app/site"
+APP_DIR="/app/site"
