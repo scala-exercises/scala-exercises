@@ -1,1 +1,0 @@
-web: site/server/target/universal/stage/bin/server -Dhttp.port=${PORT} ${JAVA_OPTS}
