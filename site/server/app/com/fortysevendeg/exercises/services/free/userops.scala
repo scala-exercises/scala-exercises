@@ -7,7 +7,7 @@ import cats.free.Inject
 import shared.User
 import com.fortysevendeg.exercises.models.UserCreation
 
-/** Exercise Ops GADT
+/** Users Ops GADT
   */
 sealed trait UserOp[A]
 final case class GetUsers() extends UserOp[List[User]]

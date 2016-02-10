@@ -2,12 +2,12 @@
 
 CREATE TABLE users (
     id bigserial primary key,
-    login text UNIQUE NOT NULL,
-    name text NOT NULL,
-    githubId text NOT NULL,
-    pictureUrl text NOT NULL,
-    githubUrl text NOT NULL,
-    email text NOT NULL
+    login varchar(255) UNIQUE NOT NULL,
+    name varchar(255) NOT NULL,
+    githubId varchar(255) NOT NULL,
+    pictureUrl varchar(255) NOT NULL,
+    githubUrl varchar(255) NOT NULL,
+    email varchar(255) NOT NULL
 );
 
 # --- !Downs
