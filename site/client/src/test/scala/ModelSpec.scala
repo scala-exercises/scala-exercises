@@ -72,7 +72,9 @@ object ExercisesSpec extends TestSuite {
       assert(Exercises.findByMethod(List(), "foo") == None)
 
       val exercise = clientExercise(method = "foo", args = Seq("one", "two"))
-      assert(Exercises.findByMethod(List(exercise), "foo").get == exercise)
+      assert(
+        Exercises.findByMethod(List(exercise), "foo").fold(false)(e ⇒ e == exercise)
+      )
     }
 
     'updateByMethod{

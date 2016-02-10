@@ -10,6 +10,9 @@ onLoad in Global := (Command.process("project server", _: State)) compose (onLoa
 // Compiler options
 scalacOptions ++= Seq("-feature", "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps")
 
+// Disable forking in CI
+fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
+
 // Common settings
 
 lazy val commonSettings = Seq(
@@ -45,7 +48,9 @@ lazy val server = (project in file("server"))
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
-    pipelineStages := Seq(scalaJSProd, gzip))
+    pipelineStages := Seq(scalaJSProd, gzip),
+    herokuAppName in Compile := "scala-exercises"
+)
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,
@@ -59,7 +64,7 @@ lazy val server = (project in file("server"))
       "com.lihaoyi" %% "upickle" % "0.2.8",
       "org.webjars" %% "webjars-play" % "2.3.0",
       "org.webjars" % "bootstrap-sass" % "3.2.0",
-      "org.webjars" % "jquery" % "2.1.1",
+      "org.webjars" % "jquery" % "2.1.3",
       "org.webjars" % "font-awesome" % "4.1.0",
       "org.webjars" % "highlightjs" % "8.7",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
@@ -67,7 +72,8 @@ lazy val server = (project in file("server"))
       "org.clapper" %% "classutil" % "1.0.5",
       "com.toddfast.typeconverter" % "typeconverter" % "1.0",
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
-      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
+      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
@@ -91,7 +97,7 @@ lazy val client = (project in file("client"))
       "org.scala-js" %%% "scalajs-dom" % "0.8.1",
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
       "com.lihaoyi" %%% "scalarx" % "0.2.8",
-      "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
+      "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
       "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()

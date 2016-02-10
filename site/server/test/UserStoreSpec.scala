@@ -1,6 +1,7 @@
-import org.scalacheck._
-import org.scalacheck.Prop.{ throws, forAll }
-
+import org.scalatest._
+import prop._
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalacheck.{ Gen, Arbitrary }
 import org.scalacheck.Shapeless._
 
 import test.database.TestDatabase
@@ -9,9 +10,14 @@ import scalaz.concurrent.Task
 import shared.User
 import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
 
-class UserStoreSpec extends Properties("UserDoobieStore") {
+class UserStoreSpec extends PropSpec with GeneratorDrivenPropertyChecks with Matchers {
   // User creation generator
   implicitly[Arbitrary[UserCreation.Request]]
+
+  // Avoids creating strings with null chars because Postgres text fields don't support it.
+  // see http://stackoverflow.com/questions/1347646/postgres-error-on-insert-error-invalid-byte-sequence-for-encoding-utf8-0x0
+  implicit val stringArbitrary: Arbitrary[String] =
+    Arbitrary(Gen.identifier.map(_.replaceAll("\u0000", "")))
 
   val newUserGen = for {
     user ← Arbitrary.arbitrary[UserCreation.Request]
@@ -26,76 +32,90 @@ class UserStoreSpec extends Properties("UserDoobieStore") {
   import transactor.yolo._
 
   // Properties
-  property("new users can be retrieved") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("new users can be created") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
-    storedUser.fold(false)(u ⇒ {
-      u == newUser.asUser(u.id)
-    })
+      val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
+      storedUser.fold(false)(u ⇒ {
+        u == newUser.asUser(u.id)
+      }) shouldBe true
+    }
   }
 
-  property("users can be retrieved given their login") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("users can be queried by their login") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    UserDoobieStore.create(newUser).quick.run
+      UserDoobieStore.create(newUser).quick.run
 
-    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
-    storedUser.fold(false)(u ⇒ {
-      u == newUser.asUser(u.id)
-    })
+      val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
+      storedUser.fold(false)(u ⇒ {
+        u == newUser.asUser(u.id)
+      }) shouldBe true
+    }
   }
 
-  property("users can be retrieved given their ID") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("users can be queried by their ID") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
+      val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
 
-    storedUser.fold(false)(u ⇒ {
-      val userById = UserDoobieStore.getById(u.id).transact(transactor).run
-      userById == Some(u)
-    })
+      storedUser.fold(false)(u ⇒ {
+        val userById = UserDoobieStore.getById(u.id).transact(transactor).run
+        userById == Some(u)
+      }) shouldBe true
+    }
   }
 
-  property("users can be deleted") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("users can be deleted") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
+      val storedUser = UserDoobieStore.create(newUser).transact(transactor).run.toOption
 
-    storedUser.fold(false)(u ⇒ {
-      UserDoobieStore.delete(u.id).quick.run
-      UserDoobieStore.getByLogin(newUser.login).transact(transactor).run == None
-    })
+      storedUser.fold(false)(u ⇒ {
+        UserDoobieStore.delete(u.id).quick.run
+        UserDoobieStore.getByLogin(newUser.login).transact(transactor).run == None
+      }) shouldBe true
+    }
   }
 
-  property("users can be updated") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("users can be updated") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    UserDoobieStore.create(newUser).quick.run
+      UserDoobieStore.create(newUser).quick.run
 
-    val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
-    storedUser.fold(false)(u ⇒ {
-      val modifiedUser = u.copy(email = "alice+spam@example.com")
-      UserDoobieStore.update(modifiedUser).quick.run
+      val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
+      storedUser.fold(false)(u ⇒ {
+        val modifiedUser = u.copy(email = "alice+spam@example.com")
+        UserDoobieStore.update(modifiedUser).quick.run
 
-      UserDoobieStore.getByLogin(u.login).transact(transactor).run == Some(modifiedUser)
-    })
+        UserDoobieStore.getByLogin(u.login).transact(transactor).run == Some(modifiedUser)
+      }) shouldBe true
+    }
   }
 
-  property("get or create users doesn't duplicate users with the same login") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("`getOrCreate` retrieves a user if already created") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    UserDoobieStore.create(newUser).quick.run
-    UserDoobieStore.getOrCreate(newUser).quick.run
+      UserDoobieStore.create(newUser).quick.run
+      UserDoobieStore.getOrCreate(newUser).quick.run
 
-    UserDoobieStore.all.transact(transactor).run.length == 1
+      UserDoobieStore.all.transact(transactor).run.length shouldBe 1
+    }
   }
 
-  property("get or create creates the user when not found") = forAll(newUserGen) { newUser ⇒
-    UserDoobieStore.deleteAll.quick.run
+  property("`getOrCreate` creates a user if it's not already created") {
+    forAll(newUserGen) { newUser ⇒
+      UserDoobieStore.deleteAll.quick.run
 
-    UserDoobieStore.getOrCreate(newUser).quick.run
+      UserDoobieStore.getOrCreate(newUser).quick.run
 
-    UserDoobieStore.all.transact(transactor).run.length == 0
+      UserDoobieStore.all.transact(transactor).run.length shouldBe 1
+    }
   }
 }
