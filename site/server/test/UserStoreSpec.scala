@@ -14,6 +14,11 @@ class UserStoreSpec extends PropSpec with GeneratorDrivenPropertyChecks with Mat
   // User creation generator
   implicitly[Arbitrary[UserCreation.Request]]
 
+  // Avoids creating strings with null chars because Postgres text fields don't support it.
+  // see http://stackoverflow.com/questions/1347646/postgres-error-on-insert-error-invalid-byte-sequence-for-encoding-utf8-0x0
+  implicit val stringArbitrary: Arbitrary[String] =
+    Arbitrary(Gen.identifier.map(_.replaceAll("\u0000", "")))
+
   val newUserGen = for {
     user ← Arbitrary.arbitrary[UserCreation.Request]
     login ← Gen.identifier

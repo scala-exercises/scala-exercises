@@ -73,7 +73,7 @@ object ExercisesSpec extends TestSuite {
 
       val exercise = clientExercise(method = "foo", args = Seq("one", "two"))
       assert(
-        Exercises.findByMethod(List(exercise), "foo").fold(false)(e => e == exercise)
+        Exercises.findByMethod(List(exercise), "foo").fold(false)(e ⇒ e == exercise)
       )
     }
 
