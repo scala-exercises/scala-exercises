@@ -1,7 +1,7 @@
 # --- !Ups
 
 CREATE TABLE "UserProgress" (
-    id serial primary key,
+    id bigserial primary key,
     userId bigint not null,
     libraryName varchar(255) not null,
     sectionName varchar(255) not null,
@@ -10,7 +10,7 @@ CREATE TABLE "UserProgress" (
     exerciseType varchar(255) not null,
     args varchar(255),
     succeeded boolean,
-FOREIGN KEY (userId) REFERENCES "User" (id));
+FOREIGN KEY (userId) REFERENCES users (id));
 
 # --- !Downs
 
