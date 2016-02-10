@@ -109,13 +109,13 @@ object DomHandler {
     ($(".exercise").divs filter isMethodDefined).toList
   }
 
-  def getMethodAttr(e: HTMLElement): String = $(e).attr("data-method").trim
+  def getMethodAttr(e: HTMLElement): String = $(e).attr("data-method").getOrElse("").trim
 
   def isMethodDefined(e: HTMLElement): Boolean = getMethodAttr(e).nonEmpty
 
-  def getLibrary: IO[String] = io { $("body").attr("data-library") }
+  def getLibrary: IO[String] = io { $("body").attr("data-library").getOrElse("") }
 
-  def getSection: IO[String] = io { $("body").attr("data-section") }
+  def getSection: IO[String] = io { $("body").attr("data-section").getOrElse("") }
 
   def getMethodsList: IO[List[String]] = allExercises.map(_.map(getMethodAttr))
 
