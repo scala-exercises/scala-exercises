@@ -35,7 +35,7 @@ class ExercisesController(
           } yield exerciseEvaluation
 
           eval.runTask match {
-            case Xor.Right(result) ⇒ Ok("Evaluation succeded : " + result)
+            case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
             case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
           }
         case JsError(errors) ⇒
