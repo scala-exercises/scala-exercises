@@ -46,7 +46,15 @@ lazy val server = (project in file("server"))
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
-    herokuAppName in Compile := "scala-exercises")
+    herokuAppName in Compile := "scala-exercises",
+    herokuJdkVersion in Compile := "1.8",
+    herokuConfigVars in Compile := Map(
+      "JAVA_OPTS" -> "-Xmx512m -Xss512k -XX:+UseCompressedOops"
+    ),
+    herokuProcessTypes in Compile := Map(
+      "web" -> "target/universal/stage/bin/server -Dhttp.port=$PORT"
+    )
+  )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,

@@ -20,7 +20,9 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
-addSbtPlugin("com.heroku" % "sbt-heroku" % "0.5.4")
+addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.0")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "0.7.6")
 
 // Build common plugin
 addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
