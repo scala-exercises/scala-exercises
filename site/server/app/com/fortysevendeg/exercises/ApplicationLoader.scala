@@ -8,9 +8,12 @@ import doobie.util.transactor.{ DataSourceTransactor, Transactor }
 import play.api.ApplicationLoader.Context
 import play.api._
 import play.api.db.{ DBComponents, HikariCPComponents }
+import play.api.db.evolutions.{ DynamicEvolutions, EvolutionsComponents }
 import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
 import router.Routes
+
+import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -20,12 +23,17 @@ import scalaz.concurrent.Task
 
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
-    new Components(context).application
+    val mode = context.environment.mode.toString.toLowerCase
+    new Components(context.copy(
+      initialConfiguration = context.initialConfiguration
+      ++ Configuration(ConfigFactory.load(s"application.${mode}.conf"))
+    )).application
   }
 }
 
 class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
+    with EvolutionsComponents
     with DBComponents
     with HikariCPComponents {
 
@@ -53,6 +61,10 @@ class Components(context: Context)
 
   implicit val wsClient: WSClient = NingWSClient()
 
+  // touch lazy val to enable
+  applicationEvolutions
+  override def dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
+
   val applicationController = new ApplicationController
   val exercisesController = new ExercisesController
   val userController = new UserController
@@ -66,4 +78,3 @@ class Components(context: Context)
     Future(wsClient.close())
   })
 }
-

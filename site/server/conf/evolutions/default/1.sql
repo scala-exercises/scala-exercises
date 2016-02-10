@@ -1,6 +1,6 @@
 # --- !Ups
 
-CREATE TABLE users (
+CREATE TABLE "users" (
     id bigserial primary key,
     login varchar(255) UNIQUE NOT NULL,
     name varchar(255) NOT NULL,
@@ -12,4 +12,4 @@ CREATE TABLE users (
 
 # --- !Downs
 
-DROP TABLE users;
+DROP TABLE "users";
