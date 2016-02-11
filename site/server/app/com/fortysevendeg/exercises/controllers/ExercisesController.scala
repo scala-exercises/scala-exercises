@@ -28,7 +28,7 @@ class ExercisesController(
       request.body.validate[ExerciseEvaluation] match {
         case JsSuccess(evaluation, _) ⇒
 
-          val c = userOps.getUserByLogin(request.userId).runTask match {
+          userOps.getUserByLogin(request.userId).runTask match {
             case Xor.Right(Some(user)) ⇒
               val eval = for {
                 exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
@@ -43,7 +43,6 @@ class ExercisesController(
               }
             case _ ⇒ BadRequest("User login not found")
           }
-          c
         case JsError(errors) ⇒
           BadRequest(JsError.toJson(errors))
       }
