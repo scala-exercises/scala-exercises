@@ -91,9 +91,10 @@ object DocParser {
     else start
 
   // Our own creation
-  private def trimTrailingWhitespace(str: String, start: Int, end: Int): Int =
-    if (end >= start && isWhitespace(str charAt (end - 1))) trimTrailingWhitespace(str, start, end - 1)
+  private def trimTrailingWhitespace(str: String, start: Int, end: Int): Int = {
+    if (end > start && isWhitespace(str charAt (end - 1))) trimTrailingWhitespace(str, start, end - 1)
     else end
+  }
 
   // Verbatim copy of DocStrings.skipLineLead
   private def skipLineLead(str: String, start: Int): Int =
@@ -113,7 +114,7 @@ object DocParser {
 
   // ~ END
 
-  private def cleanLines(lines: List[String]): List[String] = {
+  private[compiler] def cleanLines(lines: List[String]): List[String] = {
     lines.map { line ⇒
       val ll = skipLineLead(line, -1)
       val le0 = skipToEol(line, ll)
@@ -122,9 +123,13 @@ object DocParser {
     }
       .dropWhile(_.isEmpty)
       .reverse
+      .dropWhile(_.isEmpty)
       .dropWhile(_ == "/")
       .dropWhile(_.isEmpty)
       .reverse
   }
+
+  private[compiler] def cleanLines(blob: String): List[String] =
+    cleanLines(blob.lines.toList)
 
 }
