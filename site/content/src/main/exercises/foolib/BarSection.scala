@@ -1,4 +1,4 @@
-package stdlib
+package foolib
 
 /** Section Foo
   * This is a Section
