@@ -8,6 +8,7 @@ import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import wartremover._
 
 import scala.{ Console => C }
+import scala.util.Try
 
 object BuildCommon extends AutoPlugin {
   override def requires = plugins.JvmPlugin && SbtScalariform
@@ -15,10 +16,17 @@ object BuildCommon extends AutoPlugin {
 
   def baseSettings = Seq(
     organization    := "com.47deg",
-    version         := "0.0.0",
-    scalaVersion    <<= (sbtPlugin) { isPlugin => if (isPlugin) "2.10.5" else "2.11.7" },
+    version         := "0.0.0-SNAPSHOT",
+    scalaVersion    := { if (!sbtPlugin.value) "2.11.7" else scalaVersion.value },
     scalacOptions   ++= Seq("-deprecation", "-feature", "-unchecked", "-encoding", "utf8"),
+    scalacOptions   := {
+      if (!sbtPlugin.value) "-Ywarn-unused-import" +: scalacOptions.value
+      else scalacOptions.value
+    },
     javacOptions    ++= Seq("-encoding", "UTF-8", "-Xlint:-options")
+  ) ++ Seq(
+    scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
+    scalacOptions in (Test, console)    ~= (_ filterNot (_ == "-Ywarn-unused-import"))
   )
 
   def formatSettings = SbtScalariform.scalariformSettings ++ Seq(
@@ -31,9 +39,13 @@ object BuildCommon extends AutoPlugin {
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
   )
 
-  def wartSettings = Seq(
-    wartremoverWarnings in Compile ++= Warts.unsafe
-  )
+  // `WARTING=false sbt` to drop into SBT w/ wart checking off
+  def warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
+
+  def wartSettings =
+    if (warting)
+      Seq(wartremoverWarnings in Compile ++= Warts.unsafe)
+    else Nil
 
   def miscSettings = Seq(
     shellPrompt := { s => s"${C.BLUE}${Project.extract(s).currentProject.id}>${C.RESET} " }

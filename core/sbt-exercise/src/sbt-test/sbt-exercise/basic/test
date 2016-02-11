@@ -1,0 +1,9 @@
+> set fork in CompileExercises := true
+> compile
+> copyResources
+
+> clean
+
+> set fork in CompileExercises := false
+> compile
+> copyResources
