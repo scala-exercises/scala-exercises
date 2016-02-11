@@ -167,8 +167,6 @@ object SourceTextExtraction {
         )
     }
 
-    // val code = CleanCodeReader.read(g)(expr)
-
     traverse[RawAcc[g.type]](
       trees0 = List(Nil → rootTree),
       acc0 = RawAcc[g.type](Nil, Nil),
