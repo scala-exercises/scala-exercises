@@ -91,9 +91,10 @@ object DocParser {
     else start
 
   // Our own creation
-  private def trimTrailingWhitespace(str: String, start: Int, end: Int): Int =
-    if (end >= start && isWhitespace(str charAt (end - 1))) trimTrailingWhitespace(str, start, end - 1)
+  private def trimTrailingWhitespace(str: String, start: Int, end: Int): Int = {
+    if (end > start && isWhitespace(str charAt (end - 1))) trimTrailingWhitespace(str, start, end - 1)
     else end
+  }
 
   // Verbatim copy of DocStrings.skipLineLead
   private def skipLineLead(str: String, start: Int): Int =

@@ -8,7 +8,7 @@ class DocParserSpec extends FunSpec with Matchers {
     it("can be parsed even when having trailing whitespace") {
       val comment = """
       /** The next line has a trailing whitespace
-        * 
+        *
         */
       """
       assert(DocParser.parseLibraryDocComment(comment).isRight)
