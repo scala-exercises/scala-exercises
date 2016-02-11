@@ -2,35 +2,36 @@
 package com.fortysevendeg.exercises
 package sbtexercise
 
+import scala.language.implicitConversions
 import scala.language.reflectiveCalls
+
+import scala.io.Codec
+import scala.util.{ Try, Success, Failure }
+import java.io.File
+import java.net.URLClassLoader
 
 import sbt.{ `package` ⇒ _, _ }
 import sbt.Keys._
 import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
 
-import scala.io.Codec
-import scala.util.{ Try, Success, Failure }
-
-import java.io.File
-import java.net.URLClassLoader
-
 import cats._
+import cats.data.Ior
 import cats.data.Xor
 import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 
+/** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
-  import Def.Initialize
 
+  // this plugin requires the JvmPlugin and must be
+  // explicitly enabled by projects
   override def requires = plugins.JvmPlugin
   override def trigger = noTrigger
 
   val CompileMain = config("compile-main")
-
   val CompileExercisesSource = config("compile-exercises-source") extend CompileMain
-
   val CompileExercises = config("compile")
 
   val generateExercises = TaskKey[List[(String, String)]]("pregen-exercises")
@@ -98,8 +99,17 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     * `src/<configuration_name>/[scala|test|...]`. This forces the directory
     * back to `src/main/[scala|test|...]`.
     */
-  private def reconfigureSub(key: SettingKey[File]): Initialize[File] =
+  private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
     (key in ThisScope.copy(config = Global), configuration) { (src, conf) ⇒ src / "main" }
+
+  // for most of the work below, a captured error is an error message and/or a
+  // throwable value
+  private type Err = Ior[String, Throwable]
+  private implicit def errFromString(message: String) = Ior.left(message)
+  private implicit def errFromThrowable(throwable: Throwable) = Ior.right(throwable)
+
+  private def catching[A](f: ⇒ A)(msg: ⇒ String) =
+    Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(msg, e))
 
   /** Given an Analysis output from a compile run, this will
     * identify all modules implementing `exercise.Library`.
@@ -115,9 +125,6 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       .collect({
         case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
       }).sorted
-
-  private def catching[A](f: ⇒ A)(msg: ⇒ String) =
-    Xor.catchNonFatal(f).leftMap(_ ⇒ msg)
 
   // reflection is used to invoke a java-style interface to the exercise compiler
   private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
@@ -151,7 +158,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
     } yield loadedModule
 
-    def invokeCompiler(compiler: COMPILER, library: AnyRef): Xor[String, (String, String)] =
+    def invokeCompiler(compiler: COMPILER, library: AnyRef): Xor[Err, (String, String)] =
       Xor.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).toSet
           .flatMap(analysisIn.relations.definesClass)
@@ -162,10 +169,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
           sources = sourceCodes.toArray,
           targetPackage = "defaultLib"
         ).toList
-      } leftMap (_.getMessage) >>= {
+      } leftMap (e ⇒ e: Err) >>= {
         _ match {
           case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
-          case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler")
+          case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler": Err)
         }
       }
 
@@ -176,7 +183,15 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       result ← libraries.map(invokeCompiler(compiler, _)).sequenceU
     } yield result
 
-    result.fold(message ⇒ throw new Exception(message), { value ⇒ value })
+    result.fold({
+      _ match {
+        case Ior.Left(message) ⇒ throw new Exception(message)
+        case Ior.Right(error)  ⇒ throw error
+        case Ior.Both(message, error) ⇒
+          log.error(message)
+          throw error
+      }
+    }, { value ⇒ value })
   }
 
   // task responsible for outputting the source files
