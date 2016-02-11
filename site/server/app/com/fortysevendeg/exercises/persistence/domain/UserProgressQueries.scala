@@ -23,7 +23,7 @@ object SaveUserProgress {
 
 object UserProgressQueries {
 
-  val allFields = List("userId", "libraryName", "sectionName", "method", "version", "exerciseType", "args", "succeeded")
+  val allFields = List("userid", "libraryname", "sectionname", "method", "version", "exercisetype", "args", "succeeded")
 
   private[this] val commonFindBy =
     s"""
@@ -54,7 +54,7 @@ object UserProgressQueries {
   val insert =
     s"""
           INSERT INTO \"userProgress\"(${allFields.mkString(", ")})
-          VALUES(?, ?, ?, ?, ?, ?)
+          VALUES(?,?,?,?,?,?,?,?)
     """
 
   val deleteById =
