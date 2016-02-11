@@ -114,7 +114,7 @@ object DocParser {
 
   // ~ END
 
-  private def cleanLines(lines: List[String]): List[String] = {
+  private[compiler] def cleanLines(lines: List[String]): List[String] = {
     lines.map { line ⇒
       val ll = skipLineLead(line, -1)
       val le0 = skipToEol(line, ll)
@@ -123,9 +123,13 @@ object DocParser {
     }
       .dropWhile(_.isEmpty)
       .reverse
+      .dropWhile(_.isEmpty)
       .dropWhile(_ == "/")
       .dropWhile(_.isEmpty)
       .reverse
   }
+
+  private[compiler] def cleanLines(blob: String): List[String] =
+    cleanLines(blob.lines.toList)
 
 }
