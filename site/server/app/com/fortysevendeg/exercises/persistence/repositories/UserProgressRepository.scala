@@ -37,10 +37,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     sectionName: String,
     method:      String,
     version:     Int
-  ): ConnectionIO[Option[UserProgress]] =
-    persistence.fetchOption[(Long, String, String, String, Int), UserProgress](
-      UserProgressQueries.findByExerciseVersion, (userId, libraryName, sectionName, method, version)
-    )
+  ): ConnectionIO[Option[UserProgress]] = persistence.fetchOption[(Long, String, String, String, Int), UserProgress](
+      UserProgressQueries.findByExerciseVersion, (userId, libraryName, sectionName, method, version))
 
   override def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
     val SaveUserProgress.Request(userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = request
@@ -50,7 +48,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
         persistence
           .updateWithGeneratedKeys[(Long, String, String, String, Int, String, Option[String], Boolean), UserProgress](
             UserProgressQueries.insert,
-            UserProgressQueries.allFields,
+            "id" :: UserProgressQueries.allFields,
             (userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
           )
       case Some(userP) ⇒
@@ -62,7 +60,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     persistence.update(UserProgressQueries.deleteById) map (_ > 0)
 
   override def update(userProgress: UserProgress): ConnectionIO[UserProgress] = {
-    val UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = userProgress
+    val UserProgress(_, userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = userProgress
 
     persistence
       .updateWithGeneratedKeys[(Long, String, String, String, Int, String, Option[String], Boolean), UserProgress](
