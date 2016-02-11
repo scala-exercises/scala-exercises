@@ -1,4 +1,4 @@
-package stdlib
+package foolib
 
 object FooBarHelper {
   def help() {
