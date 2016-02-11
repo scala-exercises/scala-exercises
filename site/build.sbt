@@ -117,11 +117,11 @@ lazy val sharedJs = shared.js
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "definitions") % "compile-exercises-source")
+  .dependsOn(ProjectRef(file("../core"), "definitions") % CompileExercisesSource)
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
+    Seq("org.scalatest" %% "scalatest" % "2.2.4" % CompileExercisesSource) ++
     compilelibs(
-      "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % scalazVersion
     )
   )
