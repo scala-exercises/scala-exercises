@@ -193,7 +193,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
           log.error(message)
           throw error
       }
-    }, { value ⇒ value })
+    }, identity)
   }
 
   // task responsible for outputting the source files
