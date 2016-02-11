@@ -37,7 +37,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   val generateExercises = TaskKey[List[(String, String)]]("pregen-exercises")
 
   object autoImport {
+    def CompileMain = ExerciseCompilerPlugin.CompileMain
     def CompileExercises = ExerciseCompilerPlugin.CompileExercises
+    def CompileExercisesSource = ExerciseCompilerPlugin.CompileExercisesSource
   }
 
   // format: OFF
