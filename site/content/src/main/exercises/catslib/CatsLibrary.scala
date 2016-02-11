@@ -5,6 +5,7 @@ package catslib
   */
 object CatsLibrary extends exercise.Library {
   override def sections = List(
-    IdentitySection
+    IdentitySection,
+    XorSection
   )
 }
