@@ -1,4 +1,4 @@
-package stdlib
+package foolib
 
 /** Section Bar
   * This is a Section

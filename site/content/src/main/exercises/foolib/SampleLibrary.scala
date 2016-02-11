@@ -1,4 +1,4 @@
-package stdlib
+package foolib
 
 /** My Library
   * This is my Library
