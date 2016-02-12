@@ -21,7 +21,7 @@ import cats.syntax.semigroup._
 
 class SourceTextExtraction {
   private lazy val docGlobal = new DocExtractionGlobal()
-  private lazy val commentParser = makeDocCommentParser(docGlobal)
+  private lazy val commentParser = SourceTextExtraction.makeDocCommentParser(docGlobal)
   private lazy val boundExtractRaw = SourceTextExtraction.extractRaw(docGlobal)(_)
   private lazy val boundReadCode = MethodBodyReader.read(docGlobal)(_)
 
@@ -81,12 +81,21 @@ class SourceTextExtraction {
     }.toMap
   }
 
-  private sealed trait DocCommentParser[G <: Global] {
+}
+
+/** Utility to find doc exercise-worthy comments and source code blobs
+  * in a tree.
+  */
+object SourceTextExtraction {
+
+  private[compiler] sealed trait DocCommentParser[G <: Global] {
     val global: G
     def parseComment(comment: global.DocComment): Comment
+    // at the moment, this is provided for testing
+    def parseComment(comment: String): Comment
   }
 
-  private def makeDocCommentParser[G <: Global](g: G): DocCommentParser[g.type] = {
+  private[compiler] def makeDocCommentParser[G <: Global](g: G): DocCommentParser[g.type] = {
     new CommentFactoryBase with MemberLookupBase with DocCommentParser[g.type] {
       override val global: g.type = g
       import global._
@@ -96,6 +105,7 @@ class SourceTextExtraction {
         try parseAtSymbol(comment.raw, comment.raw, comment.pos)
         finally settings.nowarn.value = nowarnings
       }
+      override def parseComment(comment: String) = parseComment(DocComment(comment))
       override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo] = None
       override def chooseLink(links: List[LinkTo]): LinkTo = links.headOption.orNull
       override def toString(link: LinkTo): String = "No link"
@@ -103,13 +113,6 @@ class SourceTextExtraction {
       override def warnNoLink: Boolean = false
     }
   }
-
-}
-
-/** Utility to find doc exercise-worthy comments and source code blobs
-  * in a tree.
-  */
-object SourceTextExtraction {
 
   type Path[G <: Global] = List[G#Name]
   case class RawAcc[G <: Global](
