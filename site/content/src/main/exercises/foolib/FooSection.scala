@@ -1,6 +1,7 @@
 package foolib
 
 /** Section Bar
+  *
   * This is a Section
   */
 object BarSection extends exercise.Section {
