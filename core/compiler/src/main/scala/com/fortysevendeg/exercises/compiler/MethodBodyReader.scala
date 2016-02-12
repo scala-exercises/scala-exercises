@@ -1,6 +1,8 @@
 package com.fortysevendeg.exercises
 package compiler
 
+import scala.annotation.tailrec
+
 import scala.reflect.internal.Chars.isWhitespace
 import scala.tools.nsc.Global
 
@@ -42,7 +44,7 @@ object MethodBodyReader {
     }
   }
 
-  private def backstepWhitespace(str: Array[Char], start: Int, end: Int): Int = {
+  @tailrec private def backstepWhitespace(str: Array[Char], start: Int, end: Int): Int = {
     if (end > start && isWhitespace(str charAt (end - 1)))
       backstepWhitespace(str, start, end - 1)
     else end
@@ -51,18 +53,18 @@ object MethodBodyReader {
   /** This attempts to find all the individual lines in a method body
     * while also counting the amount of common prefix whitespace on each line.
     */
-  def normalizedLineRanges(str: Array[Char], start: Int, end: Int): List[(Int, Int)] = {
+  private def normalizedLineRanges(str: Array[Char], start: Int, end: Int): List[(Int, Int)] = {
 
-    def skipToEol(offset: Int): Int =
+    @tailrec def skipToEol(offset: Int): Int =
       if (offset < end && (str charAt offset) != '\n') skipToEol(offset + 1)
       else offset
 
-    def skipWhitespace(offset: Int): Int =
+    @tailrec def skipWhitespace(offset: Int): Int =
       if (offset < end && isWhitespace(str charAt offset)) skipWhitespace(offset + 1)
       else offset
 
     type Acc = List[(Int, Int)]
-    def loop(i: Int, minSpace: Int, acc: Acc): (Int, Acc) = {
+    @tailrec def loop(i: Int, minSpace: Int, acc: Acc): (Int, Acc) = {
       if (i >= end) minSpace → acc
       else {
         val lineStart = skipWhitespace(i)
