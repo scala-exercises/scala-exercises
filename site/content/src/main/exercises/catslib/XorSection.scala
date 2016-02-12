@@ -193,8 +193,13 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     */
   def xorComposition(res0: Boolean, res1: Boolean, res2: Boolean) = {
-    XorStyle.magic("0").isRight should be (res0)
-    XorStyle.magic("1").isRight should be (res1)
-    XorStyle.magic("Not a number").isRight should be (res2)
+    import XorStyle._
+
+    def magic(s: String): Xor[Exception, String] =
+      parse(s).flatMap(reciprocal).map(stringify)
+
+    magic("0").isRight should be (res0)
+    magic("1").isRight should be (res1)
+    magic("Not a number").isRight should be (res2)
   }
 }
