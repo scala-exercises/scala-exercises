@@ -2,6 +2,8 @@ package catslib
 
 import org.scalatest._
 
+import cats.data.Xor
+
 object XorStyle {
   def parse(s: String): Xor[NumberFormatException, Int] =
     if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
