@@ -79,6 +79,29 @@ class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSp
            |  1 + whatever""".stripMargin
       )
     }
+
+    it("should ignore lines that are empty or all whitespace") {
+      val code = """
+       |/** This is an example exercise.
+       |  * What value returns two?
+       |  */
+       |def addOne(value: Int) = {
+       |    println("this is the first line")
+       |
+       |
+       |  println("this is the last line")
+       |}
+       """.stripMargin
+
+      println("*" * 20)
+      println(extractSnippet(code))
+      println("*" * 20)
+
+      extractSnippet(code) should equal(
+        """|  println("this is the first line")
+           |println("this is the last line")""".stripMargin
+      )
+    }
   }
 
 }
