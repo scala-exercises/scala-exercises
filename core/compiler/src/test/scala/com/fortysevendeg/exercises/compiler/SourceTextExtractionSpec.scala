@@ -4,7 +4,7 @@ package compiler
 import org.scalatest._
 import scala.reflect.internal.util.BatchSourceFile
 
-class DocExtractionGlobalSpec extends FunSpec with Matchers {
+class SourceTextExtractionSpec extends FunSpec with Matchers {
 
   val code = """
     /** This is a comment that gets ignored */
