@@ -69,11 +69,15 @@ object MethodBodyReader {
       else {
         val lineStart = skipWhitespace(i)
         val lineEnd = skipToEol(lineStart)
-        loop(
-          lineEnd + 1,
-          math.min(lineStart - i, minSpace),
-          (i, lineEnd) :: acc
-        )
+
+        if (lineStart == lineEnd)
+          loop(lineEnd + 1, minSpace, acc)
+        else
+          loop(
+            lineEnd + 1,
+            math.min(lineStart - i, minSpace),
+            (i, lineEnd) :: acc
+          )
       }
     }
 
