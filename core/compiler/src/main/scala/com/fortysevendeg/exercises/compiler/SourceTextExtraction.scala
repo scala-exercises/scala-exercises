@@ -8,6 +8,12 @@ import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc._
 import scala.tools.nsc.doc.{ Settings ⇒ _, _ }
 
+import scala.tools.nsc.doc.base.CommentFactoryBase
+import scala.tools.nsc.doc.base.MemberLookupBase
+import scala.tools.nsc.doc.base.LinkTo
+import scala.tools.nsc.doc.base.LinkToExternal
+import scala.tools.nsc.doc.base.comment.Comment
+
 import cats._
 import cats.std.all._
 import cats.syntax.flatMap._
@@ -15,17 +21,26 @@ import cats.syntax.semigroup._
 
 class SourceTextExtraction {
   private lazy val docGlobal = new DocExtractionGlobal()
+  private lazy val commentParser = makeDocCommentParser(docGlobal)
   private lazy val boundExtractRaw = SourceTextExtraction.extractRaw(docGlobal)(_)
   private lazy val boundReadCode = MethodBodyReader.read(docGlobal)(_)
 
   import docGlobal._
 
-  class MethodBody(lazyCode: ⇒ String) {
+  class MethodBody private[SourceTextExtraction] (lazyCode: ⇒ String) {
     lazy val code = lazyCode
   }
 
+  class ExtractedComment private[SourceTextExtraction] (
+      lazyRaw:     ⇒ String,
+      lazyComment: ⇒ Comment
+  ) {
+    lazy val raw = lazyRaw
+    lazy val comment = lazyComment
+  }
+
   case class Extracted(
-    comments:     Map[List[String], String],
+    comments:     Map[List[String], ExtractedComment],
     methodBodies: Map[List[String], MethodBody]
   )
 
@@ -41,7 +56,9 @@ class SourceTextExtraction {
 
     Extracted(
       extractions >>= {
-        _.comments.map { kv ⇒ kv._1.map(nameToString) → kv._2.raw }
+        _.comments.map { kv ⇒
+          kv._1.map(nameToString) → new ExtractedComment(kv._2.raw, commentParser.parseComment(kv._2))
+        }
       } toMap,
       extractions >>= {
         _.methodExprs.map { kv ⇒ kv._1.map(nameToString) → new MethodBody(boundReadCode(kv._2)) }
@@ -63,6 +80,30 @@ class SourceTextExtraction {
       }
     }.toMap
   }
+
+  private sealed trait DocCommentParser[G <: Global] {
+    val global: G
+    def parseComment(comment: global.DocComment): Comment
+  }
+
+  private def makeDocCommentParser[G <: Global](g: G): DocCommentParser[g.type] = {
+    new CommentFactoryBase with MemberLookupBase with DocCommentParser[g.type] {
+      override val global: g.type = g
+      import global._
+      override def parseComment(comment: DocComment) = {
+        val nowarnings = settings.nowarn.value
+        settings.nowarn.value = true
+        try parseAtSymbol(comment.raw, comment.raw, comment.pos)
+        finally settings.nowarn.value = nowarnings
+      }
+      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo] = None
+      override def chooseLink(links: List[LinkTo]): LinkTo = links.headOption.orNull
+      override def toString(link: LinkTo): String = "No link"
+      override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternal] = None
+      override def warnNoLink: Boolean = false
+    }
+  }
+
 }
 
 /** Utility to find doc exercise-worthy comments and source code blobs

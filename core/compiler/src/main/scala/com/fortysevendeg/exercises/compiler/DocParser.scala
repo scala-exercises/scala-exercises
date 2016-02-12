@@ -15,6 +15,9 @@ object DocParser {
     description: String
   )
 
+  def parseLibraryDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedLibraryComment] =
+    parseLibraryDocComment(comment.raw)
+
   def parseLibraryDocComment(comment: String): Xor[String, ParsedLibraryComment] = {
     cleanLines(comment.lines.toList) match {
       case name :: Nil ⇒
@@ -33,6 +36,9 @@ object DocParser {
     name:        String,
     description: String
   )
+
+  def parseSectionDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedSectionComment] =
+    parseSectionDocComment(comment.raw)
 
   def parseSectionDocComment(comment: String): Xor[String, ParsedSectionComment] = {
     cleanLines(comment.lines.toList) match {
@@ -54,6 +60,9 @@ object DocParser {
     description: Option[String],
     explanation: Option[String]
   )
+
+  def parseExerciseDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedExerciseComment] =
+    parseExerciseDocComment(comment.raw)
 
   def parseExerciseDocComment(comment: String): Xor[String, ParsedExerciseComment] = {
     cleanLines(comment.lines.toList) match {
