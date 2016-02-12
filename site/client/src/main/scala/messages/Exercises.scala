@@ -1,10 +1,12 @@
 package messages
 
 case class EvaluationRequest(
-  libraryName: String,
-  sectionName: String,
-  method:      String,
-  args:        Seq[String]
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
+  exerciseType: String,
+  args:         Seq[String]
 )
 
 // TODO: moar info
