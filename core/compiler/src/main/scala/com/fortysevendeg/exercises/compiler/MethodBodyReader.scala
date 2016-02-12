@@ -45,7 +45,7 @@ object MethodBodyReader {
   }
 
   @tailrec private def backstepWhitespace(str: Array[Char], start: Int, end: Int): Int = {
-    if (end > start && isWhitespace(str charAt (end - 1)))
+    if (end > start && isWhitespace(str(end - 1)))
       backstepWhitespace(str, start, end - 1)
     else end
   }
@@ -56,11 +56,11 @@ object MethodBodyReader {
   private def normalizedLineRanges(str: Array[Char], start: Int, end: Int): List[(Int, Int)] = {
 
     @tailrec def skipToEol(offset: Int): Int =
-      if (offset < end && (str charAt offset) != '\n') skipToEol(offset + 1)
+      if (offset < end && str(offset) != '\n') skipToEol(offset + 1)
       else offset
 
     @tailrec def skipWhitespace(offset: Int): Int =
-      if (offset < end && isWhitespace(str charAt offset)) skipWhitespace(offset + 1)
+      if (offset < end && isWhitespace(str(offset))) skipWhitespace(offset + 1)
       else offset
 
     type Acc = List[(Int, Int)]
