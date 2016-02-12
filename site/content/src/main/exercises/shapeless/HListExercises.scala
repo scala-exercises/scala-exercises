@@ -2,6 +2,21 @@ package shapelessex
 
 import org.scalatest._
 import shapeless._
+import ops.hlist._
+
+object size extends Poly1 {
+  implicit def caseInt = at[Int](x => 1)
+  implicit def caseString = at[String](_.length)
+  implicit def caseTuple[T, U]
+    (implicit st : Case.Aux[T, Int], su : Case.Aux[U, Int]) =
+      at[(T, U)](t => size(t._1)+size(t._2))
+}
+
+object addSize extends Poly2 {
+  implicit  def default[T](implicit st: shapelessex.size.Case.Aux[T, Int]) =
+    at[Int, T]{ (acc, t) => acc+size(t) }
+    }
+
 
 /** Heterogenous lists
   * shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
@@ -40,19 +55,22 @@ typical `HList`'s and also `KList`'s (`HList`'s whose elements share a common ou
 
   /** It has a set of fully polymorphic fold operations which take a polymorphic binary function value. The fold is sensitive
 to the static types of all of the elements of the `HList`. Given the earlier definition of size,
+{{{
+object addSize extends Poly2 {
+  implicit  def default[T](implicit st: shapelessex.size.Case.Aux[T, Int]) =
+    at[Int, T]{ (acc, t) => acc+size(t) }
+    }
+}}}
     */
   def exerciseFold(res0 : Int) = {
 
-    object addSize extends Poly2 {
-  implicit  def default[T](implicit st: size.Case.Aux[T, Int]) =
-    at[Int, T]{ (acc, t) => acc+size(t) }
-    }
-
+   
     val l = 23 :: "foo" :: (13, "wibble") :: HNil
 
-    l.foldLeft(0)(addSize) should be res0
+    l.foldLeft(0)(addSize) should be (res0)
 
   }
+    
 
   /** It also has a zipper for traversal and persistent update
     */
@@ -67,7 +85,7 @@ to the static types of all of the elements of the `HList`. Given the earlier def
   }
 
   /** It is covariant and it has a `unify` operation which converts it to an `HList` of elements of the least upper bound of the original types
-    */
+    
   def exerciseCovariant(res0: Boolean, res1 : Boolean) = {
 
     trait Fruit
@@ -90,6 +108,10 @@ to the static types of all of the elements of the `HList`. Given the earlier def
     apap.unify =:= typeOf[FFFF] should be res1
 
   }
+*/
+      
+
 
 
 }
+

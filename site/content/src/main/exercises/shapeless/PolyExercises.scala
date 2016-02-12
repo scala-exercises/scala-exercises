@@ -2,6 +2,7 @@ package shapelessex
 
 import org.scalatest._
 import shapeless._
+import poly.{~>}
 
 /** Polymorphic function values
 Ordinary Scala function values are monomorphic. shapeless, however, provides an encoding of polymorphic
