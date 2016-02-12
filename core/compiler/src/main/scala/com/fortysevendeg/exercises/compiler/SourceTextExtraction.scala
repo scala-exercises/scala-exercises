@@ -208,5 +208,7 @@ class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettin
 object DocExtractionGlobal {
   def defaultSettings = new Settings {
     embeddedDefaults[DocExtractionGlobal.type]
+    // this flag is crucial for method body extraction
+    Yrangepos.value = true
   }
 }
