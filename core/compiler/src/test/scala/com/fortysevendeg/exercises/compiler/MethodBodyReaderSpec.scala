@@ -3,8 +3,6 @@ package compiler
 
 import org.scalatest._
 
-import java.lang.ClassLoader
-
 class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSpecUtilities {
 
   describe("code snippet extraction") {
