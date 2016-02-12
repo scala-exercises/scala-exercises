@@ -33,13 +33,13 @@ class ExercisesController(
               val eval = for {
                 exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
                 _ ← userProgressOps.saveUserProgress(
-                    mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
-                  )
+                  mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
+                )
               } yield exerciseEvaluation
 
               eval.runTask match {
                 case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
-                case Xor.Left(error) ⇒ BadRequest("Evaluation failed : " + error)
+                case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
               }
             case _ ⇒ BadRequest("User login not found")
           }

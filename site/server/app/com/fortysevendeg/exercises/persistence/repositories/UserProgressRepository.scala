@@ -38,7 +38,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     method:      String,
     version:     Int
   ): ConnectionIO[Option[UserProgress]] = persistence.fetchOption[(Long, String, String, String, Int), UserProgress](
-      UserProgressQueries.findByExerciseVersion, (userId, libraryName, sectionName, method, version))
+    UserProgressQueries.findByExerciseVersion, (userId, libraryName, sectionName, method, version)
+  )
 
   override def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
     val SaveUserProgress.Request(userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = request
