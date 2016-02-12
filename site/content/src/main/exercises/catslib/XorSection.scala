@@ -2,6 +2,18 @@ package catslib
 
 import org.scalatest._
 
+object XorStyle {
+  def parse(s: String): Xor[NumberFormatException, Int] =
+    if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    else Xor.left(new NumberFormatException(s"${s} is not a valid integer."))
+
+  def reciprocal(i: Int): Xor[IllegalArgumentException, Double] =
+    if (i == 0) Xor.left(new IllegalArgumentException("Cannot take reciprocal of 0."))
+    else Xor.right(1.0 / i)
+
+  def stringify(d: Double): String = d.toString
+}
+
 /** Xor
   *
   * In day-to-day programming, it is fairly common to find ourselves writing functions that
@@ -89,5 +101,100 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
 
     val left: String Xor Int = Xor.left("Something went wrong")
     left.map(_ + 1) should be(Xor.left(res1))
+  }
+
+  /**
+    * Because `Xor` is right-biased, it is possible to define a `Monad` instance for it. You
+    * could also define one for `Either` but due to how it's encoded it may seem strange to fix a
+    * bias direction despite it intending to be flexible in that regard. The `Monad` instance for
+    * `Xor` is consistent with the behavior of the data type itself, whereas the one for `Either`
+    * would only introduce bias when `Either` is used in a generic context (a function abstracted
+    * over `M[_] : Monad`).
+    *
+    * Since we only ever want the computation to continue in the case of `Xor.Right` (as captured
+    * by the right-bias nature), we fix the left type parameter and leave the right one free.
+    *
+    * {{{
+    * import cats.Monad
+    *
+    * implicit def xorMonad[Err]: Monad[Xor[Err, ?]] =
+    *   new Monad[Xor[Err, ?]] {
+    *     def flatMap[A, B](fa: Xor[Err, A])(f: A => Xor[Err, B]): Xor[Err, B] =
+    *       fa.flatMap(f)
+    *
+    *     def pure[A](x: A): Xor[Err, A] = Xor.right(x)
+    *   }
+    * }}}
+    *
+    */
+  def xorMonad(res0: Int, res1: String) = {
+    import cats.data.Xor
+
+    val right: String Xor Int = Xor.right(5)
+    right.flatMap(x => Xor.right(x + 1)) should be(Xor.right(res0))
+
+    val left: String Xor Int = Xor.left("Something went wrong")
+    left.flatMap(x => Xor.right(x + 1)) should be(Xor.left(res1))
+  }
+
+  /**
+    * === Using `Xor` instead of exceptions ===
+    *
+    * As a running example, we will have a series of functions that will parse a string into an integer,
+    * take the reciprocal, and then turn the reciprocal into a string.
+    *
+    * In exception-throwing code, we would have something like this:
+    *
+    * {{{
+    * object ExceptionStyle {
+    *   def parse(s: String): Int =
+    *     if (s.matches("-?[0-9]+")) s.toInt
+    *     else throw new NumberFormatException(s"${s} is not a valid integer.")
+    *
+    *   def reciprocal(i: Int): Double =
+    *     if (i == 0) throw new IllegalArgumentException("Cannot take reciprocal of 0.")
+    *     else 1.0 / i
+    *
+    *   def stringify(d: Double): String = d.toString
+    * }
+    * }}}
+    *
+    * Instead, let's make the fact that some of our functions can fail explicit in the return type.
+    *
+    * {{{
+    * object XorStyle {
+    *   def parse(s: String): Xor[NumberFormatException, Int] =
+    *     if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    *     else Xor.left(new NumberFormatException(s"${s} is not a valid integer."))
+    *
+    *   def reciprocal(i: Int): Xor[IllegalArgumentException, Double] =
+    *     if (i == 0) Xor.left(new IllegalArgumentException("Cannot take reciprocal of 0."))
+    *     else Xor.right(1.0 / i)
+    *
+    *   def stringify(d: Double): String = d.toString
+    * }
+    * }}}
+    *
+    */
+  def xorStyleParse(res0: Boolean, res1: Boolean) = {
+    XorStyle.parse("Not a number").isRight should be(res0)
+    XorStyle.parse("2").isRight should be(res1)
+  }
+
+  /**
+    * Now, using combinators like `flatMap` and `map`, we can compose our functions together.
+    *
+    * {{{
+    * import XorStyle._
+    *
+    * def magic(s: String): Xor[Exception, String] =
+    *   parse(s).flatMap(reciprocal).map(stringify)
+    * }}}
+    *
+    */
+  def xorComposition(res0: Boolean, res1: Boolean, res2: Boolean) = {
+    XorStyle.magic("0").isRight should be (res0)
+    XorStyle.magic("1").isRight should be (res1)
+    XorStyle.magic("Not a number").isRight should be (res2)
   }
 }
