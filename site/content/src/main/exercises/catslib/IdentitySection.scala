@@ -7,7 +7,7 @@ import org.scalatest._
   *
   * The identity monad can be seen as the ambient monad that encodes the
   * effect of having no effect. It is ambient in the sense that plain pure
-  * values are values of <code>Id</code>.
+  * values are values of `Id`.
   *
   * It is encoded as:
   *
@@ -16,7 +16,7 @@ import org.scalatest._
   * }}}
   *
   * That is to say that the type Id[A] is just a synonym for A.  We can
-  * freely treat values of type <code>A</code> as values of type <code>Id[A]</code>, and
+  * freely treat values of type `A` as values of type `Id[A]`, and
   * vice-versa.
   *
   * {{{
@@ -30,8 +30,8 @@ import org.scalatest._
 object IdentitySection extends FlatSpec with Matchers with exercise.Section {
 
   /**
-    * We can freely compare values of <code>Id[T]</code> with unadorned
-    * values of type <code>T</code>.
+    * We can freely compare values of `Id[T]` with unadorned
+    * values of type `T`.
     */
   def identityType(res0: Int) {
     val anId: Id[Int] = 42
@@ -40,23 +40,25 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
 
   /**
     * Using this type declaration, we can treat our Id type constructor as a
-    * <code>Monad</code> and as a <code>Comonad</code>. The <code>pure</code>
-    * method, which has type <code>A => Id[A]</code> just becomes the identity
-    * function.  The <code>map</code> method from <code>Functor</code> just becomes function
+    * `Monad` and as a `Comonad`. The `pure`
+    * method, which has type `A => Id[A]` just becomes the identity
+    * function.  The `map` method from `Functor` just becomes function
     * application:
+    *
     * {{{
     * import cats.Functor
     *
     * val one: Int = 1
     * Functor[Id].map(one)(_ + 1)
     * }}}
+    *
     */
   def pureIdentity(res0: Int) = {
     Applicative[Id].pure(42) should be (res0)
   }
 
   /**
-    * Compare the signatures of <code>map</code> and <code>flatMap</code> and <code>coflatMap</code>:
+    * Compare the signatures of `map` and `flatMap` and `coflatMap`:
     *
     * {{{
     *   def map[A, B](fa: Id[A])(f: A => B): Id[B]
@@ -64,11 +66,11 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     *   def coflatMap[A, B](a: Id[A])(f: Id[A] => B): Id[B]
     * }}}
     *
-    * You'll notice that in the flatMap signature, since <code>Id[B]</code> is the same
-    * as <code>B</code> for all B, we can rewrite the type of the <code>f</code> parameter to be
-    * <code>A => B</code> instead of <code>A => Id[B]</code>, and this makes the signatures of the
+    * You'll notice that in the flatMap signature, since `Id[B]` is the same
+    * as `B` for all B, we can rewrite the type of the `f` parameter to be
+    * `A => B` instead of `A => Id[B]`, and this makes the signatures of the
     * two functions the same, and, in fact, they can have the same
-    * implementation, meaning that for <code>Id</code>, <code>flatMap</code> is also just function
+    * implementation, meaning that for `Id`, `flatMap` is also just function
     * application:
     *
     * {{{
@@ -78,6 +80,7 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     * Monad[Id].map(one)(_ + 1)
     * Monad[Id].flatMap(one)(_ + 1)
     * }}}
+    *
     */
   def idComonad(res0: Int) = {
     val fortytwo: Int = 42
