@@ -80,7 +80,7 @@ class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSp
       )
     }
 
-    it("should ignore lines that are empty or all whitespace") {
+    it("should prefix whitespace in lines that are empty or all whitespace") {
       val code = """
        |/** This is an example exercise.
        |  * What value returns two?
@@ -93,12 +93,10 @@ class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSp
        |}
        """.stripMargin
 
-      println("*" * 20)
-      println(extractSnippet(code))
-      println("*" * 20)
-
       extractSnippet(code) should equal(
         """|  println("this is the first line")
+           |
+           |
            |println("this is the last line")""".stripMargin
       )
     }
