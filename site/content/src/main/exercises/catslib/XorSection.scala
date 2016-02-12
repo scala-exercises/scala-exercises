@@ -34,11 +34,11 @@ import org.scalatest._
   *
   * ===`Xor` vs `Validated`===
   *
-  * In general, `Validated` is used to accumulate errors, while `Xor` is used to short-circuit a computation upon the first error. For more information, see the `Validated</code> vs `Xor` section of the `Validated` documentation.
+  * In general, `Validated` is used to accumulate errors, while `Xor` is used to short-circuit a computation upon the first error. For more information, see the `Validated` vs `Xor` section of the `Validated` documentation.
   *
   * ===Why not `Either`===
   *
-  * `Xor` is very similar to `scala.util.Either</code> - in fact, they are *isomorphic* (that is,
+  * `Xor` is very similar to `scala.util.Either` - in fact, they are *isomorphic* (that is,
   * any `Either` value can be rewritten as an `Xor` value, and vice versa).
   *
   * {{{
@@ -53,11 +53,11 @@ import org.scalatest._
   * Just like `Either`, it has two type parameters. Instances of `Xor` either hold a value
   * of one type parameter, or the other. Why then does it exist at all?
   *
-  * Taking a look at `Either`, we notice it lacks `flatMap</code> and `map</code> methods. In order to map
-  * over an `Either[A, B]</code> value, we have to state which side we want to map over. For example,
-  * if we want to map `Either[A, B]</code> to `Either[A, C]</code> we would need to map over the right side.
-  * This can be accomplished by using the `Either#right</code> method, which returns a `RightProjection</code>
-  * instance. `RightProjection</code> does have `flatMap</code> and `map</code> on it, which acts on the right side
+  * Taking a look at `Either`, we notice it lacks `flatMap` and `map` methods. In order to map
+  * over an `Either[A, B]` value, we have to state which side we want to map over. For example,
+  * if we want to map `Either[A, B]` to `Either[A, C]` we would need to map over the right side.
+  * This can be accomplished by using the `Either#right` method, which returns a `RightProjection`
+  * instance. `RightProjection` does have `flatMap` and `map` on it, which acts on the right side
   * and ignores the left - this property is referred to as "right-bias."
   *
   * {{{
@@ -69,7 +69,7 @@ import org.scalatest._
   * }}}
   *
   * Note the return types are themselves back to `Either`, so if we want to make more calls to
-  * `flatMap</code> or `map</code> then we again must call `right</code> or `left`.
+  * `flatMap` or `map` then we again must call `right` or `left`.
   *
   *
   */
