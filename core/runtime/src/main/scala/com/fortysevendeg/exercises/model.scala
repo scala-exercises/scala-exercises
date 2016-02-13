@@ -7,7 +7,7 @@ package com.fortysevendeg.exercises
 trait Library {
   def name: String
   def description: String
-  def color: String
+  def color: Option[String]
   def sections: List[Section]
 }
 
@@ -22,25 +22,19 @@ trait Section {
 /** Exercises within a section.
   */
 trait Exercise {
-  type Input
-
   def name: Option[String]
   def description: Option[String]
   def code: Option[String]
-  def eval: Option[Input ⇒ Unit]
+  def qualifiedMethod: Option[String]
   def explanation: Option[String]
-}
-
-object Exercise {
-  type Aux[A] = Exercise { type Input = A }
 }
 
 // default case class implementations
 case class DefaultLibrary(
   name:        String,
   description: String,
-  color:       String,
-  sections:    List[Section] = Nil
+  color:       Option[String],
+  sections:    List[Section]  = Nil
 ) extends Library
 
 case class DefaultSection(
@@ -49,12 +43,10 @@ case class DefaultSection(
   exercises:   List[Exercise] = Nil
 ) extends Section
 
-case class DefaultExercise[A](
-    name:        Option[String]   = None,
-    description: Option[String]   = None,
-    code:        Option[String]   = None,
-    eval:        Option[A ⇒ Unit] = None,
-    explanation: Option[String]   = None
-) extends Exercise {
-  type Input = A
-}
+case class DefaultExercise(
+  name:            Option[String] = None,
+  description:     Option[String] = None,
+  code:            Option[String] = None,
+  qualifiedMethod: Option[String] = None,
+  explanation:     Option[String] = None
+) extends Exercise

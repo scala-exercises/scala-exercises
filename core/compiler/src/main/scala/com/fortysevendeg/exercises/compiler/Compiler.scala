@@ -31,7 +31,8 @@ case class Compiler() {
     case class LibraryInfo(
       symbol:   ClassSymbol,
       comment:  DocParser.ParsedLibraryComment,
-      sections: List[SectionInfo]
+      sections: List[SectionInfo],
+      color:    Option[String]
     )
 
     case class SectionInfo(
@@ -41,9 +42,10 @@ case class Compiler() {
     )
 
     case class ExerciseInfo(
-      symbol:  MethodSymbol,
-      comment: DocParser.ParsedExerciseComment,
-      code:    String
+      symbol:          MethodSymbol,
+      comment:         DocParser.ParsedExerciseComment,
+      code:            String,
+      qualifiedMethod: String
     )
 
     def enhanceDocError(symbol: Symbol)(error: String) =
@@ -61,7 +63,8 @@ case class Compiler() {
     } yield LibraryInfo(
       symbol = symbol,
       comment = comment,
-      sections = sections
+      sections = sections,
+      color = library.color
     )
 
     def maybeMakeSectionInfo(
@@ -92,7 +95,8 @@ case class Compiler() {
     } yield ExerciseInfo(
       symbol = symbol,
       comment = comment,
-      code = code
+      code = code,
+      qualifiedMethod = internal.symbolToPath(symbol).mkString(".")
     )
 
     // keeping this, as it's very useful for debugging
@@ -128,7 +132,8 @@ case class Compiler() {
                 treeGen.makeExercise(
                   name = exerciseInfo.comment.name,
                   description = exerciseInfo.comment.description,
-                  code = Some(exerciseInfo.code),
+                  code = Some(exerciseInfo.code), // TODO: remove wrapper
+                  qualifiedMethod = Some(exerciseInfo.qualifiedMethod), // TODO: remove wrapper
                   explanation = exerciseInfo.comment.explanation
                 )
               }.unzip
@@ -146,7 +151,7 @@ case class Compiler() {
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
         name = libraryInfo.comment.name,
         description = libraryInfo.comment.description,
-        color = "purple", // TODO: where should this get defined?
+        color = libraryInfo.color,
         sectionTerms = sectionTerms
       )
 
@@ -173,7 +178,7 @@ case class Compiler() {
       Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
         .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
 
-    def resolveComment(symbol: Symbol): Xor[String, String] = {
+    def resolveComment(symbol: Symbol): Xor[String, SourceTextExtraction#ExtractedComment] = {
       val path = symbolToPath(symbol)
       Xor.fromOption(
         sourceExtracted.comments.get(path),

@@ -61,7 +61,7 @@ class ApplicationController(
       val ops = for {
         libraries ← exerciseOps.getLibraries
         section ← exerciseOps.getSection(libraryName, sectionName)
-      } yield (libraries.headOption, section)
+      } yield (libraries.find(_.name == libraryName), section)
       ops.runTask match {
         case Xor.Right((Some(l), Some(s))) ⇒ Ok(views.html.templates.library.index(l, s))
         case Xor.Right((Some(l), None))    ⇒ Redirect(l.sectionNames.head)

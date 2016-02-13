@@ -4,4 +4,5 @@ package exercise
   */
 trait Library {
   def sections: List[Section]
+  def color: Option[String] = None
 }
