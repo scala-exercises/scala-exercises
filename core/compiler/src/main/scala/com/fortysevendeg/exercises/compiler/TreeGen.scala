@@ -42,7 +42,7 @@ case class TreeGen[U <: Universe](
   }
 
   def makeLibrary(
-    name: String, description: String, color: String,
+    name: String, description: String, color: Option[String],
     sectionTerms: List[TermName]
   ) = {
     val term = makeTermName("Library", name)

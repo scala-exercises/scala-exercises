@@ -49,7 +49,7 @@ class TreeGenSpec extends FunSpec with Matchers {
       val library = treeGen.makeLibrary(
         name = "MyLibrary",
         description = "This is my library",
-        color = "#FFFFFF",
+        color = Some("#FFFFFF"),
         sectionTerms = sections.map(_._1)
       )
 
