@@ -31,7 +31,8 @@ case class Compiler() {
     case class LibraryInfo(
       symbol:   ClassSymbol,
       comment:  DocParser.ParsedLibraryComment,
-      sections: List[SectionInfo]
+      sections: List[SectionInfo],
+      color:    Option[String]
     )
 
     case class SectionInfo(
@@ -61,7 +62,8 @@ case class Compiler() {
     } yield LibraryInfo(
       symbol = symbol,
       comment = comment,
-      sections = sections
+      sections = sections,
+      color = library.color
     )
 
     def maybeMakeSectionInfo(
@@ -146,7 +148,7 @@ case class Compiler() {
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
         name = libraryInfo.comment.name,
         description = libraryInfo.comment.description,
-        color = "purple", // TODO: where should this get defined?
+        color = libraryInfo.color,
         sectionTerms = sectionTerms
       )
 
