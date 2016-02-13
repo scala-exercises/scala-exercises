@@ -164,7 +164,7 @@
           </li>
 
           @for((sectionName, index) <- library.sectionNames.zipWithIndex) {
-            @templates.library.sectionRow(index, sectionName, library.color, sectionName.humanizeCamelCase == section.name)
+            @templates.library.sectionRow(index, sectionName, library.color, sectionName == section.name)
           }
 
         </ul>
