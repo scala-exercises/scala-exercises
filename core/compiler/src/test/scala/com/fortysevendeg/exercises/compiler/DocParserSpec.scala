@@ -15,34 +15,7 @@ class DocParserSpec extends FunSpec with Matchers {
   def joinWithSpaces(content: String*) =
     content.mkString(" ")
 
-  describe("library comment parsing") {
-
-    it("fails when no description is provided") {
-      val comment = """
-      /** Library Name
-        *
-        */
-      """
-      assert(DocParser.parseLibraryDocComment(comment).isLeft)
-    }
-
-    it("captures the first line as name and the rest as description") {
-      val comment = s"""
-      /** $content1
-        * $content2
-        * $content3
-        */
-      """
-      val res = DocParser.parseLibraryDocComment(comment)
-      res should equal(Xor.right(ParsedLibraryComment(
-        name = content1,
-        description = joinWithSpaces(content2, content3)
-      )))
-    }
-
-  }
-
-  describe("line cleaning") {
+  ignore("line cleaning") {
 
     it("strips comment container and leading/trailing whitespace") {
 
@@ -176,4 +149,5 @@ class DocParserSpec extends FunSpec with Matchers {
       }
     }
   }
+
 }

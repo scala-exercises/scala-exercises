@@ -26,7 +26,7 @@ object DomHandler {
   /** Highlights every preformatted code block.
     */
   def highlightCodeBlocks: IO[Unit] = io {
-    $("pre code").each((_: Any, code: dom.Element) ⇒ {
+    $("pre").each((_: Any, code: dom.Element) ⇒ {
       js.Dynamic.global.hljs.highlightBlock(code)
     })
   }

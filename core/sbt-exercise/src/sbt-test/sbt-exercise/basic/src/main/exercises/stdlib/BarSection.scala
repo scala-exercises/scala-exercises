@@ -1,6 +1,7 @@
 package stdlib
 
 /** Section Foo
+  *
   * This is a Section
   */
 object FooSection extends exercise.Section {

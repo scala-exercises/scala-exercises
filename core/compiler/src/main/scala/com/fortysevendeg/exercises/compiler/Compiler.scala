@@ -173,7 +173,7 @@ case class Compiler() {
       Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
         .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
 
-    def resolveComment(symbol: Symbol): Xor[String, String] = {
+    def resolveComment(symbol: Symbol): Xor[String, SourceTextExtraction#ExtractedComment] = {
       val path = symbolToPath(symbol)
       Xor.fromOption(
         sourceExtracted.comments.get(path),
