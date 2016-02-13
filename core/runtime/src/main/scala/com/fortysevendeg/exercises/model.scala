@@ -7,7 +7,7 @@ package com.fortysevendeg.exercises
 trait Library {
   def name: String
   def description: String
-  def color: String
+  def color: Option[String]
   def sections: List[Section]
 }
 
@@ -33,8 +33,8 @@ trait Exercise {
 case class DefaultLibrary(
   name:        String,
   description: String,
-  color:       String,
-  sections:    List[Section] = Nil
+  color:       Option[String],
+  sections:    List[Section]  = Nil
 ) extends Library
 
 case class DefaultSection(
