@@ -21,12 +21,14 @@ class TreeGenSpec extends FunSpec with Matchers {
           name = Some("Example1"),
           description = None,
           code = None,
+          qualifiedMethod = None,
           explanation = None
         ),
         treeGen.makeExercise(
           name = Some("Example2"),
           description = None,
           code = None,
+          qualifiedMethod = None,
           explanation = None
         )
       )
