@@ -23,13 +23,13 @@ object SaveUserProgress {
 
 object UserProgressQueries {
 
-  val allFields = List("userid", "libraryname", "sectionname", "method", "version", "exercisetype", "args", "succeeded")
+  val allFields = List("id", "userid", "libraryname", "sectionname", "method", "version", "exercisetype", "args", "succeeded")
 
   private[this] val commonFindBy =
     s"""
           SELECT
           ${allFields.mkString(", ")}
-          FROM \"userProgress\"
+          FROM "userProgress"
           WHERE """
 
   val findByUserId =
@@ -39,8 +39,8 @@ object UserProgressQueries {
     s"""$commonFindBy userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
 
   val update =
-    """
-          UPDATE \"userProgress\"
+    s"""
+          UPDATE "userProgress"
           SET libraryName = ?,
           sectionName = ?,
           method = ?,
@@ -53,10 +53,10 @@ object UserProgressQueries {
 
   val insert =
     s"""
-          INSERT INTO \"userProgress\"(${allFields.mkString(", ")})
+          INSERT INTO "userProgress"(${allFields.tail.mkString(", ")})
           VALUES(?,?,?,?,?,?,?,?)
     """
 
   val deleteById =
-    "DELETE FROM \"userProgress\" WHERE id = ?"
+    s"""DELETE FROM "userProgress" WHERE id = ?"""
 }
