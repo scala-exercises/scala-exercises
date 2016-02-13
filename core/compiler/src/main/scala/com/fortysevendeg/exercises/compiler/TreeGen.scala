@@ -12,22 +12,25 @@ case class TreeGen[U <: Universe](
 ) {
   import u._
 
-  def makeExercise(name: Option[String], description: Option[String], code: Option[String], explanation: Option[String]) = {
+  def makeExercise(
+    name: Option[String], description: Option[String],
+    code: Option[String], qualifiedMethod: Option[String],
+    explanation: Option[String]
+  ) = {
     val term = makeTermName("Exercise", name)
     term → q"""
         object $term extends Exercise {
-          override val name         = $name
-          override val description  = $description
-          override val code         = $code
-          override val explanation  = $explanation
-
-          override type Input       = Unit
-          override val eval         = None
+          override val name             = $name
+          override val description      = $description
+          override val code             = $code
+          override val qualifiedMethod  = $qualifiedMethod
+          override val explanation      = $explanation
         }"""
   }
 
   def makeSection(
-    name: String, description: Option[String], exerciseTerms: List[TermName]
+    name: String, description: Option[String],
+    exerciseTerms: List[TermName]
   ) = {
     val term = makeTermName("Section", name)
     term → q"""
@@ -53,7 +56,8 @@ case class TreeGen[U <: Universe](
   }
 
   def makePackage(
-    packageName: String, trees: List[Tree]
+    packageName: String,
+    trees:       List[Tree]
   ) = q"""
         package ${makeRefTree(packageName)} {
           import com.fortysevendeg.exercises.Exercise
