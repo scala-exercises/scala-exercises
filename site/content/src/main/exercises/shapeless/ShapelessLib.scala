@@ -1,6 +1,7 @@
 package shapelessex
 
-/** Shapeless exercises
+/** Shapeless
+  *
   * Exercises for shapeless
   */
 object ShapelessLib extends exercise.Library {

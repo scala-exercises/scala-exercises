@@ -19,15 +19,15 @@ object addSize extends Poly2 {
 
 
 /** Heterogenous lists
-  * 
+  *
   * shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
 
 
   */
 object HListExercises extends FlatSpec with Matchers with exercise.Section {
 
-  /** Map 
-    * 
+  /** Map
+    *
     *  It has a `map` operation, applying a polymorphic function value across its elements. This means that it subsumes both
     * typical `HList`'s and also `KList`'s (`HList`'s whose elements share a common outer type constructor).
     */
@@ -46,8 +46,8 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
   }
 
   /** Flat Map
-    *  
-    * It also has a flatMap Operation 
+    *
+    * It also has a flatMap Operation
     */
   def exerciseFlatMap(res0 : Int, res1 : String, res2 : Boolean) = {
     import poly.identity
@@ -59,7 +59,7 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
   }
 
   /** Polymorphic fold
-    * 
+    *
     * It has a set of fully polymorphic fold operations which take a polymorphic binary function value. The fold is sensitive
     * to the static types of all of the elements of the `HList`. Given the earlier definition of size,
     * {{{
@@ -71,16 +71,15 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     */
   def exerciseFold(res0 : Int) = {
 
-   
+
     val l = 23 :: "foo" :: (13, "wibble") :: HNil
 
     l.foldLeft(0)(addSize) should be (res0)
 
   }
-    
 
   /** Zipper
-    * 
+    *
     * It also has a zipper for traversal and persistent update
     */
   def exerciseZipper(res0 : Int, res1 : (String, Int), res2 : Double, res3 : Int, res4 : String, res5 : String, res6 : Double) = {
