@@ -19,15 +19,16 @@ object addSize extends Poly2 {
 
 
 /** Heterogenous lists
-  * 
+  *
   * shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
-  * 
+  *
   */
 object HListExercises extends FlatSpec with Matchers with exercise.Section {
 
-  /** It has a `map` operation, applying a polymorphic function value across its elements.
-    *  
-    * This means that it subsumes both typical `HList`'s and also `KList`'s (`HList`'s whose elements share a common outer type constructor).
+  /** Map
+    *
+    *  It has a `map` operation, applying a polymorphic function value across its elements. This means that it subsumes both
+    * typical `HList`'s and also `KList`'s (`HList`'s whose elements share a common outer type constructor).
     */
   def exerciseMap(res0: Option[Int], res1 : Option[String]) = {
     import poly._
@@ -43,8 +44,9 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     opts should be (res0 :: res1 :: HNil)
   }
 
-  /** It also has a flatMap Operation
-    *  
+  /** Flat Map
+    *
+    * It also has a flatMap Operation
     */
   def exerciseFlatMap(res0 : Int, res1 : String, res2 : Boolean) = {
     import poly.identity
@@ -55,9 +57,10 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** It has a set of fully polymorphic fold operations which take a polymorphic binary function value. 
-    * 
-    * The fold is sensitive to the static types of all of the elements of the `HList`. Given the earlier definition of size,
+  /** Polymorphic fold
+    *
+    * It has a set of fully polymorphic fold operations which take a polymorphic binary function value. The fold is sensitive
+    * to the static types of all of the elements of the `HList`. Given the earlier definition of size,
     * {{{
     * object addSize extends Poly2 {
     * implicit  def default[T](implicit st: shapelessex.size.Case.Aux[T, Int]) =
@@ -67,16 +70,17 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     */
   def exerciseFold(res0 : Int) = {
 
-   
+
     val l = 23 :: "foo" :: (13, "wibble") :: HNil
 
     l.foldLeft(0)(addSize) should be (res0)
 
   }
-    
 
-  /** It also has a zipper for traversal and persistent update
-    * 
+
+  /** Zipper
+    *
+    * It also has a zipper for traversal and persistent update
     */
   def exerciseZipper(res0 : Int, res1 : (String, Int), res2 : Double, res3 : Int, res4 : String, res5 : String, res6 : Double) = {
     import syntax.zipper._
@@ -87,35 +91,4 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     l.toZipper.right.delete.reify should be (res3 :: res4 :: res5 :: res6 :: HNil)
 
   }
-
-  /** It is covariant 
-    * 
-    * It has a `unify` operation which converts it to an `HList` of elements of the least upper bound of the original types
-    
-  def exerciseCovariant(res0: Boolean, res1 : Boolean) = {
-
-    trait Fruit
-    case class Apple() extends Fruit
-    case class Pear() extends Fruit
-
-    type FFFF = Fruit :: Fruit :: Fruit :: Fruit :: HNil
-    type APAP = Apple :: Pear :: Apple :: Pear :: HNil
-
-    val a : Apple = Apple()
-    val p : Pear = Pear()
-
-    val apap : APAP = a :: p :: a :: p :: HNil
-    val ffff : FFFF = apap  // APAP <: FFFF
-
-    import reflect.runtime.universe._
-
-    typeOf[FFFF].baseClasses.contains(typeOf[APAP].typeSymbol) should be res0
-
-    apap.unify =:= typeOf[FFFF] should be res1
-
-  }
-
-*/
-      
 }
-
