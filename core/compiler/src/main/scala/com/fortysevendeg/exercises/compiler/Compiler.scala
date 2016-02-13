@@ -42,9 +42,10 @@ case class Compiler() {
     )
 
     case class ExerciseInfo(
-      symbol:  MethodSymbol,
-      comment: DocParser.ParsedExerciseComment,
-      code:    String
+      symbol:          MethodSymbol,
+      comment:         DocParser.ParsedExerciseComment,
+      code:            String,
+      qualifiedMethod: String
     )
 
     def enhanceDocError(symbol: Symbol)(error: String) =
@@ -94,7 +95,8 @@ case class Compiler() {
     } yield ExerciseInfo(
       symbol = symbol,
       comment = comment,
-      code = code
+      code = code,
+      qualifiedMethod = internal.symbolToPath(symbol).mkString(".")
     )
 
     // keeping this, as it's very useful for debugging
@@ -130,7 +132,8 @@ case class Compiler() {
                 treeGen.makeExercise(
                   name = exerciseInfo.comment.name,
                   description = exerciseInfo.comment.description,
-                  code = Some(exerciseInfo.code),
+                  code = Some(exerciseInfo.code), // TODO: remove wrapper
+                  qualifiedMethod = Some(exerciseInfo.qualifiedMethod), // TODO: remove wrapper
                   explanation = exerciseInfo.comment.explanation
                 )
               }.unzip
