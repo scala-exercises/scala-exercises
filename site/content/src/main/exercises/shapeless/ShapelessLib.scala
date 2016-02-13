@@ -6,6 +6,7 @@ package shapelessex
   */
 object ShapelessLib extends exercise.Library {
   override def sections = List(
+    PolyExercises,
     HListExercises
   )
 }

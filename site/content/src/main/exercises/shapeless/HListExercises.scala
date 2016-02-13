@@ -21,8 +21,7 @@ object addSize extends Poly2 {
 /** Heterogenous lists
   *
   * shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
-
-
+  * 
   */
 object HListExercises extends FlatSpec with Matchers with exercise.Section {
 
@@ -91,4 +90,35 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     l.toZipper.right.delete.reify should be (res3 :: res4 :: res5 :: res6 :: HNil)
 
   }
+
+  /** It is covariant 
+    * 
+    * It has a `unify` operation which converts it to an `HList` of elements of the least upper bound of the original types
+    
+  def exerciseCovariant(res0: Boolean, res1 : Boolean) = {
+
+    trait Fruit
+    case class Apple() extends Fruit
+    case class Pear() extends Fruit
+
+    type FFFF = Fruit :: Fruit :: Fruit :: Fruit :: HNil
+    type APAP = Apple :: Pear :: Apple :: Pear :: HNil
+
+    val a : Apple = Apple()
+    val p : Pear = Pear()
+
+    val apap : APAP = a :: p :: a :: p :: HNil
+    val ffff : FFFF = apap  // APAP <: FFFF
+
+    import reflect.runtime.universe._
+
+    typeOf[FFFF].baseClasses.contains(typeOf[APAP].typeSymbol) should be res0
+
+    apap.unify =:= typeOf[FFFF] should be res1
+
+  }
+
+*/
+      
 }
+
