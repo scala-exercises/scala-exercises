@@ -1,11 +1,17 @@
 package foolib
 
 /** Section Foo
+  *
   * This is a Section
   */
 object FooSection extends exercise.Section {
 
-  /** Exercise foo 1 */
+  /** Exercise foo 1!!!
+    *
+    * {{{
+    *   // this is a code block
+    * }}}
+    */
   def foo1(value: String) {
     println(s"foo 1: $value")
   }
