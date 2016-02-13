@@ -143,7 +143,7 @@ sealed trait DocRendering {
     case Paragraph(Chain(Summary(in) :: Nil)) if skipSummary ⇒ Nil
     case Paragraph(in)                                       ⇒ <p>{ inlineToHtml(in) }</p>
     case Code(data) ⇒
-      <pre>{ data }</pre>
+      <pre class={ "scala" }>{ data }</pre>
     case UnorderedList(items) ⇒
       <ul>{ listItemsToHtml(items) }</ul>
     case OrderedList(items, listStyle) ⇒
