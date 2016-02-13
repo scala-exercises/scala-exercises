@@ -21,12 +21,14 @@ class TreeGenSpec extends FunSpec with Matchers {
           name = Some("Example1"),
           description = None,
           code = None,
+          qualifiedMethod = None,
           explanation = None
         ),
         treeGen.makeExercise(
           name = Some("Example2"),
           description = None,
           code = None,
+          qualifiedMethod = None,
           explanation = None
         )
       )
@@ -47,7 +49,7 @@ class TreeGenSpec extends FunSpec with Matchers {
       val library = treeGen.makeLibrary(
         name = "MyLibrary",
         description = "This is my library",
-        color = "#FFFFFF",
+        color = Some("#FFFFFF"),
         sectionTerms = sections.map(_._1)
       )
 

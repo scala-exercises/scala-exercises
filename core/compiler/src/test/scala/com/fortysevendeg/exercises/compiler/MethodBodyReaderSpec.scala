@@ -3,17 +3,10 @@ package compiler
 
 import org.scalatest._
 
-import scala.reflect.internal.util.AbstractFileClassLoader
-import scala.reflect.internal.util.BatchSourceFile
-import scala.tools.nsc.{ Global, Settings }
-import scala.tools.nsc.io.{ VirtualDirectory, AbstractFile }
-
-import java.lang.ClassLoader
-
 class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSpecUtilities {
 
   describe("code snippet extraction") {
-    ignore("should extract a one line snippet and trim all whitespace") {
+    it("should extract a one line snippet and trim all whitespace") {
       val code = """
        |/** This is an example exercise.
        |  * What value returns two?
@@ -22,34 +15,97 @@ class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSp
        |  value + value
        |}
        """.stripMargin
+
+      extractSnippet(code) should equal(
+        """value + value"""
+      )
     }
 
-    ignore("should extract a multi line snippet and trim all whitespace") {
+    it("should extract a multi line snippet and trim all whitespace") {
       val code = """
        |/** This is an example exercise.
        |  * What value returns two?
        |  */
        |def addOne(value: Int) = {
+       |
        |  val foo = value + 1
-       |  println("we have a foo " + foo)
-       |  1 +
+       |    println("we have a foo " + foo)
+       |  1 + whatever
        |}
        """.stripMargin
+
+      extractSnippet(code) should equal(
+        """|val foo = value + 1
+           |  println("we have a foo " + foo)
+           |1 + whatever""".stripMargin
+      )
     }
 
+    it("should handle the closing block bracket on the last line of code") {
+      val code = """
+       |/** This is an example exercise.
+       |  * What value returns two?
+       |  */
+       |def addOne(value: Int) = {
+       |
+       |  val foo = value + 1
+       |    println("we have a foo " + foo)
+       |  1 + whatever}
+       """.stripMargin
+
+      extractSnippet(code) should equal(
+        """|val foo = value + 1
+           |  println("we have a foo " + foo)
+           |1 + whatever""".stripMargin
+      )
+    }
+
+    it("should handle the opening block bracket on the first line of code") {
+      val code = """
+       |/** This is an example exercise.
+       |  * What value returns two?
+       |  */
+       |def addOne(value: Int) = {val foo = value + 1
+       |  println("we have a foo " + foo)
+       |  1 + whatever
+       |}
+       """.stripMargin
+
+      extractSnippet(code) should equal(
+        """|val foo = value + 1
+           |  println("we have a foo " + foo)
+           |  1 + whatever""".stripMargin
+      )
+    }
+
+    it("should prefix whitespace in lines that are empty or all whitespace") {
+      val code = """
+       |/** This is an example exercise.
+       |  * What value returns two?
+       |  */
+       |def addOne(value: Int) = {
+       |    println("this is the first line")
+       |
+       |
+       |  println("this is the last line")
+       |}
+       """.stripMargin
+
+      extractSnippet(code) should equal(
+        """|  println("this is the first line")
+           |
+           |
+           |println("this is the last line")""".stripMargin
+      )
+    }
   }
 
 }
 
 trait MethodBodyReaderSpecUtilities {
-
-  val global = new Global(new Settings {
-    embeddedDefaults[CompilerSpec]
-  }) {
+  val global = new DocExtractionGlobal() {
     locally { new Run() }
   }
-  val outputTarget = new VirtualDirectory("(memory)", None)
-  global.settings.outputDirs.setSingleOutput(outputTarget)
 
   import global._
 
