@@ -101,6 +101,7 @@ object ExercisesService {
       case None         ⇒ new RuntimeException("Evaluation produced no results").left[Unit]
       case Some(result) ⇒ result
     }
+    Xor.right(Unit)
   }
 }
 
