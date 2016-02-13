@@ -46,11 +46,11 @@ object XorStyle {
   *
   * How then do we communicate an error? By making it explicit in the data type we return.
   *
-  * ===`Xor` vs `Validated`===
+  * =`Xor` vs `Validated`=
   *
   * In general, `Validated` is used to accumulate errors, while `Xor` is used to short-circuit a computation upon the first error. For more information, see the `Validated` vs `Xor` section of the `Validated` documentation.
   *
-  * ===Why not `Either`===
+  * =Why not `Either`=
   *
   * `Xor` is very similar to `scala.util.Either` - in fact, they are *isomorphic* (that is,
   * any `Either` value can be rewritten as an `Xor` value, and vice versa).
@@ -140,7 +140,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * === Using `Xor` instead of exceptions ===
+    * = Using `Xor` instead of exceptions =
     *
     * As a running example, we will have a series of functions that will parse a string into an integer,
     * take the reciprocal, and then turn the reciprocal into a string.
