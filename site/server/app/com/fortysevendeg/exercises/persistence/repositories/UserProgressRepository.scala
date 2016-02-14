@@ -8,7 +8,9 @@ import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ 
 
 trait UserProgressRepository {
 
-  def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]]
+  def findById(id: Long): ConnectionIO[Option[UserProgress]]
+
+  def findByUserId(userId: Long): ConnectionIO[List[UserProgress]]
 
   def findByExerciseVersion(
     userId:      Long,
@@ -29,8 +31,14 @@ trait UserProgressRepository {
 
 class UserProgressDoobieRepository(implicit persistence: PersistenceModule) extends UserProgressRepository {
 
-  override def findByUserId(userId: Long): ConnectionIO[Option[UserProgress]] =
-    persistence.fetchOption[Long, UserProgress](Q.findByUserId, userId)
+  override def findById(id: Long): ConnectionIO[Option[UserProgress]] =
+    persistence.fetchOption[Long, UserProgress](Q.findById, id)
+
+  override def findByUserId(userId: Long): ConnectionIO[List[UserProgress]] = {
+    println(s"entrando: uderId = $userId")
+    println(s"query: = ${Q.findByUserId}")
+    persistence.fetchList[Long, UserProgress](Q.findByUserId, userId)
+  }
 
   override def findByExerciseVersion(
     userId:      Long,
