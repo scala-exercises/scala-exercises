@@ -2,7 +2,7 @@ package com.fortysevendeg.exercises.persistence.repositories
 
 import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
-import doobie.imports.ConnectionIO
+import doobie.imports._
 import shared.UserProgress
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
 
@@ -21,6 +21,8 @@ trait UserProgressRepository {
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
 
   def delete(id: Long): ConnectionIO[Boolean]
+
+  def deleteAll(): ConnectionIO[Int]
 
   def update(userProgress: UserProgress, newSucceededValue: Boolean): ConnectionIO[UserProgress]
 }
@@ -56,8 +58,9 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     }
   }
 
-  override def delete(id: Long): ConnectionIO[Boolean] =
-    persistence.update(Q.deleteById) map (_ > 0)
+  override def delete(id: Long): ConnectionIO[Boolean] = persistence.update(Q.deleteById) map (_ > 0)
+
+  override def deleteAll(): ConnectionIO[Int] = persistence.update(Q.deleteAll)
 
   override def update(userProgress: UserProgress, newSucceededValue: Boolean): ConnectionIO[UserProgress] = {
     val UserProgress(id, _, libraryName, sectionName, method, version, exerciseType, args, _) = userProgress
