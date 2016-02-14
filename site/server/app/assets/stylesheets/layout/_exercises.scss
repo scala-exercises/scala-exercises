@@ -24,10 +24,9 @@
             .compile {
                 position: absolute;
                 right: 10px;
-                bottom: 10px;
+                bottom: 4px;
 
                 button {
-                    opacity: 0;
                     transition: opacity 0.5s linear;
                 }
 
@@ -210,7 +209,7 @@
     .exercise.solved {
         .compile {
             button {
-                opacity: 1;
+                opacity: 0;
             }
         }
         input {
