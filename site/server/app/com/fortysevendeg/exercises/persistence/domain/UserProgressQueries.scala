@@ -1,5 +1,7 @@
 package com.fortysevendeg.exercises.persistence.domain
 
+import shared.UserProgress
+
 object SaveUserProgress {
 
   sealed trait ExerciseType
@@ -9,15 +11,19 @@ object SaveUserProgress {
   case object Other extends ExerciseType
 
   case class Request(
-    userId:       Long,
-    libraryName:  String,
-    sectionName:  String,
-    method:       String,
-    version:      Int,
-    exerciseType: ExerciseType   = Other,
-    args:         Option[String],
-    succeeded:    Boolean
-  )
+      userId:       Long,
+      libraryName:  String,
+      sectionName:  String,
+      method:       String,
+      version:      Int,
+      exerciseType: ExerciseType   = Other,
+      args:         Option[String],
+      succeeded:    Boolean
+  ) {
+
+    def asUserProgress(id: Long): UserProgress =
+      UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
+  }
 
 }
 
@@ -57,6 +63,7 @@ object UserProgressQueries {
           VALUES(?,?,?,?,?,?,?,?)
     """
 
-  val deleteById =
-    s"""DELETE FROM "userProgress" WHERE id = ?"""
+  val deleteById = s"""DELETE FROM "userProgress" WHERE id = ?"""
+
+  val deleteAll = s"""DELETE FROM "userProgress""""
 }
