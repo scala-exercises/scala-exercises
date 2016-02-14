@@ -1,18 +1,13 @@
-import com.fortysevendeg.exercises.models.UserCreation
 import com.fortysevendeg.exercises.persistence.PersistenceModule
 import doobie.imports._
 import org.scalacheck.{ Arbitrary, Gen }
-import org.scalatest._
-import org.scalatest.prop.{ Checkers, GeneratorDrivenPropertyChecks }
-import org.scalacheck.{ Gen, Arbitrary }
 import org.scalacheck.Shapeless._
 import org.scalatest._
-import doobie.imports._
-import prop._
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
-import _root_.scalaz.std.iterable._
 import _root_.scalaz.concurrent.Task
-import scalaz.{ \/-, -\/, \/ }
+import _root_.scalaz.std.iterable._
+import scalaz.{ -\/, \/- }
 
 trait DatabaseContext {
 
