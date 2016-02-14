@@ -38,8 +38,9 @@ object UserProgressQueries {
           FROM "userProgress"
           WHERE """
 
-  val findByUserId =
-    s"""$commonFindBy userId = ?"""
+  val findById = s"""$commonFindBy id = ?"""
+
+  val findByUserId = s"""$commonFindBy userId = ?"""
 
   val findByExerciseVersion =
     s"""$commonFindBy userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
