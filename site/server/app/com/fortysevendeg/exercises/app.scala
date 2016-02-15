@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises
 
 import cats.data.Coproduct
@@ -10,4 +15,3 @@ object app {
   type C02[A] = Coproduct[UserProgressOp, C01, A]
   type ExercisesApp[A] = Coproduct[DBResult, C02, A]
 }
-
