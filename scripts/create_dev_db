@@ -1,0 +1,4 @@
+#!/bin/sh
+
+psql -c "create database scalaexercises_dev;" -U postgres
+psql -c "create role scalaexercises_dev_user password 'scalaexercises_pass' login superuser;" -U postgres
