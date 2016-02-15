@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-client
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package model
 
 sealed trait ExerciseState
@@ -51,4 +56,3 @@ object Exercises {
   def setAsErrored(s: State, method: String): State =
     applyByMethod(s, method, _.copy(state = Errored))
 }
-

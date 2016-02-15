@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-client
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package utils
 
 import org.scalajs.dom.ext.KeyCode
@@ -26,7 +31,7 @@ object DomHandler {
   /** Highlights every preformatted code block.
     */
   def highlightCodeBlocks: IO[Unit] = io {
-    $("pre code").each((_: Any, code: dom.Element) ⇒ {
+    $("pre").each((_: Any, code: dom.Element) ⇒ {
       js.Dynamic.global.hljs.highlightBlock(code)
     })
   }

@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.services
 
 import com.fortysevendeg.exercises.Exercises
@@ -101,9 +106,9 @@ sealed trait RuntimeSharedConversions {
 
   def convertExercise(exercise: Exercise) =
     shared.Exercise(
-      method = None, // exercise.eval Option[type Input => Unit]
+      method = exercise.qualifiedMethod, // exercise.eval Option[type Input => Unit]
       name = exercise.name,
-      description = exercise.code,
+      description = exercise.description,
       code = exercise.code,
       explanation = exercise.explanation
     )
