@@ -1,10 +1,11 @@
 package com.fortysevendeg.exercises.persistence.domain
 
 import shared.UserProgress
+import doobie.imports._
 
 object SaveUserProgress {
 
-  sealed trait ExerciseType
+  sealed abstract class ExerciseType extends Product with Serializable
 
   case object Koans extends ExerciseType
 
@@ -32,18 +33,18 @@ object UserProgressQueries {
   val allFields = List("id", "userid", "libraryname", "sectionname", "method", "version", "exercisetype", "args", "succeeded")
 
   private[this] val commonFindBy =
-    s"""
-          SELECT
-          ${allFields.mkString(", ")}
-          FROM "userProgress"
-          WHERE """
+    """SELECT
+       id, userid, libraryname, sectionname, method, version, exercisetype, args, succeeded
+       FROM "userProgress""""
 
-  val findById = s"""$commonFindBy id = ?"""
+  val all = commonFindBy
 
-  val findByUserId = s"""$commonFindBy userId = ?"""
+  val findById = s"$commonFindBy WHERE id = ?"
+
+  val findByUserId = s"""$commonFindBy WHERE userId = ?"""
 
   val findByExerciseVersion =
-    s"""$commonFindBy userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
+    s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
 
   val update =
     s"""
