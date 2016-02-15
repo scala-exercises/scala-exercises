@@ -39,11 +39,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
   override def findById(id: Long): ConnectionIO[Option[UserProgress]] =
     persistence.fetchOption[Long, UserProgress](Q.findById, id)
 
-  override def findByUserId(userId: Long): ConnectionIO[List[UserProgress]] = {
-    println(s"entrando: uderId = $userId")
-    println(s"query: = ${Q.findByUserId}")
+  override def findByUserId(userId: Long): ConnectionIO[List[UserProgress]] =
     persistence.fetchList[Long, UserProgress](Q.findByUserId, userId)
-  }
 
   override def findByExerciseVersion(
     userId:      Long,
@@ -71,7 +68,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     }
   }
 
-  override def delete(id: Long): ConnectionIO[Boolean] = persistence.update(Q.deleteById) map (_ > 0)
+  override def delete(id: Long): ConnectionIO[Boolean] = persistence.update[Long](Q.deleteById, id) map (_ > 0)
 
   override def deleteAll(): ConnectionIO[Int] = persistence.update(Q.deleteAll)
 
