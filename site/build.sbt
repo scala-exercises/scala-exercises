@@ -114,6 +114,8 @@ lazy val sharedJs = shared.js
 
 // Locally bundled exercise content projects
 
+import de.heikoseeberger.sbtheader.HeaderPlugin
+
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
@@ -128,4 +130,7 @@ lazy val content = (project in file("content"))
       "org.scalaz" %% "scalaz-core" % scalazVersion
     )
   )
-
+  .settings(
+    HeaderPlugin.settingsFor(
+      CompileMain, CompileExercisesSource)
+  )

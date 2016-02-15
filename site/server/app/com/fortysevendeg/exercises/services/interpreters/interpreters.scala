@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.services.interpreters
 
 import cats._
@@ -146,4 +151,3 @@ object ProdInterpreters extends Interpreters[Task] {
 
 /** Test based interpreters lifting ops to their result identity **/
 object TestInterpreters extends Interpreters[Id]
-

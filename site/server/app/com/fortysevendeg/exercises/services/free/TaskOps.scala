@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.services.free
 
 import cats.free.Free

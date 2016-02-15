@@ -7,11 +7,15 @@ import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
 import wartremover._
 
+import de.heikoseeberger.sbtheader.HeaderPattern
+import de.heikoseeberger.sbtheader.HeaderPlugin
+import de.heikoseeberger.sbtheader.HeaderKey.headers
+
 import scala.{ Console => C }
 import scala.util.Try
 
 object BuildCommon extends AutoPlugin {
-  override def requires = plugins.JvmPlugin && SbtScalariform
+  override def requires = plugins.JvmPlugin && SbtScalariform && HeaderPlugin
   override def trigger = allRequirements
 
   def baseSettings = Seq(
@@ -27,6 +31,19 @@ object BuildCommon extends AutoPlugin {
   ) ++ Seq(
     scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
     scalacOptions in (Test, console)    ~= (_ filterNot (_ == "-Ywarn-unused-import"))
+  )
+
+  def headerSettings = Seq(
+    headers <<= (name, version) { (name, version) => Map(
+      "scala" -> (
+        HeaderPattern.cStyleBlockComment,
+        s"""|/*
+            | * scala-exercises-$name
+            | * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+            | */
+            |
+            |""".stripMargin)
+    )}
   )
 
   def formatSettings = SbtScalariform.scalariformSettings ++ Seq(
@@ -60,6 +77,7 @@ object BuildCommon extends AutoPlugin {
   override def projectSettings =
     baseSettings ++ dependencySettings ++
     formatSettings ++ wartSettings ++
+    headerSettings ++
     miscSettings
 
   object autoImport {
