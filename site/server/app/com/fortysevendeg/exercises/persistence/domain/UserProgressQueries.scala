@@ -43,7 +43,7 @@ object UserProgressQueries {
   val allFields =
     userProgressKeys()
       .to[List]
-      .map { case Symbol(s) ⇒ s }
+      .map { case Symbol(s) ⇒ s.toLowerCase }
 
   private[this] val commonFindBy =
     """SELECT
