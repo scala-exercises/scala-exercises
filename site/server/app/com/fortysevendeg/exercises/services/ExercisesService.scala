@@ -17,7 +17,9 @@ import scala.tools.reflect.ToolBox
 import cats.data.Xor
 import cats.data.Ior
 import cats.std.option._
+import cats.std.list._
 import cats.syntax.flatMap._
+import cats.syntax.traverse._
 
 object ExercisesService extends RuntimeSharedConversions {
 
