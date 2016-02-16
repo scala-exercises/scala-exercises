@@ -21,14 +21,9 @@ import state.State
 import effects.Effects
 
 object ExercisesJS extends js.JSApp {
-
-  def loadInitialData: IO[State] = for {
-    library ← getLibrary
-    section ← getSection
-    methods ← getMethodsList
-  } yield methods.map(m ⇒ ClientExercise(library = library, section = section, method = m))
-
-    def updateExerciseList(ex: List[ClientExercise]): IO[Unit] = io(exercises() = ex)
+  def main(): Unit = {
+    val states: Var[State] = Var(Nil)
+    val actions: Var[Action] = Var(Start())
 
     case class ClientExercise(method: String, arguments: Seq[String] = Nil) {
       def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
@@ -41,20 +36,19 @@ object ExercisesJS extends js.JSApp {
       setState(newState)
     }
 
-    val effects = Obs(states, skipInitial = true) {
-      Effects.perform(states(), actions()).foreach(m ⇒ {
+    Obs(states) {
+      val state = states()
+      val action = actions()
+
+      // Perform effects
+      Effects.perform(state, action).foreach(m ⇒ {
         m.foreach(triggerAction(_).unsafePerformIO())
       })
-    }
-    val ui = Obs(states, skipInitial = true) {
-      UI.update(states(), actions()).unsafePerformIO()
+      // update UI
+      UI.update(state, action).unsafePerformIO()
     }
 
-    val program = for {
-      _ ← loadInitialData flatMap setState
-      replacements ← inputReplacements
-      _ ← replaceInputs(replacements)
-      _ ← highlightCodeBlocks
+    def startInteraction: IO[Unit] = for {
       _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
         triggerAction(UpdateExercise(method, arguments))
       }, (method: String) ⇒ {
@@ -66,6 +60,11 @@ object ExercisesJS extends js.JSApp {
       _ ← onInputBlur((method: String) ⇒ io {
         // TODO: when exercise canbecompiled ~> Compileit
       })
+    } yield ()
+
+    val program = for {
+      _ ← highlightCodeBlocks
+      _ ← startInteraction
     } yield ()
 
     program.unsafePerformIO()
