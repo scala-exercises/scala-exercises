@@ -23,3 +23,26 @@ case class UserProgress(
   args:         Option[String],
   succeeded:    Boolean
 )
+
+case class OverallUserProgressItem(
+  libraryName: String,
+  sections:    Int,
+  completed:   Int
+)
+
+case class OverallUserProgress(libraries: List[OverallUserProgressItem])
+
+case class LibrarySectionArgs(
+  libraryName: String,
+  sections:    Int,
+  args:        List[String],
+  succeeded:   Boolean
+)
+
+case class SectionInfoItem(sectionName: String, succeeded: Boolean)
+
+case class LibrarySections(
+  libraryName:          String,
+  sections:             List[SectionInfoItem],
+  allSectionsSucceeded: Boolean
+)

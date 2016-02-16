@@ -11,6 +11,7 @@ import cats.free.Free
 
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
+import com.fortysevendeg.exercises.services.UserProgressService
 import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.shared.free._
 import doobie.imports._
@@ -74,8 +75,17 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
     A: ApplicativeError[F, Throwable], T: Transactor[F]
   ): UserProgressOp ~> F = new (UserProgressOp ~> F) {
 
-    def apply[A](fa: UserProgressOp[A]): F[A] = fa match {
-      case UpdateUserProgress(userProgress) ⇒ UserProgressDoobieRepository.instance.create(userProgress).transact(T)
+    def apply[A](fa: UserProgressOp[A]): F[A] = {
+      fa match {
+        case UpdateUserProgress(userProgress) ⇒
+          UserProgressDoobieRepository.instance.create(userProgress).transact(T)
+        case FetchUserProgress(user) ⇒
+          UserProgressService.fetchUserProgress(user).transact(T)
+        case FetchUserProgressByLibrary(user, libraryName) ⇒
+          UserProgressService.fetchUserProgressByLibrary(user, libraryName).transact(T)
+        case FetchUserProgressByLibrarySection(user, libraryName, sectionName) ⇒
+          UserProgressService.fetchUserProgressByLibrarySection(user, libraryName, sectionName).transact(T)
+      }
     }
   }
 
