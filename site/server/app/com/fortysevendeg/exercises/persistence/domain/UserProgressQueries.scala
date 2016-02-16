@@ -5,47 +5,63 @@
 
 package com.fortysevendeg.exercises.persistence.domain
 
+import shared.UserProgress
+import shapeless._
+import record._
+import ops.record._
+import syntax.singleton._
+
 object SaveUserProgress {
 
-  sealed trait ExerciseType
+  sealed abstract class ExerciseType extends Product with Serializable
 
   case object Koans extends ExerciseType
 
   case object Other extends ExerciseType
 
   case class Request(
-    userId:       Long,
-    libraryName:  String,
-    sectionName:  String,
-    method:       String,
-    version:      Int,
-    exerciseType: ExerciseType   = Other,
-    args:         Option[String],
-    succeeded:    Boolean
-  )
+      userId:       Long,
+      libraryName:  String,
+      sectionName:  String,
+      method:       String,
+      version:      Int,
+      exerciseType: ExerciseType,
+      args:         Option[String],
+      succeeded:    Boolean
+  ) {
+
+    def asUserProgress(id: Long): UserProgress =
+      UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
+  }
 
 }
 
 object UserProgressQueries {
 
-  val allFields = List("userid", "libraryname", "sectionname", "method", "version", "exercisetype", "args", "succeeded")
+  val userProgressGen = LabelledGeneric[shared.UserProgress]
+  val userProgressKeys = Keys[userProgressGen.Repr]
+  val allFields =
+    userProgressKeys()
+      .to[List]
+      .map { case Symbol(s) ⇒ s.toLowerCase }
 
   private[this] val commonFindBy =
-    s"""
-          SELECT
-          ${allFields.mkString(", ")}
-          FROM \"userProgress\"
-          WHERE """
+    """SELECT
+       id, userid, libraryname, sectionname, method, version, exercisetype, args, succeeded
+       FROM "userProgress""""
 
-  val findByUserId =
-    s"""$commonFindBy userId = ?"""
+  val all = commonFindBy
+
+  val findById = s"$commonFindBy WHERE id = ?"
+
+  val findByUserId = s"$commonFindBy WHERE userId = ?"
 
   val findByExerciseVersion =
-    s"""$commonFindBy userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
+    s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
 
   val update =
-    """
-          UPDATE \"userProgress\"
+    s"""
+          UPDATE "userProgress"
           SET libraryName = ?,
           sectionName = ?,
           method = ?,
@@ -58,10 +74,11 @@ object UserProgressQueries {
 
   val insert =
     s"""
-          INSERT INTO \"userProgress\"(${allFields.mkString(", ")})
+          INSERT INTO "userProgress"(${allFields.tail.mkString(", ")})
           VALUES(?,?,?,?,?,?,?,?)
     """
 
-  val deleteById =
-    "DELETE FROM \"userProgress\" WHERE id = ?"
+  val deleteById = s"""DELETE FROM "userProgress" WHERE id = ?"""
+
+  val deleteAll = s"""DELETE FROM "userProgress""""
 }
