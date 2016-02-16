@@ -8,7 +8,7 @@ package com.fortysevendeg.exercises.persistence.repositories
 import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
 import doobie.imports._
-import shared.UserProgress
+import shared.{ User, UserProgress }
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
 
 trait UserProgressRepository {
