@@ -6,7 +6,6 @@
 package com.fortysevendeg.exercises.persistence.domain
 
 import shared.UserProgress
-import doobie.imports._
 
 object SaveUserProgress {
 
@@ -22,7 +21,7 @@ object SaveUserProgress {
       sectionName:  String,
       method:       String,
       version:      Int,
-      exerciseType: ExerciseType   = Other,
+      exerciseType: ExerciseType,
       args:         Option[String],
       succeeded:    Boolean
   ) {
@@ -46,7 +45,7 @@ object UserProgressQueries {
 
   val findById = s"$commonFindBy WHERE id = ?"
 
-  val findByUserId = s"""$commonFindBy WHERE userId = ?"""
+  val findByUserId = s"$commonFindBy WHERE userId = ?"
 
   val findByExerciseVersion =
     s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
