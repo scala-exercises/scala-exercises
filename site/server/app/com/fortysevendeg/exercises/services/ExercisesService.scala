@@ -103,7 +103,7 @@ sealed trait RuntimeSharedConversions {
     shared.Exercise(
       method = None, // exercise.eval Option[type Input => Unit]
       name = exercise.name,
-      description = exercise.code,
+      description = exercise.description,
       code = exercise.code,
       explanation = exercise.explanation
     )
