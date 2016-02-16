@@ -25,3 +25,8 @@ GET /javascriptRoutes com.fortysevendeg.exercises.controllers.ApplicationControl
 # Exercises
 GET /:libraryName               com.fortysevendeg.exercises.controllers.ApplicationController.library(libraryName: String)
 GET /:libraryName/:sectionName  com.fortysevendeg.exercises.controllers.ApplicationController.section(libraryName: String, sectionName: String)
+
+#User Progress
+GET /progress com.fortysevendeg.exercises.controllers.UserProgressController.fetchUserProgress()
+GET /progress/library/:libraryName com.fortysevendeg.exercises.controllers.UserProgressController.fetchUserProgressByLibrary(libraryName: String)
+GET /progress/library/:libraryName/section/:sectionName com.fortysevendeg.exercises.controllers.UserProgressController.fetchUserProgressBySection(libraryName: String, sectionName: String)
