@@ -40,7 +40,7 @@ object UserProgressQueries {
 
   val userProgressGen = LabelledGeneric[shared.UserProgress]
   val userProgressKeys = Keys[userProgressGen.Repr]
-  val allFields =
+  val allFields: List[String] =
     userProgressKeys()
       .to[List]
       .map { case Symbol(s) ⇒ s.toLowerCase }
