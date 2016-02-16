@@ -6,6 +6,7 @@
 package com.fortysevendeg.exercises.services
 
 import com.fortysevendeg.exercises.Exercises
+import com.fortysevendeg.exercises.MethodEval
 
 import play.api.Logger
 
@@ -14,14 +15,13 @@ import scala.reflect.runtime.{ currentMirror ⇒ cm }
 import scala.tools.reflect.ToolBox
 
 import cats.data.Xor
+import cats.data.Ior
 import cats.std.option._
-import cats.std.list._
 import cats.syntax.flatMap._
-import cats.syntax.traverse._
 
 object ExercisesService extends RuntimeSharedConversions {
 
-  lazy val toolbox = cm.mkToolBox()
+  lazy val methodEval = new MethodEval()
 
   val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {
@@ -37,40 +37,19 @@ object ExercisesService extends RuntimeSharedConversions {
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
   def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Unit] = {
-
-    def eval(qualifiedMethod: String, rawArgs: List[String]): Xor[String, Any] = {
-      val lastIndex = qualifiedMethod.lastIndexOf('.')
-      if (lastIndex > 0) {
-        val moduleName = qualifiedMethod.substring(0, lastIndex)
-        val methodName = qualifiedMethod.substring(lastIndex + 1)
-        for {
-          mirror ← Xor.fromOption(runtimeLibraries.find(_.name == evaluation.libraryName), s"Unable to find library ${evaluation.libraryName}")
-            .map { library ⇒ ru.runtimeMirror(library.getClass.getClassLoader) }
-          staticModule ← guard(mirror.staticModule(moduleName), s"Unable to load module $moduleName")
-          moduleMirror ← guard(mirror.reflectModule(staticModule), s"Unable to reflect module mirror for $moduleName")
-          instanceMirror ← guard(mirror.reflect(moduleMirror.instance), s"Unable to reflect instance mirror for $moduleName")
-          methodSymbol ← guard(
-            instanceMirror.symbol.typeSignature.decl(mirror.universe.TermName(methodName)).asMethod, s"Unable to get type for module $moduleName"
-          )
-          args ← rawArgs.map(arg ⇒ guard(toolbox.parse(arg), s"Unable to parse arg: $arg") >>= { argTree ⇒
-            import mirror.universe._
-            argTree match {
-              case Literal(Constant(value)) ⇒ Xor.right(value)
-              case value                    ⇒ Xor.left(s"Unable to handle parsed value: $value")
-            }
-          }).sequenceU
-          result ← guard(instanceMirror.reflectMethod(methodSymbol)(args: _*), s"Unable to coerce arguments to match method $methodName")
-        } yield result
-      } else Xor.left(s"Invalid qualified method $qualifiedMethod")
-    }
-
-    eval(evaluation.method, evaluation.args)
-      .leftMap(new Error(_))
-      .map(_ ⇒ Unit)
+    val res = methodEval.eval(
+      evaluation.method,
+      evaluation.args
+    )
+    Logger.info(s"evaluation for $evaluation: $res")
+    res.fold(_ match {
+      case Ior.Left(message)        ⇒ Xor.left(new Exception(message))
+      case Ior.Right(error)         ⇒ Xor.left(error)
+      case Ior.Both(message, error) ⇒ Xor.left(new Exception(message, error))
+    }, _ ⇒ Xor.right(Unit))
+    // uncomment this next line if you want to actually throw the exception
+    //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
   }
-
-  private def guard[A](f: ⇒ A, message: ⇒ String) =
-    Xor.catchNonFatal(f).leftMap(_ ⇒ message)
 
 }
 

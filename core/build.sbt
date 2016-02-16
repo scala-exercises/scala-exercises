@@ -38,11 +38,12 @@ lazy val runtime = (project in file("runtime"))
     name            := "runtime"
   )
   .settings(commonSettings: _*)
-  .settings(libraryDependencies ++=
+  .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
+      "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.typelevel" %% "cats" % "0.4.0"
     )
-  )
+  ))
 
 // ~ Exercise SBT Plugin
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
