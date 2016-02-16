@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Formatting Description
   */
-
 object Formatting extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -17,8 +16,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
   def placedInFormatFormatting(res0: String) {
     val s = "Hello World"
     "Application %s".format(s) should be(res0)
-
-
   }
 
   /** characterFormatting
@@ -35,8 +32,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
 
     "%c".format(a) should be(res0)
     "%c".format(b) should be(res1)
-
-
   }
 
   /** escapeSequenceFormatting
@@ -54,8 +49,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
     "%c".format(d) should be(res1)
     "%c".format(e) should be(res2)
     "%c".format(f) should be(res3)
-
-
   }
 
   /** includingNumbersFormatting
@@ -65,8 +58,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
   def includingNumbersFormatting(res0: String) {
     val j = 190
     "%d bottles of beer on the wall" format j - 100 should be(res0)
-
-
   }
 
   /** anyNumberOfItemsFormatting
@@ -78,8 +69,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
     val k = "vodka"
 
     "%d bottles of %s on the wall".format(j - 100, k) should be(res0)
-
-
   }
 
 }

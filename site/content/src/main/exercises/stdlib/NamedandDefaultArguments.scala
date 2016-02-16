@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Named and Default Arguments Description
   */
-
 object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -79,8 +78,6 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
 
     // for koan, remove the values in the should equal
     myColor should equal(res0, res1, res2)
-
-
   }
 
   /** defaultArgumentsNamedandDefaultArguments
@@ -92,8 +89,6 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     val myColor = me.addColorsWithDefaults(green = 255)
 
     myColor should equal(res0, res1, res2)
-
-
   }
 
   /** anyOrderNamedandDefaultArguments
@@ -105,8 +100,6 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     val myColor = me.addColors(green = 50, red = 60, blue = 40)
 
     myColor should equal(res0, res1, res2)
-
-
   }
 
   /** accessClassParametersNamedandDefaultArguments
@@ -118,8 +111,6 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     val myColor = me.addColorsWithDefaults(green = 70)
 
     myColor should equal(res0, res1, res2)
-
-
   }
 
   /** defaultClassArgumentsNamedandDefaultArguments
@@ -131,8 +122,6 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     val myColor = me.addColorsWithDefaults(green = 70)
 
     myColor should equal(res0, res1, res2)
-
-
   }
 
   /** functionalDefaulParametersNamedandDefaultArguments
@@ -144,8 +133,6 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
 
     reduce(5) should equal(res0)
     reduce(5, _ * _) should equal(res1)
-
-
   }
 
 }

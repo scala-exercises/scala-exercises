@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Iterables Description
   */
-
 object Iterables extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -32,8 +31,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     if (it.hasNext) {
       it.next should be(res0)
     }
-
-
   }
 
   /** groupedIterables
@@ -46,8 +43,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     it.next() should be(List(res0, res1, res2))
     it.next() should be(List(res3, res4, res5))
     it.next() should be(List(res6, res7, res8))
-
-
   }
 
   /** slidingIterables
@@ -60,8 +55,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     it.next() should be(List(res0, res1, res2))
     it.next() should be(List(res3, res4, res5))
     it.next() should be(List(res6, res7, res8))
-
-
   }
 
   /** slidingWindowIterables
@@ -74,8 +67,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     it.next() should be(List(res0, res1, res2))
     it.next() should be(List(res3, res4, res5))
     it.next() should be(List(res6, res7, res8))
-
-
   }
 
   /** takeRightIterables
@@ -85,8 +76,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
   def takeRightIterables(res0: String, res1: String, res2: String) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
     (list takeRight 3) should be(List(res0, res1, res2))
-
-
   }
 
   /** dropRightIterables
@@ -96,8 +85,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
   def dropRightIterables(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
     (list dropRight 3) should be(List(res0, res1, res2, res3, res4, res5))
-
-
   }
 
   /** zipIterables
@@ -110,8 +97,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     val xs = List(3, 5, 9)
     val ys = List("Bob", "Ann", "Stella")
     (xs zip ys) should be(List((res0, res1), (res2, res3), (res4, res5)))
-
-
   }
 
   /** sameSizeZipIterables
@@ -125,8 +110,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     val xs = List(3, 5, 9)
     val ys = List("Bob", "Ann")
     (xs zip ys) should be(List((res0, res1), (res2, res3)))
-
-
   }
 
   /** zipAllIterables
@@ -143,8 +126,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     val xr = List(3, 5)
     val yr = List("Bob", "Ann", "Stella")
     (xr zipAll(yr, -1, "?")) should be(List((res5, res6), (res7, res8), (-1, res9)))
-
-
   }
 
   /** zipWithIndexIterables
@@ -154,8 +135,6 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
   def zipWithIndexIterables(res0: String, res1: String, res2: String, res3: String) {
     val xs = List("Manny", "Moe", "Jack")
     xs.zipWithIndex should be(List((res0, 0), (res1, res2), (res3, 2)))
-
-
   }
 
   /** sameElementsIterables

@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Infix Types Description
   */
-
 object InfixTypes extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -33,8 +32,6 @@ object InfixTypes extends FlatSpec with Matchers with exercise.Section {
     val juliet = new Person("Juliet")
 
     announceCouple(new Loves(romeo, juliet)) should be(res0)
-
-
   }
 
   /** infixOperatorInfixTypes
@@ -57,8 +54,6 @@ object InfixTypes extends FlatSpec with Matchers with exercise.Section {
     val juliet = new Person("Juliet")
 
     announceCouple(romeo loves juliet) should be(res0)
-
-
   }
 
 }

@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Literal Numbers Description
   */
-
 object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -29,8 +28,6 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
     f should be(res4)
     g should be(res5)
     h should be(res6) //Hint: 30F = 783
-
-
   }
 
   /** longLiteralsLiteralNumbers
@@ -53,8 +50,6 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
     f should be(res4)
     g should be(res5)
     h should be(res6) //Hint: 30F = 783
-
-
   }
 
   /** floatsAndDoublesLiteralNumbers
@@ -83,8 +78,6 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
     g should be(res6)
     h should be(res7)
     i should be(res8)
-
-
   }
 
 }

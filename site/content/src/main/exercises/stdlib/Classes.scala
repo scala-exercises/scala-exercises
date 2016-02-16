@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Classes Description
   */
-
 object Classes extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -61,8 +60,6 @@ object Classes extends FlatSpec with Matchers with exercise.Section {
     class ClassWithValParameter(val name: String)
     val aClass = new ClassWithValParameter("Gandalf")
     aClass.name should be(res0)
-
-
   }
 
   /** classWithVarParameterClasses

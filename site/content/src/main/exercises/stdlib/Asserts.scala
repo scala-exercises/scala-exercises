@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Asserts Description
   */
-
 object Asserts extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -46,8 +45,6 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     */
   def scalaTestAsserts(res0: String) {
     true should be(res0)
-
-
   }
 
   /** booleansAsserts
@@ -68,8 +65,6 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     */
   def valuesAsserts(res0: String) {
     assert(res0 == 1 + 1)
-
-
   }
 
 }

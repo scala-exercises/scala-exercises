@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Partial Functions Description
   */
-
 object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -33,8 +32,6 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 
     whatToDo(3) should be(res0)
     whatToDo(4) should be(res1)
-
-
   }
 
   /** caseStatementsPartialFunctions
@@ -53,8 +50,6 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     val whatToDo = doubleEvens orElse tripleOdds //Here we chain the partial functions together
     whatToDo(3) should be(res0)
     whatToDo(4) should be(res1)
-
-
   }
 
   /** andThenPartialFunctions
@@ -74,8 +69,6 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     val whatToDo = doubleEvens orElse tripleOdds andThen addFive //Here we chain the partial functions together
     whatToDo(3) should be(res0)
     whatToDo(4) should be(res1)
-
-
   }
 
   /** chainOfLogicPartialFunctions
@@ -101,8 +94,6 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 
     whatToDo(3) should be(res0)
     whatToDo(4) should be(res1)
-
-
   }
 
 }

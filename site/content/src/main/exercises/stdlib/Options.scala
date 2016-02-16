@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Options Description
   */
-
 object Options extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -25,8 +24,6 @@ object Options extends FlatSpec with Matchers with exercise.Section {
 
     val nullValue: Option[String] = None
     nullValue should be(res1)
-
-
   }
 
   /** maybeItWillReturnSomethingOptions
@@ -48,8 +45,6 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     intercept[java.util.NoSuchElementException] {
       value2.get
     }
-
-
   }
 
   /** getOrElseOptions
@@ -65,8 +60,6 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     value2 getOrElse {
       "default function"
     } should be(res2)
-
-
   }
 
   /** isEmptyOptions
@@ -79,8 +72,6 @@ object Options extends FlatSpec with Matchers with exercise.Section {
 
     value1.isEmpty should be(res0)
     value2.isEmpty should be(res1)
-
-
   }
 
   /** matchOptions
@@ -100,8 +91,6 @@ object Options extends FlatSpec with Matchers with exercise.Section {
       case None => 0.0
     }
     value1 should be(res1)
-
-
   }
 
   /** mapOptions
@@ -135,8 +124,6 @@ object Options extends FlatSpec with Matchers with exercise.Section {
 
     result1 should be(res0)
     result2 should be(res1)
-
-
   }
 
 }

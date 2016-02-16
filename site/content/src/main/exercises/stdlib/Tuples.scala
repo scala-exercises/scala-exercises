@@ -8,7 +8,6 @@ import org.scalatest._
   *
   * Tuples Description
   */
-
 object Tuples extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -34,8 +33,6 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
 
     fruit should be(res0)
     animal should be(res1)
-
-
   }
 
   /** mixedTypeTuples
@@ -47,8 +44,6 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
 
     tuple5._2 should be(res0)
     tuple5._5 should be(res1)
-
-
   }
 
   /** assignVariablesTuples
@@ -62,8 +57,6 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
     name should be(res0)
     age should be(res1)
     gpa should be(res2)
-
-
   }
 
   /** swappedTuples
@@ -74,8 +67,6 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
     val tuple = ("apple", 3).swap
     tuple._1 should be(res0)
     tuple._2 should be(res1)
-
-
   }
 
 }

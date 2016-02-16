@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Type Signatures Description
   */
-
 object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -43,8 +42,6 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
     val intRand = new IntRandomizer
     (intRand.draw < Int.MaxValue) should be(res0)
-
-
   }
 
   /** retrieveMetaInformationTypeSignatures
@@ -54,8 +51,6 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
   def retrieveMetaInformationTypeSignatures(res0: String, res1: String) {
     classOf[String].getCanonicalName should be(res0)
     classOf[String].getSimpleName should be(res1)
-
-
   }
 
   /** deriveMetaInformationTypeSignatures
@@ -67,8 +62,6 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     zoom.getClass should be(res0) // Hint: classOf ...
     zoom.getClass.getCanonicalName should be(res1)
     zoom.getClass.getSimpleName should be(res2)
-
-
   }
 
   /** isInstanceOfFunctionTypeSignatures
@@ -89,8 +82,6 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
     val intRand = new IntRandomizer
     intRand.draw.isInstanceOf[Int] should be(res0)
-
-
   }
 
   /** asInstanceOfFunctionTypeSignatures
@@ -113,8 +104,6 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     val rand = intRand
     val intRand2 = rand
     intRand2.isInstanceOf[IntRandomizer] should be(res0)
-
-
   }
 
   /** classCastExceptionIfUncompatibleTypeSignatures
@@ -146,8 +135,6 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     null.asInstanceOf[String] should be(res0)
     null.asInstanceOf[Int] should be(res1)
     null.asInstanceOf[Short] should be(res2)
-
-
   }
 
 }

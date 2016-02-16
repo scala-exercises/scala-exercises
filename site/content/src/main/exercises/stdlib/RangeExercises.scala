@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Range Description
   */
-
 object RangeExercises extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -22,8 +21,6 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     someNumbers.size should be(res0)
     second should be(res1)
     last should be(res2)
-
-
   }
 
   /** unitlRange
@@ -35,8 +32,6 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     val otherRange = 0 until 10
 
     (someNumbers == otherRange) should be(res0)
-
-
   }
 
   /** incrementsRange
@@ -51,8 +46,6 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     someNumbers.size should be(res0)
     second should be(res1)
     last should be(res2)
-
-
   }
 
   /** upperInIncrementRange
@@ -64,8 +57,6 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     someNumbers.contains(33) should be(res0)
     someNumbers.contains(32) should be(res1)
     someNumbers.contains(34) should be(res2)
-
-
   }
 
   /** specifyUpperRange
@@ -76,8 +67,6 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     val someNumbers = Range(0, 34).inclusive
 
     someNumbers.contains(34) should be(res0)
-
-
   }
 
   /** inclusiveWithToRange

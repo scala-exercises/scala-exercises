@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Empty Values Description
   */
-
 object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -36,8 +35,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     */
   def emptyValuesEmptyValues(res0: String) {
     assert(List() === res0)
-
-
   }
 
   /** avoidingNullEmptyValues
@@ -48,8 +45,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     */
   def avoidingNullEmptyValues(res0: String) {
     assert(None === res0)
-
-
   }
 
   /** identicalNoneEmptyValues
@@ -60,8 +55,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     val a = None
     val b = None
     assert(a eq res0)
-
-
   }
 
   /** noneToStringEmptyValues
@@ -70,8 +63,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     */
   def noneToStringEmptyValues(res0: String) {
     assert(None.toString === res0)
-
-
   }
 
   /** noneToListEmptyValues
@@ -81,8 +72,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
   def noneToListEmptyValues(res0: String) {
     val a = None
     assert(a.toList === res0)
-
-
   }
 
   /** noneAsEmptyEmptyValues
@@ -91,8 +80,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     */
   def noneAsEmptyEmptyValues(res0: String) {
     assert(None.isEmpty === res0)
-
-
   }
 
   /** noneToAnyEmptyValues
@@ -103,8 +90,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     assert(None.asInstanceOf[Any] === res0)
     assert(None.asInstanceOf[AnyRef] === res1)
     assert(None.asInstanceOf[AnyVal] === res2)
-
-
   }
 
   /** noneWithOptionEmptyValues
@@ -115,8 +100,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     val optional: Option[String] = None
     assert(optional.isEmpty === res0)
     assert(optional === res1)
-
-
   }
 
   /** someAgainstNoneEmptyValues
@@ -127,8 +110,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     val optional: Option[String] = Some("Some Value")
     assert((optional == None) === res0, "Some(value) should not equal None")
     assert(optional.isEmpty === res1, "Some(value) should not be empty")
-
-
   }
 
   /** getOrElseEmptyValues
@@ -140,8 +121,6 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     val optional2: Option[String] = None
     assert(optional.getOrElse("No Value") === res0, "Should return the value in the option")
     assert(optional2.getOrElse("No Value") === res1, "Should return the specified default value")
-
-
   }
 
 }

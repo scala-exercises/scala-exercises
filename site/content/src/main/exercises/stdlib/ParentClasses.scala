@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Parent Classes Description
   */
-
 object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -24,8 +23,6 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
     val pilot = new Pilot("John", "Yossarian", 256)
     pilot.firstName should be(res0)
     pilot.lastName should be(res1)
-
-
   }
 
   /** polymorphicParentClasses
@@ -42,8 +39,6 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 
     soldier.firstName should be(res0)
     soldier.lastName should be(res1)
-
-
   }
 
   /** abstractClassParentClasses
@@ -73,8 +68,6 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
     val pilot = new Pilot("John", "Yossarian", 256)
     val catchNo = new pilot.Catch(22) //using the pilot instance's path, create an catch object for it.
     catchNo.number should be(res0)
-
-
   }
 
 }

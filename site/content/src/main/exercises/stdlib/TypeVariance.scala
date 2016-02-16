@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Type Variance Description
   */
-
 object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -47,8 +46,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
     val fruitBasket = new MyContainer(new Orange())
     fruitBasket.contents should be(res0)
-
-
   }
 
   /** typeVariableTypeVariance
@@ -70,8 +67,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
     val fruitBasket = new MyContainer[Fruit](new Orange())
     fruitBasket.contents should be(res0)
-
-
   }
 
   /** coerceObjectTypeVariance
@@ -93,8 +88,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
     val fruitBasket: MyContainer[Fruit] = new MyContainer(new Orange())
     fruitBasket.contents should be(res0)
-
-
   }
 
   /** polymorphismTypeVariance
@@ -146,8 +139,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
     val fruitBasket: MyContainer[Fruit] = new MyContainer[Orange](new Orange())
     fruitBasket.contents should be(res0)
-
-
   }
 
   /** covarianceInmutableTypeVariance
@@ -169,8 +160,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
     class NavelOrange extends Orange //Creating a subtype to prove a point
     //val navelOrangeBasket: MyContainer[NavelOrange] = new MyContainer[Orange](new Orange()) //Bad!
     //val tangeloBasket: MyContainer[Tangelo] = new MyContainer[Orange](new Orange()) //Bad!
-
-
   }
 
   /** contravarianceVarianceTypeVariance
@@ -198,8 +187,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
     val orangeBasketReally: MyContainer[Orange] = tangeloBasket.asInstanceOf[MyContainer[Orange]]
     orangeBasketReally.contents should be(res3)
     orangeBasketReally.set(new Orange())
-
-
   }
 
   /** contravarianceWithoutGetterTypeVariance
@@ -223,8 +210,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
     orangeBasket.contents should be(res1)
     val tangeloBasket: MyContainer[Tangelo] = new MyContainer[Citrus](new Orange)
     tangeloBasket.contents should be(res2)
-
-
   }
 
   /** invarianceVarianceTypeVariance
@@ -248,8 +233,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
     val citrusBasket: MyContainer[Citrus] = new MyContainer[Citrus](new Orange)
     citrusBasket.contents should be(res0)
-
-
   }
 
   /** invariantTypeVariance
@@ -276,8 +259,6 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
     citrusBasket.set(new Tangelo)
     citrusBasket.contents should be(res1)
-
-
   }
 
 }
