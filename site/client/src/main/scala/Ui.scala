@@ -7,6 +7,8 @@ package ui
 
 import cats.data.OptionT
 import cats.syntax.option._
+import cats.std.list._
+import cats.syntax.traverse._
 import shared.IO
 import IO._
 import actions._
@@ -43,11 +45,23 @@ object UI {
   def noop: IO[Unit] = io {}
 
   def update(s: State, a: Action): IO[Unit] = a match {
+    case Start()                      ⇒ insertInputs
+    case SetState(state)              ⇒ reflectState(state)
     case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
     case CompileExercise(method)      ⇒ startCompilation(s, method)
     case CompilationOk(method)        ⇒ setAsSolved(s, method)
     case CompilationFail(method, msg) ⇒ setAsErrored(s, method, msg)
     case _                            ⇒ noop
+  }
+
+  def insertInputs: IO[Unit] =
+    inputReplacements flatMap replaceInputs
+
+  def reflectState(s: State): IO[Unit] = {
+    s.map(reflectExercise).sequence.map(_ ⇒ ())
+  }
+
+  def reflectExercise(e: ClientExercise): IO[Unit] = io {
   }
 
   def toggleExerciseClass(s: State, method: String): IO[Unit] = {
@@ -63,12 +77,12 @@ object UI {
   }
 
   def setClassToExercise(method: String, style: String): IO[Unit] = (for {
-    exercise ← OptionT(findExerciseByMethod(method))
+    exercise ← OptionT(io(findExerciseByMethod(method)))
     _ ← OptionT(setClass(exercise, style) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 
   def addLogToExercise(method: String, msg: String): IO[Unit] = (for {
-    exercise ← OptionT(findExerciseByMethod(method))
+    exercise ← OptionT(io(findExerciseByMethod(method)))
     _ ← OptionT(writeLog(exercise, msg) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 

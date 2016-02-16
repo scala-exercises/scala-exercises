@@ -18,6 +18,15 @@ import common.ExtAjax._
 import org.scalajs.dom.ext.{ Ajax, AjaxException }
 
 object Client {
+  def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
+    val url = "google.com" // FIXME: actual route and logic
+    Ajax.get(url).map(r ⇒
+      if (r.ok)
+        Some(List())
+      else
+        None).recover({ case exc: AjaxException ⇒ None })
+  }
+
   def compileExercise(e: ClientExercise): Future[EvaluationResult] = {
     val url = Routes.Exercises.evaluate(e.library, e.section)
     //TODO: TBD version and exercise types
