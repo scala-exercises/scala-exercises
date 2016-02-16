@@ -42,7 +42,7 @@ object ExercisesService extends RuntimeSharedConversions {
       case Some(result) ⇒ result
     }
     */
-    Xor.catchNonFatal(???)
+    Xor.right(Unit)
   }
 }
 

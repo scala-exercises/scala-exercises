@@ -1,16 +1,22 @@
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
 import org.scalatest._
 import prop._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalacheck.{ Gen, Arbitrary }
 import org.scalacheck.Shapeless._
 
-import test.database.TestDatabase
+import test.database.{ DatabaseInstance }
 import doobie.imports._
 import scalaz.concurrent.Task
 import shared.User
 import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
 
-class UserStoreSpec extends PropSpec with GeneratorDrivenPropertyChecks with Matchers {
+class UserStoreSpec
+    extends PropSpec
+    with GeneratorDrivenPropertyChecks
+    with Matchers
+    with DatabaseInstance
+    with BeforeAndAfterAll {
   // User creation generator
   implicitly[Arbitrary[UserCreation.Request]]
 
@@ -24,12 +30,10 @@ class UserStoreSpec extends PropSpec with GeneratorDrivenPropertyChecks with Mat
     login ← Gen.identifier
   } yield user.copy(login = login)
 
-  // Test database setup
-  val db = TestDatabase.create
-  TestDatabase.update(db)
-
-  val transactor: Transactor[Task] = TestDatabase.transactor(db)
   import transactor.yolo._
+
+  override def beforeAll() =
+    UserProgressDoobieRepository.instance.deleteAll().transact(transactor).run
 
   // Properties
   property("new users can be created") {
