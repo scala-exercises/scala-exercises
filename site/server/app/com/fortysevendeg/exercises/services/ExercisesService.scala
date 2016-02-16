@@ -5,72 +5,18 @@
 
 package com.fortysevendeg.exercises.services
 
+import com.fortysevendeg.exercises.Exercises
+import com.fortysevendeg.exercises.MethodEval
+
 import cats.data.Xor
-import java.io.File
-import java.net.URLClassLoader
-
-import services.exercisev0.BooleanTypeConversion
-import com.toddfast.util.convert.TypeConverter
-import shared._
-import org.clapper.classutil.{ ClassInfo, ClassFinder }
-import play.api.Play
-
-import scala.reflect.ClassTag
-import scala.reflect.runtime.{ universe ⇒ ru }
-import ru._
-import cats.syntax.xor._
+import cats.data.Ior
+import cats.std.option._
+import cats.syntax.flatMap._
 
 /** Main entry point and service for libraries, categories and exercises discovery + evaluation
   */
 object ExercisesService {
-  TypeConverter.registerTypeConversion(new BooleanTypeConversion())
-
-  private[this] lazy val classMap = {
-    val cl = Play.maybeApplication map (_.classloader) getOrElse ClassLoader.getSystemClassLoader
-    val files = cl.asInstanceOf[URLClassLoader].getURLs map (_.getFile)
-    val classFinder = ClassFinder(files map (new File(_)) filter (f ⇒ f.exists()))
-    val classes = classFinder.getClasses.toIterator
-    ClassFinder.classInfoMap(classes)
-  }
-
-  private[this] def subclassesOf[A: ClassTag] =
-    ClassFinder.concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap).toList
-
-  private[this] def sources(classInfo: ClassInfo) = {
-    val exerciseClass = Class.forName(classInfo.name)
-    val sourcesStream = exerciseClass.getResourceAsStream(exerciseClass.getSimpleName + ".scala")
-    val sources = scala.io.Source.fromInputStream(sourcesStream).getLines().toList
-    sourcesStream.close()
-    sources
-  }
-
-  private[this] def simpleClassName(classInfo: ClassInfo) =
-    Class.forName(classInfo.name).asInstanceOf[Class[_ <: exercise.Section]].getSimpleName
-
-  private[this] def packageObjectSource(classInfo: ClassInfo) = {
-    val exerciseClass = Class.forName(classInfo.name)
-    val sourcesStream = exerciseClass.getResourceAsStream("package.scala")
-    val sources = scala.io.Source.fromInputStream(sourcesStream).getLines().toList
-    sourcesStream.close()
-    sources
-  }
-
-  private[this] def evaluate(evaluation: ExerciseEvaluation, classInfo: ClassInfo): Throwable Xor Unit = {
-    val targetSectionInstance = Class.forName(classInfo.name).newInstance()
-    val mirror = runtimeMirror(getClass.getClassLoader)
-    val targetMirror = mirror.reflect(targetSectionInstance)
-    val method = targetMirror.symbol.typeSignature.decl(TermName(evaluation.method)).asMethod
-    val methodMirror = targetMirror.reflectMethod(method)
-    val argsWithTypes = evaluation.args zip method.paramLists.flatten
-    val argValues = argsWithTypes map {
-      case (arg, symbol) ⇒
-        val argClass = mirror.runtimeClass(symbol.typeSignature.dealias)
-        TypeConverter.convert(argClass, arg)
-    }
-    methodMirror.apply(argValues: _*).asInstanceOf[Throwable Xor Unit]
-  }
-
-  lazy val toolbox = cm.mkToolBox()
+  lazy val methodEval = new MethodEval()
 
   val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {
@@ -97,40 +43,19 @@ object ExercisesService {
     * containing either an exception or Unit representing success
     */
   def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Unit] = {
-
-    def eval(qualifiedMethod: String, rawArgs: List[String]): Xor[String, Any] = {
-      val lastIndex = qualifiedMethod.lastIndexOf('.')
-      if (lastIndex > 0) {
-        val moduleName = qualifiedMethod.substring(0, lastIndex)
-        val methodName = qualifiedMethod.substring(lastIndex + 1)
-        for {
-          mirror ← Xor.fromOption(runtimeLibraries.find(_.name == evaluation.libraryName), s"Unable to find library ${evaluation.libraryName}")
-            .map { library ⇒ ru.runtimeMirror(library.getClass.getClassLoader) }
-          staticModule ← guard(mirror.staticModule(moduleName), s"Unable to load module $moduleName")
-          moduleMirror ← guard(mirror.reflectModule(staticModule), s"Unable to reflect module mirror for $moduleName")
-          instanceMirror ← guard(mirror.reflect(moduleMirror.instance), s"Unable to reflect instance mirror for $moduleName")
-          methodSymbol ← guard(
-            instanceMirror.symbol.typeSignature.decl(mirror.universe.TermName(methodName)).asMethod, s"Unable to get type for module $moduleName"
-          )
-          args ← rawArgs.map(arg ⇒ guard(toolbox.parse(arg), s"Unable to parse arg: $arg") >>= { argTree ⇒
-            import mirror.universe._
-            argTree match {
-              case Literal(Constant(value)) ⇒ Xor.right(value)
-              case value                    ⇒ Xor.left(s"Unable to handle parsed value: $value")
-            }
-          }).sequenceU
-          result ← guard(instanceMirror.reflectMethod(methodSymbol)(args: _*), s"Unable to coerce arguments to match method $methodName")
-        } yield result
-      } else Xor.left(s"Invalid qualified method $qualifiedMethod")
-    }
-
-    eval(evaluation.method, evaluation.args)
-      .leftMap(new Error(_))
-      .map(_ ⇒ Unit)
+    val res = methodEval.eval(
+      evaluation.method,
+      evaluation.args
+    )
+    Logger.info(s"evaluation for $evaluation: $res")
+    res.fold(_ match {
+      case Ior.Left(message)        ⇒ Xor.left(new Exception(message))
+      case Ior.Right(error)         ⇒ Xor.left(error)
+      case Ior.Both(message, error) ⇒ Xor.left(new Exception(message, error))
+    }, _ ⇒ Xor.right(Unit))
+    // uncomment this next line if you want to actually throw the exception
+    //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
   }
-
-  private def guard[A](f: ⇒ A, message: ⇒ String) =
-    Xor.catchNonFatal(f).leftMap(_ ⇒ message)
 
 }
 
