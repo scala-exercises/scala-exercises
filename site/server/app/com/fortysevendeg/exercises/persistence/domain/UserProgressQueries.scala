@@ -6,6 +6,10 @@
 package com.fortysevendeg.exercises.persistence.domain
 
 import shared.UserProgress
+import shapeless._
+import record._
+import ops.record._
+import syntax.singleton._
 
 object SaveUserProgress {
 
@@ -34,7 +38,12 @@ object SaveUserProgress {
 
 object UserProgressQueries {
 
-  val allFields = List("id", "userid", "libraryname", "sectionname", "method", "version", "exercisetype", "args", "succeeded")
+  val userProgressGen = LabelledGeneric[shared.UserProgress]
+  val userProgressKeys = Keys[userProgressGen.Repr]
+  val allFields =
+    userProgressKeys()
+      .to[List]
+      .map { case Symbol(s) ⇒ s }
 
   private[this] val commonFindBy =
     """SELECT
