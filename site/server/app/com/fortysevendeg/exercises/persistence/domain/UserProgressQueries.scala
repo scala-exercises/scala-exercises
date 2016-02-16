@@ -7,9 +7,7 @@ package com.fortysevendeg.exercises.persistence.domain
 
 import shared.UserProgress
 import shapeless._
-import record._
 import ops.record._
-import syntax.singleton._
 
 object SaveUserProgress {
 
