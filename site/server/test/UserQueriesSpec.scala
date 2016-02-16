@@ -1,17 +1,13 @@
 import org.specs2.mutable.Specification
 import doobie.imports._
+import test.database.DatabaseInstance
 import scalaz.concurrent.Task
 import doobie.contrib.specs2.analysisspec.AnalysisSpec
-import test.database.TestDatabase
 import com.fortysevendeg.exercises.models.queries.Queries
 import shared.User
 import com.fortysevendeg.exercises.models.UserCreation
 
-class UserQueriesSpec extends Specification with AnalysisSpec {
-  val db = TestDatabase.create
-  TestDatabase.update(db)
-
-  val transactor: Transactor[Task] = TestDatabase.transactor(db)
+class UserQueriesSpec extends Specification with AnalysisSpec with DatabaseInstance {
 
   check(Queries.all)
   check(Queries.byLogin("47deg"))

@@ -2,7 +2,7 @@ import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRe
 import doobie.imports._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import test.database.TestDatabase
+import test.database.DatabaseInstance
 import org.scalacheck.Shapeless._
 
 import scalaz.concurrent.Task
@@ -11,12 +11,10 @@ class UserProgressRepositorySpec
     extends PropSpec
     with GeneratorDrivenPropertyChecks
     with Matchers
-    with ArbitraryInstances {
+    with ArbitraryInstances
+    with DatabaseInstance {
 
-  val db = TestDatabase.create
-  TestDatabase.update(db)
-
-  implicit val transactor: Transactor[Task] = TestDatabase.transactor(db)
+  implicit val trx: Transactor[Task] = transactor
 
   property("new user progress records can be created") {
     forAll { pair: UserProgressPair ⇒
