@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Literal Booleans Description
   */
-
 object LiteralBooleans extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -27,8 +26,6 @@ object LiteralBooleans extends FlatSpec with Matchers with exercise.Section {
     d should be(res3)
     e should be(res4)
     f should be(res5)
-
-
   }
 
 }

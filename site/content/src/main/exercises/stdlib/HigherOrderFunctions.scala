@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Higher Order Functions Description
   */
-
 object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -41,8 +40,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     result3 should be(res3)
     result4 should be(res4)
     result5 should be(res5)
-
-
   }
 
   /** differentLookHigherOrderFunctions
@@ -53,8 +50,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     def lambda = (x: Int) => x + 1
     def result = lambda(5)
     result should be(res0)
-
-
   }
 
   /** meetClosureHigherOrderFunctions
@@ -81,8 +76,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
 
     val result2 = closure(10)
     result2 should be(res1)
-
-
   }
 
   /** holdEnvironmentHigherOrderFunctions
@@ -101,8 +94,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     incrementer = 4
     val result2 = summation(10, closure)
     result2 should be(res1)
-
-
   }
 
   /** returningFunctionHigherOrderFunctions
@@ -122,8 +113,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
 
     def fiveAdder = addWithoutSyntaxSugar(5)
     fiveAdder(5) should be(res2)
-
-
   }
 
   /** returningAnonymousFunctionHigherOrderFunctions
@@ -138,8 +127,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
 
     def fiveAdder = addWithSyntaxSugar(5)
     fiveAdder(5) should be(res2)
-
-
   }
 
   /** isInstanceOfMethodHigherOrderFunctions
@@ -150,8 +137,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     def addWithSyntaxSugar(x: Int) = (y: Int) => x + y
 
     addWithSyntaxSugar(1).isInstanceOf[Function1[_, _]] should be(res0)
-
-
   }
 
   /** functionAsParameterHigherOrderFunctions
@@ -179,8 +164,6 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     List("Scala", "Erlang", "Clojure") map {
       _.length
     } should be(res2)
-
-
   }
 
 }

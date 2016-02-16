@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Manifests Description
   */
-
 object Manifests extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -46,8 +45,6 @@ object Manifests extends FlatSpec with Matchers with exercise.Section {
     def inspect[T](l: List[T])(implicit manifest: scala.reflect.Manifest[T]) = manifest.toString()
     val list = 1 :: 2 :: 3 :: 4 :: 5 :: Nil
     inspect(list) should be(res0)
-
-
   }
 
   /** attachedToClassesManifests
@@ -61,8 +58,6 @@ object Manifests extends FlatSpec with Matchers with exercise.Section {
     }
     val monkeyBarrel = new Barrel[Monkey]
     (monkeyBarrel + new Monkey) should be(res0)
-
-
   }
 
 }

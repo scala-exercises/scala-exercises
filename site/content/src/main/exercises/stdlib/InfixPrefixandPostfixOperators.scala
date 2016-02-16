@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Infix Prefix and Postfix Operators Description
   */
-
 object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -18,8 +17,6 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     val g: Int = 3
     (g + 4) should be(res0) // + is an infix operator
     g.+(4) should be(res1) // same result but not using the infix operator
-
-
   }
 
   /** notWithTwoInfixPrefixandPostfixOperators
@@ -34,8 +31,6 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     // g indexOf 'o', 4 should be (6) //indexOf(Char, Int) cannot be used as an infix operator
 
     g.indexOf('o', 7) should be(res1) //indexOf(Char, Int) must use standard java/scala calls
-
-
   }
 
   /** postfixOperatorInfixPrefixandPostfixOperators
@@ -45,16 +40,14 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     * For instance `a.##(b)` can be written `a ## b` and `a.!` can be written `a!`
     *
     * **Postfix operators** have lower precedence than **infix operators**, so:
-    *   - `foo bar baz` means `foo.bar(baz)`.
-    *   - `foo bar baz bam` means `(foo.bar(baz)).bam`
-    *   - `foo bar baz bam bim` means `(foo.bar(baz)).bam(bim)`.
+    * - `foo bar baz` means `foo.bar(baz)`.
+    * - `foo bar baz bam` means `(foo.bar(baz)).bam`
+    * - `foo bar baz bam bim` means `(foo.bar(baz)).bam(bim)`.
     */
   def postfixOperatorInfixPrefixandPostfixOperators(res0: String) {
     val g: Int = 31
     (g toHexString) should be(res0) //toHexString takes no params therefore can be called as a postfix operator.
     //Hint: The answer is "1f"
-
-
   }
 
   /** startsWithUnaryInfixPrefixandPostfixOperators
@@ -64,8 +57,6 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
   def startsWithUnaryInfixPrefixandPostfixOperators(res0: String) {
     val g: Int = 31
     (-g) should be(res0)
-
-
   }
 
   /** ourOwnOperatorInfixPrefixandPostfixOperators
@@ -82,8 +73,6 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     val stereo = new Stereo
     (+stereo) should be(res0)
     (-stereo) should be(res1)
-
-
   }
 
 }

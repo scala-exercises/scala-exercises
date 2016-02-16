@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Uniform Access Principle Description
   */
-
 object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -54,8 +53,6 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
   def asPropertyUniformAccessPrinciple(res0: String) {
     val me = new CalculatesAgeUsingProperty(2010, 2003)
     me.age should be(res0)
-
-
   }
 
   /** updatingPropertyUniformAccessPrinciple
@@ -67,8 +64,6 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
 
     me.currentYear = 2011
     me.age should be(res0)
-
-
   }
 
   /** updateUsingMethodUniformAccessPrinciple
@@ -80,8 +75,6 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
 
     me.currentYear = 2011
     me.age should be(res0)
-
-
   }
 
 }

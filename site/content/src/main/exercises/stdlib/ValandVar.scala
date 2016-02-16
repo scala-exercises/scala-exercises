@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Val and Var Description
   */
-
 object ValandVar extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -36,8 +35,6 @@ object ValandVar extends FlatSpec with Matchers with exercise.Section {
     a should be(res0)
     a = 7
     a should be(res1)
-
-
   }
 
   /** valIsInmutableValandVar

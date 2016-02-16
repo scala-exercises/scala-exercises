@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Lists Description
   */
-
 object Lists extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -20,8 +19,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     val a = List(1, 2, 3)
     val b = List(1, 2, 3)
     (a eq b) should be(res0)
-
-
   }
 
   /** sameContentLists
@@ -32,8 +29,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     val a = List(1, 2, 3)
     val b = List(1, 2, 3)
     (a == b) should be(res0)
-
-
   }
 
   /** nilListsLists
@@ -52,8 +47,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
 
     (a == b) should be(res4)
     (a eq b) should be(res5)
-
-
   }
 
   /** easilyCreatedLists
@@ -63,8 +56,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
   def easilyCreatedLists(res0: String, res1: String, res2: String) {
     val a = List(1, 2, 3)
     a should equal(List(res0, res1, res2))
-
-
   }
 
   /** headAndTailLists
@@ -75,8 +66,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     val a = List(1, 2, 3)
     a.head should equal(res0)
     a.tail should equal(List(res1, res2))
-
-
   }
 
   /** byPositionLists
@@ -92,8 +81,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     intercept[IndexOutOfBoundsException] {
       println(a(5))
     }
-
-
   }
 
   /** areInmutableLists
@@ -106,8 +93,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
 
     a should equal(List(1, 3, 5, 7, 9))
     b should equal(List(res0, res1, res2, res3))
-
-
   }
 
   /** usefulMethodsLists
@@ -131,8 +116,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
 
     // filter any values divisible by 3 in the list
     a.filter { v => v % 3 == 0 } should equal(List(res16, res17))
-
-
   }
 
   /** wildcardAsShorhandLists
@@ -149,8 +132,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     a.filter {
       _ % 2 == 0
     } should equal(List(res3))
-
-
   }
 
   /** functionsOverListsLists
@@ -161,8 +142,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     val a = List(1, 2, 3)
     a.map(_ * 2) should equal(List(res0, res1, res2))
     a.filter(_ % 2 != 0) should equal(List(res3, res4))
-
-
   }
 
   /** reducingListsLists
@@ -173,8 +152,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     val a = List(1, 3, 5, 7)
     a.reduceLeft(_ + _) should equal(res0)
     a.reduceLeft(_ * _) should equal(res1)
-
-
   }
 
   /** foldLeftLists
@@ -188,8 +165,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     a.foldLeft(10)(_ + _) should equal(res1)
     a.foldLeft(1)(_ * _) should equal(res2)
     a.foldLeft(0)(_ * _) should equal(res3)
-
-
   }
 
   /** fromRangeLists
@@ -199,8 +174,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
   def fromRangeLists(res0: String, res1: String, res2: String, res3: String, res4: String) {
     val a = (1 to 5).toList
     a should be(List(res0, res1, res2, res3, res4))
-
-
   }
 
   /** reuseTailsLists
@@ -217,8 +190,6 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     a.tail should be(res3)
     b.tail should be(res4)
     c.tail should be(res5)
-
-
   }
 
 }

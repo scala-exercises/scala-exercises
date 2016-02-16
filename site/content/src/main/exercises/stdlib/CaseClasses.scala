@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Case Classes Description
   */
-
 object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -105,8 +104,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
     (p1 eq p2) should be(res2)
     (p1 eq p3) should be(res3) // not identical, merely equal
-
-
   }
 
   /** hascodeMethodCaseClasses
@@ -122,8 +119,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
     (p1.hashCode == p2.hashCode) should be(res0)
     (p1.hashCode == p3.hashCode) should be(res1)
-
-
   }
 
   /** creationCaseClasses
@@ -140,8 +135,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     (d1 == d3) should be(res0)
     (d1 == d2) should be(res1)
     (d2 == d3) should be(res2)
-
-
   }
 
   /** toStringMethodCaseClasses
@@ -152,8 +145,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     case class Dog(name: String, breed: String)
     val d1 = Dog("Scooby", "Doberman")
     d1.toString should be(res0)
-
-
   }
 
   /** propertiesCaseClasses
@@ -166,8 +157,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     val d1 = Dog("Scooby", "Doberman")
     d1.name should be(res0)
     d1.breed should be(res1)
-
-
   }
 
   /** mutablePropertiesCaseClasses
@@ -185,8 +174,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
     d1.name should be(res2)
     d1.breed should be(res3)
-
-
   }
 
   /** alteringCaseClassesCaseClasses
@@ -205,8 +192,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
     d2.name should be(res2)
     d2.breed should be(res3) // copied from the original
-
-
   }
 
   /** parametersCaseClasses
@@ -236,8 +221,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     p3.ssn should be(res11)
 
     (p1 == p4) should be(res12)
-
-
   }
 
   /** asTupleCaseClasses
@@ -254,8 +237,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     parts._2 should be(res1)
     parts._3 should be(res2)
     parts._4 should be(res3)
-
-
   }
 
   /** serializableCaseClasses
@@ -273,8 +254,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     val junior = new Person("Indiana", "Jones")
 
     junior.isInstanceOf[Serializable] should be(res1)
-
-
   }
 
 }

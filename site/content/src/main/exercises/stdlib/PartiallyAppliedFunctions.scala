@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Partially Applied Functions Description
   */
-
 object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -19,8 +18,6 @@ object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Se
     val sum3 = sum _
     sum3(1, 9, 7) should be(res0)
     sum(4, 5, 6) should be(res1)
-
-
   }
 
   /** anyNumberArgumentsPartiallyAppliedFunctions
@@ -32,8 +29,6 @@ object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Se
     val sumC = sum(1, 10, _: Int)
     sumC(4) should be(res0)
     sum(4, 5, 6) should be(res1)
-
-
   }
 
   /** curryingPartiallyAppliedFunctions
@@ -49,8 +44,6 @@ object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Se
     val multiplyCurriedFour = multiplyCurried(4)
     multiplyCurriedFour(2) should be(res3)
     multiplyCurriedFour(4) should be(res4)
-
-
   }
 
   /** specializedVersionPartiallyAppliedFunctions
@@ -67,8 +60,6 @@ object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Se
 
     val onlyEvenFilter = customFilter(onlyEven) _
     onlyEvenFilter(xs) should be(res1)
-
-
   }
 
 }

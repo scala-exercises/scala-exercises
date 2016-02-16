@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Pattern Matching Description
   */
-
 object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -44,8 +43,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     myStuff should be(res0)
-
-
   }
 
   /** returnComplexPatternMatching
@@ -63,8 +60,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     myStuff should be(res0, res1, res2)
-
-
   }
 
   /** complexExpressionsPatternMatching
@@ -80,8 +75,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     goldilocks(("porridge", "Mama")) should be(res0)
-
-
   }
 
   /** wildcardParsPatternMatching
@@ -98,8 +91,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
     goldilocks(("porridge", "Papa")) should be(res0)
     goldilocks(("chair", "Mama")) should be(res1)
-
-
   }
 
   /** substitutePartsPatternMatching
@@ -116,34 +107,32 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
     goldilocks(("porridge", "Papa")) should be(res0)
     goldilocks(("chair", "Mama")) should be(res1)
-
-
   }
 
   //TODO: Improve compiler to ignore regular expressions in the body of the exercise
 
-//  /** regularExpressionsPatternMatching
-//    *
-//    * Pattern matching can be done on regular expression groups:
-//    */
-//  def regularExpressionsPatternMatching(res0: String, res1: String) {
-//    val EatingRegularExpression = """Eating Alert: bear=([^,]+),\s+source=(.+)""".r //.r turns a String to a regular expression
-//    val SittingRegularExpression =
-//      """Sitting Alert: bear=([^,]+),\s+source=(.+)""".r
-//    val SleepingRegularExpression = """Sleeping Alert: bear=([^,]+),\s+source=(.+)""".r
-//
-//    def goldilocks(expr: String) = expr match {
-//      case (EatingRegularExpression(bear, source)) => "%s said someone's been eating my %s".format(bear, source)
-//      case (SittingRegularExpression(bear, source)) => "%s said someone's been sitting on my %s".format(bear, source)
-//      case (SleepingRegularExpression(bear, source)) => "%s said someone's been sleeping in my %s".format(bear, source)
-//      case _ => "what?"
-//    }
-//
-//    goldilocks("Eating Alert: bear=Papa, source=porridge") should be(res0)
-//    goldilocks("Sitting Alert: bear=Mama, source=chair") should be(res1)
-//
-//
-//  }
+  //  /** regularExpressionsPatternMatching
+  //    *
+  //    * Pattern matching can be done on regular expression groups:
+  //    */
+  //  def regularExpressionsPatternMatching(res0: String, res1: String) {
+  //    val EatingRegularExpression = """Eating Alert: bear=([^,]+),\s+source=(.+)""".r //.r turns a String to a regular expression
+  //    val SittingRegularExpression =
+  //      """Sitting Alert: bear=([^,]+),\s+source=(.+)""".r
+  //    val SleepingRegularExpression = """Sleeping Alert: bear=([^,]+),\s+source=(.+)""".r
+  //
+  //    def goldilocks(expr: String) = expr match {
+  //      case (EatingRegularExpression(bear, source)) => "%s said someone's been eating my %s".format(bear, source)
+  //      case (SittingRegularExpression(bear, source)) => "%s said someone's been sitting on my %s".format(bear, source)
+  //      case (SleepingRegularExpression(bear, source)) => "%s said someone's been sleeping in my %s".format(bear, source)
+  //      case _ => "what?"
+  //    }
+  //
+  //    goldilocks("Eating Alert: bear=Papa, source=porridge") should be(res0)
+  //    goldilocks("Sitting Alert: bear=Mama, source=chair") should be(res1)
+  //
+  //
+  //  }
 
   /** createCaseStatementPatternMatching
     *
@@ -163,8 +152,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     goldilocks(("chair", "Mama")) should be(res1)
     goldilocks(("porridge", "Cousin")) should be(res2)
     goldilocks(("beer", "Cousin")) should be(res3)
-
-
   }
 
   /** stableVariblePatternMatching
@@ -179,8 +166,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     patternEquals(3, 3) should be(res0)
     patternEquals(7, 9) should be(res1)
     patternEquals(9, 9) should be(res2)
-
-
   }
 
   /** againstListsPatternMatching
@@ -194,8 +179,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     secondElement should be(res0)
-
-
   }
 
   /** againstListsIIPatternMatching
@@ -209,8 +192,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     secondElement should be(res0)
-
-
   }
 
   /** againstListsIIIPatternMatching
@@ -224,8 +205,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     secondElement should be(res0)
-
-
   }
 
   /** againstListsIVPatternMatching
@@ -239,8 +218,6 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     }
 
     r should be(res0)
-
-
   }
 
 }

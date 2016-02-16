@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Objects Description
   */
-
 object Objects extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -30,8 +29,6 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     Greeting.espanol should be(res1)
     Greeting.deutsch should be(res2)
     Greeting.magyar should be(res3)
-
-
   }
 
   /** notStaticMethodObjects
@@ -57,8 +54,6 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     val z = Greeting
 
     x eq z should be(res1)
-
-
   }
 
   /** companionObjectObjects
@@ -81,8 +76,6 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     }
 
     Movie.academyAwardBestMoviesForYear(1932).get.name should be(res0)
-
-
   }
 
   /** sharingVariablesObjects
@@ -121,8 +114,6 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     max.shoot(200)
 
     SecretAgent.bullets should be(res0)
-
-
   }
 
   /** privateValuesObjects
@@ -145,8 +136,6 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     Person.showMeInnerSecret(peter) should be(res1)
     Person.showMeInnerSecret(bruce) should be(res2)
     Person.showMeInnerSecret(diana) should be(res3)
-
-
   }
 
 }

@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Preconditions Description
   */
-
 object Preconditions extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -50,8 +49,6 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     intercept[IllegalArgumentException] {
       new WithParameterRequirement("")
     }
-
-
   }
 
 }

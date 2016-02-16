@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Enumerations Description
   */
-
 object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -37,8 +36,6 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
     (Planets.Earth == Planets.Earth) should be(res4)
     (Planets.Neptune == Planets.Jupiter) should be(res5)
-
-
   }
 
   /** ownIndexEnumerations
@@ -68,8 +65,6 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
     (GreekPlanets.Earth == GreekPlanets.Earth) should be(res4)
     (GreekPlanets.Neptune == GreekPlanets.Jupiter) should be(res5)
-
-
   }
 
   /** oneLineEnumerations
@@ -89,8 +84,6 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
     (Planets.Earth == Planets.Earth) should be(res4)
     (Planets.Neptune == Planets.Jupiter) should be(res5)
-
-
   }
 
   /** stringValueEnumerations
@@ -119,8 +112,6 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
     (GreekPlanets.Earth == GreekPlanets.Earth) should be(res4)
     (GreekPlanets.Neptune == GreekPlanets.Jupiter) should be(res5)
-
-
   }
 
   /** extendingValueEnumerations
@@ -156,8 +147,6 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
     Planets.Earth.mass should be(res0)
     Planets.Earth.radius should be(res1)
-
-
   }
 
 }

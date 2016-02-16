@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * ByName Parameter Description
   */
-
 object ByNameParameter extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -28,8 +27,6 @@ object ByNameParameter extends FlatSpec with Matchers with exercise.Section {
     }
 
     y should be(res0)
-
-
   }
 
   /** byNameByNameParameter
@@ -54,8 +51,6 @@ object ByNameParameter extends FlatSpec with Matchers with exercise.Section {
     }
 
     y should be(res0)
-
-
   }
 
   /** withApplyByNameParameter
@@ -74,8 +69,6 @@ object ByNameParameter extends FlatSpec with Matchers with exercise.Section {
     }
 
     result should be(res0)
-
-
   }
 
 }

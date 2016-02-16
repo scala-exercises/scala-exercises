@@ -7,7 +7,6 @@ import org.scalatest._
   *
   * Repeated Parameters Description
   */
-
 object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -27,8 +26,6 @@ object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {
     */
   def theLastParameterRepeatedParameters(res0: String) {
     repeatedParameterMethod(3, "egg", "a delicious sandwich", "protein", "high cholesterol") should be(res0)
-
-
   }
 
   /** acceptCollectionRepeatedParameters
@@ -37,8 +34,6 @@ object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {
     */
   def acceptCollectionRepeatedParameters(res0: String) {
     repeatedParameterMethod(3, "egg", List("a delicious sandwich", "protein", "high cholesterol")) should be(res0)
-
-
   }
 
   /** expandCollectionRepeatedParameters
@@ -47,8 +42,6 @@ object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {
     */
   def expandCollectionRepeatedParameters(res0: String) {
     repeatedParameterMethod(3, "egg", List("a delicious sandwich", "protein", "high cholesterol"): _*) should be(res0)
-
-
   }
 
 }

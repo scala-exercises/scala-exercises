@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Implicits Description
   */
-
 object Implicits extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -62,8 +61,6 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
     19.isOdd should be(res0)
     20.isOdd should be(res1)
-
-
   }
 
   /** importedImplicits
@@ -86,8 +83,6 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     //imported implicits come into effect within this scope
     19.isOdd should be(res0)
     20.isOdd should be(res1)
-
-
   }
 
   /** convertTypeImplicits
@@ -108,8 +103,6 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
     add(3, 6) == (9: BigInteger) should be(res3)
     add(3, 6).intValue == 9 should be(res4)
-
-
   }
 
   /** asDefaultImplicits
@@ -125,8 +118,6 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
     hourlyRate = BigDecimal(95.00)
     howMuchCanIMake_?(95) should be(res1)
-
-
   }
 
   /** listOfImplicitsImplicits
@@ -144,8 +135,6 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
     hourlyRate = BigDecimal(95.00)
     howMuchCanIMake_?(95) should be(res1)
-
-
   }
 
   /** defaultArgumentsImplicits
@@ -159,8 +148,6 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     howMuchCanIMake_?(30) should be(res0)
 
     howMuchCanIMake_?(30, 95) should be(res1)
-
-
   }
 
 }

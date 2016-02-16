@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Sets Description
   */
-
 object Sets extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -14,18 +13,16 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     *
     * `Set`s are `Iterable`s that contain no duplicate elements. The operations on sets are summarized in the following table for general sets and in the table after that for mutable sets. They fall into the following categories:
     *
-    *   - **Tests** `contains`, `apply`, `subsetOf`. The `contains` method asks whether a set contains a given element. The `apply` method for a set is the same as `contains`, so `set(elem)` is the same as `set contains elem`. That means sets can also be used as test functions that return true for the elements they contain.
-    *   - **Additions** `+` and `++`, which add one or more elements to a set, yielding a new set.
-    *   - **Removals** `-`, `--`, which remove one or more elements from a set, yielding a new set.
-    *   - **Set operations** for union, intersection, and set difference. Each of these operations exists in two forms: alphabetic and symbolic. The alphabetic versions are `intersect`, `union`, and `diff`, whereas the symbolic versions are `&`, `|`, and `&~`. In fact, the `++` that Set inherits from `Traversable` can be seen as yet another alias of `union` or `|`, except that `++` takes a `Traversable` argument whereas `union` and `|` take sets.
+    * - **Tests** `contains`, `apply`, `subsetOf`. The `contains` method asks whether a set contains a given element. The `apply` method for a set is the same as `contains`, so `set(elem)` is the same as `set contains elem`. That means sets can also be used as test functions that return true for the elements they contain.
+    * - **Additions** `+` and `++`, which add one or more elements to a set, yielding a new set.
+    * - **Removals** `-`, `--`, which remove one or more elements from a set, yielding a new set.
+    * - **Set operations** for union, intersection, and set difference. Each of these operations exists in two forms: alphabetic and symbolic. The alphabetic versions are `intersect`, `union`, and `diff`, whereas the symbolic versions are `&`, `|`, and `&~`. In fact, the `++` that Set inherits from `Traversable` can be seen as yet another alias of `union` or `|`, except that `++` takes a `Traversable` argument whereas `union` and `|` take sets.
     *
     * Sets can be created easily:
     */
   def noDuplicatesSets(res0: String) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
     mySet.size should be(res0)
-
-
   }
 
   /** distinctValuesSets
@@ -35,8 +32,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
   def distinctValuesSets(res0: String) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Michigan")
     mySet.size should be(res0)
-
-
   }
 
   /** easilyAddedSets
@@ -49,8 +44,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
 
     aNewSet.contains("Illinois") should be(res0)
     mySet.contains("Illinois") should be(res1)
-
-
   }
 
   /** mixedTypeSets
@@ -62,8 +55,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
 
     mySet.contains(12) should be(res0)
     mySet.contains("MI") should be(res1)
-
-
   }
 
   /** checkExistenceSets
@@ -75,8 +66,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
 
     mySet(12) should be(res0)
     mySet("MI") should be(res1)
-
-
   }
 
   /** easilyRemovedSets
@@ -89,8 +78,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
 
     aNewSet.contains("Michigan") should be(res0)
     mySet.contains("Michigan") should be(res1)
-
-
   }
 
   /** multipleRemovingSets
@@ -104,8 +91,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.contains("Michigan") should be(res0)
     aNewSet.contains("Wisconsin") should be(res1)
     aNewSet.size should be(res2)
-
-
   }
 
   /** tupleRemovingSets
@@ -119,8 +104,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.contains("Michigan") should be(res0)
     aNewSet.contains("Wisconsin") should be(res1)
     aNewSet.size should be(res2)
-
-
   }
 
   /** nonexistentRemovalSets
@@ -132,8 +115,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     val aNewSet = mySet - "Minnesota"
 
     aNewSet.equals(mySet) should be(res0)
-
-
   }
 
   /** easilyIteratedSets
@@ -147,8 +128,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
       sum = sum + i //Of course this is the same thing as mySet.reduce(_ + _) or mySet.sum
 
     sum should be(res0)
-
-
   }
 
   /** easilyIntersectedSets
@@ -162,8 +141,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     // NOTE: Scala 2.7 used **, deprecated for & or intersect in Scala 2.8
 
     aNewSet.equals(Set("Michigan", "Wisconsin")) should be(res0)
-
-
   }
 
   /** easilyJoinedSets
@@ -176,8 +153,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     val aNewSet = mySet1 union mySet2 // NOTE: You can also use the "|" operator
 
     aNewSet.equals(Set("Michigan", "Wisconsin", "Ohio", "Iowa", "Minnesota")) should be(res0)
-
-
   }
 
   /** subsetSets
@@ -191,8 +166,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
 
     mySet2 subsetOf mySet1 should be(res0)
     mySet3 subsetOf mySet1 should be(res1)
-
-
   }
 
   /** easilyObtainedDifferencesSets
@@ -205,8 +178,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     val aNewSet = mySet1 diff mySet2 // Note: you can use the "&~" operator if you *really* want to.
 
     aNewSet.equals(Set("Ohio", "Iowa")) should be(res0)
-
-
   }
 
   /** equivalencySets
@@ -218,8 +189,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     val mySet2 = Set("Wisconsin", "Michigan", "Ohio", "Iowa")
 
     mySet1.equals(mySet2) should be(res0)
-
-
   }
 
 }

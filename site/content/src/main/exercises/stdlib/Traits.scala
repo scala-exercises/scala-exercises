@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Traits Description
   */
-
 object Traits extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -72,8 +71,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     val evt = Event("Moose Stampede")
     val myListener = new MyListener
     myListener.listen(evt) should be(res0)
-
-
   }
 
   /** extendsFromOneTraits
@@ -101,8 +98,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     val evt = Event("Woodchuck Stampede")
     val myListener = new MyListener
     myListener.listen(evt) should be(res0)
-
-
   }
 
   /** polymorphicTraits
@@ -131,8 +126,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     myListener.isInstanceOf[EventListener] should be(res1)
     myListener.isInstanceOf[Any] should be(res2)
     myListener.isInstanceOf[AnyRef] should be(res3)
-
-
   }
 
   /** implementatedTraits
@@ -170,8 +163,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
     welder.logCache.size should be(res0)
     baker.logCache.size should be(res1)
-
-
   }
 
   /** previouslyInstantiatedTraits
@@ -198,8 +189,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
-
-
   }
 
   /** fromLeftToRightTraits
@@ -232,8 +221,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
-
-
   }
 
   /** duplicateInstantiationTraits
@@ -266,8 +253,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
-
-
   }
 
   /** diamondOfDeathTraits
@@ -306,8 +291,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
-
-
   }
 
 }

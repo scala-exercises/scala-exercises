@@ -7,7 +7,6 @@ import Stream.cons
   *
   * Traversables Description
   */
-
 object Traversables extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -33,8 +32,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val result2 = list ++ set
     result2.size should be(res1)
-
-
   }
 
   /** mapFunctionTraversables
@@ -45,8 +42,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val set = Set(1, 3, 4, 6)
     val result = set.map(_ * 4)
     result.last should be(res0)
-
-
   }
 
   /** flattenFunctionTraversables
@@ -56,8 +51,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def flattenFunctionTraversables(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String, res6: String, res7: String, res8: String, res9: String) {
     val list = List(List(1), List(2, 3, 4), List(5, 6, 7), List(8, 9, 10))
     list.flatten should be(List(res0, res1, res2, res3, res4, res5, res6, res7, res8, res9))
-
-
   }
 
   /** flatMapFunctionTraversables
@@ -68,8 +61,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(List(1), List(2, 3, 4), List(5, 6, 7), List(8, 9, 10))
     val result = list.flatMap(_.map(_ * 4))
     result should be(List(res0, res1, res2, res3, res4, res5, res6, res7, res8, res9))
-
-
   }
 
   /** flatMapOfOptionsTraversables
@@ -80,8 +71,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(1, 2, 3, 4, 5)
     val result = list.flatMap(it => if (it % 2 == 0) Some(it) else None)
     result should be(List(res0, res1))
-
-
   }
 
   /** collectFunctionTraversables
@@ -94,8 +83,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
       case x: Int if (x % 2 == 0) => x * 3
     }
     result should be(List(res0, res1, res2, res3))
-
-
   }
 
   /** collectFunctionIITraversables
@@ -112,8 +99,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     }
     val result = list.collect(partialFunction1 orElse partialFunction2)
     result should be(List(res0, res1, res2, res3, res4, res5, res6))
-
-
   }
 
   /** foreachFunctionTraversables
@@ -125,8 +110,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     list.foreach(num => println(num * 4))
     list should be(List(res0, res1, res2, res3, res4, res5, res6))
-
-
   }
 
   /** toArrayFunctionTraversables
@@ -137,8 +120,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val set = Set(4, 6, 7, 8, 9, 13, 14)
     val result = set.toArray
     result.isInstanceOf[Array[Int]] should be(res0)
-
-
   }
 
   /** toListFunctionTraversables
@@ -150,8 +131,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val result = set.toList
 
     result.isInstanceOf[List[_]] should be(res0)
-
-
   }
 
   /** toListFunctionIITraversables
@@ -162,8 +141,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(5, 6, 7, 8, 9)
     val result = list.toList
     result eq list should be(res0)
-
-
   }
 
   /** toIterableFunctionTraversables
@@ -174,8 +151,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val set = Set(4, 6, 7, 8, 9, 13, 14)
     val result = set.toIterable
     result.isInstanceOf[Iterable[_]] should be(res0)
-
-
   }
 
   /** toSeqFunctionTraversables
@@ -186,8 +161,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val set = Set(4, 6, 7, 8, 9, 13, 14)
     val result = set.toSeq
     result.isInstanceOf[Seq[_]] should be(res0)
-
-
   }
 
   /** toIndexedSeqFunctionTraversables
@@ -198,8 +171,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val set = Set(4, 6, 7, 8, 9, 13, 14)
     val result = set.toIndexedSeq
     result.isInstanceOf[IndexedSeq[_]] should be(res0)
-
-
   }
 
   /** toStreamFunctionTraversables
@@ -211,8 +182,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val result = list.toStream
     result.isInstanceOf[Stream[_]] should be(res0)
     (result take 3) should be(List(res1, res2, res3))
-
-
   }
 
   /** toSetFunctionTraversables
@@ -223,8 +192,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     val result = list.toSet
     result.isInstanceOf[Set[_]] should be(res0)
-
-
   }
 
   /** toMapFunctionTraversables
@@ -235,8 +202,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List("Phoenix" -> "Arizona", "Austin" -> "Texas")
     val result = list.toMap
     result.isInstanceOf[Map[_, _]] should be(res0)
-
-
   }
 
   /** toMapFunctionIITraversables
@@ -247,8 +212,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val set = Set("Phoenix" -> "Arizona", "Austin" -> "Texas")
     val result = set.toMap
     result.isInstanceOf[Map[_, _]] should be(res0)
-
-
   }
 
   /** isEmptyFunctionTraversables
@@ -261,8 +224,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val set = Set()
     set.isEmpty should be(res1)
-
-
   }
 
   /** nonEmptyFunctionTraversables
@@ -275,8 +236,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val set = Set()
     set.nonEmpty should be(res1)
-
-
   }
 
   /** sizeFunctionTraversables
@@ -286,8 +245,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def sizeFunctionTraversables(res0: String) {
     val map = Map("Phoenix" -> "Arizona", "Austin" -> "Texas")
     map.size should be(res0)
-
-
   }
 
   /** hasDefiniteSizeFunctionTraversables
@@ -300,8 +257,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val stream = cons(0, cons(1, Stream.empty))
     stream.hasDefiniteSize should be(res1)
-
-
   }
 
   /** headFunctionTraversables
@@ -311,8 +266,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def headFunctionTraversables(res0: String) {
     val list = List(10, 19, 45, 1, 22)
     list.head should be(res0)
-
-
   }
 
   /** headOptionFunctionTraversables
@@ -325,8 +278,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val list2 = List()
     list2.headOption should be(res1)
-
-
   }
 
   /** lastFunctionTraversables
@@ -336,8 +287,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def lastFunctionTraversables(res0: String) {
     val list = List(10, 19, 45, 1, 22)
     list.last should be(res0)
-
-
   }
 
   /** lastOptionFunctionTraversables
@@ -350,8 +299,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val list2 = List()
     list2.lastOption should be(res1)
-
-
   }
 
   /** findFunctionTraversables
@@ -364,8 +311,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val list2 = List(4, 8, 16)
     list2.find(_ % 2 != 0) should be(res1)
-
-
   }
 
   /** tailFunctionTraversables
@@ -375,8 +320,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def tailFunctionTraversables(res0: String, res1: String, res2: String, res3: String) {
     val list = List(10, 19, 45, 1, 22)
     list.tail should be(List(res0, res1, res2, res3))
-
-
   }
 
   /** initFunctionTraversables
@@ -386,8 +329,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def initFunctionTraversables(res0: String, res1: String, res2: String, res3: String) {
     val list = List(10, 19, 45, 1, 22)
     list.init should be(List(res0, res1, res2, res3))
-
-
   }
 
   /** sliceFunctionTraversables
@@ -397,8 +338,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def sliceFunctionTraversables(res0: String, res1: String) {
     val list = List(10, 19, 45, 1, 22)
     list.slice(1, 3) should be(List(res0, res1))
-
-
   }
 
   /** takeFunctionTraversables
@@ -408,8 +347,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def takeFunctionTraversables(res0: String, res1: String, res2: String) {
     val list = List(10, 19, 45, 1, 22)
     list.take(3) should be(List(res0, res1, res2))
-
-
   }
 
   /** takeFunctionIITraversables
@@ -420,8 +357,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     def streamer(v: Int): Stream[Int] = cons(v, streamer(v + 1))
     val a = streamer(2)
     (a take 3 toList) should be(List(res0, res1, res2))
-
-
   }
 
   /** dropFunctionTraversables
@@ -432,8 +367,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     def streamer(v: Int): Stream[Int] = cons(v, streamer(v + 1))
     val a = streamer(2)
     ((a drop 6) take 3).toList should be(List(res0, res1, res2))
-
-
   }
 
   /** takeWhileFunctionTraversables
@@ -443,8 +376,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def takeWhileFunctionTraversables(res0: String, res1: String, res2: String, res3: String) {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
     list.takeWhile(_ < 100) should be(List(res0, res1, res2, res3))
-
-
   }
 
   /** dropWhileFunctionTraversables
@@ -454,8 +385,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def dropWhileFunctionTraversables(res0: String, res1: String, res2: String, res3: String) {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
     list.dropWhile(_ < 100) should be(List(res0, res1, res2, res3))
-
-
   }
 
   /** filterFunctionTraversables
@@ -465,8 +394,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def filterFunctionTraversables(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
     array.filter(_ < 100) should be(Array(res0, res1, res2, res3, res4, res5))
-
-
   }
 
   /** filterNotFunctionTraversables
@@ -476,8 +403,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def filterNotFunctionTraversables(res0: String, res1: String) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
     array.filterNot(_ < 100) should be(Array(res0, res1))
-
-
   }
 
   /** splitAtFunctionTraversables
@@ -489,8 +414,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val result = array splitAt 3
     result._1 should be(Array(res0, res1, res2))
     result._2 should be(Array(res3, res4, res5, res6, res7))
-
-
   }
 
   /** spanFunctionTraversables
@@ -502,8 +425,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val result = array span (_ < 100)
     result._1 should be(Array(res0, res1, res2, res3))
     result._2 should be(Array(res4, res5, res6, res7))
-
-
   }
 
   /** partitionFunctionTraversables
@@ -515,8 +436,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val result = array partition (_ < 100)
     result._1 should be(Array(res0, res1, res2, res3, res4, res5))
     result._2 should be(Array(res6, res7))
-
-
   }
 
   /** groupByFunctionTraversables
@@ -556,8 +475,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     (result("Even and less than 100") size) should be(res0)
     (result("Large Number") size) should be(res1)
-
-
   }
 
   /** forallFunctionTraversables
@@ -568,8 +485,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
     val result = list forall (_ < 100)
     result should be(res0)
-
-
   }
 
   /** existsFunctionTraversables
@@ -580,8 +495,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
     val result = list exists (_ < 100)
     result should be(res0)
-
-
   }
 
   /** countFunctionTraversables
@@ -592,8 +505,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
     val result = list count (_ < 100)
     result should be(res0)
-
-
   }
 
   /** foldLeftFunctionTraversables
@@ -621,8 +532,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     result4 should be(res3)
 
     (((((0 - 5) - 4) - 3) - 2) - 1) should be(res4)
-
-
   }
 
   /** foldRightFunctionTraversables
@@ -650,8 +559,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     result4 should be(res3)
 
     (5 - (4 - (3 - (2 - (1 - 0))))) should be(res4)
-
-
   }
 
   /** reduceLeftFunctionTraversables
@@ -668,8 +575,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     stringList.reduceLeft {
       _ + _
     } should be(res1)
-
-
   }
 
   /** reduceRightFunctionTraversables
@@ -686,8 +591,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     stringList.reduceRight {
       _ + _
     } should be(res1)
-
-
   }
 
   /** sumFunctionTraversables
@@ -700,8 +603,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     intList.product should be(res1)
     intList.max should be(res2)
     intList.min should be(res3)
-
-
   }
 
   /** performantTraversables
@@ -723,8 +624,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val totalReduceRightTime = reduceRightEndTime.getTime - reduceRightStartTime.getTime
 
     //(totalReduceRightTime > totalReduceLeftTime) should be(res0)
-
-
   }
 
   /** transposeFunctionTraversables
@@ -739,8 +638,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     val list2 = List(List(1), List(4))
     list2.transpose should be(List(List(res9, res10)))
-
-
   }
 
   /** mkStringFunctionTraversables
@@ -750,8 +647,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def mkStringFunctionTraversables(res0: String) {
     val list = List(1, 2, 3, 4, 5)
     list.mkString(",") should be(res0)
-
-
   }
 
   /** mkStringFunctionIITraversables
@@ -761,8 +656,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def mkStringFunctionIITraversables(res0: String) {
     val list = List(1, 2, 3, 4, 5)
     list.mkString(">", ",", "<") should be(res0)
-
-
   }
 
   /** addStringFunctionTraversables
@@ -775,8 +668,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     stringBuilder.append("I want all numbers 6-12: ")
     list.filter(it => it > 5 && it < 13).addString(stringBuilder, ",")
     stringBuilder.mkString should be(res0)
-
-
   }
 
   /** viewsTraversables
@@ -817,8 +708,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     history(3) should be(res9)
     history(4) should be(res10)
     history(5) should be(res11)
-
-
   }
 
   /** viewForceTraversables
@@ -828,8 +717,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def viewForceTraversables(res0: String, res1: String, res2: String) {
     val list = List(1, 2, 3, 4, 5, 6, 7, 8)
     list.view(3, 6).map(_ + 2).map(_ * 10).force should be(List(res0, res1, res2))
-
-
   }
 
 }

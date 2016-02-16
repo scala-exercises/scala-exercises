@@ -8,7 +8,6 @@ import scala.collection.mutable
   *
   * Mutable Sets Description
   */
-
 object MutableSets extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -21,8 +20,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet.size should be(res0)
     mySet += "Oregon"
     mySet contains "Oregon" should be(res1)
-
-
   }
 
   /** removeElementMutableSets
@@ -33,8 +30,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")
     mySet -= "Ohio"
     mySet contains "Ohio" should be(res0)
-
-
   }
 
   /** removeWithTuplesMutableSets
@@ -46,8 +41,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet -=("Iowa", "Ohio")
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
-
-
   }
 
   /** addWithTuplesMutableSets
@@ -59,8 +52,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet +=("Iowa", "Ohio")
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
-
-
   }
 
   /** addedElementsMutableSets
@@ -72,8 +63,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet ++= List("Iowa", "Ohio")
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
-
-
   }
 
   /** removedElementsMutableSets
@@ -85,8 +74,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet --= List("Iowa", "Ohio")
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
-
-
   }
 
   /** clearSetMutableSets
@@ -98,8 +85,6 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet.clear() // Convention is to use parens if possible when method called changes state
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
-
-
   }
 
 }

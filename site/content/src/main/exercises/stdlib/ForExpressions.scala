@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * For Expressions Description
   */
-
 object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -21,8 +20,6 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
       sum += i
 
     sum should equal(res0)
-
-
   }
 
   /** additionalLogicForExpressions
@@ -37,8 +34,6 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
       if (i % 2 == 0) sum += i
 
     sum should equal(res0)
-
-
   }
 
   /** canBeNestedForExpressions
@@ -52,8 +47,6 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
       x <- xValues
       y <- yValues} yield (x, y)
     coordinates(4) should be(res0, res1)
-
-
   }
 
   /** readableCodeForExpressions
@@ -76,8 +69,6 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
     // or the same as
     nums.flatten.filter(_ % 2 == 0) should be(result)
-
-
   }
 
 }

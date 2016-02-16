@@ -6,7 +6,6 @@ import org.scalatest._
   *
   * Sequences and Arrays Description
   */
-
 object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -20,8 +19,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     val l = List(1, 2, 3)
     val a = l.toArray
     a should equal(Array(res0, res1, res2))
-
-
   }
 
   /** orderedElementsSequencesandArrays
@@ -36,8 +33,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     val s = a.toSeq
     val l = s.toList
     l should equal(res0)
-
-
   }
 
   /** fromForComprehensionSequencesandArrays
@@ -47,8 +42,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
   def fromForComprehensionSequencesandArrays(res0: String) {
     val s = for (v <- 1 to 4) yield v
     s.toList should be(res0)
-
-
   }
 
   /** withConditionSequencesandArrays
@@ -58,8 +51,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
   def withConditionSequencesandArrays(res0: String) {
     val s = for (v <- 1 to 10 if v % 3 == 0) yield v
     s.toList should be(res0)
-
-
   }
 
   /** filterPredicateSequencesandArrays
@@ -70,8 +61,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     val s = Seq("hello", "to", "you")
     val filtered = s.filter(_.length > 2)
     filtered should be(Seq(res0, res1))
-
-
   }
 
   /** filterArraySequencesandArrays
@@ -82,8 +71,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     val a = Array("hello", "to", "you", "again")
     val filtered = a.filter(_.length > 3)
     filtered should be(Array(res0, res1))
-
-
   }
 
   /** mapValuesSequencesandArrays
@@ -97,8 +84,6 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     }
 
     r should be(res0)
-
-
   }
 
 }

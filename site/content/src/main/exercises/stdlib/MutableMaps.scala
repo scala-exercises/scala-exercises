@@ -8,7 +8,6 @@ import scala.collection.mutable
   *
   * Mutable Maps Description
   */
-
 object MutableMaps extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -21,8 +20,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res0)
     myMap += "OR" -> "Oregon"
     myMap contains "OR" should be(res1)
-
-
   }
 
   /** removeElementMutableMaps
@@ -33,8 +30,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     val myMap = mutable.Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
     myMap -= "OH"
     myMap contains "OH" should be(res0)
-
-
   }
 
   /** removeWithTuplesMutableMaps
@@ -46,8 +41,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap -=("IA", "OH")
     myMap contains "OH" should be(res0)
     myMap.size should be(res1)
-
-
   }
 
   /** addWithTuplesMutableMaps
@@ -59,8 +52,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap +=("IA" -> "Iowa", "OH" -> "Ohio")
     myMap contains "OH" should be(res0)
     myMap.size should be(res1)
-
-
   }
 
   /** addedElementsMutableMaps
@@ -72,8 +63,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap ++= List("IA" -> "Iowa", "OH" -> "Ohio")
     myMap contains "OH" should be(res0)
     myMap.size should be(res1)
-
-
   }
 
   /** removedElementsMutableMaps
@@ -85,8 +74,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap --= List("IA", "OH")
     myMap contains "OH" should be(res0)
     myMap.size should be(res1)
-
-
   }
 
   /** clearMapMutableMaps
@@ -98,8 +85,6 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap.clear() // Convention is to use parens if possible when method called changes state
     myMap contains "OH" should be(res0)
     myMap.size should be(res1)
-
-
   }
 
 }
