@@ -80,8 +80,10 @@ object BuildCommon extends AutoPlugin {
     headerSettings ++
     miscSettings
 
-  object autoImport {
+  object autoImport {    
     def compilelibs(deps: ModuleID*) = deps map (_ % "compile")
     def testlibs(deps: ModuleID*) = deps map (_ % "test")
+
+    object Dep extends Dependencies
   }
 }
