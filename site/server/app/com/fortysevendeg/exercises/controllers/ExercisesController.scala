@@ -41,18 +41,13 @@ class ExercisesController(
                 )
               } yield exerciseEvaluation
 
-              eval.runTask match {
-                case Xor.Right(response) ⇒ response match {
-                  case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
-                  case Xor.Left(error)   ⇒ BadRequest("Runtime error : " + error.getMessage)
-                }
-                case Xor.Left(error) ⇒ BadRequest("Evaluation failed : " + error)
-              }
-            case _ ⇒ BadRequest("User login not found")
+        eval.runTask match {
+          case Xor.Right(response) ⇒ response match {
+            case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
+            case Xor.Left(error)   ⇒ BadRequest("Runtime error : " + error.getMessage)
           }
-        case JsError(errors) ⇒
-          BadRequest(JsError.toJson(errors))
-      }
+          case Xor.Left(error) ⇒ BadRequest("Evaluation failed : " + error)
+        }
     }
 
   private[this] def mkSaveProgressRequest(userId: Long, evaluation: ExerciseEvaluation, success: Boolean) =
