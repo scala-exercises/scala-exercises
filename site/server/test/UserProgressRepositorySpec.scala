@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository.{ instance ⇒ repository }
 import doobie.imports._
 import org.scalatest._

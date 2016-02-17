@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress.Other
 import org.junit.runner._
 import org.specs2.mutable._
