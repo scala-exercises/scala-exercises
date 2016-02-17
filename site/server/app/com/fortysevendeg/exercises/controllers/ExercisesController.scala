@@ -28,19 +28,31 @@ class ExercisesController(
 ) extends Controller with JsonFormats with AuthenticationModule {
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
-    AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
-      (evaluation: ExerciseEvaluation, user: User) ⇒
-        val eval = for {
-          exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
-          _ ← userProgressOps.saveUserProgress(
-            mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
-          )
-        } yield exerciseEvaluation
+    AuthenticationAction(BodyParsers.parse.json) { request ⇒
+      request.body.validate[ExerciseEvaluation] match {
+        case JsSuccess(evaluation, _) ⇒
 
-        eval.runTask match {
-          case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
-          case Xor.Left(error)   ⇒ BadRequest("Evaluation failed : " + error)
-        }
+          userOps.getUserByLogin(request.userId).runTask match {
+            case Xor.Right(Some(user)) ⇒
+              val eval = for {
+                exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
+                _ ← userProgressOps.saveUserProgress(
+                  mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
+                )
+              } yield exerciseEvaluation
+
+              eval.runTask match {
+                case Xor.Right(response) ⇒ response match {
+                  case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
+                  case Xor.Left(error)   ⇒ BadRequest("Runtime error : " + error.getMessage)
+                }
+                case Xor.Left(error) ⇒ BadRequest("Evaluation failed : " + error)
+              }
+            case _ ⇒ BadRequest("User login not found")
+          }
+        case JsError(errors) ⇒
+          BadRequest(JsError.toJson(errors))
+      }
     }
 
   private[this] def mkSaveProgressRequest(userId: Long, evaluation: ExerciseEvaluation, success: Boolean) =
