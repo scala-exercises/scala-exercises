@@ -22,9 +22,28 @@ object Client {
     val url = Routes.Exercises.progress(library, section)
     Ajax.get(url).map(r ⇒
       if (r.ok)
-        Some(List())
+        Some(List(
+        ClientExercise(
+          library = "Shapeless exercises",
+          section = "HList",
+          method = "shapeless.exercises.HListExercises.testExercise",
+          arguments = List("true"),
+          state = Solved
+        )
+      ))
       else
-        None).recover({ case exc: AjaxException ⇒ None })
+        None).recover({
+      case exc: AjaxException ⇒
+        Some(List(
+          ClientExercise(
+            library = "Shapeless exercises",
+            section = "HList",
+            method = "shapeless.exercises.HListExercises.testExercise",
+            arguments = List("true"),
+            state = Solved
+          )
+        ))
+    })
   }
 
   def compileExercise(e: ClientExercise): Future[EvaluationResult] = {
