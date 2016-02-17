@@ -277,6 +277,7 @@
             img {
                 width: 24px;
                 height: auto;
+							  @include border-radius(200px);
             }
         }
 
