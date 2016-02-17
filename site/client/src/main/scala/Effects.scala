@@ -18,9 +18,9 @@ object Effects {
   def noop: Future[Option[Action]] = Future(None)
 
   def perform(s: State, a: Action): Future[Option[Action]] = a match {
-    case Start() ⇒ loadInitialData
+    case Start()                 ⇒ loadInitialData
     case CompileExercise(method) ⇒ compileExercise(s, method)
-    case _ ⇒ noop
+    case _                       ⇒ noop
   }
 
   def loadInitialData: Future[Option[Action]] = {
@@ -34,14 +34,14 @@ object Effects {
   }
 
   def compileExercise(s: State, method: String): Future[Option[Action]] =
-      findByMethod(s, method) match {
-        case Some(exercise) if exercise.isFilled ⇒ Client.compileExercise(exercise).map(result ⇒ {
-          if (result.ok)
-            Some(CompilationOk(result.method))
-          else
-            Some(CompilationFail(result.method, result.msg))
-        })
-        case _ ⇒ noop
-      }
+    findByMethod(s, method) match {
+      case Some(exercise) if exercise.isFilled ⇒ Client.compileExercise(exercise).map(result ⇒ {
+        if (result.ok)
+          Some(CompilationOk(result.method))
+        else
+          Some(CompilationFail(result.method, result.msg))
+      })
+      case _ ⇒ noop
+    }
 
 }

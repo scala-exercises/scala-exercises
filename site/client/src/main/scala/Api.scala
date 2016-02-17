@@ -19,7 +19,7 @@ import org.scalajs.dom.ext.{ Ajax, AjaxException }
 
 object Client {
   def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
-    val url = "google.com" // FIXME: actual route and logic
+    val url = Routes.Exercises.progress(library, section)
     Ajax.get(url).map(r ⇒
       if (r.ok)
         Some(List())
