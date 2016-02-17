@@ -27,8 +27,7 @@ object Effects {
     DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection ⇒ {
       val (lib, sect) = libAndSection
       Client.fetchProgress(lib, sect).map(maybeState ⇒ {
-        // TODO: fetch this from the server
-        Some(SetState(DomHandler.methods.map(m ⇒ ClientExercise(lib, sect, m))))
+        maybeState.map(SetState(_))
       })
     })
   }
