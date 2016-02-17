@@ -120,6 +120,7 @@ lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
   .dependsOn(ProjectRef(file("../core"), "definitions") % CompileExercisesSource)
+  .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     Seq("org.scalatest" %% "scalatest" % "2.2.4" % CompileExercisesSource) ++

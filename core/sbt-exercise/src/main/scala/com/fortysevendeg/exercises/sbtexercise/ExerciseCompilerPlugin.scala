@@ -71,6 +71,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       fork := false,
 
+      products := {
+        products.value ++
+        (products in CompileExercisesSource).value ++
+        (products in CompileMain).value
+      },
+
       // disable any user defined source files for this scope as
       // we only want to compile the generated files
       unmanagedSourceDirectories := Nil,

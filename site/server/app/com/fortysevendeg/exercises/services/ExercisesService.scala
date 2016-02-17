@@ -6,18 +6,26 @@
 package com.fortysevendeg.exercises.services
 
 import com.fortysevendeg.exercises.Exercises
+import com.fortysevendeg.exercises.MethodEval
 
 import play.api.Logger
 
+import scala.reflect.runtime.{ universe ⇒ ru }
+import scala.reflect.runtime.{ currentMirror ⇒ cm }
+import scala.tools.reflect.ToolBox
+
 import cats.data.Xor
+import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
 
 object ExercisesService extends RuntimeSharedConversions {
 
+  lazy val methodEval = new MethodEval()
+
+  val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {
-    val (errors, libraries0) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
-    val libraries1 = colorize(libraries0)
+    val libraries1 = colorize(runtimeLibraries)
     errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
     (
       libraries1.map(convertLibrary),
@@ -28,22 +36,21 @@ object ExercisesService extends RuntimeSharedConversions {
   def section(libraryName: String, name: String): Option[shared.Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: shared.ExerciseEvaluation): Throwable Xor Unit = {
-    /* // the previous implementation, for reference
-    val evalResult = for {
-      pkg ← subclassesOf[exercise.Library]
-      library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList
-      if library.name == evaluation.libraryName
-      subclass ← subclassesOf[exercise.Section]
-      if simpleClassName(subclass) == evaluation.sectionName
-    } yield evaluate(evaluation, subclass)
-    evalResult.headOption match {
-      case None         ⇒ new RuntimeException("Evaluation produced no results").left[Unit]
-      case Some(result) ⇒ result
-    }
-    */
-    Xor.right(Unit)
+  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Unit] = {
+    val res = methodEval.eval(
+      evaluation.method,
+      evaluation.args
+    )
+    Logger.info(s"evaluation for $evaluation: $res")
+    res.fold(_ match {
+      case Ior.Left(message)        ⇒ Xor.left(new Exception(message))
+      case Ior.Right(error)         ⇒ Xor.left(error)
+      case Ior.Both(message, error) ⇒ Xor.left(new Exception(message, error))
+    }, _ ⇒ Xor.right(Unit))
+    // uncomment this next line if you want to actually throw the exception
+    //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
   }
+
 }
 
 sealed trait RuntimeSharedConversions {
