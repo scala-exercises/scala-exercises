@@ -7,7 +7,7 @@ lazy val root = (project in file("."))
 // Common settings
 // TODO: consider moving this to BuildCommon
 lazy val commonSettings = Seq(
-  libraryDependencies ++= testlibs("org.scalatest" %% "scalatest" % "3.0.0-M15")
+  libraryDependencies ++= testlibs(Dep.scalatest)
 )
 
 // ~ Exercise Definitions
@@ -26,8 +26,8 @@ lazy val compiler = (project in file("compiler"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
-      "org.scala-lang" % "scala-compiler" % scalaVersion,
-      "org.spire-math" %% "cats" % "0.3.0")
+      Dep.scala.compiler(scalaVersion),
+      Dep.cats.core)
   ))
   .dependsOn(definitions)
   .dependsOn(runtime % "test")
@@ -40,7 +40,7 @@ lazy val runtime = (project in file("runtime"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
-      "org.typelevel" %% "cats" % "0.4.0"
+      Dep.cats.core
     )
   )
 
@@ -53,7 +53,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     compilelibs(
-      "org.typelevel" %% "cats" % "0.4.0"
+      Dep.cats.core
     )
   )
   // Leverage build info to populate compiler classpath--
