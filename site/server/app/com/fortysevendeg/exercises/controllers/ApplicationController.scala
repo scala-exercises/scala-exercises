@@ -78,7 +78,8 @@ class ApplicationController(
   def javascriptRoutes = Action { implicit request ⇒
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.ExercisesController.evaluate
+        routes.javascript.ExercisesController.evaluate,
+        routes.javascript.UserProgressController.fetchUserProgressBySection
       )
     ).as("text/javascript")
   }

@@ -21,8 +21,7 @@ object Routes {
       controllers.ExercisesController.evaluate(libraryName, sectionName).url.toString
 
     def progress(libraryName: String, sectionName: String): String = {
-      // TODO: use actual reverse routing
-      s"/progress/library/$libraryName/section/$sectionName"
+      controllers.UserProgressController.fetchUserProgressBySection(libraryName, sectionName).url.toString
     }
   }
 
