@@ -45,7 +45,7 @@
 
             @user match {
               case Some(u) => { @templates.home.userInfo(u) }
-              case None => { <li><a href="@redirectUrl">Login with GitHub</a></li> }
+              case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
             }
 
           </ul>
