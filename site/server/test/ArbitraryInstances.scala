@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 import cats.data.Xor
 import com.fortysevendeg.exercises.models.UserCreation.Request
 import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
