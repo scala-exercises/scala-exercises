@@ -27,22 +27,24 @@ case class UserProgress(
 case class OverallUserProgressItem(
   libraryName: String,
   sections:    Int,
-  completed:   Int
+  completed:   Int,
+  color:       String
 )
 
 case class OverallUserProgress(libraries: List[OverallUserProgressItem])
 
+case class LibrarySectionExercise(methodName: String, args: List[String])
+
 case class LibrarySectionArgs(
-  libraryName: String,
-  sections:    Int,
-  args:        List[String],
-  succeeded:   Boolean
+  libraryName:      String,
+  totalSections:    Int,
+  exercises:        List[LibrarySectionExercise],
+  librarySucceeded: Boolean
 )
 
 case class SectionInfoItem(sectionName: String, succeeded: Boolean)
 
 case class LibrarySections(
-  libraryName:          String,
-  sections:             List[SectionInfoItem],
-  allSectionsSucceeded: Boolean
+  libraryName: String,
+  sections:    List[SectionInfoItem]
 )
