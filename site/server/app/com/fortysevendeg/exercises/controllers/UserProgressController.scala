@@ -9,12 +9,14 @@ import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
 import com.fortysevendeg.shared.free.ExerciseOps
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import doobie.imports._
 import play.api.libs.json.Json
 import play.api.mvc.Controller
 
 import scalaz.concurrent.Task
+
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 class UserProgressController(
     implicit
@@ -22,7 +24,7 @@ class UserProgressController(
     userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
     T:               Transactor[Task]
-) extends Controller with JsonFormats with AuthenticationModule {
+) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
   def fetchUserProgressBySection(libraryName: String, sectionName: String) =
     AuthenticatedUser { user ⇒

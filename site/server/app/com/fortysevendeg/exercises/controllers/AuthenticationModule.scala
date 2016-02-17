@@ -8,17 +8,18 @@ package com.fortysevendeg.exercises.controllers
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free.UserOps
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import doobie.imports._
 import play.api.libs.json._
 import play.api.mvc.Results._
 import play.api.mvc._
 import shared.User
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 import scala.concurrent.Future
 import scalaz.concurrent._
 
-trait AuthenticationModule {
+trait AuthenticationModule { self: ProdInterpreters ⇒
 
   case class UserRequest[A](val userId: String, request: Request[A]) extends WrappedRequest[A](request)
 
@@ -55,5 +56,3 @@ trait AuthenticationModule {
       }
     }
 }
-
-object AuthenticationModule extends AuthenticationModule

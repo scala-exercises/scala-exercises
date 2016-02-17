@@ -5,13 +5,12 @@
 
 package com.fortysevendeg.exercises.services.interpreters
 
-import cats._
+import cats.{ Monad, Eval, ~>, ApplicativeError, Applicative }
 import cats.data.Xor
 import cats.free.Free
 
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
-import com.fortysevendeg.exercises.services.UserProgressService
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository
 import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.shared.free._
 import doobie.imports._
@@ -19,39 +18,30 @@ import doobie.imports._
 import scala.language.higherKinds
 import scalaz.\/
 import scalaz.concurrent.Task
+import FreeExtensions._
 
 /** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
   */
-trait Interpreters[F[_]] extends InterpreterInstances[F] {
+trait Interpreters[M[_]] {
 
-  def exerciseAndUserInterpreter(
+  implicit def interpreters(
     implicit
-    A: ApplicativeError[F, Throwable],
-    T: Transactor[F]
-  ): C01 ~> F =
-    exerciseOpsInterpreter or userOpsInterpreter
-
-  def userAndUserProgressInterpreter(
-    implicit
-    A: ApplicativeError[F, Throwable],
-    T: Transactor[F]
-  ): C02 ~> F =
-    userProgressOpsInterpreter or exerciseAndUserInterpreter
-
-  def interpreters(
-    implicit
-    A: ApplicativeError[F, Throwable],
-    T: Transactor[F]
-  ): ExercisesApp ~> F =
-    dbOpsInterpreter or userAndUserProgressInterpreter
+    A: ApplicativeError[M, Throwable],
+    T: Transactor[M]
+  ): ExercisesApp ~> M = {
+    val exerciseAndUserInterpreter: C01 ~> M = exerciseOpsInterpreter or userOpsInterpreter
+    val userAndUserProgressInterpreter: C02 ~> M = userProgressOpsInterpreter or exerciseAndUserInterpreter
+    val all: ExercisesApp ~> M = dbOpsInterpreter or userAndUserProgressInterpreter
+    all
+  }
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def exerciseOpsInterpreter(implicit A: ApplicativeError[F, Throwable]): ExerciseOp ~> F = new (ExerciseOp ~> F) {
+  implicit def exerciseOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
 
     import com.fortysevendeg.exercises.services.ExercisesService._
 
-    def apply[A](fa: ExerciseOp[A]): F[A] = fa match {
+    def apply[A](fa: ExerciseOp[A]): M[A] = fa match {
       case GetLibraries()                       ⇒ A.pureEval(Eval.later(libraries))
       case GetSection(libraryName, sectionName) ⇒ A.pureEval(Eval.later(section(libraryName, sectionName)))
       case Evaluate(evalInfo)                   ⇒ A.pureEval(Eval.later(evaluate(evalInfo)))
@@ -59,38 +49,35 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
 
   }
 
-  implicit def userOpsInterpreter(implicit A: ApplicativeError[F, Throwable], T: Transactor[F]): UserOp ~> F = new (UserOp ~> F) {
+  implicit def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable], T: Transactor[M]): UserOp ~> M = new (UserOp ~> M) {
 
-    def apply[A](fa: UserOp[A]): Task[A] = fa match {
-      case GetUsers()            ⇒ Task.fork(Task.delay(userService.all))
-      case GetUserByLogin(login) ⇒ Task.fork(Task.delay(userService.getByLogin(login)))
-      case CreateUser(newUser)   ⇒ Task.fork(Task.delay(userService.create(newUser)))
-      case UpdateUser(user)      ⇒ Task.fork(Task.delay(userService.update(user)))
-      case DeleteUser(user)      ⇒ Task.fork(Task.delay(userService.delete(user.id)))
+    import com.fortysevendeg.exercises.models.UserDoobieStore._
+
+    def apply[A](fa: UserOp[A]): M[A] = fa match {
+      case GetUsers()            ⇒ all.transact(T)
+      case GetUserByLogin(login) ⇒ getByLogin(login).transact(T)
+      case CreateUser(newUser)   ⇒ create(newUser).transact(T)
+      case UpdateUser(user)      ⇒ update(user).map(_.isDefined).transact(T)
+      case DeleteUser(user)      ⇒ delete(user.id).transact(T)
     }
   }
 
   implicit def userProgressOpsInterpreter(
     implicit
-    A: ApplicativeError[F, Throwable], T: Transactor[F], userProgressService: UserProgressService[ExercisesApp]
-  ): UserProgressOp ~> F = new (UserProgressOp ~> F) {
+    UPR: UserProgressRepository, T: Transactor[M]
+  ): UserProgressOp ~> M = new (UserProgressOp ~> M) {
 
-    def apply[A](fa: UserProgressOp[A]): F[A] = {
+    def apply[A](fa: UserProgressOp[A]): M[A] = {
       fa match {
         case UpdateUserProgress(userProgress) ⇒
-          UserProgressDoobieRepository.instance.create(userProgress).transact(T)
-        case FetchUserProgress(user) ⇒
-          userProgressService.fetchUserProgress(user).transact(T)
-        case FetchUserProgressByLibrary(user, libraryName) ⇒
-          userProgressService.fetchUserProgressByLibrary(user, libraryName).transact(T)
-        case FetchUserProgressByLibrarySection(user, libraryName, sectionName) ⇒
-          userProgressService.fetchUserProgressByLibrarySection(user, libraryName, sectionName)
+          UPR.create(userProgress).transact(T)
       }
     }
   }
 
-  implicit def dbOpsInterpreter(implicit A: Applicative[F]): DBResult ~> F = new (DBResult ~> F) {
-    def apply[A](fa: DBResult[A]): F[A] = fa match {
+  implicit def dbOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): DBResult ~> M = new (DBResult ~> M) {
+
+    def apply[A](fa: DBResult[A]): M[A] = fa match {
       case DBSuccess(value) ⇒ A.pure(value)
       case DBFailure(error) ⇒ A.raiseError(error)
     }
@@ -98,31 +85,30 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
 
 }
 
-trait InterpreterInstances[F[_]] { self: Interpreters[F] ⇒
-  implicit def idApplicativeError(
-    implicit
-    I: Applicative[Id]
-  ): ApplicativeError[Id, Throwable] = new ApplicativeError[Id, Throwable] {
-    override def pure[A](x: A): Id[A] = I.pure(x)
+/** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
+trait ProdInterpreters extends Interpreters[Task] with TaskInstances
 
-    override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = I.ap(ff)(fa)
+/** Test based interpreters lifting ops to their result identity **/
+trait TestInterpreters extends Interpreters[cats.Id] with IdInstances
 
-    override def map[A, B](fa: Id[A])(f: Id[A ⇒ B]): Id[B] = I.map(fa)(f)
+object FreeExtensions {
 
-    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = I.product(fa, fb)
+  def scalazToCatsDisjunction[A, B](disj: A \/ B): A Xor B =
+    disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
 
-    override def raiseError[A](e: Throwable): Id[A] =
-      throw e
+  implicit class FreeOps[F[_], A](f: Free[F, A]) {
 
-    override def handleErrorWith[A](fa: Id[A])(f: Throwable ⇒ Id[A]): Id[A] = {
-      try {
-        fa
-      } catch {
-        case e: Exception ⇒ f(e)
-      }
+    def runF[M[_]: Monad](implicit interpreter: F ~> M) = f.foldMap(interpreter)
+
+    def runTask(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Throwable Xor A = {
+      scalazToCatsDisjunction(f.foldMap(interpreter).attemptRun)
+
     }
   }
 
+}
+
+trait TaskInstances {
   implicit val taskMonad: Monad[Task] with ApplicativeError[Task, Throwable] = new Monad[Task] with ApplicativeError[Task, Throwable] {
 
     def pure[A](x: A): Task[A] = Task.now(x)
@@ -145,18 +131,31 @@ trait InterpreterInstances[F[_]] { self: Interpreters[F] ⇒
 
 }
 
-/** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
-object ProdInterpreters extends Interpreters[Task] {
-  def scalazToCatsDisjunction[A, B](disj: A \/ B): A Xor B =
-    disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
+trait IdInstances {
+  implicit def idApplicativeError(
+    implicit
+    I: Applicative[cats.Id]
+  ): ApplicativeError[cats.Id, Throwable] = new ApplicativeError[cats.Id, Throwable] {
 
-  implicit class FreeOps[A](f: Free[ExercisesApp, A]) {
-    /** Run this Free structure folding it's ops to an effect capturing task */
-    def runTask(implicit T: Transactor[Task]): Throwable Xor A = {
-      scalazToCatsDisjunction(f.foldMap(interpreters).attemptRun)
+    import cats.Id
+
+    override def pure[A](x: A): Id[A] = I.pure(x)
+
+    override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = I.ap(ff)(fa)
+
+    override def map[A, B](fa: Id[A])(f: Id[A ⇒ B]): Id[B] = I.map(fa)(f)
+
+    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = I.product(fa, fb)
+
+    override def raiseError[A](e: Throwable): Id[A] =
+      throw e
+
+    override def handleErrorWith[A](fa: Id[A])(f: Throwable ⇒ Id[A]): Id[A] = {
+      try {
+        fa
+      } catch {
+        case e: Exception ⇒ f(e)
+      }
     }
   }
 }
-
-/** Test based interpreters lifting ops to their result identity **/
-object TestInterpreters extends Interpreters[Id]

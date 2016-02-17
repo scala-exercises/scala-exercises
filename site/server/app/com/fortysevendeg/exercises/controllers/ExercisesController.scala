@@ -9,13 +9,15 @@ import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.utils.StringUtils.ExerciseType
 import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports._
 import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
 import shared.{ ExerciseEvaluation, User }
+
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 import scalaz.concurrent.Task
 
@@ -25,7 +27,7 @@ class ExercisesController(
     userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
     T:               Transactor[Task]
-) extends Controller with JsonFormats with AuthenticationModule {
+) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
     AuthenticationAction(BodyParsers.parse.json) { request ⇒

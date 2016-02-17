@@ -20,6 +20,7 @@ class UserProgressRepositorySpec
     with DatabaseInstance {
 
   implicit val trx: Transactor[Task] = transactor
+  val repository = implicitly[UserProgressRepository]
 
   property("new user progress records can be created") {
     forAll { pair: UserProgressPair ⇒
