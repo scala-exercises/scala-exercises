@@ -21,7 +21,15 @@ import org.scalajs.dom.ext.{ Ajax, AjaxException }
 object Client {
   def readProgress(library: String, section: String, raw: String): List[ClientExercise] = {
     val parsedBody = read[LibrarySectionArgs](raw)
-    parsedBody.exercises.map(e ⇒ ClientExercise(library, section, e.methodName, arguments = e.args))
+    parsedBody.exercises.map(e ⇒ {
+      ClientExercise(
+        library = library,
+        section = section,
+        method = e.methodName,
+        arguments = e.args,
+        state = if (e.succeeded) Solved else Unsolved
+      )
+    })
   }
 
   def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
