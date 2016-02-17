@@ -33,7 +33,7 @@ case class OverallUserProgressItem(
 
 case class OverallUserProgress(libraries: List[OverallUserProgressItem])
 
-case class LibrarySectionExercise(methodName: String, args: List[String])
+case class LibrarySectionExercise(methodName: String, args: List[String], succeeded: Boolean)
 
 case class LibrarySectionArgs(
   libraryName:      String,

@@ -57,6 +57,9 @@ object UserProgressQueries {
   val findByExerciseVersion =
     s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
 
+  val findBySection =
+    s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ?"""
+
   val update =
     s"""
           UPDATE "userProgress"

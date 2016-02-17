@@ -25,6 +25,8 @@ trait UserProgressRepository {
     version:     Int
   ): ConnectionIO[Option[UserProgress]]
 
+  def findBySection(userId: Long, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
+
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
 
   def delete(id: Long): ConnectionIO[Boolean]
@@ -50,6 +52,14 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     version:     Int
   ): ConnectionIO[Option[UserProgress]] = persistence.fetchOption[(Long, String, String, String, Int), UserProgress](
     Q.findByExerciseVersion, (userId, libraryName, sectionName, method, version)
+  )
+
+  override def findBySection(
+    userId:      Long,
+    libraryName: String,
+    sectionName: String
+  ): ConnectionIO[List[UserProgress]] = persistence.fetchList[(Long, String, String), UserProgress](
+    Q.findBySection, (userId, libraryName, sectionName)
   )
 
   override def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
