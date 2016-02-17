@@ -35,7 +35,7 @@ trait UserProgressRepository {
 
   def deleteAll(): ConnectionIO[Int]
 
-  def update(userProgress: UserProgress, newSucceededValue: Boolean): ConnectionIO[UserProgress]
+  def update(userProgress: UserProgress): ConnectionIO[UserProgress]
 
   def findUserProgress(
     user:        User,
@@ -48,7 +48,10 @@ trait UserProgressRepository {
           val argsList: List[String] = up.args map (_.split("##").toList) getOrElse Nil
           LibrarySectionExercise(up.method, argsList, up.succeeded)
         }
-        val succeeded = exercisesList.forall(_.succeeded)
+        val succeeded = exercisesList match {
+          case Nil ⇒ false
+          case _   ⇒ exercisesList.forall(_.succeeded)
+        }
         SectionProgress(libraryName, succeeded, exercisesList)
     }
 
@@ -92,7 +95,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
             (userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
           )
       case Some(userP) ⇒
-        update(userP, succeeded)
+        update(request.asUserProgress(userP.id))
     }
   }
 
@@ -100,14 +103,14 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
 
   override def deleteAll(): ConnectionIO[Int] = persistence.update(Q.deleteAll)
 
-  override def update(userProgress: UserProgress, newSucceededValue: Boolean): ConnectionIO[UserProgress] = {
-    val UserProgress(id, _, libraryName, sectionName, method, version, exerciseType, args, _) = userProgress
+  override def update(userProgress: UserProgress): ConnectionIO[UserProgress] = {
+    val UserProgress(id, _, libraryName, sectionName, method, version, exerciseType, args, succeeded) = userProgress
 
     persistence
       .updateWithGeneratedKeys[(String, String, String, Int, String, Option[String], Boolean, Long), UserProgress](
         Q.update,
         Q.allFields,
-        (libraryName, sectionName, method, version, exerciseType, args, newSucceededValue, id)
+        (libraryName, sectionName, method, version, exerciseType, args, succeeded, id)
       )
   }
 

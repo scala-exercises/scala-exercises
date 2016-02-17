@@ -91,12 +91,12 @@ class UserProgressRepositorySpec
     forAll { pair: UserProgressPair ⇒
 
       val userProgress = repository.create(pair.request).transact(transactor).run
-      val modifiedUser = userProgress.copy(version = userProgress.version + 1)
-      repository.update(userProgress = modifiedUser, newSucceededValue = !userProgress.succeeded).transact(transactor).run
+      val modifiedUserProgress = userProgress.copy(version = userProgress.version + 1)
+      repository.update(userProgress = modifiedUserProgress).transact(transactor).run
       val fetchedProgress = repository.findById(userProgress.id).transact(transactor).run
 
       fetchedProgress foreach { up ⇒
-        up.succeeded shouldBe !userProgress.succeeded
+        up.version shouldBe userProgress.version + 1
         up.id shouldBe userProgress.id
         up.userId shouldBe userProgress.userId
       }
