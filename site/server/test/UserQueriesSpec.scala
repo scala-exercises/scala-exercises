@@ -1,5 +1,4 @@
 import org.specs2.mutable.Specification
-import doobie.imports._
 import test.database.DatabaseInstance
 import scalaz.concurrent.Task
 import doobie.contrib.specs2.analysisspec.AnalysisSpec

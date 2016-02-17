@@ -10,7 +10,7 @@ import scala.util.{ Failure, Success, Random }
 import rx._
 import rx.core.{ Propagator, Obs }
 import org.scalajs.dom
-import org.scalajs.dom.{ Element, DOMParser }
+import org.scalajs.dom.{ Element }
 import scala.scalajs.js
 
 /** A minimal binding between Scala.Rx and Scalatags and Scala-Js-Dom
