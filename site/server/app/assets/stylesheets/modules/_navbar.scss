@@ -27,6 +27,7 @@
         top: 17px;
         width: 28px;
         height: auto;
+			  @include border-radius(200px);
     }
 }
 
