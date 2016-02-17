@@ -1,3 +1,8 @@
+/*
+ * scala-exercises
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 import sbt.Keys._
 import sbt._
 
@@ -83,5 +88,7 @@ object BuildCommon extends AutoPlugin {
   object autoImport {
     def compilelibs(deps: ModuleID*) = deps map (_ % "compile")
     def testlibs(deps: ModuleID*) = deps map (_ % "test")
+
+    object Dep extends Dependencies
   }
 }
