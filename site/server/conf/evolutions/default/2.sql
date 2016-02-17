@@ -14,4 +14,4 @@ FOREIGN KEY (userId) REFERENCES users (id));
 
 # --- !Downs
 
-DROP TABLE "UserProgress";
+DROP TABLE "userProgress";
