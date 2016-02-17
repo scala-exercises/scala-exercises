@@ -1,5 +1,9 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 import org.specs2.mutable.Specification
-import doobie.imports._
 import test.database.DatabaseInstance
 import scalaz.concurrent.Task
 import doobie.contrib.specs2.analysisspec.AnalysisSpec

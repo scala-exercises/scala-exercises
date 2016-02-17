@@ -1,5 +1,5 @@
 @(library: shared.Library, section: shared.Section)(implicit request: RequestHeader)
-@import play.api.Play
+
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
 <!DOCTYPE html>
@@ -215,9 +215,9 @@
         </div>
 
       </section>
-      
+
       @templates.library.footer()
-      
+
     </div>
       <!-- JS -->
     <script src="@routes.Assets.at("lib/jquery/jquery.min.js")" type="text/javascript"></script>
