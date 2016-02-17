@@ -10,7 +10,7 @@ import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.mvc.{ Action, Controller, Results }
 import play.api.libs.ws._
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 
 import com.fortysevendeg.exercises.models._
 import com.fortysevendeg.exercises.services.free.UserOps
@@ -39,7 +39,7 @@ class OAuth2Controller(
     implicit
     T:  Transactor[Task],
     ws: WSClient
-) extends Controller {
+) extends Controller with ProdInterpreters {
 
   import OAuth2._
 

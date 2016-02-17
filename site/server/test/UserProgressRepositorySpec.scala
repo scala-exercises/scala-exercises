@@ -1,4 +1,5 @@
-import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository.{ instance ⇒ repository }
+
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository
 import doobie.imports._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -15,6 +16,7 @@ class UserProgressRepositorySpec
     with DatabaseInstance {
 
   implicit val trx: Transactor[Task] = transactor
+  val repository = implicitly[UserProgressRepository]
 
   property("new user progress records can be created") {
     forAll { pair: UserProgressPair ⇒

@@ -8,8 +8,10 @@ package com.fortysevendeg.exercises.persistence.repositories
 import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
 import doobie.imports._
-import shared.{ User, UserProgress }
+import shared.{ LibrarySectionExercise, User, UserProgress }
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
+
+case class SectionProgress(libraryName: String, succeeded: Boolean, exerciseList: List[LibrarySectionExercise])
 
 trait UserProgressRepository {
 
@@ -34,6 +36,22 @@ trait UserProgressRepository {
   def deleteAll(): ConnectionIO[Int]
 
   def update(userProgress: UserProgress, newSucceededValue: Boolean): ConnectionIO[UserProgress]
+
+  def findUserProgress(
+    user:        User,
+    libraryName: String,
+    sectionName: String
+  ): ConnectionIO[SectionProgress] =
+    findBySection(user.id, libraryName, sectionName) map {
+      list ⇒
+        val exercisesList: List[LibrarySectionExercise] = list map { up ⇒
+          val argsList: List[String] = up.args map (_.split("##").toList) getOrElse Nil
+          LibrarySectionExercise(up.method, argsList, up.succeeded)
+        }
+        val succeeded = exercisesList.forall(_.succeeded)
+        SectionProgress(libraryName, succeeded, exercisesList)
+    }
+
 }
 
 class UserProgressDoobieRepository(implicit persistence: PersistenceModule) extends UserProgressRepository {
@@ -92,9 +110,11 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
         (libraryName, sectionName, method, version, exerciseType, args, newSucceededValue, id)
       )
   }
+
 }
 
-object UserProgressDoobieRepository {
+object UserProgressRepository {
 
-  implicit def instance(implicit persistence: PersistenceModule) = new UserProgressDoobieRepository()
+  implicit def instance(implicit persistence: PersistenceModule): UserProgressRepository = new UserProgressDoobieRepository
+
 }
