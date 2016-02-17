@@ -17,8 +17,13 @@ object Routes {
     def section(libraryName: String, sectionName: String): String =
       controllers.ExercisesController.section(libraryName, sectionName).url.toString
 
-    def evaluate(libraryName: String, sectionName: String) =
+    def evaluate(libraryName: String, sectionName: String): String =
       controllers.ExercisesController.evaluate(libraryName, sectionName).url.toString
+
+    def progress(libraryName: String, sectionName: String): String = {
+      // TODO: use actual reverse routing
+      s"/progress/library/$libraryName/section/$sectionName"
+    }
   }
 
 }
