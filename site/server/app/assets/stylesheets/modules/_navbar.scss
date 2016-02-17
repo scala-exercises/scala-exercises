@@ -1,36 +1,44 @@
 // Navbar
 // -----------------------------------------------------
-
 .navbar {
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .navbar-brand {
-    font-size: $font-size-large;
-    
-    span {
-        display: inline-block;
-        padding-left: 44px;
-        font-family: $headings-font-family;
-    }
-    
-    > svg {
-        position: absolute;
-        top: 17px;
-    }
+	font-size: $font-size-large;
+	span {
+		display: inline-block;
+		padding-left: 44px;
+		font-family: $headings-font-family;
+	}
+	> svg {
+		position: absolute;
+		top: 17px;
+	}
 }
 
 .navbar-nav {
-    img {
-        position: absolute;
-        left: -22px;
-        top: 17px;
-        width: 28px;
-        height: auto;
-			  @include border-radius(200px);
-    }
+	li {
+		a {
+			.fa:before {
+				font-size: 20px;
+				display: inline-block;
+				vertical-align: -10%;
+				margin-right: 8px;
+				
+			}
+			img {
+				position: absolute;
+				left: -22px;
+				top: 17px;
+				width: 28px;
+				height: auto;
+				@include border-radius(200px);
+			}
+		}
+	}
 }
 
 .navbar-collapse {
-    border-top: none;
+	border-top: none;
 }
