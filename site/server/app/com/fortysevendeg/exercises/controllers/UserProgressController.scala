@@ -21,16 +21,6 @@ class UserProgressController(
     T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule {
 
-  def fetchUserProgress() =
-    AuthenticatedUser {
-      user ⇒ ???
-    }
-
-  def fetchUserProgressByLibrary(libraryName: String) =
-    AuthenticatedUser {
-      user ⇒ ???
-    }
-
   def fetchUserProgressBySection(libraryName: String, sectionName: String) =
     AuthenticatedUser {
       user ⇒ ???
