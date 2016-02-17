@@ -5,10 +5,13 @@
 
 package ui
 
+import org.scalajs.dom.raw.{ HTMLElement }
+
 import cats.data.OptionT
 import cats.syntax.option._
 import cats.std.list._
 import cats.syntax.traverse._
+
 import shared.IO
 import IO._
 import actions._
@@ -17,30 +20,11 @@ import model.Exercises._
 import utils.DomHandler._
 
 object UI {
-
-  sealed trait ExerciseStyle {
-    def className: String
-  }
-
-  case object Unsolved extends ExerciseStyle {
-    val className = "unsolved"
-  }
-
-  case object Filled extends ExerciseStyle {
-    val className = "filled"
-  }
-
-  case object Evaluating extends ExerciseStyle {
-    val className = "evaluating"
-  }
-
-  case object Errored extends ExerciseStyle {
-    val className = "errored"
-  }
-
-  case object Solved extends ExerciseStyle {
-    val className = "solved"
-  }
+  val UNSOLVED = "unsolved"
+  val FILLED = "filled"
+  val ERRORED = "errored"
+  val EVALUATING = "evaluating"
+  val SOLVED = "solved"
 
   def noop: IO[Unit] = io {}
 
@@ -54,6 +38,16 @@ object UI {
     case _                            ⇒ noop
   }
 
+  def exerciseToClassname(e: ClientExercise): String = {
+    e.state match {
+      case Unsolved if (e.isFilled) ⇒ FILLED
+      case Unsolved                 ⇒ UNSOLVED
+      case Evaluating               ⇒ EVALUATING
+      case Errored                  ⇒ ERRORED
+      case Solved                   ⇒ SOLVED
+    }
+  }
+
   def insertInputs: IO[Unit] =
     inputReplacements flatMap replaceInputs
 
@@ -61,16 +55,25 @@ object UI {
     s.map(reflectExercise).sequence.map(_ ⇒ ())
   }
 
-  def reflectExercise(e: ClientExercise): IO[Unit] = io {
+  def reflectExercise(e: ClientExercise): IO[Unit] = (for {
+    exercise ← OptionT(io(findExerciseByMethod(e.method)))
+    _ ← OptionT(setClass(exercise, exerciseToClassname(e)) map (_.some))
+    _ ← OptionT(copyArgumentsToInputs(e, exercise) map (_.some))
+  } yield ()).value.map(_.getOrElse(()))
+
+  def copyArgumentsToInputs(e: ClientExercise, element: HTMLElement): IO[Unit] = {
+    val theInputs = inputs(element)
+    val args = e.arguments
+    args.zip(theInputs).map({ argAndInput ⇒
+      val (arg, input) = argAndInput
+      setInputValue(input, arg)
+    }).toList.sequence.map(_ ⇒ ())
   }
 
   def toggleExerciseClass(s: State, method: String): IO[Unit] = {
     Exercises.findByMethod(s, method) match {
       case Some(exercise) ⇒ {
-        if (exercise.isFilled)
-          setClassToExercise(method, Filled.className)
-        else
-          setClassToExercise(method, Unsolved.className)
+        setClassToExercise(method, exerciseToClassname(exercise))
       }
       case _ ⇒ noop
     }
@@ -87,16 +90,16 @@ object UI {
   } yield ()).value.map(_.getOrElse(()))
 
   def startCompilation(s: State, method: String): IO[Unit] = findByMethod(s, method) match {
-    case Some(exercise) if exercise.isFilled ⇒ setClassToExercise(method, Evaluating.className)
+    case Some(exercise) if exercise.isFilled ⇒ setClassToExercise(method, EVALUATING)
     case _                                   ⇒ noop
   }
 
   def setAsSolved(s: State, method: String): IO[Unit] = for {
-    _ ← setClassToExercise(method, Solved.className)
+    _ ← setClassToExercise(method, SOLVED)
   } yield ()
 
   def setAsErrored(s: State, method: String, msg: String): IO[Unit] = for {
     _ ← addLogToExercise(method, msg)
-    _ ← setClassToExercise(method, Errored.className)
+    _ ← setClassToExercise(method, ERRORED)
   } yield ()
 }

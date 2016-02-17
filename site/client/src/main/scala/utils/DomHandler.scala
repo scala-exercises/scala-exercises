@@ -150,6 +150,8 @@ object DomHandler {
 
   def allInputs: Seq[HTMLInputElement] = $(".exercise-code>input").inputs
 
+  def inputs(el: HTMLElement): List[HTMLInputElement] = $(el).find("input").inputs.toList
+
   def findExerciseByMethod(method: String): Option[HTMLElement] = {
     allExercises.find(methodName(_) == Option(method))
   }
@@ -165,6 +167,11 @@ object DomHandler {
   def replaceInputByRes(text: String): String = resAssert.replaceAllIn(text, """(<input type="text" data-res="$1"/>)""")
 
   def getInputLength(input: HTMLInputElement): Int = $(input).value.toString.length
+
+  def setInputValue(input: HTMLInputElement, v: String): IO[Unit] = for {
+    _ ← io { $(input) `val` (v) }
+    _ ← setInputWidth(input)
+  } yield ()
 
   def inputSize(length: Int): Double = length match {
     case 0 ⇒ 12d
