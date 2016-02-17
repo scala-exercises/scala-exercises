@@ -11,6 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import model._
 import config.Routes
 import messages.{ EvaluationRequest, EvaluationResult }
+import shared._
 
 import upickle._
 import common.ExtAjax._
@@ -18,32 +19,19 @@ import common.ExtAjax._
 import org.scalajs.dom.ext.{ Ajax, AjaxException }
 
 object Client {
+  def readProgress(library: String, section: String, raw: String): List[ClientExercise] = {
+    val parsedBody = read[LibrarySectionArgs](raw)
+    parsedBody.exercises.map(e ⇒ ClientExercise(library, section, e.methodName, arguments = e.args))
+  }
+
   def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
     val url = Routes.Exercises.progress(library, section)
-    Ajax.get(url).map(r ⇒
+    Ajax.get(url).map(r ⇒ {
       if (r.ok)
-        Some(List(
-        ClientExercise(
-          library = "Shapeless exercises",
-          section = "HList",
-          method = "shapeless.exercises.HListExercises.testExercise",
-          arguments = List("true"),
-          state = Solved
-        )
-      ))
+        Some(readProgress(library, section, r.responseText))
       else
-        None).recover({
-      case exc: AjaxException ⇒
-        Some(List(
-          ClientExercise(
-            library = "Shapeless exercises",
-            section = "HList",
-            method = "shapeless.exercises.HListExercises.testExercise",
-            arguments = List("true"),
-            state = Solved
-          )
-        ))
-    })
+        None
+    }).recover({ case exc: AjaxException ⇒ None })
   }
 
   def compileExercise(e: ClientExercise): Future[EvaluationResult] = {
