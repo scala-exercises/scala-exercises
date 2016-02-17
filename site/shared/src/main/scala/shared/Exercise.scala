@@ -3,11 +3,13 @@ package shared
 /** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
   */
 case class Library(
-  name:         String,
-  description:  String,
-  color:        String,
-  sectionNames: List[String] = Nil
-)
+    name:        String,
+    description: String,
+    color:       String,
+    sections:    List[Section] = Nil
+) {
+  val sectionNames: List[String] = sections map (_.name)
+}
 
 /** A section in a library. For example `Extractors`
   */

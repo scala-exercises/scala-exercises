@@ -107,7 +107,7 @@ sealed trait RuntimeSharedConversions {
       name = library.name,
       description = library.description,
       color = library.color getOrElse "black",
-      sectionNames = library.sections.map(_.name)
+      sections = library.sections map convertSection
     )
 
   def convertSection(section: Section) =
