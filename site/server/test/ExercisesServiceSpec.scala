@@ -1,4 +1,3 @@
-import com.fortysevendeg.exercises.models._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress.Other
 import org.junit.runner._
 import org.specs2.mutable._
