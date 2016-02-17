@@ -72,7 +72,7 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
 
   implicit def userProgressOpsInterpreter(
     implicit
-    A: ApplicativeError[F, Throwable], T: Transactor[F]
+    A: ApplicativeError[F, Throwable], T: Transactor[F], userProgressService: UserProgressService[ExercisesApp]
   ): UserProgressOp ~> F = new (UserProgressOp ~> F) {
 
     def apply[A](fa: UserProgressOp[A]): F[A] = {
@@ -80,11 +80,11 @@ trait Interpreters[F[_]] extends InterpreterInstances[F] {
         case UpdateUserProgress(userProgress) ⇒
           UserProgressDoobieRepository.instance.create(userProgress).transact(T)
         case FetchUserProgress(user) ⇒
-          UserProgressService.fetchUserProgress(user).transact(T)
+          userProgressService.fetchUserProgress(user).transact(T)
         case FetchUserProgressByLibrary(user, libraryName) ⇒
-          UserProgressService.fetchUserProgressByLibrary(user, libraryName).transact(T)
+          userProgressService.fetchUserProgressByLibrary(user, libraryName).transact(T)
         case FetchUserProgressByLibrarySection(user, libraryName, sectionName) ⇒
-          UserProgressService.fetchUserProgressByLibrarySection(user, libraryName, sectionName).transact(T)
+          userProgressService.fetchUserProgressByLibrarySection(user, libraryName, sectionName)
       }
     }
   }
@@ -150,7 +150,6 @@ object ProdInterpreters extends Interpreters[Task] {
     disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
 
   implicit class FreeOps[A](f: Free[ExercisesApp, A]) {
-
     /** Run this Free structure folding it's ops to an effect capturing task */
     def runTask(implicit T: Transactor[Task]): Throwable Xor A = {
       scalazToCatsDisjunction(f.foldMap(interpreters).attemptRun)

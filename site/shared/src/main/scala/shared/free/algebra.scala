@@ -22,6 +22,9 @@ class ExerciseOps[F[_]](implicit I: Inject[ExerciseOp, F]) {
   def getLibraries: Free[F, List[Library]] =
     Free.inject[ExerciseOp, F](GetLibraries())
 
+  def getLibrary(libraryName: String): Free[F, Option[Library]] =
+    getLibraries map (_.find(_.name == libraryName))
+
   def getSection(libraryName: String, sectionName: String): Free[F, Option[Section]] =
     Free.inject[ExerciseOp, F](GetSection(libraryName, sectionName))
 
