@@ -106,9 +106,8 @@ object DomHandler {
     })
   }
 
-  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] = for {
-    _ ← allExercises.map(attachClickHandler(_, onClick)).sequence
-  } yield ()
+  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] =
+    allExercises.map(attachClickHandler(_, onClick)).sequence_
 
   def attachClickHandler(exercise: HTMLElement, onClick: String ⇒ IO[Unit]): IO[Unit] = io {
     $(exercise).find(".compile button").click((e: dom.Event) ⇒ {
