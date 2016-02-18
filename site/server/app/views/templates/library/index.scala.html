@@ -1,4 +1,4 @@
-@(library: shared.Library, section: shared.Section)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, progress: Int = 0)(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
@@ -157,7 +157,7 @@
     <div id="wrapper">
 
       <section id="sidebar">
-        @templates.widgets.progress(1, library)
+        @templates.widgets.progress(progress, library)
         <ul>
           <li>
             <h3>Categories</h3>
