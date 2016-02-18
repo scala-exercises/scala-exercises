@@ -14,13 +14,14 @@
     padding: 30px;
     background: #fff;
     line-height: 1.6;
+	
+	.hljs {
+				background: $gray-lighter;
+			}
 
     .exercise {
         margin-bottom: 15px;
-			
-			.hljs {
-				background: $gray-lighter;
-			}
+
 
         .highlight {
             position: relative;
