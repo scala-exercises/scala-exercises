@@ -71,7 +71,12 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
       lbs ← UPR.findUserProgressBySection(user, libraryName, sectionName).liftF[F]
       libraryInformation ← EO.getLibrary(libraryName) map extractLibraryInformation(sectionName)
       eList = calculateExerciseList(lbs.exerciseList, libraryInformation._2)
-    } yield LibrarySectionArgs(libraryName, libraryInformation._1, eList, lbs.succeeded)
+    } yield LibrarySectionArgs(
+      libraryName = libraryName,
+      totalSections = libraryInformation._1,
+      exercises = eList,
+      librarySucceeded = lbs.succeeded && lbs.exerciseList.size == libraryInformation._2.size
+    )
   }
 
   private[this] def extractLibraryInformation(sectionName: String): (Option[Library]) ⇒ (Int, List[Exercise]) = {
@@ -88,7 +93,15 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     userProgressExerciseList: List[LibrarySectionExercise],
     allExercises:             List[Exercise]
   ): List[LibrarySectionExercise] = {
-    ??? //allExercises.filterNot(e => e.m userProgressExerciseList.contains(uel => uel))
+    val notStartedExercises: List[Exercise] =
+      allExercises
+        .filterNot(exercise ⇒
+          userProgressExerciseList.exists(_.methodName == exercise.method))
+    val mappedExercises =
+      notStartedExercises map { nee ⇒
+        LibrarySectionExercise(methodName = nee.method, args = Nil, succeeded = false)
+      }
+    userProgressExerciseList ::: mappedExercises
   }
 }
 
