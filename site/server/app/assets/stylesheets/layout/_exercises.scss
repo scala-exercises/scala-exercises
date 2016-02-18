@@ -17,6 +17,10 @@
 
     .exercise {
         margin-bottom: 15px;
+			
+			.hljs {
+				background: $gray-lighter;
+			}
 
         .highlight {
             position: relative;
