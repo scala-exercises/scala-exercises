@@ -54,6 +54,14 @@ object UserProgressQueries {
 
   val findByUserId = s"$commonFindBy WHERE userId = ?"
 
+  val findByUserIdAggregated =
+    s"""
+       SELECT libraryname, bool_and(succeeded)
+       FROM "userProgress"
+       WHERE userId=?
+       GROUP BY libraryname
+     """
+
   val findByLibrary =
     s"""SELECT
        sectionname, bool_and(succeeded)
