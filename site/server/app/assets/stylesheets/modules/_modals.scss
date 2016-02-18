@@ -6,7 +6,11 @@
 }
 
 .modal-backdrop {
-    z-index: 0;
+    z-index: 1040;
+}
+
+.modal-dialog {
+	z-index: 1045;
 }
 
 .modal-body {
