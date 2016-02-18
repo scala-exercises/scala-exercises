@@ -60,6 +60,36 @@ class UserProgressRepositorySpec
     }
   }
 
+  property("user progress can be fetched by library") {
+    forAll { pair: UserProgressPair ⇒
+      repository.create(pair.request).transact(transactor).run
+
+      val upByLibrary =
+        repository.findByLibrary(
+          userId = pair.user.id,
+          libraryName = pair.request.libraryName
+        ).transact(transactor).run
+
+      upByLibrary.size shouldBe 1
+      upByLibrary.head._2 shouldBe pair.request.succeeded
+    }
+  }
+
+  property("user progress can be fetched by library, grouping by the succeeded field") {
+    forAll { pair: UserProgressPair ⇒
+      repository.create(pair.request).transact(transactor).run
+
+      val upByLibrary =
+        repository.findUserProgressByLibrary(
+          user = pair.user,
+          libraryName = pair.request.libraryName
+        ).transact(transactor).run
+
+      upByLibrary.size shouldBe 1
+      upByLibrary.head.succeeded shouldBe pair.request.succeeded
+    }
+  }
+
   property("user progress can be fetched by section and exercise") {
     forAll { pair: UserProgressPair ⇒
       repository.create(pair.request).transact(transactor).run
