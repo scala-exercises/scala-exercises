@@ -13,6 +13,7 @@ import shared._
 
 import cats.free.Free
 import cats.free.Inject
+import cats.std.list._
 
 import scalaz.concurrent.Task
 
@@ -37,9 +38,20 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     for {
       lbs ← UPR.findByUserIdAggregated(user.id).liftF[F]
       items = lbs map {
-        case (libraryName, sections, succeeded) ⇒ OverallUserProgressItem(libraryName, sections, succeeded)
+        case (libraryName, sections, succeeded) ⇒
+          EO
+            .getLibrary(libraryName)
+            .map(_ map (_.sections.size) getOrElse 0)
+            .map { total ⇒
+              OverallUserProgressItem(
+                libraryName,
+                sections,
+                succeeded && total == sections.toInt
+              )
+            }
       }
-    } yield OverallUserProgress(items)
+      list ← Free.freeMonad[F].sequence(items)
+    } yield OverallUserProgress(list)
   }
 
   def fetchUserProgressByLibrary(user: User, libraryName: String): Free[F, LibrarySections] = {
