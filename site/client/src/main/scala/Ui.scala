@@ -19,13 +19,26 @@ import model._
 import model.Exercises._
 import utils.DomHandler._
 
-object UI {
-  val UNSOLVED = "unsolved"
-  val FILLED = "filled"
-  val ERRORED = "errored"
-  val EVALUATING = "evaluating"
-  val SOLVED = "solved"
+sealed trait ExerciseStyle {
+  def className: String
+}
+case object UnsolvedStyle extends ExerciseStyle {
+  val className = "unsolved"
+}
+case object FilledStyle extends ExerciseStyle {
+  val className = "filled"
+}
+case object ErroredStyle extends ExerciseStyle {
+  val className = "errored"
+}
+case object EvaluatingStyle extends ExerciseStyle {
+  val className = "evaluating"
+}
+case object SolvedStyle extends ExerciseStyle {
+  val className = "solved"
+}
 
+object UI {
   def noop: IO[Unit] = io {}
 
   def update(s: State, a: Action): IO[Unit] = a match {
@@ -38,13 +51,13 @@ object UI {
     case _                            ⇒ noop
   }
 
-  def exerciseToClassname(e: ClientExercise): String = {
+  def exerciseStyle(e: ClientExercise): ExerciseStyle = {
     e.state match {
-      case Unsolved if (e.isFilled) ⇒ FILLED
-      case Unsolved                 ⇒ UNSOLVED
-      case Evaluating               ⇒ EVALUATING
-      case Errored                  ⇒ ERRORED
-      case Solved                   ⇒ SOLVED
+      case Unsolved if (e.isFilled) ⇒ FilledStyle
+      case Unsolved                 ⇒ UnsolvedStyle
+      case Evaluating               ⇒ EvaluatingStyle
+      case Errored                  ⇒ ErroredStyle
+      case Solved                   ⇒ SolvedStyle
     }
   }
 
@@ -57,7 +70,7 @@ object UI {
 
   def reflectExercise(e: ClientExercise): IO[Unit] = (for {
     exercise ← OptionT(io(findExerciseByMethod(e.method)))
-    _ ← OptionT(setClass(exercise, exerciseToClassname(e)) map (_.some))
+    _ ← OptionT(setClass(exercise, exerciseStyle(e).className) map (_.some))
     _ ← OptionT(copyArgumentsToInputs(e, exercise) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 
@@ -71,17 +84,14 @@ object UI {
   }
 
   def toggleExerciseClass(s: State, method: String): IO[Unit] = {
-    Exercises.findByMethod(s, method) match {
-      case Some(exercise) ⇒ {
-        setClassToExercise(method, exerciseToClassname(exercise))
-      }
-      case _ ⇒ noop
-    }
+    Exercises.findByMethod(s, method).fold(noop)(exercise ⇒ {
+      setExerciseStyle(method, exerciseStyle(exercise))
+    })
   }
 
-  def setClassToExercise(method: String, style: String): IO[Unit] = (for {
+  def setExerciseStyle(method: String, style: ExerciseStyle): IO[Unit] = (for {
     exercise ← OptionT(io(findExerciseByMethod(method)))
-    _ ← OptionT(setClass(exercise, style) map (_.some))
+    _ ← OptionT(setClass(exercise, style.className) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 
   def addLogToExercise(method: String, msg: String): IO[Unit] = (for {
@@ -90,16 +100,15 @@ object UI {
   } yield ()).value.map(_.getOrElse(()))
 
   def startCompilation(s: State, method: String): IO[Unit] = findByMethod(s, method) match {
-    case Some(exercise) if exercise.isFilled ⇒ setClassToExercise(method, EVALUATING)
+    case Some(exercise) if exercise.isFilled ⇒ setExerciseStyle(method, EvaluatingStyle)
     case _                                   ⇒ noop
   }
 
-  def setAsSolved(s: State, method: String): IO[Unit] = for {
-    _ ← setClassToExercise(method, SOLVED)
-  } yield ()
+  def setAsSolved(s: State, method: String): IO[Unit] =
+    setExerciseStyle(method, SolvedStyle)
 
   def setAsErrored(s: State, method: String, msg: String): IO[Unit] = for {
     _ ← addLogToExercise(method, msg)
-    _ ← setClassToExercise(method, ERRORED)
+    _ ← setExerciseStyle(method, ErroredStyle)
   } yield ()
 }
