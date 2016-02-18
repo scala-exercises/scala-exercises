@@ -22,7 +22,7 @@ case class Section(
 /** Exercises within a Category
   */
 case class Exercise(
-  method:      Option[String] = None,
+  method:      String,
   name:        Option[String] = None,
   description: Option[String] = None,
   code:        Option[String] = None,
