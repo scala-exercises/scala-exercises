@@ -26,8 +26,8 @@ object Effects {
   def loadInitialData: Future[Option[Action]] = {
     DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection ⇒ {
       val (lib, sect) = libAndSection
-      Client.fetchProgress(lib, sect).map(maybeState ⇒ {
-        maybeState.map(SetState(_))
+      Client.fetchProgress(lib, sect).collect({
+        case Some(state) ⇒ Some(SetState(state))
       })
     })
   }
