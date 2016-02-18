@@ -4,17 +4,15 @@
  */
 
 import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository
-import org.scalatest._
-import prop._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalacheck.{ Gen, Arbitrary }
-import org.scalacheck.Shapeless._
 
-import test.database.{ DatabaseInstance }
-import doobie.imports._
-import scalaz.concurrent.Task
-import shared.User
 import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository
+import doobie.imports._
+import org.scalacheck.Shapeless._
+import org.scalacheck.{ Arbitrary, Gen }
+import org.scalatest._
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import test.database.DatabaseInstance
 
 class UserStoreSpec
     extends PropSpec
@@ -38,7 +36,7 @@ class UserStoreSpec
   import transactor.yolo._
 
   override def beforeAll() =
-    UserProgressDoobieRepository.instance.deleteAll().transact(transactor).run
+    implicitly[UserProgressRepository].deleteAll().transact(transactor).run
 
   // Properties
   property("new users can be created") {

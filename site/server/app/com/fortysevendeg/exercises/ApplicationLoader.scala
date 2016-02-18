@@ -5,26 +5,23 @@
 
 package com.fortysevendeg.exercises
 
-import doobie.contrib.hikari.hikaritransactor.HikariTransactor
-import play.api._
 import com.fortysevendeg.exercises.controllers._
 import com.fortysevendeg.exercises.utils._
+import com.typesafe.config.ConfigFactory
+import doobie.contrib.hikari.hikaritransactor.HikariTransactor
 import doobie.util.transactor.{ DataSourceTransactor, Transactor }
 import play.api.ApplicationLoader.Context
 import play.api._
-import play.api.db.{ DBComponents, HikariCPComponents }
 import play.api.db.evolutions.{ DynamicEvolutions, EvolutionsComponents }
+import play.api.db.{ DBComponents, HikariCPComponents }
 import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
 import router.Routes
 
-import com.typesafe.config.ConfigFactory
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scalaz.{ -\/, \/-, \/ }
-import doobie.util.transactor.{ DriverManagerTransactor, Transactor, DataSourceTransactor }
 import scalaz.concurrent.Task
+import scalaz.{ -\/, \/- }
 
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
@@ -74,10 +71,19 @@ class Components(context: Context)
   val exercisesController = new ExercisesController
   val userController = new UserController
   val oauthController = new OAuth2Controller
+  val userProgressController = new UserProgressController
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
-  val router = new Routes(httpErrorHandler, applicationController, userController, exercisesController, assets, oauthController)
+  val router = new Routes(
+    httpErrorHandler,
+    applicationController,
+    userController,
+    exercisesController,
+    assets,
+    oauthController,
+    userProgressController
+  )
 
   applicationLifecycle.addStopHook({ () ⇒
     Future(wsClient.close())

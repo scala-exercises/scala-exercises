@@ -10,7 +10,7 @@ import java.util.UUID
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free.UserOps
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.utils.OAuth2
 import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports._
@@ -20,13 +20,14 @@ import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.Future
 import scalaz.concurrent.Task
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 class ApplicationController(
     implicit
     exerciseOps: ExerciseOps[ExercisesApp],
     userOps:     UserOps[ExercisesApp],
     T:           Transactor[Task]
-) extends Controller {
+) extends Controller with ProdInterpreters {
 
   def index = Action.async { implicit request ⇒
 

@@ -8,7 +8,7 @@ package com.fortysevendeg.exercises.controllers
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free.UserOps
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import doobie.imports._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -17,11 +17,13 @@ import upickle._
 
 import scalaz.concurrent.Task
 
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
+
 class UserController(
     implicit
     userOps: UserOps[ExercisesApp],
     T:       Transactor[Task]
-) extends Controller {
+) extends Controller with ProdInterpreters {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 

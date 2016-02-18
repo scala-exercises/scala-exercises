@@ -2,8 +2,7 @@
  * scala-exercises-server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
-
-import com.fortysevendeg.exercises.persistence.repositories.UserProgressDoobieRepository.{ instance ⇒ repository }
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository
 import doobie.imports._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -20,6 +19,7 @@ class UserProgressRepositorySpec
     with DatabaseInstance {
 
   implicit val trx: Transactor[Task] = transactor
+  val repository = implicitly[UserProgressRepository]
 
   property("new user progress records can be created") {
     forAll { pair: UserProgressPair ⇒
@@ -94,12 +94,12 @@ class UserProgressRepositorySpec
     forAll { pair: UserProgressPair ⇒
 
       val userProgress = repository.create(pair.request).transact(transactor).run
-      val modifiedUser = userProgress.copy(version = userProgress.version + 1)
-      repository.update(userProgress = modifiedUser, newSucceededValue = !userProgress.succeeded).transact(transactor).run
+      val modifiedUserProgress = userProgress.copy(version = userProgress.version + 1)
+      repository.update(userProgress = modifiedUserProgress).transact(transactor).run
       val fetchedProgress = repository.findById(userProgress.id).transact(transactor).run
 
       fetchedProgress foreach { up ⇒
-        up.succeeded shouldBe !userProgress.succeeded
+        up.version shouldBe userProgress.version + 1
         up.id shouldBe userProgress.id
         up.userId shouldBe userProgress.userId
       }
