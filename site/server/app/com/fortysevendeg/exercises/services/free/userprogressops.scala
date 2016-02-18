@@ -44,7 +44,7 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
   ): Free[F, LibrarySectionArgs] = {
     import ConnectionIOOps._
     for {
-      lbs ← UPR.findUserProgress(user, libraryName, sectionName).liftF[F]
+      lbs ← UPR.findUserProgressBySection(user, libraryName, sectionName).liftF[F]
       sectionCount ← EO.getLibrary(libraryName) map (_ map (_.sections.size) getOrElse 0)
     } yield LibrarySectionArgs(libraryName, sectionCount, lbs.exerciseList, lbs.succeeded)
   }
