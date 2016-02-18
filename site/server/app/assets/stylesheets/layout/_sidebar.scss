@@ -20,7 +20,6 @@
     margin-left: -520px;
     overflow-y: auto;
     background: $gray-light;
-    z-index: 1000;
     @include transition(all 0.5s ease);
     @media (min-width: $screen-sm-min) {
         margin-left: -260px;
