@@ -37,7 +37,18 @@ class MethodEvalSpec extends FunSpec with Matchers {
         "1 + 2" :: "\"world\"" :: Nil
       )
 
-      res should equal(Xor.right("3world"))
+      res should equal(Xor.right(Xor.right("3world")))
+    }
+
+    it("captures exceptions thrown by the called method") {
+      val res = methodEval.eval(
+        "com.fortysevendeg.exercises.ExampleTarget.throwsExceptionMethod",
+        Nil
+      )
+
+      res should matchPattern {
+        case Xor.Right(Xor.Left(e: ExampleTarget.ExampleException)) ⇒
+      }
     }
 
   }
@@ -46,5 +57,11 @@ class MethodEvalSpec extends FunSpec with Matchers {
 object ExampleTarget {
   def intStringMethod(a: Int, b: String): String = {
     s"$a$b"
+  }
+
+  class ExampleException extends Exception("this is an example exception")
+
+  def throwsExceptionMethod() {
+    throw new ExampleException
   }
 }

@@ -28,21 +28,10 @@ object ExercisesService {
     )
   }
 
-  /** Scans the classpath returning a list of sections containing exercises for a given library
-    */
-  def section(libraryName: String, sectionName: String): Option[Section] = for {
-    pkg ← subclassesOf[exercise.Library].headOption
-    library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg))
-    if library.name == libraryName
-    subclass ← subclassesOf[exercise.Section].headOption
-    if simpleClassName(subclass) == sectionName
-    section ← ExerciseCodeExtractor.buildSection(sources(subclass))
-  } yield section
+  def section(libraryName: String, name: String): Option[shared.Section] =
+    librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  /** Evaluates an exercise in a given section and category and returns a disjunction
-    * containing either an exception or Unit representing success
-    */
-  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Unit] = {
+  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Xor[Throwable, Any]] = {
     val res = methodEval.eval(
       evaluation.method,
       evaluation.args
@@ -52,7 +41,7 @@ object ExercisesService {
       case Ior.Left(message)        ⇒ Xor.left(new Exception(message))
       case Ior.Right(error)         ⇒ Xor.left(error)
       case Ior.Both(message, error) ⇒ Xor.left(new Exception(message, error))
-    }, _ ⇒ Xor.right(Unit))
+    }, v ⇒ Xor.right(v))
     // uncomment this next line if you want to actually throw the exception
     //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
   }
