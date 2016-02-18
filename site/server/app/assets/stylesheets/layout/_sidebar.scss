@@ -29,25 +29,28 @@
     ul {
         padding: 0 25px;
         position: absolute;
-        width: 280px;
+        width: 260px;
         li {
             display: block;
-            list-style: none;
+						position: relative;
             padding: 8px 0;
             span {
+								position: absolute;
+								left: 0;
+								top: 14px;
                 width: 8px;
                 height: 8px;
-                display: inline-block;
                 background: #E0E0E0;
                 @include border-radius (50px);
+								z-index: 30;
             }
             .bullet-active {
                 background: $brand-primary;
             }
             a {
-                padding-left: 5px;
-                display: inline-block;
+								display: inline-block;
                 color: $sidebar-link-color;
+								padding-left: 18px;
             }
             &.active,
             &:hover,
@@ -63,6 +66,7 @@
             }
         }
     }
+	
     .sources {
         position: absolute;
         left: 30px;
