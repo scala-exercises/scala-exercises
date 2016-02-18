@@ -51,6 +51,7 @@ class SourceTextExtraction {
 
   def extractAll(sources: List[String]): Extracted = {
     new docGlobal.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
+
     val extractions = docGlobal.currentRun.units.map(_.body).map(boundExtractRaw)
       .toList // only iterable once without this call
 
@@ -74,6 +75,7 @@ class SourceTextExtraction {
 
   def extractAllComments(sources: List[String]): Map[List[String], String] = {
     new docGlobal.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
+
     val extractions = docGlobal.currentRun.units.map(_.body).map(boundExtractRaw)
 
     extractions.flatMap { extraction ⇒
@@ -230,22 +232,14 @@ object SourceTextExtraction {
 
 }
 
-/** Scala compiler global needed for extracting doc comments. This uses the
-  * ScaladocSyntaxAnalyzer, which keeps DocDefs in the parsed AST.
-  *
-  * It would be ideal to do this as a compiler plugin. Unfortunately there
-  * doesn't seem to be a way to replace the syntax analyzer phase (named
-  * "parser") with a plugin.
+import scala.tools.nsc.plugins.Plugin
+
+/** Scala compiler global needed for extracting doc comments.
   */
 class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettings) extends Global(settings) {
 
-  override lazy val syntaxAnalyzer = new ScaladocSyntaxAnalyzer[this.type](this) {
-    val runsAfter = List[String]()
-    val runsRightAfter = None
-    override val initial = true
-  }
-
-  override def newUnitParser(unit: CompilationUnit) = new syntaxAnalyzer.ScaladocUnitParser(unit, Nil)
+  override protected def loadRoughPluginsList: List[Plugin] =
+    new ExercisePlugin(this) :: super.loadRoughPluginsList
 
   override protected def computeInternalPhases() {
     phasesSet += syntaxAnalyzer
