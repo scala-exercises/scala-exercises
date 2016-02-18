@@ -26,9 +26,8 @@ case class UserProgress(
 
 case class OverallUserProgressItem(
   libraryName: String,
-  sections:    Int,
-  completed:   Int,
-  color:       String
+  sections:    Long,
+  completed:   Boolean
 )
 
 case class OverallUserProgress(libraries: List[OverallUserProgressItem])

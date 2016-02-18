@@ -19,7 +19,7 @@ class UserProgressQueriesSpec
   check(Query[Unit, UserProgress](Q.all))
   check(Query[Long, UserProgress](Q.findById))
   check(Query[Long, UserProgress](Q.findByUserId))
-  check(Query[Long, (String, Boolean)](Q.findByUserIdAggregated))
+  check(Query[Long, (String, Long, Boolean)](Q.findByUserIdAggregated))
   check(Query[(Long, String), (String, Boolean)](Q.findByLibrary))
   check(Query[(Long, String, String), UserProgress](Q.findBySection))
   check(Query[(Long, String, String, String, Int), UserProgress](Q.findByExerciseVersion))
