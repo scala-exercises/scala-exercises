@@ -62,15 +62,32 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
   }
 
   def fetchUserProgressByLibrarySection(
-    user:        User,
+    user: User,
     libraryName: String,
     sectionName: String
   ): Free[F, LibrarySectionArgs] = {
     import ConnectionIOOps._
     for {
       lbs ← UPR.findUserProgressBySection(user, libraryName, sectionName).liftF[F]
-      sectionCount ← EO.getLibrary(libraryName) map (_ map (_.sections.size) getOrElse 0)
-    } yield LibrarySectionArgs(libraryName, sectionCount, lbs.exerciseList, lbs.succeeded)
+      libraryInformation ← EO.getLibrary(libraryName) map extractLibraryInformation(sectionName)
+      eList = calculateExerciseList(lbs.exerciseList, libraryInformation._2)
+    } yield LibrarySectionArgs(libraryName, libraryInformation._1, eList, lbs.succeeded)
+  }
+
+  private[this] def extractLibraryInformation(sectionName: String): (Option[Library]) => (Int, List[Exercise]) = {
+    _ map (fetchSectionInformation(_, sectionName)) getOrElse(0, Nil)
+  }
+
+  private[this] def fetchSectionInformation(library: Library, sectionName: String): (Int, List[Exercise]) = {
+    val sectionNumbers = library.sections.size
+    val exerciseList = library.sections.find(s => s.name == sectionName) map (_.exercises) getOrElse Nil
+    (sectionNumbers, exerciseList)
+  }
+
+  private[this] def calculateExerciseList(
+    userProgressExerciseList: List[LibrarySectionExercise],
+    allExercises: List[Exercise]): List[LibrarySectionExercise] = {
+    ??? //allExercises.filterNot(e => e.m userProgressExerciseList.contains(uel => uel))
   }
 }
 
