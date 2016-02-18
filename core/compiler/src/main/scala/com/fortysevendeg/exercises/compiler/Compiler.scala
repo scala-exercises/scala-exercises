@@ -137,8 +137,8 @@ case class Compiler() {
                 treeGen.makeExercise(
                   name = exerciseInfo.comment.name,
                   description = exerciseInfo.comment.description,
-                  code = Some(exerciseInfo.code), // TODO: remove wrapper
-                  qualifiedMethod = Some(exerciseInfo.qualifiedMethod), // TODO: remove wrapper
+                  code = exerciseInfo.code,
+                  qualifiedMethod = exerciseInfo.qualifiedMethod,
                   explanation = exerciseInfo.comment.explanation
                 )
               }.unzip
@@ -146,7 +146,7 @@ case class Compiler() {
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
               name = sectionInfo.comment.name,
-              description = Some(sectionInfo.comment.description),
+              description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms
             )
 

@@ -20,17 +20,17 @@ trait Library {
   */
 trait Section {
   def name: String
-  def description: Option[String]
+  def description: String
   def exercises: List[Exercise]
 }
 
 /** Exercises within a section.
   */
 trait Exercise {
-  def name: Option[String]
+  def name: String
   def description: Option[String]
-  def code: Option[String]
-  def qualifiedMethod: Option[String]
+  def code: String
+  def qualifiedMethod: String
   def explanation: Option[String]
 }
 
@@ -44,14 +44,14 @@ case class DefaultLibrary(
 
 case class DefaultSection(
   name:        String,
-  description: Option[String] = None,
+  description: String,
   exercises:   List[Exercise] = Nil
 ) extends Section
 
 case class DefaultExercise(
-  name:            Option[String] = None,
+  name:            String,
   description:     Option[String] = None,
-  code:            Option[String] = None,
-  qualifiedMethod: Option[String] = None,
+  code:            String,
+  qualifiedMethod: String,
   explanation:     Option[String] = None
 ) extends Exercise

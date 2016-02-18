@@ -107,16 +107,16 @@ sealed trait RuntimeSharedConversions {
   def convertSection(section: Section) =
     shared.Section(
       name = section.name,
-      description = section.description,
+      description = Option(section.description),
       exercises = section.exercises.map(convertExercise)
     )
 
   def convertExercise(exercise: Exercise) =
     shared.Exercise(
-      method = exercise.qualifiedMethod, // exercise.eval Option[type Input => Unit]
-      name = exercise.name,
+      method = Option(exercise.qualifiedMethod),
+      name = Option(exercise.name),
       description = exercise.description,
-      code = exercise.code,
+      code = Option(exercise.code),
       explanation = exercise.explanation
     )
 
