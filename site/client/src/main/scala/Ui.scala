@@ -52,7 +52,7 @@ object UI {
     inputReplacements flatMap replaceInputs
 
   def reflectState(s: State): IO[Unit] = {
-    s.map(reflectExercise).sequence.map(_ ⇒ ())
+    s.map(reflectExercise).sequence_
   }
 
   def reflectExercise(e: ClientExercise): IO[Unit] = (for {
@@ -67,7 +67,7 @@ object UI {
     args.zip(theInputs).map({ argAndInput ⇒
       val (arg, input) = argAndInput
       setInputValue(input, arg)
-    }).toList.sequence.map(_ ⇒ ())
+    }).toList.sequence_
   }
 
   def toggleExerciseClass(s: State, method: String): IO[Unit] = {
