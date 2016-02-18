@@ -54,11 +54,19 @@ object UserProgressQueries {
 
   val findByUserId = s"$commonFindBy WHERE userId = ?"
 
-  val findByExerciseVersion =
-    s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
+  val findByLibrary =
+    s"""SELECT
+       sectionname, bool_and(succeeded)
+       FROM "userProgress"
+       WHERE userId = ? AND libraryname=?
+       GROUP BY sectionname"""
+  s"""$commonFindBy WHERE userId = ? AND libraryName = ?"""
 
   val findBySection =
     s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ?"""
+
+  val findByExerciseVersion =
+    s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ? AND version = ?"""
 
   val update =
     s"""

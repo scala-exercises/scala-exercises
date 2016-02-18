@@ -19,6 +19,7 @@ import scalaz.concurrent.Task
 /** Users Progress Ops GADT
   */
 sealed trait UserProgressOp[A]
+
 final case class UpdateUserProgress(
   userProgress: SaveUserProgress.Request
 ) extends UserProgressOp[UserProgress]
@@ -34,8 +35,12 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
   def fetchUserProgress(user: User): Free[F, OverallUserProgress] =
     ???
 
-  def fetchUserProgressByLibrary(user: User, libraryName: String): Free[F, LibrarySections] =
-    ???
+  def fetchUserProgressByLibrary(user: User, libraryName: String): Free[F, LibrarySections] = {
+    import ConnectionIOOps._
+    UPR.findUserProgressByLibrary(user, libraryName).liftF[F] map { ss ⇒
+      LibrarySections(libraryName, ss)
+    }
+  }
 
   def fetchUserProgressByLibrarySection(
     user:        User,
