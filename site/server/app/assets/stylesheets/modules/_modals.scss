@@ -44,4 +44,17 @@
             }
         }
     }
+	
+	ul.social {
+		margin-top: 30px;
+		li {
+			padding: 0;
+			margin-right: 15px;
+			display: inline-block;
+			border: none;
+			i {
+				font-size: 40px;
+			}
+		}
+	}
 }
