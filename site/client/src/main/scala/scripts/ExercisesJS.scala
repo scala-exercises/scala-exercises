@@ -23,7 +23,7 @@ import effects.Effects
 object ExercisesJS extends js.JSApp {
   def main(): Unit = {
     val states: Var[State] = Var(Nil)
-    val actions: Var[Action] = Var(Start())
+    val actions: Var[Action] = Var(Start)
 
     def setState(s: State): IO[Unit] = io {
       states() = s
@@ -44,7 +44,7 @@ object ExercisesJS extends js.JSApp {
       Effects.perform(state, action).foreach(m ⇒ {
         m.foreach(triggerAction(_).unsafePerformIO())
       })
-      // update UI
+      // Update UI
       UI.update(state, action).unsafePerformIO()
     }
 

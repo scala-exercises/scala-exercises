@@ -42,7 +42,7 @@ object UI {
   def noop: IO[Unit] = io {}
 
   def update(s: State, a: Action): IO[Unit] = a match {
-    case Start()                      ⇒ insertInputs
+    case Start                        ⇒ insertInputs
     case SetState(state)              ⇒ reflectState(state)
     case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
     case CompileExercise(method)      ⇒ startCompilation(s, method)
