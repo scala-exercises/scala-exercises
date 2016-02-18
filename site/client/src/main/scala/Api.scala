@@ -34,11 +34,8 @@ object Client {
 
   def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
     val url = Routes.Exercises.progress(library, section)
-    Ajax.get(url).map(r ⇒ {
-      if (r.ok)
-        Some(readProgress(library, section, r.responseText))
-      else
-        None
+    Ajax.get(url).collect({
+      case r if r.ok ⇒ Some(readProgress(library, section, r.responseText))
     }).recover({ case exc: AjaxException ⇒ None })
   }
 
