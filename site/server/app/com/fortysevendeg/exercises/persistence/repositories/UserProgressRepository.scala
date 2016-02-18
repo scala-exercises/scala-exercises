@@ -37,23 +37,11 @@ trait UserProgressRepository {
 
   def update(userProgress: UserProgress): ConnectionIO[UserProgress]
 
-  def findUserProgress(
+  def findUserProgressBySection(
     user:        User,
     libraryName: String,
     sectionName: String
-  ): ConnectionIO[SectionProgress] =
-    findBySection(user.id, libraryName, sectionName) map {
-      list ⇒
-        val exercisesList: List[LibrarySectionExercise] = list map { up ⇒
-          val argsList: List[String] = up.args map (_.split("##").toList) getOrElse Nil
-          LibrarySectionExercise(up.method, argsList, up.succeeded)
-        }
-        val succeeded = exercisesList match {
-          case Nil ⇒ false
-          case _   ⇒ exercisesList.forall(_.succeeded)
-        }
-        SectionProgress(libraryName, succeeded, exercisesList)
-    }
+  ): ConnectionIO[SectionProgress]
 
 }
 
@@ -82,6 +70,24 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
   ): ConnectionIO[List[UserProgress]] = persistence.fetchList[(Long, String, String), UserProgress](
     Q.findBySection, (userId, libraryName, sectionName)
   )
+
+  override def findUserProgressBySection(
+    user:        User,
+    libraryName: String,
+    sectionName: String
+  ): ConnectionIO[SectionProgress] =
+    findBySection(user.id, libraryName, sectionName) map {
+      list ⇒
+        val exercisesList: List[LibrarySectionExercise] = list map { up ⇒
+          val argsList: List[String] = up.args map (_.split("##").toList) getOrElse Nil
+          LibrarySectionExercise(up.method, argsList, up.succeeded)
+        }
+        val succeeded = exercisesList match {
+          case Nil ⇒ false
+          case _   ⇒ exercisesList.forall(_.succeeded)
+        }
+        SectionProgress(libraryName, succeeded, exercisesList)
+    }
 
   override def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
     val SaveUserProgress.Request(userId, libraryName, sectionName, method, version, exerciseType, args, succeeded) = request
