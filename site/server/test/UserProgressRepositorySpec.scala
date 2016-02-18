@@ -71,7 +71,8 @@ class UserProgressRepositorySpec
         ).transact(transactor).run
 
       upByLibrary.size shouldBe 1
-      upByLibrary.head._2 shouldBe pair.request.succeeded
+      val (_, succeeded) = upByLibrary.head
+      succeeded shouldBe pair.request.succeeded
     }
   }
 

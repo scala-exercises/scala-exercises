@@ -70,12 +70,13 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     for {
       lbs ← UPR.findUserProgressBySection(user, libraryName, sectionName).liftF[F]
       libraryInformation ← EO.getLibrary(libraryName) map extractLibraryInformation(sectionName)
-      eList = calculateExerciseList(lbs.exerciseList, libraryInformation._2)
+      (sectionsTotal, sectionExerciseList) = libraryInformation
+      eList = calculateExerciseList(lbs.exerciseList, sectionExerciseList)
     } yield LibrarySectionArgs(
       libraryName = libraryName,
-      totalSections = libraryInformation._1,
+      totalSections = sectionsTotal,
       exercises = eList,
-      librarySucceeded = lbs.succeeded && lbs.exerciseList.size == libraryInformation._2.size
+      librarySucceeded = lbs.succeeded && lbs.exerciseList.size == sectionExerciseList.size
     )
   }
 
