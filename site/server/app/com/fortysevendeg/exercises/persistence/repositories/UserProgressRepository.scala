@@ -8,7 +8,7 @@ package com.fortysevendeg.exercises.persistence.repositories
 import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
 import doobie.imports._
-import shared.{ LibrarySectionExercise, User, UserProgress }
+import shared.{ SectionInfoItem, LibrarySectionExercise, User, UserProgress }
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
 
 case class SectionProgress(libraryName: String, succeeded: Boolean, exerciseList: List[LibrarySectionExercise])
@@ -19,6 +19,13 @@ trait UserProgressRepository {
 
   def findByUserId(userId: Long): ConnectionIO[List[UserProgress]]
 
+  def findByLibrary(
+    userId:      Long,
+    libraryName: String
+  ): ConnectionIO[List[(String, Boolean)]]
+
+  def findBySection(userId: Long, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
+
   def findByExerciseVersion(
     userId:      Long,
     libraryName: String,
@@ -26,8 +33,6 @@ trait UserProgressRepository {
     method:      String,
     version:     Int
   ): ConnectionIO[Option[UserProgress]]
-
-  def findBySection(userId: Long, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
 
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
 
@@ -43,6 +48,10 @@ trait UserProgressRepository {
     sectionName: String
   ): ConnectionIO[SectionProgress]
 
+  def findUserProgressByLibrary(
+    user:        User,
+    libraryName: String
+  ): ConnectionIO[List[SectionInfoItem]]
 }
 
 class UserProgressDoobieRepository(implicit persistence: PersistenceModule) extends UserProgressRepository {
@@ -52,6 +61,21 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
 
   override def findByUserId(userId: Long): ConnectionIO[List[UserProgress]] =
     persistence.fetchList[Long, UserProgress](Q.findByUserId, userId)
+
+  override def findByLibrary(
+    userId:      Long,
+    libraryName: String
+  ): ConnectionIO[List[(String, Boolean)]] = persistence.fetchList[(Long, String), (String, Boolean)](
+    Q.findByLibrary, (userId, libraryName)
+  )
+
+  override def findBySection(
+    userId:      Long,
+    libraryName: String,
+    sectionName: String
+  ): ConnectionIO[List[UserProgress]] = persistence.fetchList[(Long, String, String), UserProgress](
+    Q.findBySection, (userId, libraryName, sectionName)
+  )
 
   override def findByExerciseVersion(
     userId:      Long,
@@ -63,13 +87,16 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     Q.findByExerciseVersion, (userId, libraryName, sectionName, method, version)
   )
 
-  override def findBySection(
-    userId:      Long,
-    libraryName: String,
-    sectionName: String
-  ): ConnectionIO[List[UserProgress]] = persistence.fetchList[(Long, String, String), UserProgress](
-    Q.findBySection, (userId, libraryName, sectionName)
-  )
+  override def findUserProgressByLibrary(
+    user:        User,
+    libraryName: String
+  ): ConnectionIO[List[SectionInfoItem]] =
+    findByLibrary(user.id, libraryName) map {
+      list ⇒
+        list map { up ⇒
+          SectionInfoItem(sectionName = up._1, succeeded = up._2)
+        }
+    }
 
   override def findUserProgressBySection(
     user:        User,
