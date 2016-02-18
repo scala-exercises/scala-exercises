@@ -32,8 +32,15 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
   def saveUserProgress(userProgress: SaveUserProgress.Request): Free[F, UserProgress] =
     Free.inject[UserProgressOp, F](UpdateUserProgress(userProgress))
 
-  def fetchUserProgress(user: User): Free[F, OverallUserProgress] =
-    ???
+  def fetchUserProgress(user: User): Free[F, OverallUserProgress] = {
+    import ConnectionIOOps._
+    for {
+      lbs ← UPR.findByUserIdAggregated(user.id).liftF[F]
+      items = lbs map {
+        case (libraryName, sections, succeeded) ⇒ OverallUserProgressItem(libraryName, sections, succeeded)
+      }
+    } yield OverallUserProgress(items)
+  }
 
   def fetchUserProgressByLibrary(user: User, libraryName: String): Free[F, LibrarySections] = {
     import ConnectionIOOps._

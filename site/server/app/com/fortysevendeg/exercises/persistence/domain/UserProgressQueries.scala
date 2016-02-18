@@ -56,7 +56,7 @@ object UserProgressQueries {
 
   val findByUserIdAggregated =
     s"""
-       SELECT libraryname, bool_and(succeeded)
+       SELECT libraryname, count(sectionname), bool_and(succeeded)
        FROM "userProgress"
        WHERE userId=?
        GROUP BY libraryname

@@ -19,7 +19,7 @@ trait UserProgressRepository {
 
   def findByUserId(userId: Long): ConnectionIO[List[UserProgress]]
 
-  def findByUserIdAggregated(userId: Long): ConnectionIO[List[(String, Boolean)]]
+  def findByUserIdAggregated(userId: Long): ConnectionIO[List[(String, Long, Boolean)]]
 
   def findByLibrary(
     userId:      Long,
@@ -64,8 +64,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
   override def findByUserId(userId: Long): ConnectionIO[List[UserProgress]] =
     persistence.fetchList[Long, UserProgress](Q.findByUserId, userId)
 
-  override def findByUserIdAggregated(userId: Long): ConnectionIO[List[(String, Boolean)]] =
-    persistence.fetchList[Long, (String, Boolean)](Q.findByUserIdAggregated, userId)
+  override def findByUserIdAggregated(userId: Long): ConnectionIO[List[(String, Long, Boolean)]] =
+    persistence.fetchList[Long, (String, Long, Boolean)](Q.findByUserIdAggregated, userId)
 
   override def findByLibrary(
     userId:      Long,
