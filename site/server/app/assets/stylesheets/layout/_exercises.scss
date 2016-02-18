@@ -14,9 +14,14 @@
     padding: 30px;
     background: #fff;
     line-height: 1.6;
+	
+	.hljs {
+				background: $gray-lighter;
+			}
 
     .exercise {
         margin-bottom: 15px;
+
 
         .highlight {
             position: relative;
@@ -277,6 +282,7 @@
             img {
                 width: 24px;
                 height: auto;
+							  @include border-radius(200px);
             }
         }
 
