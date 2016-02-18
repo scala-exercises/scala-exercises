@@ -39,10 +39,14 @@ class ExercisesController(
           )
         } yield exerciseEvaluation
 
+        // this match expression is now a really bad joke
         eval.runTask match {
           case Xor.Right(response) ⇒ response match {
-            case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
-            case Xor.Left(error)   ⇒ BadRequest("Runtime error : " + error.getMessage)
+            case Xor.Right(result) ⇒ result match {
+              case Xor.Right(value)    ⇒ Ok("Evaluation succeeded : " + value)
+              case Xor.Left(codeError) ⇒ BadRequest("Runtime error : " + codeError.getMessage)
+            }
+            case Xor.Left(error) ⇒ BadRequest("Compilation error : " + error.getMessage)
           }
           case Xor.Left(error) ⇒ BadRequest("Evaluation failed : " + error)
         }

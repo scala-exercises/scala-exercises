@@ -5,6 +5,7 @@
 
 package com.fortysevendeg.exercises
 
+import java.lang.reflect.InvocationTargetException
 import scala.reflect.runtime.{ universe ⇒ ru }
 import scala.reflect.runtime.{ currentMirror ⇒ cm }
 import scala.tools.reflect.ToolBox
@@ -35,7 +36,7 @@ class MethodEval {
   import Res._
 
   // format: OFF
-  def eval(qualifiedMethod: String, rawArgs: List[String]): Res[Any] = for {
+  def eval(qualifiedMethod: String, rawArgs: List[String]): Res[Xor[Throwable, Any]] = for {
 
     lastIndex ← {
       val lastIndex = qualifiedMethod.lastIndexOf('.')
@@ -71,8 +72,15 @@ class MethodEval {
       }}
       .sequenceU
 
-    result ← catching(instanceMirror.reflectMethod(methodSymbol)(args: _*),
-      s"Error while calling $qualifiedMethod")
+    result ←
+      try {
+        success(Xor.right(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
+      } catch {
+        // capture exceptions thrown by the method, since they are considered success
+        case e: InvocationTargetException => success(Xor.left(e.getCause))
+        case scala.util.control.NonFatal(t) => error(t)
+      }
+
 
   } yield result
 
