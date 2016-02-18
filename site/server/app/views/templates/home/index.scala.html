@@ -42,12 +42,10 @@
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-
             @user match {
               case Some(u) => { @templates.home.userInfo(u) }
               case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
             }
-
           </ul>
         </div>
           <!--.nav-collapse -->
@@ -147,11 +145,30 @@
         </div>
       </div>
     </section>
-    <section id="spread-the-world">
-      <div class="container">
-        <a class="btn btn-primary btn-lg" href="#">Spread the world</a>
-      </div>
-    </section>
+   <section id="spread-the-world">
+	<div class="container">
+		<a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="#">Spread the world</a>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title" id="myModalLabel">Spread the word</h3>
+				</div>
+				<div class="modal-body">
+					<p>Do you think "Scala Exercises" is useful? Share it with your friends. Who knows, maybe you will inspire some future Scala developers.</p>
+					<ul class="social">
+						<li><a href="#"><i class="fa fa-facebook-official"></i></a></li>
+						<li><a href="#"><i class="fa fa-twitter"></i></a></li>
+						<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
     <section id="books-docs">
       <div class="container">
         <div class="col-md-4">
