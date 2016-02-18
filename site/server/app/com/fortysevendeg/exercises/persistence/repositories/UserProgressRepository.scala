@@ -7,8 +7,9 @@ package com.fortysevendeg.exercises.persistence.repositories
 
 import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
+import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository._
 import doobie.imports._
-import shared.{ LibrarySectionExercise, User, UserProgress }
+import shared.{ SectionInfoItem, LibrarySectionExercise, User, UserProgress }
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
 
 case class SectionProgress(libraryName: String, succeeded: Boolean, exerciseList: List[LibrarySectionExercise])
@@ -19,6 +20,15 @@ trait UserProgressRepository {
 
   def findByUserId(userId: Long): ConnectionIO[List[UserProgress]]
 
+  def findByUserIdAggregated(userId: Long): ConnectionIO[List[FindByUserIdAggregatedOutput]]
+
+  def findByLibrary(
+    userId:      Long,
+    libraryName: String
+  ): ConnectionIO[List[FindByLibraryOutput]]
+
+  def findBySection(userId: Long, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
+
   def findByExerciseVersion(
     userId:      Long,
     libraryName: String,
@@ -26,8 +36,6 @@ trait UserProgressRepository {
     method:      String,
     version:     Int
   ): ConnectionIO[Option[UserProgress]]
-
-  def findBySection(userId: Long, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
 
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
 
@@ -43,6 +51,10 @@ trait UserProgressRepository {
     sectionName: String
   ): ConnectionIO[SectionProgress]
 
+  def findUserProgressByLibrary(
+    user:        User,
+    libraryName: String
+  ): ConnectionIO[List[SectionInfoItem]]
 }
 
 class UserProgressDoobieRepository(implicit persistence: PersistenceModule) extends UserProgressRepository {
@@ -53,23 +65,45 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
   override def findByUserId(userId: Long): ConnectionIO[List[UserProgress]] =
     persistence.fetchList[Long, UserProgress](Q.findByUserId, userId)
 
+  override def findByLibrary(
+    userId:      Long,
+    libraryName: String
+  ): ConnectionIO[List[FindByLibraryOutput]] =
+    persistence.fetchList[FindByLibraryParams, FindByLibraryOutput](
+      Q.findByLibrary, (userId, libraryName)
+    )
+
+  override def findByUserIdAggregated(userId: Long): ConnectionIO[List[FindByUserIdAggregatedOutput]] =
+    persistence.fetchList[Long, FindByUserIdAggregatedOutput](Q.findByUserIdAggregated, userId)
+
+  override def findBySection(
+    userId:      Long,
+    libraryName: String,
+    sectionName: String
+  ): ConnectionIO[List[UserProgress]] = persistence.fetchList[FindBySectionParams, UserProgress](
+    Q.findBySection, (userId, libraryName, sectionName)
+  )
+
   override def findByExerciseVersion(
     userId:      Long,
     libraryName: String,
     sectionName: String,
     method:      String,
     version:     Int
-  ): ConnectionIO[Option[UserProgress]] = persistence.fetchOption[(Long, String, String, String, Int), UserProgress](
+  ): ConnectionIO[Option[UserProgress]] = persistence.fetchOption[FindByExerciseVerionParams, UserProgress](
     Q.findByExerciseVersion, (userId, libraryName, sectionName, method, version)
   )
 
-  override def findBySection(
-    userId:      Long,
-    libraryName: String,
-    sectionName: String
-  ): ConnectionIO[List[UserProgress]] = persistence.fetchList[(Long, String, String), UserProgress](
-    Q.findBySection, (userId, libraryName, sectionName)
-  )
+  override def findUserProgressByLibrary(
+    user:        User,
+    libraryName: String
+  ): ConnectionIO[List[SectionInfoItem]] =
+    findByLibrary(user.id, libraryName) map {
+      list ⇒
+        list map { up ⇒
+          SectionInfoItem(sectionName = up._1, succeeded = up._2)
+        }
+    }
 
   override def findUserProgressBySection(
     user:        User,
@@ -95,7 +129,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     findByExerciseVersion(userId, libraryName, sectionName, method, version) flatMap {
       case None ⇒
         persistence
-          .updateWithGeneratedKeys[(Long, String, String, String, Int, String, Option[String], Boolean), UserProgress](
+          .updateWithGeneratedKeys[InsertParams, UserProgress](
             Q.insert,
             Q.allFields,
             (userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
@@ -113,7 +147,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     val UserProgress(id, _, libraryName, sectionName, method, version, exerciseType, args, succeeded) = userProgress
 
     persistence
-      .updateWithGeneratedKeys[(String, String, String, Int, String, Option[String], Boolean, Long), UserProgress](
+      .updateWithGeneratedKeys[UpdateParams, UserProgress](
         Q.update,
         Q.allFields,
         (libraryName, sectionName, method, version, exerciseType, args, succeeded, id)
@@ -124,6 +158,16 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
 
 object UserProgressRepository {
 
-  implicit def instance(implicit persistence: PersistenceModule): UserProgressRepository = new UserProgressDoobieRepository
+  //Queries input:
+  type FindByLibraryParams = (Long, String)
+  type FindBySectionParams = (Long, String, String)
+  type FindByExerciseVerionParams = (Long, String, String, String, Int)
+  type UpdateParams = (String, String, String, Int, String, Option[String], Boolean, Long)
+  type InsertParams = (Long, String, String, String, Int, String, Option[String], Boolean)
 
+  //Queries output:
+  type FindByLibraryOutput = (String, Boolean)
+  type FindByUserIdAggregatedOutput = (String, Long, Boolean)
+
+  implicit def instance(implicit persistence: PersistenceModule): UserProgressRepository = new UserProgressDoobieRepository
 }

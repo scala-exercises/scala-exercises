@@ -113,7 +113,7 @@ sealed trait RuntimeSharedConversions {
 
   def convertExercise(exercise: Exercise) =
     shared.Exercise(
-      method = Option(exercise.qualifiedMethod),
+      method = exercise.qualifiedMethod,
       name = Option(exercise.name),
       description = exercise.description,
       code = Option(exercise.code),
