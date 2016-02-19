@@ -44,16 +44,13 @@ class ExercisesController(
               } yield exerciseEvaluation
 
         eval.runTask.fold(
-          // error during interpreter/free
           e ⇒ BadRequest(s"Evaluation failed : $e"),
           _.fold(
-            // error during reflection / param compilation
-            e ⇒ BadRequest(s"Compilation error : ${e.getMessage}"),
             _.fold(
-              // thrown error during eval of actual code
-              e ⇒ BadRequest(s"Runtime error : ${e.getMessage}"),
-              v ⇒ Ok(s"Evaluation succeeded : $v")
-            )
+              e ⇒ BadRequest(s"Compilation error : ${e.getMessage}"),
+              e ⇒ BadRequest(s"Runtime error : ${e.getMessage}")
+            ),
+            v ⇒ Ok(s"Evaluation succeeded : $v")
           )
         )
 

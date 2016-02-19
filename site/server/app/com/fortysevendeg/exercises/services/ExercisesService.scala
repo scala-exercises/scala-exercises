@@ -31,19 +31,16 @@ object ExercisesService {
   def section(libraryName: String, name: String): Option[shared.Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Xor[Throwable, Any]] = {
+  def evaluate(evaluation: shared.ExerciseEvaluation): shared.ExerciseEvaluation.Result = {
     val res = methodEval.eval(
       evaluation.method,
       evaluation.args
     )
     Logger.info(s"evaluation for $evaluation: $res")
-    res.leftMap(_ match {
-      case Ior.Left(message)        ⇒ new Exception(message)
-      case Ior.Right(error)         ⇒ error
-      case Ior.Both(message, error) ⇒ new Exception(message, error)
-    })
-    // uncomment this next line if you want to actually throw the exception
-    //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
+    res.toSuccessXor.bimap(
+      _.bimap(_.foldedException, _.e),
+      _ ⇒ Unit
+    )
   }
 
 }

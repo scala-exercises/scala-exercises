@@ -11,6 +11,8 @@ import cats.data.Xor
 
 class MethodEvalSpec extends FunSpec with Matchers {
 
+  import MethodEval._
+
   describe("runtime evaluation") {
 
     val methodEval = new MethodEval()
@@ -20,7 +22,9 @@ class MethodEvalSpec extends FunSpec with Matchers {
         "com.fortysevendeg.exercises.ExampleTarget.intStringMethod",
         "\"hello\"" :: "\"world\"" :: Nil
       )
-      assert(res.isLeft)
+      assert(!res.didRun)
+      assert(res.toSuccessXor.isLeft)
+      assert(res.toExecutionXor.isLeft)
     }
 
     it("fails when too many parameters are provided") {
@@ -28,7 +32,9 @@ class MethodEvalSpec extends FunSpec with Matchers {
         "com.fortysevendeg.exercises.ExampleTarget.intStringMethod",
         "\"hello\"" :: "\"world\"" :: "1" :: Nil
       )
-      assert(res.isLeft)
+      assert(!res.didRun)
+      assert(res.toSuccessXor.isLeft)
+      assert(res.toExecutionXor.isLeft)
     }
 
     it("works when the parameters are appropriate") {
@@ -37,7 +43,9 @@ class MethodEvalSpec extends FunSpec with Matchers {
         "1 + 2" :: "\"world\"" :: Nil
       )
 
-      res should equal(Xor.right(Xor.right("3world")))
+      res should equal(EvaluationSuccess[String]("3world"))
+      assert(res.toSuccessXor.isRight)
+      assert(res.toExecutionXor.isRight)
     }
 
     it("captures exceptions thrown by the called method") {
@@ -47,8 +55,10 @@ class MethodEvalSpec extends FunSpec with Matchers {
       )
 
       res should matchPattern {
-        case Xor.Right(Xor.Left(e: ExampleTarget.ExampleException)) ⇒
+        case EvaluationException(_: ExampleTarget.ExampleException) ⇒
       }
+      assert(res.toSuccessXor.isLeft)
+      assert(res.toExecutionXor.isRight)
     }
 
   }
