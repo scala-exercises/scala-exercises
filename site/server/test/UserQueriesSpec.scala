@@ -23,7 +23,7 @@ class UserQueriesSpec extends Specification with AnalysisSpec with DatabaseInsta
       githubId = "47deg",
       pictureUrl = "http://placekitten.com/50/50",
       githubUrl = "http://github.com/47deg",
-      email = "hello@47deg.com"
+      email = Some("hello@47deg.com")
     )
   ))
   check(Queries.deleteById(47))
@@ -35,7 +35,7 @@ class UserQueriesSpec extends Specification with AnalysisSpec with DatabaseInsta
       githubId = "47deg",
       pictureUrl = "http://placekitten.com/50/50",
       githubUrl = "http://github.com/47deg",
-      email = "hello@47deg.com"
+      email = Some("hello@47deg.com")
     )
   ))
 }

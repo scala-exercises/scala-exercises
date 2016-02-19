@@ -14,8 +14,6 @@ import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 
 import com.fortysevendeg.exercises.models._
 import com.fortysevendeg.exercises.services.free.UserOps
-import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services._
 
 import doobie.imports._
 import cats.data.Xor
@@ -84,13 +82,12 @@ class OAuth2Controller(
       ws.url("https://api.github.com/user").
         withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
-
           val login = (response.json \ "login").as[String]
           val name = (response.json \ "name").as[String]
           val githubId = (response.json \ "id").as[Long]
           val avatarUrl = (response.json \ "avatar_url").as[String]
           val htmlUrl = (response.json \ "html_url").as[String]
-          val email = (response.json \ "email").as[String]
+          val email = (response.json \ "email").asOpt[String]
 
           UserDoobieStore.getOrCreate(
             UserCreation.Request(

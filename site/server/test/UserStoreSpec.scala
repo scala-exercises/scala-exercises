@@ -97,7 +97,7 @@ class UserStoreSpec
 
       val storedUser = UserDoobieStore.getByLogin(newUser.login).transact(transactor).run
       storedUser.fold(false)(u ⇒ {
-        val modifiedUser = u.copy(email = "alice+spam@example.com")
+        val modifiedUser = u.copy(email = Some("alice+spam@example.com"))
         UserDoobieStore.update(modifiedUser).quick.run
 
         UserDoobieStore.getByLogin(u.login).transact(transactor).run == Some(modifiedUser)

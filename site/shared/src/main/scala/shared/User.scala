@@ -9,7 +9,7 @@ case class User(
   githubId:   String,
   pictureUrl: String,
   githubUrl:  String,
-  email:      String
+  email:      Option[String]
 )
 
 case class UserProgress(

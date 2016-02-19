@@ -7,7 +7,7 @@ CREATE TABLE "users" (
     githubId varchar(255) UNIQUE NOT NULL,
     pictureUrl varchar(255) NOT NULL,
     githubUrl varchar(255) NOT NULL,
-    email varchar(255) NOT NULL
+    email varchar(255)
 );
 
 # --- !Downs
