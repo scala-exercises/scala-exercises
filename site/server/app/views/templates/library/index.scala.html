@@ -1,4 +1,4 @@
-@(library: shared.Library, section: shared.Section)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
@@ -131,24 +131,16 @@
             <svg viewBox="0 0 34 22" width="34" height="22">
               <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand")"/>
             </svg>
-            <span>Scala Exercises / <span class="section-name">@section.name</span> </span>
+            <span>Scala Exercises / <span class="section-name">@library.name</span> </span>
           </a>
         </div>
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="http://avatars3.githubusercontent.com/u/315070" alt=""> Rafa Paradela
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="#">View on GitHub</a>
-                </li>
-                <li><a href="#">Logout</a>
-                </li>
-              </ul>
-            </li>
+          @user match {
+            case Some(u) => { @templates.base.userInfo(u) }
+            case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
+          }
           </ul>
         </div>
           <!--.nav-collapse -->
