@@ -1,4 +1,4 @@
-@(library: shared.Library)(implicit request: RequestHeader)
+@(library: shared.Library, progress: Option[shared.OverallUserProgressItem])(implicit request: RequestHeader)
 
 <div class="col-xs-12 col-sm-6 col-md-4">
   <a href="@library.name">
@@ -10,10 +10,15 @@
         <div class="panel-body">
           @Html(library.description)
 
-          @*<div><button class="btn btn-primary btn-sm">Start</button></div>*@
-
-          @templates.widgets.progress(1, library)
-
+	  @progress match {
+   	    case None => {
+	      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
+	    }
+	    case Some(p) if p.sections == 0 => {
+	      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
+	    }
+ 	    case Some(p) => { @templates.widgets.progress(p.sections, p.totalSections, library.color) }
+	  }
         </div>
       </div>
     </div>
