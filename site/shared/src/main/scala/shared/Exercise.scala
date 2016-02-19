@@ -39,3 +39,5 @@ case class ExerciseEvaluation(
   exerciseType: String,
   args:         List[String]
 )
+
+case class EvaluationSuccess(value: Any)
