@@ -9,7 +9,7 @@ import java.util.UUID
 
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services.free.UserOps
+import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.utils.OAuth2
 import com.fortysevendeg.shared.free.ExerciseOps
@@ -18,30 +18,32 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 
+import shared.User
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 class ApplicationController(
     implicit
-    exerciseOps: ExerciseOps[ExercisesApp],
-    userOps:     UserOps[ExercisesApp],
-    T:           Transactor[Task]
-) extends Controller with ProdInterpreters {
+    exerciseOps:     ExerciseOps[ExercisesApp],
+    userOps:         UserOps[ExercisesApp],
+    userProgressOps: UserProgressOps[ExercisesApp],
+    T:               Transactor[Task]
+) extends Controller with AuthenticationModule with ProdInterpreters {
 
   def index = Action.async { implicit request ⇒
-
     val (redirectUrl, state) = authStatus
 
     val ops = for {
       libraries ← exerciseOps.getLibraries
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-    } yield (libraries, user, request.session.get("oauth-token"))
+      progress ← userProgressOps.fetchMaybeUserProgress(user)
+    } yield (libraries, user, request.session.get("oauth-token"), progress)
 
     ops.runTask match {
-      case Xor.Right((libraries, user, Some(token))) ⇒ Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries)))
-      case Xor.Right((libraries, None, None))        ⇒ Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
-      case Xor.Left(ex)                              ⇒ Future.successful(InternalServerError(ex.getMessage))
+      case Xor.Right((libraries, user, Some(token), progress)) ⇒ Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress)))
+      case Xor.Right((libraries, None, None, progress))        ⇒ Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl), progress = progress)).withSession("oauth-state" → state))
+      case Xor.Left(ex)                                        ⇒ Future.successful(InternalServerError(ex.getMessage))
     }
   }
 

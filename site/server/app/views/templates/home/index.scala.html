@@ -1,4 +1,4 @@
-@(user: Option[shared.User] = None, libraries: List[shared.Library] = Nil, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(user: Option[shared.User] = None, libraries: List[shared.Library] = Nil, progress: shared.OverallUserProgress, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 @import play.api.Play
 
 <!DOCTYPE html>
@@ -69,7 +69,7 @@
           <div class="technologies-list">
 
             @for(library <- libraries) {
-              @templates.home.libraryGridItem(library)
+              @templates.home.libraryGridItem(library, progress.libraries.find(_.libraryName == library.name))
             }
 
           </div>
