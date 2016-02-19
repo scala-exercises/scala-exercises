@@ -14,8 +14,9 @@ import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
 import shared.IO
 
 import cats.data.OptionT
-import cats.syntax.option._
 import cats.std.list._
+import cats.std.option._
+import cats.syntax.option._
 import cats.syntax.traverse._
 
 object DomHandler {
@@ -67,7 +68,7 @@ object DomHandler {
       (for {
         _ ← OptionT(setInputWidth(input) map (_.some))
         methodName ← OptionT(io(methodParent(input)))
-        exercise ← OptionT(findExerciseByMethod(methodName))
+        exercise ← OptionT(io(findExerciseByMethod(methodName)))
         inputsValues = getInputsValues(exercise)
         _ ← OptionT((e.keyCode match {
           case KeyCode.enter ⇒ onEnterPressed(methodName)
@@ -90,10 +91,8 @@ object DomHandler {
     })
   }
 
-  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] = for {
-    exercises ← allExercises
-    _ ← exercises.map(attachClickHandler(_, onClick)).sequence
-  } yield ()
+  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] =
+    allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ ⇒ ())
 
   def attachClickHandler(exercise: HTMLElement, onClick: String ⇒ IO[Unit]): IO[Unit] = io {
     $(exercise).find(".compile button").click((e: dom.Event) ⇒ {
@@ -110,7 +109,7 @@ object DomHandler {
 
   val resAssert = """(?s)(res[0-9]*)""".r
 
-  def allExercises: IO[List[HTMLDivElement]] = io {
+  def allExercises: List[HTMLDivElement] = {
     ($(".exercise").divs filter isMethodDefined).toList
   }
 
@@ -118,11 +117,16 @@ object DomHandler {
 
   def isMethodDefined(e: HTMLElement): Boolean = getMethodAttr(e).nonEmpty
 
-  def getLibrary: IO[String] = io { $("body").attr("data-library").getOrElse("") }
+  def library: Option[String] = $("body").attr("data-library").toOption
 
-  def getSection: IO[String] = io { $("body").attr("data-section").getOrElse("") }
+  def section: Option[String] = $("body").attr("data-section").toOption
 
-  def getMethodsList: IO[List[String]] = allExercises.map(_.map(getMethodAttr))
+  def libraryAndSection: Option[(String, String)] = for {
+    lib ← library
+    sec ← section
+  } yield (lib, sec)
+
+  def methods: List[String] = allExercises.map(getMethodAttr(_))
 
   def methodName(e: HTMLElement): Option[String] = Option(getMethodAttr(e)) filter (_.nonEmpty)
 
@@ -130,9 +134,11 @@ object DomHandler {
 
   def allInputs: IO[List[HTMLInputElement]] = io { $(".exercise-code>input").inputs.toList }
 
-  def findExerciseByMethod(method: String): IO[Option[HTMLElement]] = for {
-    exercises ← allExercises
-  } yield exercises.find(methodName(_) == Option(method))
+  def inputs(el: HTMLElement): List[HTMLInputElement] = $(el).find("input").inputs.toList
+
+  def findExerciseByMethod(method: String): Option[HTMLElement] = {
+    allExercises.find(methodName(_) == Option(method))
+  }
 
   def getInputsValues(exercise: HTMLElement): Seq[String] = inputsInExercise(exercise).map(_.value)
 
@@ -145,6 +151,11 @@ object DomHandler {
   def replaceInputByRes(text: String): String = resAssert.replaceAllIn(text, """<input type="text" data-res="$1"/>""")
 
   def getInputLength(input: HTMLInputElement): Int = $(input).value.toString.length
+
+  def setInputValue(input: HTMLInputElement, v: String): IO[Unit] = for {
+    _ ← io { $(input) `val` (v) }
+    _ ← setInputWidth(input)
+  } yield ()
 
   def inputSize(length: Int): Double = length match {
     case 0 ⇒ 12d

@@ -1,12 +1,12 @@
-@(status: Int, library: shared.Library)(implicit request: RequestHeader)
+@(count: Int, library: shared.Library)(implicit request: RequestHeader)
 
 @import scala.util.Try
 
-@defining(Try(100*status/library.sectionNames.size) getOrElse 100) { percent =>
+@defining(Try(100 * count / library.sectionNames.size) getOrElse 0) { percent =>
   <div class="content-progres-bar">
     <div class="progress">
       <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="background-color: @library.color; width : @percent% ;"></div>
     </div>
-    <span>@status/@library.sectionNames.size</span>
+    <span>@count / @library.sectionNames.size</span>
   </div>
 }

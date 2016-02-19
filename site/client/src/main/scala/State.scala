@@ -10,6 +10,7 @@ import actions._
 
 object State {
   def update(s: State, a: Action): State = a match {
+    case Start                        ⇒ Nil
     case SetState(newState)           ⇒ newState
     case UpdateExercise(method, args) ⇒ updateByMethod(s, method, args)
     case CompileExercise(method)      ⇒ evaluate(s, method)
