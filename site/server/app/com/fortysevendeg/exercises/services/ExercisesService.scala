@@ -37,11 +37,11 @@ object ExercisesService {
       evaluation.args
     )
     Logger.info(s"evaluation for $evaluation: $res")
-    res.fold(_ match {
-      case Ior.Left(message)        ⇒ Xor.left(new Exception(message))
-      case Ior.Right(error)         ⇒ Xor.left(error)
-      case Ior.Both(message, error) ⇒ Xor.left(new Exception(message, error))
-    }, v ⇒ Xor.right(v))
+    res.leftMap(_ match {
+      case Ior.Left(message)        ⇒ new Exception(message)
+      case Ior.Right(error)         ⇒ error
+      case Ior.Both(message, error) ⇒ new Exception(message, error)
+    })
     // uncomment this next line if you want to actually throw the exception
     //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
   }
