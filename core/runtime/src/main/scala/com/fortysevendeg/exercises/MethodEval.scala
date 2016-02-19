@@ -15,28 +15,43 @@ import cats.std.list._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 
+object MethodEval {
+  sealed abstract class EvaluationResult extends Product with Serializable {
+    def didRun: Boolean
+  }
+
+  case class EvaluationFailure(reason: Ior[String, Throwable]) extends EvaluationResult {
+    override def didRun = false
+  }
+  case class EvaluationSuccess[A](res: A) extends EvaluationResult {
+    override def didRun = true
+  }
+  case class EvaluationException(e: Throwable) extends EvaluationResult {
+    override def didRun = true
+  }
+}
+
 class MethodEval {
+  import MethodEval._
 
   private[this] val toolbox = cm.mkToolBox()
   private[this] val mirror = ru.runtimeMirror(classOf[MethodEval].getClassLoader)
   import mirror.universe._
 
-  type Res[A] = Xor[Ior[String, Throwable], A]
+  private[this]type Res[A] = Xor[Ior[String, Throwable], A]
 
-  private[this] object Res {
-    def error[A](message: String): Res[A] = Xor.left(Ior.left(message))
-    def error[A](e: Throwable): Res[A] = Xor.left(Ior.right(e))
-    def error[A](message: String, e: Throwable): Res[A] = Xor.left(Ior.both(message, e))
-    def success[A](value: A): Res[A] = Xor.right(value)
+  private[this] def error[A](message: String): Res[A] = Xor.left(Ior.left(message))
+  private[this] def error[A](e: Throwable): Res[A] = Xor.left(Ior.right(e))
+  private[this] def error[A](message: String, e: Throwable): Res[A] = Xor.left(Ior.both(message, e))
+  private[this] def success[A](value: A): Res[A] = Xor.right(value)
 
-    def catching[A](f: ⇒ A): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.right(e))
-    def catching[A](f: ⇒ A, message: ⇒ String): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(message, e))
-  }
+  private[this] def catching[A](f: ⇒ A): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.right(e))
+  private[this] def catching[A](f: ⇒ A, message: ⇒ String): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(message, e))
 
-  import Res._
 
   // format: OFF
-  def eval(qualifiedMethod: String, rawArgs: List[String]): Res[Xor[Throwable, Any]] = for {
+  def eval(qualifiedMethod: String, rawArgs: List[String]): EvaluationResult = {
+    val result = for {
 
     lastIndex ← {
       val lastIndex = qualifiedMethod.lastIndexOf('.')
@@ -74,15 +89,19 @@ class MethodEval {
 
     result ←
       try {
-        success(Xor.right(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
+        success(EvaluationSuccess(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
       } catch {
         // capture exceptions thrown by the method, since they are considered success
-        case e: InvocationTargetException => success(Xor.left(e.getCause))
+        case e: InvocationTargetException => success(EvaluationException(e.getCause))
         case scala.util.control.NonFatal(t) => error(t)
       }
-
-
   } yield result
+
+  result.fold(
+    EvaluationFailure(_),
+    identity
+  )
+}
 
   // format: ON
 }
