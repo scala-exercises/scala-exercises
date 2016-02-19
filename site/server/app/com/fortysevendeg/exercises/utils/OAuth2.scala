@@ -80,7 +80,7 @@ class OAuth2Controller(
   }
 
   def success() = Action.async { request ⇒
-    request.session.get("oauth-token").fold(Future.successful(Unauthorized("No way Jose"))) { authToken ⇒
+    request.session.get("oauth-token").fold(Future.successful(Unauthorized("Unauthorized"))) { authToken ⇒
       ws.url("https://api.github.com/user").
         withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
@@ -102,7 +102,7 @@ class OAuth2Controller(
               email
             )
           ).transact(T).run match {
-              case Xor.Right(_) ⇒ Redirect("/").withSession("oauth-token" → authToken, "user" → login)
+              case Xor.Right(_) ⇒ Redirect(request.headers.get("referer").getOrElse("/")).withSession("oauth-token" → authToken, "user" → login)
               case Xor.Left(_)  ⇒ InternalServerError("Failed to save user information")
             }
 

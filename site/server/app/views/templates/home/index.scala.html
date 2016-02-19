@@ -43,7 +43,7 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             @user match {
-              case Some(u) => { @templates.home.userInfo(u) }
+              case Some(u) => { @templates.base.userInfo(u) }
               case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
             }
           </ul>

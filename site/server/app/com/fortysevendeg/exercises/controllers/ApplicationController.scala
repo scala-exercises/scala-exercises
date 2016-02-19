@@ -31,25 +31,17 @@ class ApplicationController(
 
   def index = Action.async { implicit request ⇒
 
-    val scope = "user"
-    val state = UUID.randomUUID().toString
-    val callbackUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.callback(None, None).absoluteURL()
-    val logoutUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.logout().absoluteURL()
-    val redirectUrl = OAuth2.getAuthorizationUrl(callbackUrl, scope, state)
+    val (redirectUrl, state) = authStatus
 
     val ops = for {
       libraries ← exerciseOps.getLibraries
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-    } yield (libraries, user)
+    } yield (libraries, user, request.session.get("oauth-token"))
 
     ops.runTask match {
-      case Xor.Right((libraries, user)) ⇒
-        request.session.get("oauth-token") map { token ⇒
-          Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries)))
-        } getOrElse {
-          Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
-        }
-      case Xor.Left(ex) ⇒ Future.successful(InternalServerError(ex.getMessage))
+      case Xor.Right((libraries, user, Some(token))) ⇒ Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries)))
+      case Xor.Right((libraries, None, None))        ⇒ Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl))).withSession("oauth-state" → state))
+      case Xor.Left(ex)                              ⇒ Future.successful(InternalServerError(ex.getMessage))
     }
   }
 
@@ -64,14 +56,17 @@ class ApplicationController(
 
   def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
     Future {
+      val (redirectUrl, state) = authStatus
       val ops = for {
         libraries ← exerciseOps.getLibraries
         section ← exerciseOps.getSection(libraryName, sectionName)
-      } yield (libraries.find(_.name == libraryName), section)
+        user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+      } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"))
       ops.runTask match {
-        case Xor.Right((Some(l), Some(s))) ⇒ Ok(views.html.templates.library.index(l, s))
-        case Xor.Right((Some(l), None))    ⇒ Redirect(l.sectionNames.head)
-        case _                             ⇒ Ok("Section not found")
+        case Xor.Right((Some(l), Some(s), user, Some(token))) ⇒ Ok(views.html.templates.library.index(l, s, user))
+        case Xor.Right((Some(l), Some(s), user, None)) ⇒ Ok(views.html.templates.library.index(l, s, user, Option(redirectUrl))).withSession("oauth-state" → state)
+        case Xor.Right((Some(l), None, _, _)) ⇒ Redirect(l.sectionNames.head)
+        case _ ⇒ Ok("Section not found")
       }
     }
   }
@@ -84,6 +79,14 @@ class ApplicationController(
         UserProgressController.fetchUserProgressBySection
       )
     ).as("text/javascript")
+  }
+
+  def authStatus(implicit req: Request[AnyContent]): (String, String) = {
+    val scope = "user"
+    val state = UUID.randomUUID().toString
+    val callbackUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.callback(None, None).absoluteURL()
+    val redirectUrl = OAuth2.getAuthorizationUrl(callbackUrl, scope, state)
+    (redirectUrl, state)
   }
 
 }
