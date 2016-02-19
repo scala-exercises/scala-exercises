@@ -36,17 +36,17 @@ object ExercisesService extends RuntimeSharedConversions {
   def section(libraryName: String, name: String): Option[shared.Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Unit] = {
+  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Xor[Throwable, Any]] = {
     val res = methodEval.eval(
       evaluation.method,
       evaluation.args
     )
     Logger.info(s"evaluation for $evaluation: $res")
-    res.fold(_ match {
-      case Ior.Left(message)        ⇒ Xor.left(new Exception(message))
-      case Ior.Right(error)         ⇒ Xor.left(error)
-      case Ior.Both(message, error) ⇒ Xor.left(new Exception(message, error))
-    }, _ ⇒ Xor.right(Unit))
+    res.leftMap(_ match {
+      case Ior.Left(message)        ⇒ new Exception(message)
+      case Ior.Right(error)         ⇒ error
+      case Ior.Both(message, error) ⇒ new Exception(message, error)
+    })
     // uncomment this next line if you want to actually throw the exception
     //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
   }

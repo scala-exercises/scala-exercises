@@ -39,13 +39,20 @@ class ExercisesController(
           )
         } yield exerciseEvaluation
 
-        eval.runTask match {
-          case Xor.Right(response) ⇒ response match {
-            case Xor.Right(result) ⇒ Ok("Evaluation succeeded : " + result)
-            case Xor.Left(error)   ⇒ BadRequest("Runtime error : " + error.getMessage)
-          }
-          case Xor.Left(error) ⇒ BadRequest("Evaluation failed : " + error)
-        }
+        eval.runTask.fold(
+          // error during interpreter/free
+          e ⇒ BadRequest(s"Evaluation failed : $e"),
+          _.fold(
+            // error during reflection / param compilation
+            e ⇒ BadRequest(s"Compilation error : ${e.getMessage}"),
+            _.fold(
+              // thrown error during eval of actual code
+              e ⇒ BadRequest(s"Runtime error : ${e.getMessage}"),
+              v ⇒ Ok(s"Evaluation succeeded : $v")
+            )
+          )
+        )
+
     }
 
   private[this] def mkSaveProgressRequest(userId: Long, evaluation: ExerciseEvaluation, success: Boolean) =

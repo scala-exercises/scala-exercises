@@ -12,7 +12,7 @@ import shared.Section
 sealed trait ExerciseOp[A]
 final case class GetLibraries() extends ExerciseOp[List[Library]]
 final case class GetSection(libraryName: String, sectionName: String) extends ExerciseOp[Option[Section]]
-final case class Evaluate(exerciseEvaluation: ExerciseEvaluation) extends ExerciseOp[Throwable Xor Unit]
+final case class Evaluate(exerciseEvaluation: ExerciseEvaluation) extends ExerciseOp[Xor[Throwable, Xor[Throwable, Any]]]
 
 /** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
   * Coproduct
@@ -28,7 +28,7 @@ class ExerciseOps[F[_]](implicit I: Inject[ExerciseOp, F]) {
   def getSection(libraryName: String, sectionName: String): Free[F, Option[Section]] =
     Free.inject[ExerciseOp, F](GetSection(libraryName, sectionName))
 
-  def evaluate(evaluation: ExerciseEvaluation): Free[F, Throwable Xor Unit] =
+  def evaluate(evaluation: ExerciseEvaluation): Free[F, Xor[Throwable, Xor[Throwable, Any]]] =
     Free.inject[ExerciseOp, F](Evaluate(evaluation))
 
 }
@@ -40,4 +40,3 @@ object ExerciseOps {
   implicit def instance[F[_]](implicit I: Inject[ExerciseOp, F]): ExerciseOps[F] = new ExerciseOps[F]
 
 }
-
