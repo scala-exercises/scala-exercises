@@ -108,7 +108,7 @@ object DomHandler {
     blocks ← getCodeBlocks
   } yield blocks.map(code ⇒ code → replaceInputByRes(getTextInCode(code)))
 
-  val resAssert = """(?s)\((res[0-9]*)\)""".r
+  val resAssert = """(?s)(res[0-9]*)""".r
 
   def allExercises: IO[List[HTMLDivElement]] = io {
     ($(".exercise").divs filter isMethodDefined).toList
@@ -142,7 +142,7 @@ object DomHandler {
 
   def getTextInCode(code: HTMLElement): String = $(code).text
 
-  def replaceInputByRes(text: String): String = resAssert.replaceAllIn(text, """(<input type="text" data-res="$1"/>)""")
+  def replaceInputByRes(text: String): String = resAssert.replaceAllIn(text, """<input type="text" data-res="$1"/>""")
 
   def getInputLength(input: HTMLInputElement): Int = $(input).value.toString.length
 
