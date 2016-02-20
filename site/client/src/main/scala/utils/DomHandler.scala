@@ -75,7 +75,7 @@ object DomHandler {
 
   /** Shows modal for signing up
     */
-  def showSignUpModal: IO[Unit] = io ( $("#mustSignUp").modal("show") )
+  def showSignUpModal: IO[Unit] = io($("#mustSignUp").modal("show"))
 
   def attachKeyUpHandler(
     input:          HTMLInputElement,
