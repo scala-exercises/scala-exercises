@@ -6,7 +6,6 @@
 package utils
 
 import org.scalajs.dom.ext.KeyCode
-
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.ext.KeyCode
@@ -73,6 +72,10 @@ object DomHandler {
     inputs ← allInputs
     _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
   } yield ()
+
+  /** Shows modal for signing up
+    */
+  def showSignUpModal: IO[Unit] = io ( $("#mustSignUp").modal("show") )
 
   def attachKeyUpHandler(
     input:          HTMLInputElement,
@@ -167,6 +170,8 @@ object DomHandler {
 
   def getInputLength(input: HTMLInputElement): Int = $(input).value.toString.length
 
+  def isLogged: Boolean = $("#loggedUser").length > 0
+
   def setInputValue(input: HTMLInputElement, v: String): IO[Unit] = for {
     _ ← io { $(input) `val` (v) }
     _ ← setInputWidth(input)
@@ -192,5 +197,12 @@ object DomHandler {
     def get[A <: dom.Element]: A = j.get().asInstanceOf[A]
 
   }
+
+  @js.native
+  trait BootstrapModal extends JQuery {
+    def modal(action: String): BootstrapModal = js.native
+  }
+
+  implicit def jQueryToModal(jq: JQuery): BootstrapModal = jq.asInstanceOf[BootstrapModal]
 
 }
