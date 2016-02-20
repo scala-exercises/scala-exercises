@@ -5,10 +5,10 @@
 
 package com.fortysevendeg.exercises.controllers
 
-import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.utils.StringUtils.ExerciseType
 import com.fortysevendeg.shared.free.ExerciseOps
@@ -16,8 +16,6 @@ import doobie.imports._
 import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
 import shared.{ ExerciseEvaluation, User }
-
-import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 import scalaz.concurrent.Task
 
@@ -40,19 +38,9 @@ class ExercisesController(
         } yield exerciseEvaluation
 
         eval.runTask.fold(
-          // error during interpreter/free
-          e ⇒ BadRequest(s"Evaluation failed : $e"),
-          _.fold(
-            // error during reflection / param compilation
-            e ⇒ BadRequest(s"Compilation error : ${e.getMessage}"),
-            _.fold(
-              // thrown error during eval of actual code
-              e ⇒ BadRequest(s"Runtime error : ${e.getMessage}"),
-              v ⇒ Ok(s"Evaluation succeeded : $v")
-            )
-          )
+          e ⇒ BadRequest(s"Compilation error : ${e.getMessage}"),
+          v ⇒ Ok(s"Evaluation succeeded : $v")
         )
-
     }
 
   private[this] def mkSaveProgressRequest(userId: Long, evaluation: ExerciseEvaluation, success: Boolean) =

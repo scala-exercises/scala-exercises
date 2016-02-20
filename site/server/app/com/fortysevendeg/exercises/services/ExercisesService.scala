@@ -10,14 +10,11 @@ import com.fortysevendeg.exercises.MethodEval
 
 import play.api.Logger
 
-import scala.reflect.runtime.{ universe ⇒ ru }
-import scala.reflect.runtime.{ currentMirror ⇒ cm }
-import scala.tools.reflect.ToolBox
-
 import cats.data.Xor
 import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
+import shared.EvaluationSuccess
 
 object ExercisesService extends RuntimeSharedConversions {
 
@@ -36,21 +33,20 @@ object ExercisesService extends RuntimeSharedConversions {
   def section(libraryName: String, name: String): Option[shared.Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: shared.ExerciseEvaluation): Xor[Throwable, Xor[Throwable, Any]] = {
-    val res = methodEval.eval(
-      evaluation.method,
-      evaluation.args
-    )
+  def evaluate(evaluation: shared.ExerciseEvaluation): Throwable Xor EvaluationSuccess = {
+    import cats.syntax.xor._
+    val res = methodEval.eval(evaluation.method, evaluation.args) match {
+      case Xor.Left(l) ⇒ l match {
+        case Ior.Left(message)        ⇒ new Exception(message).left
+        case Ior.Right(error)         ⇒ error.left
+        case Ior.Both(message, error) ⇒ new Exception(message, error).left
+      }
+      case Xor.Right(Xor.Right(a)) ⇒ EvaluationSuccess(a).right
+      case Xor.Right(Xor.Left(a))  ⇒ a.left
+    }
     Logger.info(s"evaluation for $evaluation: $res")
-    res.leftMap(_ match {
-      case Ior.Left(message)        ⇒ new Exception(message)
-      case Ior.Right(error)         ⇒ error
-      case Ior.Both(message, error) ⇒ new Exception(message, error)
-    })
-    // uncomment this next line if you want to actually throw the exception
-    //.bimap(e ⇒ { throw e; e }, _ ⇒ Unit)
+    res
   }
-
 }
 
 sealed trait RuntimeSharedConversions {
