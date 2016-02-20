@@ -79,8 +79,7 @@ lazy val client = (project in file("client"))
     persistLauncher in Test := false,
     sourceMapsDirectories += sharedJs.base / "..",
     jsDependencies ++= Seq(
-      "org.webjars" % "jquery" % "2.1.3" / "jquery.js" minified "jquery.min.js",
-      "org.webjars" % "bootstrap" % "3.2.0" / "bootstrap.js" minified "bootstrap.min.js" dependsOn "jquery.js"
+      "org.webjars" % "bootstrap" % "3.2.0" / "bootstrap.js" minified "bootstrap.min.js"
     ),
     jsDependencies += RuntimeDOM % "test",
     skip in packageJSDependencies := false,
