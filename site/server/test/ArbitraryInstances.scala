@@ -37,7 +37,7 @@ trait ArbitraryInstances extends Assertions {
       githubId = githubId.toString,
       pictureUrl = pictureUrl,
       githubUrl = githubUrl,
-      email = email
+      email = Some(email)
     ))
 
   def persistentUserArbitrary(implicit transactor: Transactor[Task]): Arbitrary[User] = {

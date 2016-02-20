@@ -24,7 +24,7 @@ object UserCreation {
       githubId:   String,
       pictureUrl: String,
       githubUrl:  String,
-      email:      String
+      email:      Option[String]
   ) {
 
     def asUser(id: Long): User =
