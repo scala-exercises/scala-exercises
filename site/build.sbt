@@ -55,8 +55,6 @@ lazy val server = (project in file("server"))
       "com.lihaoyi" %% "upickle" % "0.2.8",
       "org.webjars" %% "webjars-play" % "2.3.0",
       "org.webjars" % "bootstrap-sass" % "3.2.0",
-      "org.webjars" % "jquery" % "2.1.3",
-      "org.webjars" % "font-awesome" % "4.1.0",
       "org.webjars" % "highlightjs" % "8.7",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
       "org.scala-lang" % "scala-compiler" % scalaVersion,
@@ -80,7 +78,12 @@ lazy val client = (project in file("client"))
     persistLauncher := true,
     persistLauncher in Test := false,
     sourceMapsDirectories += sharedJs.base / "..",
-    jsDependencies += RuntimeDOM,
+    jsDependencies ++= Seq(
+      "org.webjars" % "jquery" % "2.1.3" / "jquery.js" minified "jquery.min.js",
+      "org.webjars" % "bootstrap" % "3.2.0" / "bootstrap.js" minified "bootstrap.min.js" dependsOn "jquery.js"
+    ),
+    jsDependencies += RuntimeDOM % "test",
+    skip in packageJSDependencies := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.8.1",

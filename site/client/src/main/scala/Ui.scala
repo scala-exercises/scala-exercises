@@ -99,9 +99,10 @@ object UI {
     _ ← OptionT(writeLog(exercise, msg) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 
-  def startCompilation(s: State, method: String): IO[Unit] = findByMethod(s, method) match {
-    case Some(exercise) if exercise.isFilled ⇒ setExerciseStyle(method, EvaluatingStyle)
-    case _                                   ⇒ noop
+  def startCompilation(s: State, method: String): IO[Unit] = (isLogged, findByMethod(s, method)) match {
+    case (true, Some(exercise)) if exercise.isFilled ⇒ setExerciseStyle(method, EvaluatingStyle)
+    case (false, _) ⇒ showSignUpModal
+    case _ ⇒ noop
   }
 
   def setAsSolved(s: State, method: String): IO[Unit] =
