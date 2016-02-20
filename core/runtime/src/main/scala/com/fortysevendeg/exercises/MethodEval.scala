@@ -15,28 +15,77 @@ import cats.std.list._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 
+object MethodEval {
+
+  /** An evaluation result, which can have three possible results. */
+  sealed abstract class EvaluationResult[A](val didRun: Boolean) extends Product with Serializable {
+
+    /** Converts the result to an Xor with all exceptions projected on the left.
+      * The result value is projected on the right.
+      */
+    def toSuccessXor: Xor[Xor[EvaluationFailure[A], EvaluationException[A]], EvaluationSuccess[A]] =
+      this match {
+        case ef: EvaluationFailure[A]   ⇒ Xor.left(Xor.left(ef))
+        case ee: EvaluationException[A] ⇒ Xor.left(Xor.right(ee))
+        case es: EvaluationSuccess[A]   ⇒ Xor.right(es)
+      }
+
+    /** Converts the result to an Xor where executions during evaluation are
+      * projected on the right. Reflection or compilation exceptions are
+      * projected left.
+      */
+    def toExecutionXor: Xor[EvaluationFailure[A], Xor[EvaluationException[A], EvaluationSuccess[A]]] =
+      this match {
+        case ef: EvaluationFailure[A]   ⇒ Xor.left(ef)
+        case ee: EvaluationException[A] ⇒ Xor.right(Xor.left(ee))
+        case es: EvaluationSuccess[A]   ⇒ Xor.right(Xor.right(es))
+      }
+  }
+
+  /** An evaluation that failed (miersably) due to reflection or compilation errors
+    * (including parameter type errors).
+    */
+  case class EvaluationFailure[A](reason: Ior[String, Throwable]) extends EvaluationResult[A](false) {
+
+    /** Convenience; provides a single exception for the underlying reason. */
+    def foldedException: EvaluationFailureException = reason.fold(
+      new EvaluationFailureException(_, null),
+      new EvaluationFailureException(null, _),
+      new EvaluationFailureException(_, _)
+    )
+  }
+
+  /** A convenince exception that captures why an evaluation failed to run */
+  class EvaluationFailureException private[MethodEval] (message: String, e: Throwable) extends Exception(message, e)
+
+  /** An evaluation that ran, but threw an exception. */
+  case class EvaluationException[A](e: Throwable) extends EvaluationResult[A](true)
+
+  /** An evaluation that ran and returned a result. */
+  case class EvaluationSuccess[A](res: A) extends EvaluationResult[A](true)
+}
+
 class MethodEval {
+  import MethodEval._
 
   private[this] val toolbox = cm.mkToolBox()
   private[this] val mirror = ru.runtimeMirror(classOf[MethodEval].getClassLoader)
   import mirror.universe._
 
-  type Res[A] = Xor[Ior[String, Throwable], A]
+  private[this]type Res[A] = Xor[Ior[String, Throwable], A]
 
-  private[this] object Res {
-    def error[A](message: String): Res[A] = Xor.left(Ior.left(message))
-    def error[A](e: Throwable): Res[A] = Xor.left(Ior.right(e))
-    def error[A](message: String, e: Throwable): Res[A] = Xor.left(Ior.both(message, e))
-    def success[A](value: A): Res[A] = Xor.right(value)
+  private[this] def error[A](message: String): Res[A] = Xor.left(Ior.left(message))
+  private[this] def error[A](e: Throwable): Res[A] = Xor.left(Ior.right(e))
+  private[this] def error[A](message: String, e: Throwable): Res[A] = Xor.left(Ior.both(message, e))
+  private[this] def success[A](value: A): Res[A] = Xor.right(value)
 
-    def catching[A](f: ⇒ A): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.right(e))
-    def catching[A](f: ⇒ A, message: ⇒ String): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(message, e))
-  }
+  private[this] def catching[A](f: ⇒ A): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.right(e))
+  private[this] def catching[A](f: ⇒ A, message: ⇒ String): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(message, e))
 
-  import Res._
 
   // format: OFF
-  def eval(qualifiedMethod: String, rawArgs: List[String]): Res[Xor[Throwable, Any]] = for {
+  def eval(qualifiedMethod: String, rawArgs: List[String]): EvaluationResult[_] = {
+    val result = for {
 
     lastIndex ← {
       val lastIndex = qualifiedMethod.lastIndexOf('.')
@@ -74,15 +123,19 @@ class MethodEval {
 
     result ←
       try {
-        success(Xor.right(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
+        success(EvaluationSuccess(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
       } catch {
         // capture exceptions thrown by the method, since they are considered success
-        case e: InvocationTargetException => success(Xor.left(e.getCause))
+        case e: InvocationTargetException => success(EvaluationException(e.getCause))
         case scala.util.control.NonFatal(t) => error(t)
       }
-
-
   } yield result
+
+  result.fold(
+    EvaluationFailure(_),
+    identity
+  )
+}
 
   // format: ON
 }
