@@ -18,7 +18,7 @@ object UserCreation {
 
   case class Request(
       login:      String,
-      name:       String,
+      name:       Option[String],
       githubId:   String,
       pictureUrl: String,
       githubUrl:  String,
