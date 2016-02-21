@@ -82,8 +82,8 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
 object UserRepository {
 
   //Queries input:
-  type UpdateParams = (String, String, String, String, Option[String], Long)
-  type InsertParams = (String, String, String, String, String, Option[String])
+  type UpdateParams = (Option[String], String, String, String, Option[String], Long)
+  type InsertParams = (String, Option[String], String, String, String, Option[String])
 
   implicit def instance(implicit persistence: PersistenceModule): UserRepository = new UserDoobieRepository()
 }
