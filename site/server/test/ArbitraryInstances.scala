@@ -33,7 +33,7 @@ trait ArbitraryInstances extends Assertions {
       email ← Gen.alphaStr
     } yield Request(
       login = login.toString,
-      name = name,
+      name = Some(name),
       githubId = githubId.toString,
       pictureUrl = pictureUrl,
       githubUrl = githubUrl,
