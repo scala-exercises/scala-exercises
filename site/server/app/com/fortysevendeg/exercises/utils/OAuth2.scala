@@ -5,18 +5,17 @@
 
 package com.fortysevendeg.exercises.utils
 
-import play.api.{ Application, Play }
-import play.api.http.{ HeaderNames, MimeTypes }
-import play.api.mvc.{ Action, Controller, Results }
-import play.api.libs.ws._
-import scala.concurrent.ExecutionContext.Implicits.global
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
-
-import com.fortysevendeg.exercises.models._
-import com.fortysevendeg.exercises.services.free.UserOps
-
-import doobie.imports._
 import cats.data.Xor
+import com.fortysevendeg.exercises.persistence.domain.UserCreation
+import com.fortysevendeg.exercises.persistence.repositories.UserRepository
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
+import doobie.imports._
+import play.api.http.{ HeaderNames, MimeTypes }
+import play.api.libs.ws._
+import play.api.mvc.{ Action, Controller, Results }
+import play.api.{ Application, Play }
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 
@@ -89,7 +88,7 @@ class OAuth2Controller(
           val htmlUrl = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").asOpt[String]
 
-          UserDoobieStore.getOrCreate(
+          UserRepository.instance.getOrCreate(
             UserCreation.Request(
               login,
               name,

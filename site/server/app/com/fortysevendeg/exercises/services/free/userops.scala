@@ -5,12 +5,9 @@
 
 package com.fortysevendeg.exercises.services.free
 
-import cats.data.Xor
-import cats.free.Free
-import cats.free.Inject
-
+import cats.free.{ Free, Inject }
+import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import shared.User
-import com.fortysevendeg.exercises.models.UserCreation
 
 /** Users Ops GADT
   */
