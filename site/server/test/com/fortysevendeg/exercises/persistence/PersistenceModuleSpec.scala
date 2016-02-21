@@ -3,10 +3,11 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-import com.fortysevendeg.exercises.persistence.PersistenceModule
+package com.fortysevendeg.exercises.persistence
+
 import doobie.imports._
-import org.scalacheck.{ Arbitrary, Gen }
 import org.scalacheck.Shapeless._
+import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 

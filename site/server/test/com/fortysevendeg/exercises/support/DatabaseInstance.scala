@@ -3,16 +3,16 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package test.database
+package com.fortysevendeg.exercises.support
 
-import doobie.util.transactor.DataSourceTransactor
 import doobie.contrib.hikari.hikaritransactor.HikariTransactor
+import doobie.imports._
 import org.scalatest.Assertions
 import play.api.db.evolutions._
 import play.api.db.{ Database, Databases }
-import doobie.imports._
-import scalaz.{ -\/, \/- }
+
 import scalaz.concurrent.Task
+import scalaz.{ -\/, \/- }
 
 trait DatabaseInstance extends Assertions {
   val testDriver = "org.postgresql.Driver"

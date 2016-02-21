@@ -1,13 +1,16 @@
+
 /*
  * scala-exercises-server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
-import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository
+
+package com.fortysevendeg.exercises.persistence.repositories
+
+import com.fortysevendeg.exercises.support.{ ArbitraryInstances, DatabaseInstance }
 import doobie.imports._
+import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import test.database.DatabaseInstance
-import org.scalacheck.Shapeless._
 
 import scalaz.concurrent.Task
 
