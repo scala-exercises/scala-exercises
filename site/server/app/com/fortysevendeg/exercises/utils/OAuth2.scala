@@ -35,7 +35,8 @@ object OAuth2 {
 class OAuth2Controller(
     implicit
     T:  Transactor[Task],
-    ws: WSClient
+    ws: WSClient,
+  UR: UserRepository
 ) extends Controller with ProdInterpreters {
 
   import OAuth2._
@@ -88,7 +89,7 @@ class OAuth2Controller(
           val htmlUrl = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").asOpt[String]
 
-          UserRepository.instance.getOrCreate(
+          UR.getOrCreate(
             UserCreation.Request(
               login,
               name,
