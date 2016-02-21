@@ -63,6 +63,9 @@ trait ArbitraryInstances extends Assertions {
       }
     } yield UserProgressPair(request, user))
   }
+
+  def genBoundedList[T](minSize: Int = 1, maxSize: Int = 100, gen: Gen[T]): Gen[List[T]] =
+    Gen.choose(minSize, maxSize) flatMap { size ⇒ Gen.listOfN(size, gen) }
 }
 
 object ArbitraryInstances extends ArbitraryInstances
