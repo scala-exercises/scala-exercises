@@ -3,6 +3,8 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+package com.fortysevendeg.exercises.support
+
 import cats.data.Xor
 import com.fortysevendeg.exercises.persistence.domain.UserCreation.Request
 import com.fortysevendeg.exercises.persistence.domain.{ SaveUserProgress, UserCreation }
@@ -61,6 +63,9 @@ trait ArbitraryInstances extends Assertions {
       }
     } yield UserProgressPair(request, user))
   }
+
+  def genBoundedList[T](minSize: Int = 1, maxSize: Int = 100, gen: Gen[T]): Gen[List[T]] =
+    Gen.choose(minSize, maxSize) flatMap { size ⇒ Gen.listOfN(size, gen) }
 }
 
 object ArbitraryInstances extends ArbitraryInstances

@@ -1,3 +1,5 @@
+package com.fortysevendeg.exercises.persistence.repositories
+
 /*
  * scala-exercises-server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
@@ -5,15 +7,14 @@
 
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import com.fortysevendeg.exercises.persistence.domain.UserCreation.Request
-import com.fortysevendeg.exercises.persistence.repositories._
+import com.fortysevendeg.exercises.support.{ ArbitraryInstances, DatabaseInstance }
 import doobie.imports._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import test.database.DatabaseInstance
 
-class UserStoreSpec
+class UserRepositorySpec
     extends PropSpec
     with GeneratorDrivenPropertyChecks
     with Matchers
