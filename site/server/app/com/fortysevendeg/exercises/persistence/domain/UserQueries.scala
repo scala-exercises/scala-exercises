@@ -12,8 +12,7 @@ import ops.record._
 
 object UserCreation {
 
-  // TODO: add proper case objects with errors when switching to Postgres
-  sealed trait CreationError
+  abstract class CreationError extends Product with Serializable
 
   case object DuplicateName extends CreationError
 
