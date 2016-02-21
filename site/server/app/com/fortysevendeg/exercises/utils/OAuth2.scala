@@ -82,7 +82,7 @@ class OAuth2Controller(
         withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
           val login = (response.json \ "login").as[String]
-          val name = (response.json \ "name").as[String]
+          val name = (response.json \ "name").asOpt[String]
           val githubId = (response.json \ "id").as[Long]
           val avatarUrl = (response.json \ "avatar_url").as[String]
           val htmlUrl = (response.json \ "html_url").as[String]
