@@ -3,6 +3,8 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+package com.fortysevendeg.exercises.support
+
 import cats.data.Xor
 import com.fortysevendeg.exercises.persistence.domain.UserCreation.Request
 import com.fortysevendeg.exercises.persistence.domain.{ SaveUserProgress, UserCreation }

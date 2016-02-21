@@ -3,12 +3,11 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress.Other
+package com.fortysevendeg.exercises.services
+
 import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
-import com.fortysevendeg.exercises.services._
-import shared._
 
 @RunWith(classOf[JUnitRunner])
 class ExercisesServiceSpec extends Specification {
