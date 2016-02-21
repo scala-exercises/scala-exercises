@@ -34,6 +34,8 @@
 			
 			}
 		}
+		.bubble { opacity: 0; transition:opacity 0.3s linear;}
+
 		div {
 			> span {
 				position: relative;
@@ -72,8 +74,11 @@
 			border-bottom-color: #fff;
 			border-width: 13px;
 		}
+
+
 	}
-	.active {
+	.step:hover {
+		.bubble { opacity: 1}
 		div {
 			> span {
 				color: $step-title-active;
@@ -87,7 +92,11 @@
 			}
 		}
 	}
+
+
 }
+.steps>div:last-of-type .content-info {left: auto; right:-20px;}
+.steps>div:last-of-type .content-info:after {left: auto; right: 50px;}
 
 hr {
 	position: absolute;
