@@ -3,39 +3,25 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-import org.specs2.mutable.Specification
-import test.database.DatabaseInstance
-import scalaz.concurrent.Task
+import com.fortysevendeg.exercises.persistence.domain.{ UserQueries ⇒ Q }
+import com.fortysevendeg.exercises.persistence.repositories.UserRepository._
 import doobie.contrib.specs2.analysisspec.AnalysisSpec
-import com.fortysevendeg.exercises.models.queries.Queries
+import doobie.util.query.Query
+import doobie.util.update.Update
+import org.specs2.mutable.Specification
 import shared.User
-import com.fortysevendeg.exercises.models.UserCreation
+import test.database.DatabaseInstance
 
-class UserQueriesSpec extends Specification with AnalysisSpec with DatabaseInstance {
+class UserQueriesSpec
+    extends Specification
+    with AnalysisSpec
+    with DatabaseInstance {
 
-  check(Queries.all)
-  check(Queries.byLogin("47deg"))
-  check(Queries.byId(47))
-  check(Queries.insert(
-    UserCreation.Request(
-      login = "47deg",
-      name = "47",
-      githubId = "47deg",
-      pictureUrl = "http://placekitten.com/50/50",
-      githubUrl = "http://github.com/47deg",
-      email = Some("hello@47deg.com")
-    )
-  ))
-  check(Queries.deleteById(47))
-  check(Queries.update(
-    User(
-      id = 47,
-      login = "47deg",
-      name = "47",
-      githubId = "47deg",
-      pictureUrl = "http://placekitten.com/50/50",
-      githubUrl = "http://github.com/47deg",
-      email = Some("hello@47deg.com")
-    )
-  ))
+  check(Query[Unit, User](Q.all))
+  check(Query[Long, User](Q.findById))
+  check(Query[String, User](Q.findByLogin))
+  check(Update[UpdateParams](Q.update))
+  check(Update[InsertParams](Q.insert))
+  check(Update[Long](Q.deleteById))
+  check(Update[Unit](Q.deleteAll))
 }

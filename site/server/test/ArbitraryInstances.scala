@@ -4,13 +4,13 @@
  */
 
 import cats.data.Xor
-import com.fortysevendeg.exercises.models.UserCreation.Request
-import com.fortysevendeg.exercises.models.{ UserCreation, UserDoobieStore }
-import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
+import com.fortysevendeg.exercises.persistence.domain.UserCreation.Request
+import com.fortysevendeg.exercises.persistence.domain.{ SaveUserProgress, UserCreation }
+import com.fortysevendeg.exercises.persistence.repositories.UserRepository
 import doobie.imports._
-import org.scalacheck.{ Gen, Arbitrary }
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Shapeless._
+import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest.Assertions
 import shared.User
 
@@ -40,10 +40,10 @@ trait ArbitraryInstances extends Assertions {
       email = Some(email)
     ))
 
-  def persistentUserArbitrary(implicit transactor: Transactor[Task]): Arbitrary[User] = {
+  def persistentUserArbitrary(implicit transactor: Transactor[Task], UR: UserRepository): Arbitrary[User] = {
     import UserCreation._
     Arbitrary(arbitrary[Request] map { request ⇒
-      UserDoobieStore.create(request).transact(transactor).run match {
+      UR.create(request).transact(transactor).run match {
         case Xor.Right(user) ⇒ user
         case Xor.Left(error) ⇒ fail("Failed generating persistent users : $error")
       }

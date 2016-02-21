@@ -10,7 +10,7 @@ import cats.data.Xor
 import cats.free.Free
 
 import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository
+import com.fortysevendeg.exercises.persistence.repositories.{ UserRepository, UserProgressRepository }
 import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.shared.free._
 import doobie.imports._
@@ -49,9 +49,9 @@ trait Interpreters[M[_]] {
 
   }
 
-  implicit def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable], T: Transactor[M]): UserOp ~> M = new (UserOp ~> M) {
+  implicit def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOp ~> M = new (UserOp ~> M) {
 
-    import com.fortysevendeg.exercises.models.UserDoobieStore._
+    import UR._
 
     def apply[A](fa: UserOp[A]): M[A] = fa match {
       case GetUsers()            ⇒ all.transact(T)
