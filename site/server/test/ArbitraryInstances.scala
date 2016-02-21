@@ -33,11 +33,11 @@ trait ArbitraryInstances extends Assertions {
       email ← Gen.alphaStr
     } yield Request(
       login = login.toString,
-      name = Some(name),
+      name = Option(name),
       githubId = githubId.toString,
       pictureUrl = pictureUrl,
       githubUrl = githubUrl,
-      email = Some(email)
+      email = Option(email)
     ))
 
   def persistentUserArbitrary(implicit transactor: Transactor[Task], UR: UserRepository): Arbitrary[User] = {

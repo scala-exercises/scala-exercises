@@ -36,7 +36,7 @@ class OAuth2Controller(
     implicit
     T:  Transactor[Task],
     ws: WSClient,
-  UR: UserRepository
+    UR: UserRepository
 ) extends Controller with ProdInterpreters {
 
   import OAuth2._
