@@ -1,18 +1,31 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.services
 
 import com.fortysevendeg.exercises.Exercises
+import com.fortysevendeg.exercises.MethodEval
 
 import play.api.Logger
 
+import scala.reflect.runtime.{ universe ⇒ ru }
+import scala.reflect.runtime.{ currentMirror ⇒ cm }
+import scala.tools.reflect.ToolBox
+
 import cats.data.Xor
+import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
 
 object ExercisesService extends RuntimeSharedConversions {
 
+  lazy val methodEval = new MethodEval()
+
+  val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {
-    val (errors, libraries0) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
-    val libraries1 = colorize(libraries0)
+    val libraries1 = colorize(runtimeLibraries)
     errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
     (
       libraries1.map(convertLibrary),
@@ -23,22 +36,18 @@ object ExercisesService extends RuntimeSharedConversions {
   def section(libraryName: String, name: String): Option[shared.Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: shared.ExerciseEvaluation): Throwable Xor Unit = {
-    /* // the previous implementation, for reference
-    val evalResult = for {
-      pkg ← subclassesOf[exercise.Library]
-      library ← ExerciseCodeExtractor.buildLibrary(packageObjectSource(pkg)).toList
-      if library.name == evaluation.libraryName
-      subclass ← subclassesOf[exercise.Section]
-      if simpleClassName(subclass) == evaluation.sectionName
-    } yield evaluate(evaluation, subclass)
-    evalResult.headOption match {
-      case None         ⇒ new RuntimeException("Evaluation produced no results").left[Unit]
-      case Some(result) ⇒ result
-    }
-    */
-    Xor.catchNonFatal(???)
+  def evaluate(evaluation: shared.ExerciseEvaluation): shared.ExerciseEvaluation.Result = {
+    val res = methodEval.eval(
+      evaluation.method,
+      evaluation.args
+    )
+    Logger.info(s"evaluation for $evaluation: $res")
+    res.toSuccessXor.bimap(
+      _.bimap(_.foldedException, _.e),
+      _ ⇒ Unit
+    )
   }
+
 }
 
 sealed trait RuntimeSharedConversions {
@@ -89,22 +98,22 @@ sealed trait RuntimeSharedConversions {
       name = library.name,
       description = library.description,
       color = library.color getOrElse "black",
-      sectionNames = library.sections.map(_.name)
+      sections = library.sections map convertSection
     )
 
   def convertSection(section: Section) =
     shared.Section(
       name = section.name,
-      description = section.description,
+      description = Option(section.description),
       exercises = section.exercises.map(convertExercise)
     )
 
   def convertExercise(exercise: Exercise) =
     shared.Exercise(
-      method = None, // exercise.eval Option[type Input => Unit]
-      name = exercise.name,
+      method = exercise.qualifiedMethod,
+      name = Option(exercise.name),
       description = exercise.description,
-      code = exercise.code,
+      code = Option(exercise.code),
       explanation = exercise.explanation
     )
 

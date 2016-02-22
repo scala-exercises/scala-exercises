@@ -1,19 +1,24 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.services.free
 
 import cats.free.Free
+import doobie.imports._
 
 import scalaz.concurrent.Task
 import scalaz.{ -\/, \/- }
 
-object TaskOps {
+object ConnectionIOOps {
 
-  implicit def liftFTask[F[_], A](t: Task[A])(implicit dbOps: DBOps[F]): Free[F, A] = t.liftF[F]
-
-  implicit class TaskOps[A](task: Task[A]) {
-    def liftF[F[_]](implicit dbOps: DBOps[F]): cats.free.Free[F, A] = task.attemptRun match {
-      case \/-(value) ⇒ dbOps.success(value)
-      case -\/(e)     ⇒ dbOps.failure(e)
-    }
+  implicit class ConnectionIOOps[A](c: ConnectionIO[A]) {
+    def liftF[F[_]](implicit dbOps: DBOps[F], transactor: Transactor[Task]): Free[F, A] =
+      c.transact(transactor).attemptRun match {
+        case \/-(value) ⇒ dbOps.success(value)
+        case -\/(e)     ⇒ dbOps.failure(e)
+      }
   }
 
 }

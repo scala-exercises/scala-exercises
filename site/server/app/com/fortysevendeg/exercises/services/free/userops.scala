@@ -1,11 +1,13 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.services.free
 
-import cats.data.Xor
-import cats.free.Free
-import cats.free.Inject
-
+import cats.free.{ Free, Inject }
+import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import shared.User
-import com.fortysevendeg.exercises.models.UserCreation
 
 /** Users Ops GADT
   */
@@ -43,4 +45,3 @@ object UserOps {
   implicit def instance[F[_]](implicit I: Inject[UserOp, F]): UserOps[F] = new UserOps[F]
 
 }
-

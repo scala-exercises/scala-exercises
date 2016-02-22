@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-client
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package common
 import scala.collection.{ SortedMap, mutable }
 import scalatags.JsDom.all._
@@ -5,7 +10,7 @@ import scala.util.{ Failure, Success, Random }
 import rx._
 import rx.core.{ Propagator, Obs }
 import org.scalajs.dom
-import org.scalajs.dom.{ Element, DOMParser }
+import org.scalajs.dom.{ Element }
 import scala.scalajs.js
 
 /** A minimal binding between Scala.Rx and Scalatags and Scala-Js-Dom

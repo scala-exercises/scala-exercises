@@ -32,7 +32,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="/">
             <svg viewBox="0 0 34 22" width="34" height="22">
               <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand")"/>
             </svg>
@@ -42,12 +42,10 @@
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-
             @user match {
-              case Some(u) => { @templates.home.userInfo(u) }
-              case None => { <li><a href="@redirectUrl">Login with GitHub</a></li> }
+              case Some(u) => { @templates.base.userInfo(u) }
+              case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
             }
-
           </ul>
         </div>
           <!--.nav-collapse -->
@@ -66,7 +64,7 @@
     <section id="technologies">
       <div class="container">
         <div class="row">
-           
+
             <!-- List technologies -->
           <div class="technologies-list">
 
@@ -83,8 +81,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-8 col-md-offset-2">
-            <h2 class="text-center">How it work?</h2>
-            <p class="section-description text-center">Scala Exercises is an Open Source project for learning different technologies based in Scala language. Learn, play and contribute with us.</p>
+            <h2 class="text-center">How does it work?</h2>
+            <p class="section-description text-center">Scala Exercises is an open source project for learning various Scala tools and technologies. Learn, play and contribute.</p>
           </div>
         </div>
         <div class="row">
@@ -93,11 +91,11 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
               <div class="step active">
                 <a href="#"><span>1</span></a>
-                <div>
+                <div class="bubble">
                   <span>
                     Learn
                     <div class="content-info">
-                      <p>Each category includes an explanation of the basics. Learn the concepts through simple code samples.</p>
+                      <p>Exercises start with the basics and progress with your skill level. Code samples demonstrate concepts along the way.</p>
                     </div>
                   </span>
                 </div>
@@ -106,24 +104,40 @@
             <div class="col-xs-3 col-sm-3 col-md-3">
               <div class="step">
                 <a href="#"><span>2</span></a>
-                <div>
-                  <span>Solve</span>
+                <div class="bubble">
+                  <span>
+                    Solve
+                    <div class="content-info">
+                      <p>Complete and solve exercises to test your understanding of the concepts.</p>
+                    </div>
+                  </span>
                 </div>
               </div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3">
               <div class="step">
                 <a href="#"><span>3</span></a>
-                <div>
-                  <span>Share</span>
+                <div class="bubble">
+                  <span>
+                    Share
+                    <div class="content-info">
+                      <p>Share your progress with friends and colleagues.</p>
+                    </div>
+                  </span>
                 </div>
               </div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3">
               <div class="step">
-                <a href="#"><span>3</span></a>
-                <div>
-                  <span>Contribute</span>
+               <div>
+                <a href="#"><span>4</span></a>
+                <div class="bubble">
+                  <span>
+                    Contribute
+                    <div class="content-info">
+                      <p>Improve existing exercises or create new exercises for your Scala libraries.</p>
+                    </div>
+                  </span>
                 </div>
               </div>
             </div>
@@ -131,35 +145,63 @@
         </div>
       </div>
     </section>
-    <section id="spread-the-world">
-      <div class="container">
-        <a class="btn btn-primary btn-lg" href="#">Spread the world</a>
-      </div>
-    </section>
+   <section id="spread-the-world">
+	<div class="container">
+		<a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="#">Spread the world</a>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title" id="myModalLabel">Spread the word</h3>
+				</div>
+				<div class="modal-body">
+					<p>Do you think "Scala Exercises" is useful? Share it with your friends. Who knows, maybe you will inspire some future Scala developers.</p>
+					<ul class="social">
+						<li><a href="#"><i class="fa fa-facebook-official"></i></a></li>
+						<li><a href="#"><i class="fa fa-twitter"></i></a></li>
+						<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
     <section id="books-docs">
       <div class="container">
         <div class="col-md-4">
           <i class="fa fa-book"></i>
           <h3>Books</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam neque fugiat eligendi aut provident suscipit quod autem quos quasi.</p>
+          <div>
+          	<a class="btn btn-primary btn-xs" href="#">Learn more</a>
+          </div>
         </div>
         <div class="col-md-4">
           <i class="fa fa-file"></i>
           <h3>Official Docs</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam neque fugiat eligendi aut provident suscipit quod autem quos quasi.</p>
+            <div>
+          	<a class="btn btn-primary btn-xs" href="#">Learn more</a>
+          </div>
         </div>
         <div class="col-md-4">
           <i class="fa fa-fw fa-newspaper-o"></i>
           <h3>47 Degrees Blog</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam neque fugiat eligendi aut provident suscipit quod autem quos quasi.</p>
+            <div>
+          	<a class="btn btn-primary btn-xs" href="#">Learn more</a>
+          </div>
         </div>
       </div>
     </section>
-    
-    @templates.footer()
-    
+
+    @templates.home.footer()
+
       <!-- JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="@routes.Assets.at("javascripts/parallax.js")"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 

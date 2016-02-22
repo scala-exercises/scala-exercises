@@ -2,7 +2,7 @@
 // -----------------------------------------------------
 .content-header {
     padding: 20px 0;
-    
+
     h2 {
         margin: 0;
     }
@@ -14,9 +14,14 @@
     padding: 30px;
     background: #fff;
     line-height: 1.6;
+	
+	.hljs {
+				background: $gray-lighter;
+			}
 
     .exercise {
         margin-bottom: 15px;
+
 
         .highlight {
             position: relative;
@@ -24,10 +29,9 @@
             .compile {
                 position: absolute;
                 right: 10px;
-                bottom: 10px;
+                bottom: 4px;
 
                 button {
-                    opacity: 0;
                     transition: opacity 0.5s linear;
                 }
 
@@ -80,7 +84,6 @@
             position: absolute;
             top: -4px;
             right: -4px;
-            opacity: 0;
             transition: opacity 0.5s linear;
             .ribbon-green {
                 //font: bold 15px Sans-Serif;
@@ -136,13 +139,16 @@
     .exercise.unsolved {
         .compile {
             button {
-                opacity: 0;
+	        opacity: 0;
             }
         }
         input {
             color: $input-unsolved;
             border-bottom: 1px solid $input-unsolved;
             -webkit-animation: underliner_unsolved 2s linear infinite;
+        }
+        .ribbon-wrapper {
+	    opacity: 0;
         }
         .log {
             max-height: 0;
@@ -155,11 +161,14 @@
                 opacity: 1;
             }
         }
+	.ribbon-wrapper {
+	    opacity: 0;
+	}
         .log {
             max-height: 0;
         }
     }
-    
+
     .exercise.evaluating {
         .compile {
             button {
@@ -183,6 +192,9 @@
                 animation: progress-bar-stripes 2s linear infinite;
             }
         }
+        .ribbon-wrapper {
+	    opacity: 0;
+        }
         .log {
             max-height: 0;
         }
@@ -200,7 +212,7 @@
             -webkit-animation: underliner_errored 2s linear infinite;
         }
         .ribbon-wrapper {
-            opacity: 0;
+	    opacity: 0;
         }
         .log {
             max-height: 40px;
@@ -210,7 +222,7 @@
     .exercise.solved {
         .compile {
             button {
-                opacity: 1;
+                opacity: 0;
             }
         }
         input {
@@ -219,7 +231,7 @@
             -webkit-animation: underliner_solved 8s linear infinite;
         }
         .ribbon-wrapper {
-            opacity: 1;
+	    opacity: 1;
         }
         .log {
             max-height: 0;
@@ -245,7 +257,7 @@
             left: 30px;
             right: 0;
         }
-        
+
         @media (min-width: $screen-sm-min) {
             float: left;
         }
@@ -273,9 +285,10 @@
             img {
                 width: 24px;
                 height: auto;
+							  @include border-radius(200px);
             }
         }
-        
+
         &:last-child {
 
             border-top: 1px solid $line-divider;
@@ -284,7 +297,7 @@
                 bottom: 18px;
                 left: 30px;
             }
-            
+
             @media (min-width: $screen-sm-min) {
                 float: right;
                 border-top: none;

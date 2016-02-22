@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-exercise-compiler
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises
 package compiler
 
@@ -99,23 +104,43 @@ case class Compiler() {
       qualifiedMethod = internal.symbolToPath(symbol).mkString(".")
     )
 
-    // keeping this, as it's very useful for debugging
-    // TODO: properly send this output to SBT?
+    def oneline(msg: String) = {
+      val msg0 = msg.lines.mkString(s"${Console.BLUE}\\n${Console.RESET}")
+      // there's a chance that we could put elipses over part of the escaped
+      // newline sequence... but oh well
+      if (msg0.length <= 100) msg0
+      else s"${msg0.take(97)}${Console.BLUE}...${Console.RESET}"
+    }
+
     def dump(libraryInfo: LibraryInfo) {
+      println(s"Found library ${libraryInfo.comment.name}")
+      println(s" description: ${oneline(libraryInfo.comment.description)}")
+      libraryInfo.sections.foreach { sectionInfo ⇒
+        println(s" with section ${sectionInfo.comment.name}")
+        println(s"  description: ${oneline(sectionInfo.comment.description)}")
+        sectionInfo.exercises.foreach { exerciseInfo ⇒
+          println(s"  with exercise ${exerciseInfo.comment.name}")
+          println(s"   description: ${exerciseInfo.comment.description.map(oneline)}")
+        }
+      }
+    }
+
+    // leaving this around, for debugging
+    def debugDump(libraryInfo: LibraryInfo) {
       println("~ library")
       println(s" • symbol        ${libraryInfo.symbol}")
       println(s" - name          ${libraryInfo.comment.name}")
-      println(s" - description   ${libraryInfo.comment.description}")
+      println(s" - description   ${oneline(libraryInfo.comment.description)}")
       libraryInfo.sections.foreach { sectionInfo ⇒
         println(" ~ section")
         println(s"  • symbol        ${sectionInfo.symbol}")
         println(s"  - name          ${sectionInfo.comment.name}")
-        println(s"  - description   ${sectionInfo.comment.description}")
+        println(s"  - description   ${oneline(sectionInfo.comment.description)}")
         sectionInfo.exercises.foreach { exerciseInfo ⇒
           println("  ~ exercise")
           println(s"   • symbol        ${exerciseInfo.symbol}")
           println(s"   - name          ${exerciseInfo.comment.name}")
-          println(s"   - description   ${exerciseInfo.comment.description}")
+          println(s"   - description   ${exerciseInfo.comment.description.map(oneline)}")
         }
       }
     }
@@ -132,8 +157,8 @@ case class Compiler() {
                 treeGen.makeExercise(
                   name = exerciseInfo.comment.name,
                   description = exerciseInfo.comment.description,
-                  code = Some(exerciseInfo.code), // TODO: remove wrapper
-                  qualifiedMethod = Some(exerciseInfo.qualifiedMethod), // TODO: remove wrapper
+                  code = exerciseInfo.code,
+                  qualifiedMethod = exerciseInfo.qualifiedMethod,
                   explanation = exerciseInfo.comment.explanation
                 )
               }.unzip
@@ -141,7 +166,7 @@ case class Compiler() {
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
               name = sectionInfo.comment.name,
-              description = Some(sectionInfo.comment.description),
+              description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms
             )
 
@@ -163,6 +188,10 @@ case class Compiler() {
     }
 
     maybeMakeLibraryInfo(library)
+      .map { info ⇒
+        dump(info)
+        info
+      }
       .map(generateTree)
       .map { case (TermName(kname), v) ⇒ s"$targetPackage.$kname" → showCode(v) }
 

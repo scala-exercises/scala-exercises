@@ -1,19 +1,21 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.utils
 
-import play.api.{ Application, Play }
-import play.api.http.{ HeaderNames, MimeTypes }
-import play.api.mvc.{ Action, Controller, Results }
-import play.api.libs.ws._
-import scala.concurrent.ExecutionContext.Implicits.global
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters._
-
-import com.fortysevendeg.exercises.models._
-import com.fortysevendeg.exercises.services.free.UserOps
-import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.exercises.services._
-
-import doobie.imports._
 import cats.data.Xor
+import com.fortysevendeg.exercises.persistence.domain.UserCreation
+import com.fortysevendeg.exercises.persistence.repositories.UserRepository
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
+import doobie.imports._
+import play.api.http.{ HeaderNames, MimeTypes }
+import play.api.libs.ws._
+import play.api.mvc.{ Action, Controller, Results }
+import play.api.{ Application, Play }
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 
@@ -33,8 +35,9 @@ object OAuth2 {
 class OAuth2Controller(
     implicit
     T:  Transactor[Task],
-    ws: WSClient
-) extends Controller {
+    ws: WSClient,
+    UR: UserRepository
+) extends Controller with ProdInterpreters {
 
   import OAuth2._
 
@@ -75,19 +78,18 @@ class OAuth2Controller(
   }
 
   def success() = Action.async { request ⇒
-    request.session.get("oauth-token").fold(Future.successful(Unauthorized("No way Jose"))) { authToken ⇒
+    request.session.get("oauth-token").fold(Future.successful(Unauthorized("Unauthorized"))) { authToken ⇒
       ws.url("https://api.github.com/user").
         withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
-
           val login = (response.json \ "login").as[String]
-          val name = (response.json \ "name").as[String]
+          val name = (response.json \ "name").asOpt[String]
           val githubId = (response.json \ "id").as[Long]
           val avatarUrl = (response.json \ "avatar_url").as[String]
           val htmlUrl = (response.json \ "html_url").as[String]
-          val email = (response.json \ "email").as[String]
+          val email = (response.json \ "email").asOpt[String]
 
-          UserDoobieStore.getOrCreate(
+          UR.getOrCreate(
             UserCreation.Request(
               login,
               name,
@@ -97,7 +99,7 @@ class OAuth2Controller(
               email
             )
           ).transact(T).run match {
-              case Xor.Right(_) ⇒ Redirect("/").withSession("oauth-token" → authToken, "user" → login)
+              case Xor.Right(_) ⇒ Redirect(request.headers.get("referer").getOrElse("/")).withSession("oauth-token" → authToken, "user" → login)
               case Xor.Left(_)  ⇒ InternalServerError("Failed to save user information")
             }
 

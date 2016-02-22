@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-exercise-compiler
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises
 package compiler
 
@@ -40,71 +45,19 @@ object DocParser extends DocRendering {
     )
 
   case class ParsedExerciseComment(
-    name:        Option[String],
+    name:        String,
     description: Option[String],
     explanation: Option[String]
   )
 
   def parseExerciseDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedExerciseComment] =
-    Xor right ParsedExerciseComment(
-      name = renderSummary(comment.comment).toOption,
+    for {
+      name ← renderSummary(comment.comment)
+    } yield ParsedExerciseComment(
+      name = name,
       description = renderComment(comment.comment).toOption,
       explanation = None
     )
-
-  // ~ BEGIN
-  // The following methods are strongly based off of code in
-  // scala.tools.nsc.util.DocStrings. I chose to copy the methods here
-  // so adjustments could be made for our purposes. A bastardization, of sorts.
-
-  // Adjusted from DocStrings.skipToEol
-  private def skipToEol(str: String, start: Int): Int =
-    if (start + 2 < str.length && (str charAt start) == '/' && (str charAt (start + 1)) == '*' && (str charAt (start + 2)) == '*') start + 3
-    else if (start + 1 < str.length && (str charAt start) == '*' && (str charAt (start + 1)) == '/') start
-    else if (start < str.length && (str charAt start) != '\n') skipToEol(str, start + 1)
-    else start
-
-  // Our own creation
-  private def trimTrailingWhitespace(str: String, start: Int, end: Int): Int = {
-    if (end > start && isWhitespace(str charAt (end - 1))) trimTrailingWhitespace(str, start, end - 1)
-    else end
-  }
-
-  // Verbatim copy of DocStrings.skipLineLead
-  private def skipLineLead(str: String, start: Int): Int =
-    if (start == str.length) start
-    else {
-      val idx = skipWhitespace(str, start + 1)
-      if (idx < str.length && (str charAt idx) == '*') skipWhitespace(str, idx + 1)
-      else if (idx + 2 < str.length && (str charAt idx) == '/' && (str charAt (idx + 1)) == '*' && (str charAt (idx + 2)) == '*')
-        skipWhitespace(str, idx + 3)
-      else idx
-    }
-
-  // Verbatim copy of DocStrings.skipWhitespace
-  private def skipWhitespace(str: String, start: Int): Int =
-    if (start < str.length && isWhitespace(str charAt start)) skipWhitespace(str, start + 1)
-    else start
-
-  // ~ END
-
-  private[compiler] def cleanLines(lines: List[String]): List[String] = {
-    lines.map { line ⇒
-      val ll = skipLineLead(line, -1)
-      val le0 = skipToEol(line, ll)
-      val le1 = trimTrailingWhitespace(line, ll, le0)
-      line.substring(ll, le1)
-    }
-      .dropWhile(_.isEmpty)
-      .reverse
-      .dropWhile(_.isEmpty)
-      .dropWhile(_ == "/")
-      .dropWhile(_.isEmpty)
-      .reverse
-  }
-
-  private[compiler] def cleanLines(blob: String): List[String] =
-    cleanLines(blob.lines.toList)
 
 }
 

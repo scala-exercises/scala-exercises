@@ -1,7 +1,11 @@
+/*
+ * scala-exercises-client
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package utils
 
 import org.scalajs.dom.ext.KeyCode
-
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
@@ -9,8 +13,9 @@ import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
 import shared.IO
 
 import cats.data.OptionT
-import cats.syntax.option._
 import cats.std.list._
+import cats.std.option._
+import cats.syntax.option._
 import cats.syntax.traverse._
 
 object DomHandler {
@@ -53,6 +58,10 @@ object DomHandler {
     _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
   } yield ()
 
+  /** Shows modal for signing up
+    */
+  def showSignUpModal: IO[Unit] = io($("#mustSignUp").modal("show"))
+
   def attachKeyUpHandler(
     input:          HTMLInputElement,
     onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
@@ -62,7 +71,7 @@ object DomHandler {
       (for {
         _ ← OptionT(setInputWidth(input) map (_.some))
         methodName ← OptionT(io(methodParent(input)))
-        exercise ← OptionT(findExerciseByMethod(methodName))
+        exercise ← OptionT(io(findExerciseByMethod(methodName)))
         inputsValues = getInputsValues(exercise)
         _ ← OptionT((e.keyCode match {
           case KeyCode.enter ⇒ onEnterPressed(methodName)
@@ -85,10 +94,8 @@ object DomHandler {
     })
   }
 
-  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] = for {
-    exercises ← allExercises
-    _ ← exercises.map(attachClickHandler(_, onClick)).sequence
-  } yield ()
+  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] =
+    allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ ⇒ ())
 
   def attachClickHandler(exercise: HTMLElement, onClick: String ⇒ IO[Unit]): IO[Unit] = io {
     $(exercise).find(".compile button").click((e: dom.Event) ⇒ {
@@ -103,9 +110,9 @@ object DomHandler {
     blocks ← getCodeBlocks
   } yield blocks.map(code ⇒ code → replaceInputByRes(getTextInCode(code)))
 
-  val resAssert = """(?s)\((res[0-9]*)\)""".r
+  val resAssert = """(?s)(res[0-9]*)""".r
 
-  def allExercises: IO[List[HTMLDivElement]] = io {
+  def allExercises: List[HTMLDivElement] = {
     ($(".exercise").divs filter isMethodDefined).toList
   }
 
@@ -113,11 +120,16 @@ object DomHandler {
 
   def isMethodDefined(e: HTMLElement): Boolean = getMethodAttr(e).nonEmpty
 
-  def getLibrary: IO[String] = io { $("body").attr("data-library").getOrElse("") }
+  def library: Option[String] = $("body").attr("data-library").toOption
 
-  def getSection: IO[String] = io { $("body").attr("data-section").getOrElse("") }
+  def section: Option[String] = $("body").attr("data-section").toOption
 
-  def getMethodsList: IO[List[String]] = allExercises.map(_.map(getMethodAttr))
+  def libraryAndSection: Option[(String, String)] = for {
+    lib ← library
+    sec ← section
+  } yield (lib, sec)
+
+  def methods: List[String] = allExercises.map(getMethodAttr(_))
 
   def methodName(e: HTMLElement): Option[String] = Option(getMethodAttr(e)) filter (_.nonEmpty)
 
@@ -125,9 +137,11 @@ object DomHandler {
 
   def allInputs: IO[List[HTMLInputElement]] = io { $(".exercise-code>input").inputs.toList }
 
-  def findExerciseByMethod(method: String): IO[Option[HTMLElement]] = for {
-    exercises ← allExercises
-  } yield exercises.find(methodName(_) == Option(method))
+  def inputs(el: HTMLElement): List[HTMLInputElement] = $(el).find("input").inputs.toList
+
+  def findExerciseByMethod(method: String): Option[HTMLElement] = {
+    allExercises.find(methodName(_) == Option(method))
+  }
 
   def getInputsValues(exercise: HTMLElement): Seq[String] = inputsInExercise(exercise).map(_.value)
 
@@ -137,9 +151,16 @@ object DomHandler {
 
   def getTextInCode(code: HTMLElement): String = $(code).text
 
-  def replaceInputByRes(text: String): String = resAssert.replaceAllIn(text, """(<input type="text" data-res="$1"/>)""")
+  def replaceInputByRes(text: String): String = resAssert.replaceAllIn(text, """<input type="text" data-res="$1"/>""")
 
   def getInputLength(input: HTMLInputElement): Int = $(input).value.toString.length
+
+  def isLogged: Boolean = $("#loggedUser").length > 0
+
+  def setInputValue(input: HTMLInputElement, v: String): IO[Unit] = for {
+    _ ← io { $(input) `val` (v) }
+    _ ← setInputWidth(input)
+  } yield ()
 
   def inputSize(length: Int): Double = length match {
     case 0 ⇒ 12d
@@ -161,5 +182,12 @@ object DomHandler {
     def get[A <: dom.Element]: A = j.get().asInstanceOf[A]
 
   }
+
+  @js.native
+  trait BootstrapModal extends JQuery {
+    def modal(action: String): BootstrapModal = js.native
+  }
+
+  implicit def jQueryToModal(jq: JQuery): BootstrapModal = jq.asInstanceOf[BootstrapModal]
 
 }

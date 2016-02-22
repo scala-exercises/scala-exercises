@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises.controllers
 
 import shared._
@@ -10,6 +15,10 @@ trait JsonFormats {
   implicit val sectionWrites: Writes[Section] = Json.writes[Section]
 
   implicit val libraryWrites: Writes[Library] = Json.writes[Library]
+
+  implicit val librarySectionExerciseWrites: Writes[LibrarySectionExercise] = Json.writes[LibrarySectionExercise]
+
+  implicit val librarySectionArgsWrites: Writes[LibrarySectionArgs] = Json.writes[LibrarySectionArgs]
 
   implicit val exerciseEvaluationReads: Reads[ExerciseEvaluation] = Json.reads[ExerciseEvaluation]
 

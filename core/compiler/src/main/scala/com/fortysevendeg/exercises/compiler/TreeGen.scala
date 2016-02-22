@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-exercise-compiler
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package com.fortysevendeg.exercises
 package compiler
 
@@ -13,8 +18,8 @@ case class TreeGen[U <: Universe](
   import u._
 
   def makeExercise(
-    name: Option[String], description: Option[String],
-    code: Option[String], qualifiedMethod: Option[String],
+    name: String, description: Option[String],
+    code: String, qualifiedMethod: String,
     explanation: Option[String]
   ) = {
     val term = makeTermName("Exercise", name)
@@ -29,7 +34,7 @@ case class TreeGen[U <: Universe](
   }
 
   def makeSection(
-    name: String, description: Option[String],
+    name: String, description: String,
     exerciseTerms: List[TermName]
   ) = {
     val term = makeTermName("Section", name)

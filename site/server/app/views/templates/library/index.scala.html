@@ -1,5 +1,5 @@
-@(library: shared.Library, section: shared.Section)(implicit request: RequestHeader)
-@import play.api.Play
+@(library: shared.Library, section: shared.Section, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
 <!DOCTYPE html>
@@ -118,6 +118,24 @@
         </div>
       </div>
     </div>
+
+      <!-- Modal -->
+    <div class="modal fade" id="mustSignUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 class="modal-title" id="myModalLabel">Sign up</h3>
+          </div>
+          <div class="modal-body">
+            <p class="text-center">
+              <a href="@redirectUrl" class="btn btn-info"><i class="fa fa-github"></i> Login with GitHub</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <header class="navbar navbar-inverse navbar-fixed-top" style="background-color: @library.color;" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -127,28 +145,20 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="#" class="navbar-brand">
+          <a href="/" class="navbar-brand">
             <svg viewBox="0 0 34 22" width="34" height="22">
               <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand")"/>
             </svg>
-            <span>Scala Exercises</span>
+            <span>Scala Exercises / <span class="section-name">@library.name</span> </span>
           </a>
         </div>
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="http://avatars3.githubusercontent.com/u/315070" alt=""> Rafa Paradela
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="#">View on GitHub</a>
-                </li>
-                <li><a href="#">Logout</a>
-                </li>
-              </ul>
-            </li>
+          @user match {
+            case Some(u) => { @templates.base.userInfo(u) }
+            case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
+          }
           </ul>
         </div>
           <!--.nav-collapse -->
@@ -163,8 +173,8 @@
             <h3>Categories</h3>
           </li>
 
-          @for((sectionName, index) <- library.sectionNames.zipWithIndex) {
-            @templates.library.sectionRow(index, sectionName, library.color, sectionName == section.name)
+          @for(sectionName <- library.sectionNames) {
+            @templates.library.sectionRow(sectionName, library.color, sectionName == section.name)
           }
 
         </ul>
@@ -215,13 +225,10 @@
         </div>
 
       </section>
-      
-      @templates.footer("light")
-      
+      @templates.library.footer()
     </div>
+      
       <!-- JS -->
-    <script src="@routes.Assets.at("lib/jquery/jquery.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("lib/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/highlight.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/languages/scala.min.js")" type="text/javascript"></script>
     <script src="@com.fortysevendeg.exercises.controllers.routes.ApplicationController.javascriptRoutes" type="text/javascript"></script>

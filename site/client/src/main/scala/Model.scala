@@ -1,3 +1,8 @@
+/*
+ * scala-exercises-client
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package model
 
 sealed trait ExerciseState
@@ -38,7 +43,7 @@ object Exercises {
     })
 
   def updateByMethod(s: State, method: String, args: Seq[String]): State =
-    applyByMethod(s, method, _.copy(arguments = args))
+    applyByMethod(s, method, _.copy(arguments = args, state = Unsolved))
 
   def evaluate(s: State, method: String): State = findByMethod(s, method) match {
     case Some(exercise) if exercise.canBeCompiled ⇒ applyByMethod(s, method, _.copy(state = Evaluating))
@@ -51,4 +56,3 @@ object Exercises {
   def setAsErrored(s: State, method: String): State =
     applyByMethod(s, method, _.copy(state = Errored))
 }
-

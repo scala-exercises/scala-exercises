@@ -1,3 +1,7 @@
+/*
+ * scala-exercises-sbt-exercise
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
 
 package com.fortysevendeg.exercises
 package sbtexercise
@@ -5,9 +9,12 @@ package sbtexercise
 import scala.language.implicitConversions
 import scala.language.reflectiveCalls
 
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Codec
 import scala.util.{ Try, Success, Failure }
 import java.io.File
+import java.io.OutputStream
+import java.io.PrintStream
 import java.net.URLClassLoader
 
 import sbt.{ `package` ⇒ _, _ }
@@ -66,6 +73,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       Defaults.configTasks ++ Seq(
 
       fork := false,
+
+      products := {
+        products.value ++
+        (products in CompileExercisesSource).value ++
+        (products in CompileMain).value
+      },
 
       // disable any user defined source files for this scope as
       // we only want to compile the generated files
@@ -165,12 +178,16 @@ object ExerciseCompilerPlugin extends AutoPlugin {
         val sourceCodes = (libraryNames ++ sectionNames).toSet
           .flatMap(analysisIn.relations.definesClass)
           .map(IO.read(_))
-
-        compiler.compile(
-          library = library,
-          sources = sourceCodes.toArray,
-          targetPackage = "defaultLib"
-        ).toList
+        captureStdStreams(
+          fOut = log.info(_: String),
+          fErr = log.error(_: String)
+        ) {
+            compiler.compile(
+              library = library,
+              sources = sourceCodes.toArray,
+              targetPackage = "defaultLib"
+            ).toList
+          }
       } leftMap (e ⇒ e: Err) >>= {
         _ match {
           case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
@@ -219,6 +236,32 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     val resourceFile = dir / "scala-exercises" / "library.47"
     IO.write(resourceFile, qualifiedLibraryInstancies.mkString("\n"))
     Seq(resourceFile)
+  }
+
+  private[this] def captureStdStreams[T](fOut: (String) ⇒ Unit, fErr: (String) ⇒ Unit)(thunk: ⇒ T): T = {
+    val originalOut = System.out
+    val originalErr = System.err
+    System.setOut(new PrintStream(new LineByLineOutputStream(fOut), true))
+    System.setErr(new PrintStream(new LineByLineOutputStream(fErr), true))
+    val res: T = thunk
+    System.setOut(originalOut)
+    System.setErr(originalErr)
+    res
+  }
+
+  private[this] class LineByLineOutputStream(f: (String) ⇒ Unit) extends OutputStream {
+    val ls = System.getProperty("line.separator")
+    val buf = new ArrayBuffer[Byte](200)
+    override def write(b: Int) = if (b != 0) {
+      buf += b.toByte
+    }
+    override def flush() {
+      if (!buf.isEmpty) {
+        val message = new String(buf.toArray)
+        buf.clear()
+        if (message != ls) f(message)
+      }
+    }
   }
 
 }
