@@ -14,6 +14,28 @@ object XorStyle {
     else Xor.right(1.0 / i)
 
   def stringify(d: Double): String = d.toString
+
+  def magic(s: String): Xor[Exception, String] =
+    parse(s).flatMap(reciprocal).map(stringify)
+}
+
+object XorStyleWithAdts {
+  sealed abstract class Error
+  final case class NotANumber(string: String) extends Error
+  final case object NoZeroReciprocal extends Error
+
+  def parse(s: String): Xor[Error, Int] =
+    if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    else Xor.left(NotANumber(s))
+
+  def reciprocal(i: Int): Xor[Error, Double] =
+    if (i == 0) Xor.left(NoZeroReciprocal)
+    else Xor.right(1.0 / i)
+
+  def stringify(d: Double): String = d.toString
+
+  def magic(s: String): Xor[Error, String] =
+    parse(s).flatMap(reciprocal).map(stringify)
 }
 
 /** Xor
@@ -163,6 +185,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *     else 1.0 / i
     *
     *   def stringify(d: Double): String = d.toString
+    *
     * }
     * }}}
     *
@@ -179,6 +202,9 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *     else Xor.right(1.0 / i)
     *
     *   def stringify(d: Double): String = d.toString
+    *
+    *   def magic(s: String): Xor[Exception, String] =
+    *     parse(s).flatMap(reciprocal).map(stringify)
     * }
     * }}}
     *
@@ -192,27 +218,272 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
 
   /** xorComposition
     *
-    * Now, using combinators like `flatMap` and `map`, we can compose our functions together.
-    *
-    * {{{
-    * import XorStyle._
-    *
-    * def magic(s: String): Xor[Exception, String] =
-    *   parse(s).flatMap(reciprocal).map(stringify)
-    * }}}
-    *
-    * Will the following incantations return a `Xor.Right` value?
+    * Now, using combinators like `flatMap` and `map`, we can compose our functions together. Will the following incantations return a `Xor.Right` value?
     *
     */
   def xorComposition(res0: Boolean, res1: Boolean, res2: Boolean) = {
     import XorStyle._
-
-    def magic(s: String): Xor[Exception, String] =
-      parse(s).flatMap(reciprocal).map(stringify)
 
     magic("0").isRight should be (res0)
     magic("1").isRight should be (res1)
     magic("Not a number").isRight should be (res2)
   }
 
+  /**
+    *
+    * With the composite function that we actually care about, we can pass in strings and then pattern
+    * match on the exception. Because `Xor` is a sealed type (often referred to as an algebraic data type,
+    * or ADT), the compiler will complain if we do not check both the `Left` and `Right` case.
+    *
+    * In the following exercise we pattern-match on every case the `Xor` returned by `magic` can be in.
+    * If we leave out any of those clauses the compiler will yell at us, as it should. However,
+    * note the `Xor.Left(_)` clause - the compiler will complain if we leave that out because it knows
+    * that given the type `Xor[Exception, String]`, there can be inhabitants of `Xor.Left` that are not
+    * `NumberFormatException` or `IllegalArgumentException`. However, we "know" by inspection of the source
+    * that those will be the only exceptions thrown, so it seems strange to have to account for other exceptions.
+    * This implies that there is still room to improve.
+    *
+    */
+  def xorExceptions(res0: String) = {
+    import XorStyle._
+
+    val result = magic("123") match {
+      case Xor.Left(_: NumberFormatException)    => "Not a number!"
+      case Xor.Left(_: IllegalArgumentException) => "Can't take reciprocal of 0!"
+      case Xor.Left(_)                           => "Unknown error"
+      case Xor.Right(result)                     => s"Got reciprocal: ${result}"
+    }
+    result should be(res0)
+  }
+
+  /** xorErrorsAsAdts
+    *
+    * Instead of using exceptions as our error value, let's instead enumerate explicitly the things that
+    * can go wrong in our program.
+    *
+    * {{{
+    * object XorStyleWithAdts {
+    *   sealed abstract class Error
+    *   final case class NotANumber(string: String) extends Error
+    *   final case object NoZeroReciprocal extends Error
+    *
+    *   def parse(s: String): Xor[Error, Int] =
+    *     if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    *     else Xor.left(NotANumber(s))
+    *
+    *   def reciprocal(i: Int): Xor[Error, Double] =
+    *     if (i == 0) Xor.left(NoZeroReciprocal)
+    *     else Xor.right(1.0 / i)
+    *
+    *   def stringify(d: Double): String = d.toString
+    *
+    *   def magic(s: String): Xor[Error, String] =
+    *     parse(s).flatMap(reciprocal).map(stringify)
+    * }
+    * }}}
+    *
+    * For our little module, we enumerate any and all errors that can occur. Then, instead of using
+    * exception classes as error values, we use one of the enumerated cases. Now when we pattern
+    * match, we get much nicer matching. Moreover, since `Error` is `sealed`, no outside code can
+    * add additional subtypes which we might fail to handle.
+    *
+    */
+  def xorErrorsAsAdts(res0: String) = {
+    import XorStyleWithAdts._
+
+    val result = magic("123") match {
+      case Xor.Left(NotANumber(_))    => "Not a number!"
+      case Xor.Left(NoZeroReciprocal) => "Can't take reciprocal of 0!"
+      case Xor.Right(result)          => s"Got reciprocal: ${result}"
+    }
+    result should be(res0)
+  }
+
+  /** xorInTheLarge
+    *
+    * = Xor in the small, Xor in the large =
+    *
+    * Once you start using `Xor` for all your error-handling, you may quickly run into an issue where
+    * you need to call into two separate modules which give back separate kinds of errors.
+    *
+    * {{{
+    * sealed abstract class DatabaseError
+    * trait DatabaseValue
+    *
+    * object Database {
+    *   def databaseThings(): Xor[DatabaseError, DatabaseValue] = ???
+    * }
+    *
+    * sealed abstract class ServiceError
+    * trait ServiceValue
+    *
+    * object Service {
+    *   def serviceThings(v: DatabaseValue): Xor[ServiceError, ServiceValue] = ???
+    * }
+    * }}}
+    *
+    * Let's say we have an application that wants to do database things, and then take database
+    * values and do service things. Glancing at the types, it looks like `flatMap` will do it.
+    *
+    * {{{
+    * def doApp = Database.databaseThings().flatMap(Service.serviceThings)
+    * }}}
+    *
+    * This doesn't work! Well, it does, but it gives us `Xor[Object, ServiceValue]` which isn't
+    * particularly useful for us. Now if we inspect the `Left`s, we have no clue what it could be.
+    * The reason this occurs is because the first type parameter in the two `Xor`s are different -
+    * `databaseThings()` can give us a `DatabaseError` whereas `serviceThings()` can give us a
+    * `ServiceError`: two completely unrelated types. Recall that the type parameters of `Xor`
+    * are covariant, so when it sees an `Xor[E1, A1]` and an `Xor[E2, A2]`, it will happily try
+    * to unify the `E1` and `E2` in a `flatMap` call - in our case, the closest common supertype is
+    * `Object`, leaving us with practically no type information to use in our pattern match.
+    *
+    * == Solution 1: Application-wide errors ==
+    *
+    * So clearly in order for us to easily compose `Xor` values, the left type parameter must be the same.
+    * We may then be tempted to make our entire application share an error data type.
+    *
+    * {{{
+    * sealed abstract class AppError
+    * final case object DatabaseError1 extends AppError
+    * final case object DatabaseError2 extends AppError
+    * final case object ServiceError1 extends AppError
+    * final case object ServiceError2 extends AppError
+    *
+    * trait DatabaseValue
+    *
+    * object Database {
+    *   def databaseThings(): Xor[AppError, DatabaseValue] = ???
+    * }
+    *
+    * object Service {
+    *   def serviceThings(v: DatabaseValue): Xor[AppError, ServiceValue] = ???
+    * }
+    *
+    * def doApp = Database.databaseThings().flatMap(Service.serviceThings)
+    * }}}
+    *
+    * This certainly works, or at least it compiles. But consider the case where another module wants to just use
+    * `Database`, and gets an `Xor[AppError, DatabaseValue]` back. Should it want to inspect the errors, it
+    * must inspect **all** the `AppError` cases, even though it was only intended for `Database` to use
+    * `DatabaseError1` or `DatabaseError2`.
+    *
+    * == Solution 2: ADTs all the way down ==
+    *
+    * Instead of lumping all our errors into one big ADT, we can instead keep them local to each module, and have
+    * an application-wide error ADT that wraps each error ADT we need.
+    *
+    * {{{
+    * sealed abstract class DatabaseError
+    * trait DatabaseValue
+    *
+    * object Database {
+    *   def databaseThings(): Xor[DatabaseError, DatabaseValue] = ???
+    * }
+    *
+    * sealed abstract class ServiceError
+    * trait ServiceValue
+    *
+    * object Service {
+    *   def serviceThings(v: DatabaseValue): Xor[ServiceError, ServiceValue] = ???
+    * }
+    *
+    * sealed abstract class AppError
+    * object AppError {
+    *   final case class Database(error: DatabaseError) extends AppError
+    *   final case class Service(error: ServiceError) extends AppError
+    * }
+    * }}}
+    *
+    * Now in our outer application, we can wrap/lift each module-specific error into `AppError` and then
+    * call our combinators as usual. `Xor` provides a convenient method to assist with this, called `Xor.leftMap` -
+    * it can be thought of as the same as `map`, but for the `Left` side.
+    *
+    * {{{
+    * def doApp: Xor[AppError, ServiceValue] =
+    *   Database.databaseThings().leftMap(AppError.Database).
+    *   flatMap(dv => Service.serviceThings(dv).leftMap(AppError.Service))
+    * }}}
+    *
+    * Hurrah! Each module only cares about its own errors as it should be, and more composite modules have their
+    * own error ADT that encapsulates each constituent module's error ADT. Doing this also allows us to take action
+    * on entire classes of errors instead of having to pattern match on each individual one.
+    *
+    * {{{
+    * def awesome =
+    *   doApp match {
+    *     case Xor.Left(AppError.Database(_)) => "something in the database went wrong"
+    *     case Xor.Left(AppError.Service(_))  => "something in the service went wrong"
+    *     case Xor.Right(_)                   => "everything is alright!"
+    *   }
+    * }}}
+    *
+    * Let's review the `leftMap` and `map` methods:
+    *
+    */
+  def xorInTheLarge(res0: Int, res1: String, res2: String) = {
+    val right: String Xor Int = Xor.Right(41)
+    right.map(_ + 1) should be (Xor.Right(res0))
+
+    val left: String Xor Int = Xor.Left("Hello")
+    left.map(_ + 1) should be (Xor.Left(res1))
+    left.leftMap(_.reverse) should be (Xor.Left(res2))
+  }
+
+  /** xorWithExceptions
+    *
+    * There will inevitably come a time when your nice `Xor` code will have to interact with exception-throwing
+    * code. Handling such situations is easy enough.
+    *
+    * {{{
+    * val xor: Xor[NumberFormatException, Int] =
+    *   try {
+    *     Xor.right("abc".toInt)
+    *   } catch {
+    *     case nfe: NumberFormatException => Xor.left(nfe)
+    *   }
+    * }}}
+    *
+    * However, this can get tedious quickly. `Xor` provides a `catchOnly` method on its companion object
+    * that allows you to pass it a function, along with the type of exception you want to catch, and does the
+    * above for you.
+    *
+    * {{{
+    * val xor: Xor[NumberFormatException, Int] =
+    *   Xor.catchOnly[NumberFormatException]("abc".toInt)
+    * }}}
+    *
+    * If you want to catch all (non-fatal) throwables, you can use `catchNonFatal`.
+    *
+    *
+    */
+  def xorWithExceptions(res0: Boolean, res1: Boolean) = {
+    Xor.catchOnly[NumberFormatException]("abc".toInt).isRight should be(res0)
+
+    Xor.catchNonFatal(1 / 0).isLeft should be(res1)
+  }
+
+  /**
+    * = Additional syntax =
+    *
+    * For using Xor's syntax on arbitrary data types, you can import `cats.syntax.xor._`. This will
+    * make possible to use the `left` and `right` methods:
+    *
+    * {{{
+    * import cats.syntax.xor._
+    *
+    * val right: Xor[String, Int] = 7.right[String]
+    *
+    * val left: Xor[String, Int] = "hello 🐈s".left[Int]
+    * }}}
+    *
+    * These method promote values to the `Xor` data type:
+    *
+    */
+  def xorSyntax(res0: Boolean, res1: Boolean) = {
+    import cats.syntax.xor._
+
+    val right: Xor[String, Int] = 42.right[String]
+    right.isRight should be(res0)
+  }
 }
