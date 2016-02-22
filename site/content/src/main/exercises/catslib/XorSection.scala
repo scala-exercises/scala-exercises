@@ -88,7 +88,8 @@ object XorStyle {
   *
   */
 object XorSection extends FlatSpec with Matchers with exercise.Section {
-  /**
+  /** xorMapRightBias
+    *
     * More often than not we want to just bias towards one side and call it a day - by convention,
     * the right side is most often chosen. This is the primary difference between `Xor` and `Either` -
     * `Xor` is right-biased. `Xor` also has some more convenient methods on it, but the most
@@ -105,7 +106,8 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     left.map(_ + 1) should be(Xor.left(res1))
   }
 
-  /**
+  /** xorMonad
+    *
     * Because `Xor` is right-biased, it is possible to define a `Monad` instance for it. You
     * could also define one for `Either` but due to how it's encoded it may seem strange to fix a
     * bias direction despite it intending to be flexible in that regard. The `Monad` instance for
@@ -128,6 +130,8 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *   }
     * }}}
     *
+    * So the `flatMap` method is right-biased:
+    *
     */
   def xorMonad(res0: Int, res1: String) = {
     import cats.data.Xor
@@ -139,7 +143,8 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     left.flatMap(x => Xor.right(x + 1)) should be(Xor.left(res1))
   }
 
-  /**
+  /** xorErrors
+    *
     * = Using `Xor` instead of exceptions =
     *
     * As a running example, we will have a series of functions that will parse a string into an integer,
@@ -177,13 +182,16 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * }
     * }}}
     *
+    * Do these calls return a `Xor.Right` value?
+    *
     */
   def xorStyleParse(res0: Boolean, res1: Boolean) = {
     XorStyle.parse("Not a number").isRight should be(res0)
     XorStyle.parse("2").isRight should be(res1)
   }
 
-  /**
+  /** xorComposition
+    *
     * Now, using combinators like `flatMap` and `map`, we can compose our functions together.
     *
     * {{{
@@ -192,6 +200,8 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * def magic(s: String): Xor[Exception, String] =
     *   parse(s).flatMap(reciprocal).map(stringify)
     * }}}
+    *
+    * Will the following incantations return a `Xor.Right` value?
     *
     */
   def xorComposition(res0: Boolean, res1: Boolean, res2: Boolean) = {
@@ -204,4 +214,5 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     magic("1").isRight should be (res1)
     magic("Not a number").isRight should be (res2)
   }
+
 }
