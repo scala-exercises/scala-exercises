@@ -41,10 +41,10 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     EO.getLibraries.map({ libs ⇒
       val libraries = libs.map(l ⇒ {
         OverallUserProgressItem(
-          l.name,
-          0,
-          l.sections.size,
-          false
+          libraryName = l.name,
+          sections = 0,
+          totalSections = l.sections.size,
+          completed = false
         )
       })
       OverallUserProgress(libraries = libraries)
@@ -61,10 +61,10 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
             .map(_ map (_.sections.size) getOrElse 0)
             .map { total ⇒
               OverallUserProgressItem(
-                libraryName,
-                sections.toInt,
-                total,
-                succeeded && total == sections.toInt
+                libraryName = libraryName,
+                sections = sections.toInt,
+                totalSections = total,
+                completed = succeeded && total == sections.toInt
               )
             }
       }
