@@ -13,6 +13,7 @@ import doobie.util.query.Query
 import doobie.util.update.Update
 import org.specs2.mutable.Specification
 import shared.UserProgress
+import doobie.contrib.postgresql.pgtypes._
 
 class UserProgressQueriesSpec
     extends Specification
