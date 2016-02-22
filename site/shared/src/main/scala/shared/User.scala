@@ -45,6 +45,9 @@ case class LibrarySectionArgs(
 case class SectionInfoItem(sectionName: String, succeeded: Boolean)
 
 case class LibrarySections(
-  libraryName: String,
-  sections:    List[SectionInfoItem]
-)
+    libraryName: String,
+    sections:    List[SectionInfoItem]
+) {
+  def totalSections: Int = sections.size
+  def completedSections: Int = sections.filter(_.succeeded).size
+}
