@@ -5,7 +5,7 @@
 
 package stdlib
 
-/** std lib
+/** StdLib
   *
   * Exercises for basic scala
   */

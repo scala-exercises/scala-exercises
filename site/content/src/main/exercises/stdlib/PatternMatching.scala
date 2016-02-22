@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** Pattern Matching
+/** PatternMatching
   *
   * Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
   */
