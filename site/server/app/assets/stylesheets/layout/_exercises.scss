@@ -17,6 +17,7 @@
 	}
 	.hljs {
 		background: $gray-lighter;
+		min-height: 60px;
 	}
 	.exercise {
 		margin-bottom: 15px;
@@ -24,7 +25,7 @@
 			position: relative;
 			.compile {
 				position: absolute;
-				right: 10px;
+				right: 8px;
 				bottom: 8px;
 				button {
 					transition: opacity 0.5s linear;
@@ -62,47 +63,15 @@
 		.highlight:last-child pre {
 			margin-bottom: 0;
 		}
-		.ribbon-wrapper {
-			width: 85px;
-			height: 88px;
-			overflow: hidden;
+		.bullet-state {
+			width: 10px;
+			height: 10px;
 			position: absolute;
-			top: -4px;
-			right: -4px;
-			transition: opacity 0.5s linear;
-			.ribbon-green {
-				//font: bold 15px Sans-Serif;
-				font-size: $font-size-small;
-				font-weight: 600;
-				color: #333;
-				text-align: center;
-				-webkit-transform: rotate(45deg);
-				-moz-transform: rotate(45deg);
-				-ms-transform: rotate(45deg);
-				-o-transform: rotate(45deg);
-				position: relative;
-				padding: 7px 0;
-				left: -5px;
-				top: 15px;
-				width: 120px;
-				background: $brand-primary;
-				color: #fff;
-			}
-			.ribbon-green:before,
-			.ribbon-green:after {
-				content: "";
-				border-top: 3px solid darken($brand-primary, 10%);
-				border-left: 3px solid transparent;
-				border-right: 3px solid transparent;
-				position: absolute;
-				bottom: -3px;
-			}
-			.ribbon-green:before {
-				left: 0;
-			}
-			.ribbon-green:after {
-				right: 0;
-			}
+			right: 8px;
+			top: 8px;
+			background: #ccc;
+			@include border-radius (100px);
+		}
 		}
 		.log {
 			background-color: $gray-soft;
@@ -142,8 +111,8 @@
 			border-bottom: 1px solid $input-unsolved;
 			-webkit-animation: underliner_unsolved 2s linear infinite;
 		}
-		.ribbon-wrapper {
-			opacity: 0;
+		.bullet-state {
+			background: #E6E6E6;
 		}
 		.log {
 			max-height: 0;
@@ -155,8 +124,8 @@
 				opacity: 1;
 			}
 		}
-		.ribbon-wrapper {
-			opacity: 0;
+		.bullet-state {
+			background: #E6E6E6;
 		}
 		.log {
 			max-height: 0;
@@ -185,8 +154,8 @@
 				animation: progress-bar-stripes 2s linear infinite;
 			}
 		}
-		.ribbon-wrapper {
-			opacity: 0;
+		.bullet-state {
+			background: #FFA726;
 		}
 		.log {
 			max-height: 0;
@@ -203,8 +172,8 @@
 			border-bottom: 1px solid $input-errored;
 			-webkit-animation: underliner_errored 2s linear infinite;
 		}
-		.ribbon-wrapper {
-			opacity: 0;
+		.bullet-state {
+			background: #EF5350;
 		}
 		.log {
 			max-height: 40px;
@@ -221,14 +190,14 @@
 			border-bottom: 1px solid $input-solved;
 			-webkit-animation: underliner_solved 8s linear infinite;
 		}
-		.ribbon-wrapper {
-			opacity: 1;
+		.bullet-state {
+			background: #9CCC65;
 		}
 		.log {
 			max-height: 0;
 		}
 	}
-}
+
 
 .contributors {
 	border-top: 1px solid #EAEAEA;
