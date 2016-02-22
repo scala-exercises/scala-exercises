@@ -23,6 +23,7 @@
 			&:active {
 				text-decoration: none;
 				background: darken($step-bg, 5%);
+				cursor: default;
 			}
 			@media (min-width: $screen-sm-min) {
 				height: 100px;
