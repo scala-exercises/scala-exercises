@@ -1,55 +1,50 @@
 //
 // Code (inline and block)
 // --------------------------------------------------
-
 // Line
 code {
-  color: $gray-dark;
-  background-color: $pre-bg;
+    color: $gray-dark;
+    background-color: $pre-bg;
 }
 
 // Blocks of code
 pre {
-  display: block;
-  padding: $line-height-computed;
+    display: block;
+    padding: $line-height-computed;
+    font-size: $font-size-base;
     margin: {
         top: ($line-height-computed);
         bottom: ($line-height-computed);
         left: 0;
         right: 0;
     }
-  border: none;
-  border-radius: 0;
-
-  .hljs {
-    background-color: $pre-bg;
-  }
-
-  code.exercise-code {
-
-    input {
-      background-color: $pre-bg;
-      font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-      font-size: 12px;
-      text-align: left;
-      line-height: 11px;
-      vertical-align: middle;
-      padding: 2px 0px;
-      margin-left: 4px;
-      margin-right: 4px;
-      border: 0px solid #999;
-      width: 12px;
+    border: none;
+    border-radius: 0;
+    .hljs {
+        background-color: $pre-bg;
     }
-
-    input:hover,
-    input:focus,
-    input:active {
-      outline:none;
+    code.exercise-code {
+        input {
+            background-color: $pre-bg;
+            font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+            font-size: 13px;
+            text-align: left;
+            line-height: 11px;
+            vertical-align: middle;
+            padding: 2px 0px;
+            margin-left: 4px;
+            margin-right: 4px;
+            border: 0px solid #999;
+            width: 12px;
+        }
+        input:hover,
+        input:focus,
+        input:active {
+            outline: none;
+        }
     }
-
-  }
 }
 
 pre.exercise-pre {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }

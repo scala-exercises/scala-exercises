@@ -24,32 +24,31 @@
     @media (min-width: $screen-sm-min) {
         margin-left: -260px;
     }
-    
     ul {
         padding: 0 25px;
         position: absolute;
         width: 260px;
         li {
             display: block;
-						position: relative;
+            position: relative;
             padding: 8px 0;
             span {
-								position: absolute;
-								left: 0;
-								top: 14px;
+                position: absolute;
+                left: 0;
+                top: 14px;
                 width: 8px;
                 height: 8px;
                 background: #E0E0E0;
                 @include border-radius (50px);
-								z-index: 30;
+                z-index: 30;
             }
             .bullet-active {
                 background: $brand-primary;
             }
             a {
-								display: inline-block;
+                display: inline-block;
                 color: $sidebar-link-color;
-								padding-left: 18px;
+                padding-left: 18px;
             }
             &.active,
             &:hover,
@@ -57,7 +56,6 @@
             &:active {
                 a {
                     color: #333;
-                    
                 }
             }
             &:first-child {
@@ -65,7 +63,6 @@
             }
         }
     }
-	
     .sources {
         position: absolute;
         left: 30px;
@@ -78,7 +75,9 @@
         }
     }
     a {
-        &:hover, &:focus, &:active {
+        &:hover,
+        &:focus,
+        &:active {
             text-decoration: none;
             color: $sidebar-link-color-hover;
         }

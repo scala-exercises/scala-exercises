@@ -1,6 +1,5 @@
 // Global
 // -----------------------------------------------------
-
 .navbar-akka {
     background: $brand-primary;
 }
@@ -22,15 +21,13 @@ section {
 }
 
 // Home
-
 .section-name {
-  // TODO: Isra, fill me!	      
+    // TODO: Isra, fill me!	      
 }
 
 .section-description {
     margin-bottom: ($line-height-computed * 2);
     font-size: $font-size-large;
-    
     @media (min-width: $screen-sm-min) {
         margin-bottom: ($line-height-computed * 3);
     }

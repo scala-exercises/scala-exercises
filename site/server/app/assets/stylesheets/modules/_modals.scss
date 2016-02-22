@@ -10,7 +10,7 @@
 }
 
 .modal-dialog {
-	z-index: 1045;
+    z-index: 1045;
 }
 
 .modal-body {
@@ -48,17 +48,16 @@
             }
         }
     }
-	
-	ul.social {
-		margin-top: 30px;
-		li {
-			padding: 0;
-			margin-right: 15px;
-			display: inline-block;
-			border: none;
-			i {
-				font-size: 40px;
-			}
-		}
-	}
+    ul.social {
+        margin-top: 30px;
+        li {
+            padding: 0;
+            margin-right: 15px;
+            display: inline-block;
+            border: none;
+            i {
+                font-size: 40px;
+            }
+        }
+    }
 }
