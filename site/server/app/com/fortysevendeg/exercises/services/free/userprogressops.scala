@@ -33,6 +33,23 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
   def saveUserProgress(userProgress: SaveUserProgress.Request): Free[F, UserProgress] =
     Free.inject[UserProgressOp, F](UpdateUserProgress(userProgress))
 
+  def fetchMaybeUserProgress(user: Option[User]): Free[F, OverallUserProgress] = {
+    user.fold(anonymousUserProgress)(fetchUserProgress(_))
+  }
+
+  private[this] def anonymousUserProgress: Free[F, OverallUserProgress] =
+    EO.getLibraries.map({ libs ⇒
+      val libraries = libs.map(l ⇒ {
+        OverallUserProgressItem(
+          libraryName = l.name,
+          sections = 0,
+          totalSections = l.sections.size,
+          completed = false
+        )
+      })
+      OverallUserProgress(libraries = libraries)
+    })
+
   def fetchUserProgress(user: User): Free[F, OverallUserProgress] = {
     import ConnectionIOOps._
     for {
@@ -44,9 +61,10 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
             .map(_ map (_.sections.size) getOrElse 0)
             .map { total ⇒
               OverallUserProgressItem(
-                libraryName,
-                sections,
-                succeeded && total == sections.toInt
+                libraryName = libraryName,
+                sections = sections.toInt,
+                totalSections = total,
+                completed = succeeded && total == sections.toInt
               )
             }
       }
