@@ -60,7 +60,8 @@ lazy val server = (project in file("server"))
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
-      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
+      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
     testlibs(
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
