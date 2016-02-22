@@ -1,11 +1,9 @@
 // Progress bars
 // -----------------------------------------------------
-
 .content-progres-bar {
     position: relative;
     padding: 13px;
     background: $gray-lighter;
-    
     span {
         position: absolute;
         top: 8px;
@@ -29,13 +27,11 @@
     .content-progres-bar {
         padding: 25px 25px 15px 25px;
         background: none;
-        
         span {
             top: 19px;
             right: 25px;
         }
     }
-    
     .progress {
         max-width: 78%;
     }
