@@ -4,14 +4,12 @@ import org.scalatest._
 
 /** Implicits
   *
-  * Implicits Description
+  * A method with implicit parameters can be applied to arguments just like a normal method. In this case the implicit label has no effect. However, if such a method misses arguments for its implicit parameters, such arguments will be automatically provided.
   */
 object Implicits extends FlatSpec with Matchers with exercise.Section {
 
 
   /** implicitsParametersImplicits
-    *
-    * A method with implicit parameters can be applied to arguments just like a normal method. In this case the implicit label has no effect. However, if such a method misses arguments for its implicit parameters, such arguments will be automatically provided.
     *
     * The actual arguments that are eligible to be passed to an implicit parameter fall into two categories: * First, eligible are all identifiers x that can be accessed at the point of the method call without a prefix and that denote an implicit definition or an implicit parameter. * Second, eligible are also all members of companion modules of the implicit parameter's type that are labeled implicit.
     *
@@ -52,7 +50,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     *
     * Creating a method isOdd for Int, which doesn't exist:
     */
-  def implicitsParametersImplicits(res0: String, res1: String) {
+  def implicitsParametersImplicits(res0: Boolean, res1: Boolean) {
     class KoanIntWrapper(val original: Int) {
       def isOdd = original % 2 != 0
     }
@@ -67,7 +65,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     *
     * Implicits rules can be imported into your scope with an import:
     */
-  def importedImplicits(res0: String, res1: String) {
+  def importedImplicits(res0: Boolean, res1: Boolean) {
     object MyPredef {
 
       class KoanIntWrapper(val original: Int) {
@@ -89,7 +87,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     *
     * Implicits can be used to automatically convert one type to another
     */
-  def convertTypeImplicits(res0: String, res1: String, res2: String, res3: String, res4: String) {
+  def convertTypeImplicits(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean, res4: Boolean) {
     import java.math.BigInteger
     implicit def Int2BigIntegerConvert(value: Int): BigInteger = new BigInteger(value.toString)
 
@@ -109,7 +107,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     *
     * Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:
     */
-  def asDefaultImplicits(res0: String, res1: String) {
+  def asDefaultImplicits(res0: BigDecimal, res1: BigDecimal) {
     def howMuchCanIMake_?(hours: Int)(implicit dollarsPerHour: BigDecimal) = dollarsPerHour * hours
 
     implicit var hourlyRate = BigDecimal(34.00)

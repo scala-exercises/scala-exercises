@@ -4,14 +4,13 @@ import org.scalatest._
 
 /** Pattern Matching
   *
-  * Pattern Matching Description
+  * Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
   */
 object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
 
   /** patternMatchingMechanismPatternMatching
     *
-    * Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
     * Here is a small example which shows how to match against an integer value:
     *
     * {{{
@@ -32,7 +31,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * Pattern matching returns something:
     */
-  def patternMatchingMechanismPatternMatching(res0: String) {
+  def patternMatchingMechanismPatternMatching(res0: Int) {
     val stuff = "blue"
 
     val myStuff = stuff match {
@@ -49,7 +48,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * Pattern matching can return complex somethings:
     */
-  def returnComplexPatternMatching(res0: String, res1: String, res2: String) {
+  def returnComplexPatternMatching(res0: Int, res1: Int, res2: Int) {
     val stuff = "blue"
 
     val myStuff = stuff match {
@@ -158,7 +157,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * A backquote can be used to refer to a method parameter as a stable variable to create a case statement:
     */
-  def stableVariblePatternMatching(res0: String, res1: String, res2: String) {
+  def stableVariblePatternMatching(res0: Boolean, res1: Boolean, res2: Boolean) {
     def patternEquals(i: Int, j: Int) = j match {
       case `i` => true
       case _ => false
@@ -172,7 +171,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * To pattern match against a `List`, the list can be broken out into parts, in this case the head `x` and the tail `xs`. Since the case doesn't terminate in `Nil`, `xs` is interpreted as the rest of the list:
     */
-  def againstListsPatternMatching(res0: String) {
+  def againstListsPatternMatching(res0: Int) {
     val secondElement = List(1, 2, 3) match {
       case x :: xs => xs.head
       case _ => 0
@@ -185,7 +184,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * To obtain the second element you can expand on the pattern. Where `x` is the first element, `y` is the second element, and `xs` is the rest:
     */
-  def againstListsIIPatternMatching(res0: String) {
+  def againstListsIIPatternMatching(res0: Int) {
     val secondElement = List(1, 2, 3) match {
       case x :: y :: xs => y
       case _ => 0
@@ -198,7 +197,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * Same koan as above, but we are pattern matching a list with only one item!
     */
-  def againstListsIIIPatternMatching(res0: String) {
+  def againstListsIIIPatternMatching(res0: Int) {
     val secondElement = List(1) match {
       case x :: y :: xs => y
       case _ => 0
@@ -211,7 +210,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * To pattern match against `List`, you can also establish a pattern match if you know the exact number of elements in a `List`:
     */
-  def againstListsIVPatternMatching(res0: String) {
+  def againstListsIVPatternMatching(res0: Int) {
     val r = List(1, 2, 3) match {
       case x :: y :: Nil => y
       case _ => 0
