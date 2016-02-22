@@ -123,7 +123,10 @@ lazy val content = (project in file("content"))
   .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
-    Seq("org.scalatest" %% "scalatest" % "2.2.4" % CompileExercisesSource) ++
+    Seq(
+      "org.scalatest" %% "scalatest" % "2.2.4" % CompileExercisesSource,
+      "com.chuusai" %% "shapeless" % "2.2.5" % CompileExercisesSource
+    ) ++
     compilelibs(
       "org.scalaz" %% "scalaz-core" % scalazVersion
     )
