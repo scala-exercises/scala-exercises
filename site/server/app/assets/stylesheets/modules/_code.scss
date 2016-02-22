@@ -12,6 +12,7 @@ code {
 pre {
   display: block;
   padding: $line-height-computed;
+	font-size: $font-size-base;
     margin: {
         top: ($line-height-computed);
         bottom: ($line-height-computed);
@@ -30,7 +31,7 @@ pre {
     input {
       background-color: $pre-bg;
       font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-      font-size: 12px;
+      font-size: 13px;
       text-align: left;
       line-height: 11px;
       vertical-align: middle;

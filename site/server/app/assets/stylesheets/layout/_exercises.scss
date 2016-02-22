@@ -15,6 +15,11 @@
     background: #fff;
     line-height: 1.6;
 	
+	p {
+		font-size: floor(($font-size-base * 1.15));
+	}
+	
+	
 	.hljs {
 				background: $gray-lighter;
 			}
