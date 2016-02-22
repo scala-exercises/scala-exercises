@@ -125,7 +125,7 @@ object DomHandler {
     blocks ← getCodeBlocks
   } yield blocks.map(code ⇒ code → replaceInputByRes(getTextInCode(code)))
 
-  val resAssert = """(?s)(res[0-9]*)""".r
+  val resAssert = """(?s)(res\d+)""".r
 
   def allExercises: List[HTMLDivElement] = {
     ($(".exercise").divs filter isMethodDefined).toList
