@@ -72,132 +72,135 @@
 			background: #ccc;
 			@include border-radius (100px);
 		}
-		}
-		.log {
-			background-color: $gray-soft;
-			color: $gray-light;
-			font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-			font-size: 12px;
-			line-height: 30px;
-			vertical-align: middle;
-			padding: 0px 12px;
-			margin-top: 0px;
-			margin-bottom: ($line-height-computed);
-			max-height: 0;
-			overflow: hidden;
-			transition: max-height 0.5s linear;
-		}
 	}
-	.exercise.unsolved {
-		.compile {
-			button {
-				opacity: 0.6;
-			}
-			
-			.btn {
-				&:hover,
-							&:focus,
-							&:active {
-								opacity: 0.6;
-								cursor: not-allowed;
-								background: #fff;
-								border-color: $btn-default-border;
-								box-shadow: none;
-							}
-			}
-		}
-		input {
-			color: $input-unsolved;
-			border-bottom: 1px solid $input-unsolved;
-			-webkit-animation: underliner_unsolved 2s linear infinite;
-		}
-		.bullet-state {
-			background: #E6E6E6;
-		}
-		.log {
-			max-height: 0;
-		}
+	.log {
+		background-color: $gray-soft;
+		color: $gray-light;
+		font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+		font-size: 12px;
+		line-height: 30px;
+		vertical-align: middle;
+		padding: 0px 12px;
+		margin-top: 0px;
+		margin-bottom: ($line-height-computed);
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.5s linear;
 	}
-	.exercise.filled {
-		.compile {
-			button {
-				opacity: 1;
-			}
-		}
-		.bullet-state {
-			background: #E6E6E6;
-		}
-		.log {
-			max-height: 0;
-		}
-	}
-	.exercise.evaluating {
-		.compile {
-			button {
-				opacity: 1;
-				background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -webkit-linear-gradient(top, #f6f5f0, #e1e0dc);
-				background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -moz-linear-gradient(top, #f6f5f0, #e1e0dc);
-				background: -ms-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -ms-linear-gradient(top, #f6f5f0, #e1e0dc);
-				background: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -o-linear-gradient(top, #f6f5f0, #e1e0dc);
-				background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), linear-gradient(top, #f6f5f0, #e1e0dc);
-				-pie-background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), linear-gradient(top, #f6f5f0, #e1e0dc);
-				background-repeat: repeat;
-				-webkit-background-size: 40px 40px, 100% 100%;
-				-moz-background-size: 40px 40px, 100% 100%;
-				-ms-background-size: 40px 40px, 100% 100%;
-				-o-background-size: 40px 40px, 100% 100%;
-				background-size: 40px 40px, 100% 100%;
-				-webkit-animation: progress-bar-stripes 2s linear infinite;
-				-moz-animation: progress-bar-stripes 2s linear infinite;
-				-ms-animation: progress-bar-stripes 2s linear infinite;
-				-o-animation: progress-bar-stripes 2s linear infinite;
-				animation: progress-bar-stripes 2s linear infinite;
-			}
-		}
-		.bullet-state {
-			background: #FFA726;
-		}
-		.log {
-			max-height: 0;
-		}
-	}
-	.exercise.errored {
-		.compile {
-			button {
-				opacity: 1;
-			}
-		}
-		input {
-			color: $input-errored;
-			border-bottom: 1px solid $input-errored;
-			-webkit-animation: underliner_errored 2s linear infinite;
-		}
-		.bullet-state {
-			background: #EF5350;
-		}
-		.log {
-			max-height: 40px;
-		}
-	}
-	.exercise.solved {
-		.compile {
-			button {
-				opacity: 0;
-			}
-		}
-		input {
-			color: $input-solved;
-			border-bottom: 1px solid $input-solved;
-			-webkit-animation: underliner_solved 8s linear infinite;
-		}
-		.bullet-state {
-			background: #9CCC65;
-		}
-		.log {
-			max-height: 0;
-		}
-	}
+}
 
+.exercise.unsolved {
+	.compile {
+		button {
+			opacity: 0.6;
+		}
+		.btn {
+			&:hover,
+			&:focus,
+			&:active {
+				opacity: 0.6;
+				cursor: not-allowed;
+				background: #fff;
+				border-color: $btn-default-border;
+				box-shadow: none;
+			}
+		}
+	}
+	input {
+		color: $input-unsolved;
+		border-bottom: 1px solid $input-unsolved;
+		-webkit-animation: underliner_unsolved 2s linear infinite;
+	}
+	.bullet-state {
+		background: #E6E6E6;
+	}
+	.log {
+		max-height: 0;
+	}
+}
+
+.exercise.filled {
+	.compile {
+		button {
+			opacity: 1;
+		}
+	}
+	.bullet-state {
+		background: #E6E6E6;
+	}
+	.log {
+		max-height: 0;
+	}
+}
+
+.exercise.evaluating {
+	.compile {
+		button {
+			opacity: 1;
+			background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -webkit-linear-gradient(top, #f6f5f0, #e1e0dc);
+			background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -moz-linear-gradient(top, #f6f5f0, #e1e0dc);
+			background: -ms-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -ms-linear-gradient(top, #f6f5f0, #e1e0dc);
+			background: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), -o-linear-gradient(top, #f6f5f0, #e1e0dc);
+			background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), linear-gradient(top, #f6f5f0, #e1e0dc);
+			-pie-background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.6) 75%, transparent 75%, transparent), linear-gradient(top, #f6f5f0, #e1e0dc);
+			background-repeat: repeat;
+			-webkit-background-size: 40px 40px, 100% 100%;
+			-moz-background-size: 40px 40px, 100% 100%;
+			-ms-background-size: 40px 40px, 100% 100%;
+			-o-background-size: 40px 40px, 100% 100%;
+			background-size: 40px 40px, 100% 100%;
+			-webkit-animation: progress-bar-stripes 2s linear infinite;
+			-moz-animation: progress-bar-stripes 2s linear infinite;
+			-ms-animation: progress-bar-stripes 2s linear infinite;
+			-o-animation: progress-bar-stripes 2s linear infinite;
+			animation: progress-bar-stripes 2s linear infinite;
+		}
+	}
+	.bullet-state {
+		background: #FFA726;
+	}
+	.log {
+		max-height: 0;
+	}
+}
+
+.exercise.errored {
+	.compile {
+		button {
+			opacity: 1;
+		}
+	}
+	input {
+		color: $input-errored;
+		border-bottom: 1px solid $input-errored;
+		-webkit-animation: underliner_errored 2s linear infinite;
+	}
+	.bullet-state {
+		background: #EF5350;
+	}
+	.log {
+		max-height: 40px;
+	}
+}
+
+.exercise.solved {
+	.compile {
+		button {
+			opacity: 0;
+		}
+	}
+	input {
+		color: $input-solved;
+		border-bottom: 1px solid $input-solved;
+		-webkit-animation: underliner_solved 8s linear infinite;
+	}
+	.bullet-state {
+		background: #9CCC65;
+	}
+	.log {
+		max-height: 0;
+	}
+}
 
 .contributors {
 	border-top: 1px solid #EAEAEA;
