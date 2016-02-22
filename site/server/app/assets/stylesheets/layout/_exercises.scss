@@ -17,6 +17,8 @@
     }
     .hljs {
         background: $gray-lighter;
+    }
+    .exercise-pre {
         min-height: 60px;
     }
     .exercise {
@@ -155,6 +157,16 @@
             -o-animation: progress-bar-stripes 2s linear infinite;
             animation: progress-bar-stripes 2s linear infinite;
         }
+        
+        .btn {
+            &:hover,
+            &:focus,
+            &:active {
+                border-color: $btn-default-border;
+                box-shadow: none;
+                cursor: not-allowed;
+            }
+        }
     }
     .bullet-state {
         background: #FFA726;
@@ -186,7 +198,7 @@
 .exercise.solved {
     .compile {
         button {
-            opacity: 0;
+            display: none;
         }
     }
     input {
