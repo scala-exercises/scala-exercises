@@ -16,8 +16,7 @@
             @include border-radius(200px);
             &:hover,
             &:focus,
-            &:active
-            {
+            &:active {
                 text-decoration: none;
                 background: darken($step-bg, 5%);
             }
