@@ -32,11 +32,12 @@
 				font-size: ceil(($font-size-base * 2.1));
 				line-height: ($line-height-base * 1.6);
 				border: 16px solid $gray-lighter;
-			
 			}
 		}
-		.bubble { opacity: 0; transition:opacity 0.3s linear;}
-
+		.bubble {
+			opacity: 0;
+			transition: opacity 0.3s linear;
+		}
 		div {
 			> span {
 				position: relative;
@@ -75,11 +76,11 @@
 			border-bottom-color: #fff;
 			border-width: 13px;
 		}
-
-
 	}
 	.step:hover {
-		.bubble { opacity: 1}
+		.bubble {
+			opacity: 1
+		}
 		div {
 			> span {
 				color: $step-title-active;
@@ -93,11 +94,17 @@
 			}
 		}
 	}
-
-
 }
-.steps>div:last-of-type .content-info {left: auto; right:-20px;}
-.steps>div:last-of-type .content-info:after {left: auto; right: 50px;}
+
+.steps>div:last-of-type .content-info {
+	left: auto;
+	right: -20px;
+}
+
+.steps>div:last-of-type .content-info:after {
+	left: auto;
+	right: 50px;
+}
 
 hr {
 	position: absolute;
