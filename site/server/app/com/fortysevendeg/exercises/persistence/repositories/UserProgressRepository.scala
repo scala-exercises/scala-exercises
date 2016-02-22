@@ -11,6 +11,7 @@ import com.fortysevendeg.exercises.persistence.repositories.UserProgressReposito
 import doobie.imports._
 import shared.{ SectionInfoItem, LibrarySectionExercise, User, UserProgress }
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
+import doobie.contrib.postgresql.pgtypes._
 
 case class SectionProgress(libraryName: String, succeeded: Boolean, exerciseList: List[LibrarySectionExercise])
 
@@ -113,8 +114,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     findBySection(user.id, libraryName, sectionName) map {
       list ⇒
         val exercisesList: List[LibrarySectionExercise] = list map { up ⇒
-          val argsList: List[String] = up.args map (_.split("##").toList) getOrElse Nil
-          LibrarySectionExercise(up.method, argsList, up.succeeded)
+          LibrarySectionExercise(up.method, up.args getOrElse Nil, up.succeeded)
         }
         val succeeded = exercisesList match {
           case Nil ⇒ false
@@ -162,8 +162,8 @@ object UserProgressRepository {
   type FindByLibraryParams = (Long, String)
   type FindBySectionParams = (Long, String, String)
   type FindByExerciseVerionParams = (Long, String, String, String, Int)
-  type UpdateParams = (String, String, String, Int, String, Option[String], Boolean, Long)
-  type InsertParams = (Long, String, String, String, Int, String, Option[String], Boolean)
+  type UpdateParams = (String, String, String, Int, String, Option[List[String]], Boolean, Long)
+  type InsertParams = (Long, String, String, String, Int, String, Option[List[String]], Boolean)
 
   //Queries output:
   type FindByLibraryOutput = (String, Boolean)

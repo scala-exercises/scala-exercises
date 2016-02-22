@@ -60,7 +60,7 @@ class ExercisesController(
       method = evaluation.method,
       version = evaluation.version,
       exerciseType = ExerciseType fromString evaluation.exerciseType,
-      args = evaluation.args.headOption map (_ ⇒ evaluation.args.mkString("##")),
+      args = evaluation.args.headOption map (_ ⇒ evaluation.args),
       succeeded = success
     )
 }
