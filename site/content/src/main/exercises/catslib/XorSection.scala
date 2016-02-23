@@ -247,7 +247,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
   def xorExceptions(res0: String) = {
     import XorStyle._
 
-    val result = magic("123") match {
+    val result = magic("2") match {
       case Xor.Left(_: NumberFormatException)    => "Not a number!"
       case Xor.Left(_: IllegalArgumentException) => "Can't take reciprocal of 0!"
       case Xor.Left(_)                           => "Unknown error"
@@ -291,7 +291,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
   def xorErrorsAsAdts(res0: String) = {
     import XorStyleWithAdts._
 
-    val result = magic("123") match {
+    val result = magic("2") match {
       case Xor.Left(NotANumber(_))    => "Not a number!"
       case Xor.Left(NoZeroReciprocal) => "Can't take reciprocal of 0!"
       case Xor.Right(result)          => s"Got reciprocal: ${result}"
@@ -480,7 +480,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * These method promote values to the `Xor` data type:
     *
     */
-  def xorSyntax(res0: Boolean, res1: Boolean) = {
+  def xorSyntax(res0: Boolean) = {
     import cats.syntax.xor._
 
     val right: Xor[String, Int] = 42.right[String]
