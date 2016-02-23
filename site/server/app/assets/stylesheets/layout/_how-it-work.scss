@@ -86,7 +86,7 @@
         }
         @media (max-width: $screen-sm-min) {
             .content-info {
-                top: 50px;
+                top: 40px;
                 width: 280px;
                 padding: 20px;
             }
@@ -116,7 +116,6 @@
             }
         }
     }
-    
     .step:hover {
         .bubble {
             opacity: 1

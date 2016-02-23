@@ -32,6 +32,12 @@
                 button {
                     transition: opacity 0.5s linear;
                 }
+                 
+                i {
+                    margin-right: 4px;
+                    font-size: 10px;
+                }
+                
                 button:hover,
                 button:focus,
                 button:active {
