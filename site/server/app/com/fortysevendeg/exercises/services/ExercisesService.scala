@@ -49,14 +49,13 @@ object ExercisesService extends RuntimeSharedConversions {
   }
 
   def reorderLibraries(topLibNames: List[String], libraries: List[shared.Library]): List[shared.Library] = {
-    val libsByName = libraries.groupBy(_.name)
-    val topLibs = for {
-      name ← topLibNames
-      lib ← libsByName.get(name).getOrElse(Nil)
-    } yield lib
-    val restLibs = libraries.filterNot(topLibs.contains(_))
-
-    topLibs ++ restLibs
+    libraries.sortBy(lib ⇒ {
+      val idx = topLibNames.indexOf(lib.name)
+      if (idx == -1)
+        Integer.MAX_VALUE
+      else
+        idx
+    })
   }
 }
 
