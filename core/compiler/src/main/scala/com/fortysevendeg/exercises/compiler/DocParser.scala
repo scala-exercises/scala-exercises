@@ -102,9 +102,9 @@ sealed trait DocRendering {
     Xor.catchNonFatal(
       ScalaFormatter.format(wrapCode(code))
     ) match {
-      case Xor.Right(result) ⇒ unwrapCode(result)
-      case _                 ⇒ code
-    }
+        case Xor.Right(result) ⇒ unwrapCode(result)
+        case _                 ⇒ code
+      }
   }
 
   def blockToHtml(block: Block)(implicit skipSummary: Boolean): NodeSeq = block match {

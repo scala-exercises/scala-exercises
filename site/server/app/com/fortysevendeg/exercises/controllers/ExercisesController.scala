@@ -41,10 +41,7 @@ class ExercisesController(
         eval.runTask.fold(
           e ⇒ BadRequest(s"Evaluation failed : $e"),
           _.fold(
-            _.fold(
-              e ⇒ BadRequest(s"Compilation error : ${e.getMessage}"),
-              e ⇒ BadRequest(s"Runtime error : ${e.getMessage}")
-            ),
+            msg ⇒ BadRequest(msg),
             v ⇒ Ok(s"Evaluation succeeded : $v")
           )
         )
