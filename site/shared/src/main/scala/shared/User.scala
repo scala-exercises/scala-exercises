@@ -1,7 +1,5 @@
 package shared
 
-// TODO: is any of this actually used/needed by the client js code?
-
 case class User(
   id:         Long,
   login:      String,
@@ -19,8 +17,8 @@ case class UserProgress(
   sectionName:  String,
   method:       String,
   version:      Int,
-  exerciseType: String         = "Other",
-  args:         Option[String],
+  exerciseType: String       = "Other",
+  args:         List[String],
   succeeded:    Boolean
 )
 

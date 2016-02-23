@@ -34,7 +34,7 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     Free.inject[UserProgressOp, F](UpdateUserProgress(userProgress))
 
   def fetchMaybeUserProgress(user: Option[User]): Free[F, OverallUserProgress] = {
-    user.fold(anonymousUserProgress)(fetchUserProgress(_))
+    user.fold(anonymousUserProgress)(fetchUserProgress)
   }
 
   private[this] def anonymousUserProgress: Free[F, OverallUserProgress] =

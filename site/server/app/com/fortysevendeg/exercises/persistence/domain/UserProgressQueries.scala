@@ -24,7 +24,7 @@ object SaveUserProgress {
       method:       String,
       version:      Int,
       exerciseType: ExerciseType,
-      args:         Option[String],
+      args:         List[String],
       succeeded:    Boolean
   ) {
 
