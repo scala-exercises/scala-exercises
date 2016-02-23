@@ -147,7 +147,7 @@ object DomHandler {
 
   def inputsInExercise(exercise: HTMLElement): Seq[HTMLInputElement] = $(exercise).find("input").inputs
 
-  def getCodeBlocks: IO[Seq[HTMLElement]] = io { $("pre code").elements }
+  def getCodeBlocks: IO[Seq[HTMLElement]] = io { $("code.exercise-code").elements }
 
   def getTextInCode(code: HTMLElement): String = $(code).text
 
