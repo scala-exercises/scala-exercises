@@ -28,6 +28,13 @@ trait UserProgressRepository {
     libraryName: String
   ): ConnectionIO[List[FindByLibraryOutput]]
 
+  def completedSectionsByLibrary(
+    userId:      Long,
+    libraryName: String
+  ): ConnectionIO[Int] = for {
+    lib ← findByLibrary(userId, libraryName)
+  } yield lib.filter(_._2).size
+
   def findBySection(userId: Long, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
 
   def findByExerciseVersion(
