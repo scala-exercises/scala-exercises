@@ -12,6 +12,11 @@
     padding: 30px;
     background: #fff;
     line-height: 1.6;
+    h4 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
     p {
         font-size: floor(($font-size-base * 1.15));
     }
