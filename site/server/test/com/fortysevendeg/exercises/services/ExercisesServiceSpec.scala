@@ -9,6 +9,8 @@ import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
 
+import shared._
+
 @RunWith(classOf[JUnitRunner])
 class ExercisesServiceSpec extends Specification {
 
@@ -20,9 +22,47 @@ class ExercisesServiceSpec extends Specification {
   val expectedTestSuccesArgs = List("Chevy", "Camaro", "1978", "120")
   val expectedTestFailedArgs = List("a", "b", "1", "2")
 
-  /*
-  "ExercisesService" should {
+  def library(name: String): Library =
+    Library(name, "", "")
 
+  "ExercisesService" should {
+    "not reorder libraries when there aren't any top libraries" in {
+      val libraries = List(
+        library("A lib"),
+        library("Another lib"),
+        library("Yet another lib")
+      )
+      val topLibraries = List()
+
+      val reordered = ExercisesService.reorderLibraries(topLibraries, libraries).map(_.name)
+
+      reordered must be(libraries.map(_.name))
+    }
+
+    "reorder libraries when there are top libraries" in {
+      val libraries = List(
+        library("A lib"),
+        library("Another lib"),
+        library("Yet another lib")
+      )
+      val topLibraries = List(
+        "Yet another lib",
+        "A lib",
+        "Another lib"
+      )
+
+      val reordered = ExercisesService.reorderLibraries(topLibraries, libraries).map(_.name)
+
+      reordered must be(
+        List(
+          "Yet another lib",
+          "A lib",
+          "Another lib"
+        )
+      )
+    }
+  }
+  /*
     "return at least one library via classpath discovery" in {
       val libraries = ExercisesService.libraries
       libraries must not be empty

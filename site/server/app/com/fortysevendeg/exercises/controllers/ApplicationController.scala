@@ -6,14 +6,17 @@
 package com.fortysevendeg.exercises.controllers
 
 import java.util.UUID
+import scala.collection.JavaConverters._
 
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free._
+import com.fortysevendeg.exercises.services.ExercisesService
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.utils.OAuth2
 import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports._
+import play.api.{ Play, Application }
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -30,12 +33,15 @@ class ApplicationController(
     userProgressOps: UserProgressOps[ExercisesApp],
     T:               Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
+  implicit def application: Application = Play.current
+
+  lazy val topLibraries: List[String] = application.configuration.getStringList("exercises.top_libraries") map (_.asScala.toList) getOrElse Nil
 
   def index = Action.async { implicit request ⇒
     val (redirectUrl, state) = authStatus
 
     val ops = for {
-      libraries ← exerciseOps.getLibraries
+      libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       progress ← userProgressOps.fetchMaybeUserProgress(user)
     } yield (libraries, user, request.session.get("oauth-token"), progress)
