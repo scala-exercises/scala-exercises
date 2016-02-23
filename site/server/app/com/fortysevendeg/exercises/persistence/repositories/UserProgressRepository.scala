@@ -114,7 +114,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
     findBySection(user.id, libraryName, sectionName) map {
       list ⇒
         val exercisesList: List[LibrarySectionExercise] = list map { up ⇒
-          LibrarySectionExercise(up.method, up.args getOrElse Nil, up.succeeded)
+          LibrarySectionExercise(up.method, up.args, up.succeeded)
         }
         val succeeded = exercisesList match {
           case Nil ⇒ false
@@ -162,8 +162,8 @@ object UserProgressRepository {
   type FindByLibraryParams = (Long, String)
   type FindBySectionParams = (Long, String, String)
   type FindByExerciseVerionParams = (Long, String, String, String, Int)
-  type UpdateParams = (String, String, String, Int, String, Option[List[String]], Boolean, Long)
-  type InsertParams = (Long, String, String, String, Int, String, Option[List[String]], Boolean)
+  type UpdateParams = (String, String, String, Int, String, List[String], Boolean, Long)
+  type InsertParams = (Long, String, String, String, Int, String, List[String], Boolean)
 
   //Queries output:
   type FindByLibraryOutput = (String, Boolean)
