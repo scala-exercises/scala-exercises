@@ -95,15 +95,15 @@ sealed trait DocRendering {
     }"""
 
   def unwrapCode(code: String): String = {
-    code.split("\n").drop(1).dropRight(1).mkString("\n").trim
+    code.split("\n").drop(1).dropRight(1).map(_.drop(2)).mkString("\n")
   }
 
   def formatCode(code: String): String = {
     Xor.catchNonFatal(
       ScalaFormatter.format(wrapCode(code))
     ) match {
-      case Xor.Right(result) => unwrapCode(result)
-      case _ => code
+      case Xor.Right(result) ⇒ unwrapCode(result)
+      case _                 ⇒ code
     }
   }
 
