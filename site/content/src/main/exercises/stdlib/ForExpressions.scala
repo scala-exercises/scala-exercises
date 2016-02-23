@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** for_expressions
   *
-  * for_expressions
   */
 object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 

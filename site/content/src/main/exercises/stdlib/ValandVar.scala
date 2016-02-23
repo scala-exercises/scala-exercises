@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** val_and_var
   *
-  * val_and_var
   */
 object ValandVar extends FlatSpec with Matchers with exercise.Section {
 

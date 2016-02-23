@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** case_classes
   *
-  * case_classes
   */
 object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 

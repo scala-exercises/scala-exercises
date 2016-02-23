@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** partial_functions
   *
-  * partial_functions
   */
 object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 

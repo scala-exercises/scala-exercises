@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** enumerations
   *
-  * enumerations
   */
 object Enumerations extends FlatSpec with Matchers with exercise.Section {
 

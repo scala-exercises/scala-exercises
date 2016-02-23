@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** maps
   *
-  * maps
   */
 object Maps extends FlatSpec with Matchers with exercise.Section {
 

@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** byname_parameter
   *
-  * byname_parameter
   */
 object ByNameParameter extends FlatSpec with Matchers with exercise.Section {
 

@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** implicits
   *
-  * implicits
   */
 object Implicits extends FlatSpec with Matchers with exercise.Section {
 

@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** extractors
   *
-  * extractors
   */
 object Extractors extends FlatSpec with Matchers with exercise.Section {
 

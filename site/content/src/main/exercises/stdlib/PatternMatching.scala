@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** pattern_matching
   *
-  * pattern_matching
   */
 object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 

@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** rangeexercises
   *
-  * rangeexercises
   */
 object RangeExercises extends FlatSpec with Matchers with exercise.Section {
 

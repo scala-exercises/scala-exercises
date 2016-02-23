@@ -5,7 +5,6 @@ import org.scalatest._
 
 /** uniform_access_principle
   *
-  * uniform_access_principle
   */
 object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Section {
 

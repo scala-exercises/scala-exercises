@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** higher_order_functions
   *
-  * higher_order_functions
   */
 object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section {
 

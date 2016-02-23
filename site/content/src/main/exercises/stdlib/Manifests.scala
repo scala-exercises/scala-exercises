@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** manifests
   *
-  * manifests
   */
 object Manifests extends FlatSpec with Matchers with exercise.Section {
 
