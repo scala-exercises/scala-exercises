@@ -24,7 +24,9 @@ lazy val compiler = (project in file("compiler"))
     exportJars      := true
   )
   .settings(commonSettings: _*)
-  .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
+  .settings(libraryDependencies ++= Seq(
+    "org.scalariform" %% "scalariform" % "0.1.8"
+  )).settings(libraryDependencies  <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       Dep.scala.compiler(scalaVersion),
       Dep.cats.core)

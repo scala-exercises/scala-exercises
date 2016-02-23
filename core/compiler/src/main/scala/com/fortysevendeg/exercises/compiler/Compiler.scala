@@ -117,7 +117,7 @@ case class Compiler() {
       println(s" description: ${oneline(libraryInfo.comment.description)}")
       libraryInfo.sections.foreach { sectionInfo ⇒
         println(s" with section ${sectionInfo.comment.name}")
-        println(s"  description: ${oneline(sectionInfo.comment.description)}")
+        println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
         sectionInfo.exercises.foreach { exerciseInfo ⇒
           println(s"  with exercise ${exerciseInfo.comment.name}")
           println(s"   description: ${exerciseInfo.comment.description.map(oneline)}")
@@ -135,7 +135,7 @@ case class Compiler() {
         println(" ~ section")
         println(s"  • symbol        ${sectionInfo.symbol}")
         println(s"  - name          ${sectionInfo.comment.name}")
-        println(s"  - description   ${oneline(sectionInfo.comment.description)}")
+        println(s"  - description   ${sectionInfo.comment.description.map(oneline)}")
         sectionInfo.exercises.foreach { exerciseInfo ⇒
           println("  ~ exercise")
           println(s"   • symbol        ${exerciseInfo.symbol}")

@@ -1,7 +1,7 @@
 // How it work
 // -----------------------------------------------------
 #work {
-    padding-bottom: ($padding-large-vertical * 25);
+    padding-bottom: ($padding-large-vertical * 18);
 }
 
 .steps {
@@ -22,7 +22,7 @@
             &:focus,
             &:active {
                 text-decoration: none;
-                background: darken($step-bg, 5%);
+                background: $step-bg;
                 cursor: default;
             }
             @media (min-width: $screen-sm-min) {
@@ -58,8 +58,8 @@
             position: absolute;
             padding: 30px;
             left: -20px;
-            top: 50px;
-            width: 380px;
+            top: 45px;
+            width: 350px;
             background: #fff;
             @include box-shadow(0 1px 0 rgba(0, 0, 0, .05));
         }
@@ -76,6 +76,45 @@
             border-bottom-color: #fff;
             border-width: 13px;
         }
+        span.fourth {
+            .content-info {
+                left: -255px;
+            }
+            .content-info:after {
+                left: 286px;
+            }
+        }
+        @media (max-width: $screen-sm-min) {
+            .content-info {
+                top: 40px;
+                width: 280px;
+                padding: 20px;
+            }
+            span.second {
+                .content-info {
+                    left: -80px;
+                }
+                .content-info:after {
+                    left: 85px;
+                }
+            }
+            span.third {
+                .content-info {
+                    left: -130px;
+                }
+                .content-info:after {
+                    left: 135px;
+                }
+            }
+            span.fourth {
+                .content-info {
+                    left: -210px;
+                }
+                .content-info:after {
+                    left: 234px;
+                }
+            }
+        }
     }
     .step:hover {
         .bubble {
@@ -90,20 +129,10 @@
             background: $step-active-bg;
             &:hover {
                 text-decoration: none;
-                background: darken($step-active-bg, 5%);
+                background: $step-active-bg;
             }
         }
     }
-}
-
-.steps>div:last-of-type .content-info {
-    left: auto;
-    right: -20px;
-}
-
-.steps>div:last-of-type .content-info:after {
-    left: auto;
-    right: 50px;
 }
 
 hr {

@@ -7,6 +7,7 @@ package com.fortysevendeg.exercises
 package compiler
 
 import scala.reflect.internal.Chars.isWhitespace
+import scalariform.formatter.{ ScalaFormatter }
 
 import cats.data.Xor
 import cats.syntax.option._
@@ -32,16 +33,15 @@ object DocParser extends DocRendering {
 
   case class ParsedSectionComment(
     name:        String,
-    description: String
+    description: Option[String]
   )
 
   def parseSectionDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedSectionComment] =
     for {
       name ← renderSummary(comment.comment)
-      description ← renderComment(comment.comment)
     } yield ParsedSectionComment(
       name = name,
-      description = description
+      description = renderComment(comment.comment).toOption
     )
 
   case class ParsedExerciseComment(
@@ -88,6 +88,24 @@ sealed trait DocRendering {
   def bodyToHtml(body: Body)(implicit skipSummary: Boolean): NodeSeq =
     body.blocks flatMap (blockToHtml(_))
 
+  def wrapCode(code: String): String =
+    s"""object Wrapper {
+     $code
+    }"""
+
+  def unwrapCode(code: String): String = {
+    code.split("\n").drop(1).dropRight(1).map(_.drop(2)).mkString("\n")
+  }
+
+  def formatCode(code: String): String = {
+    Xor.catchNonFatal(
+      ScalaFormatter.format(wrapCode(code))
+    ) match {
+        case Xor.Right(result) ⇒ unwrapCode(result)
+        case _                 ⇒ code
+      }
+  }
+
   def blockToHtml(block: Block)(implicit skipSummary: Boolean): NodeSeq = block match {
     case Title(in, 1)                                        ⇒ <h3>{ inlineToHtml(in) }</h3>
     case Title(in, 2)                                        ⇒ <h4>{ inlineToHtml(in) }</h4>
@@ -96,7 +114,7 @@ sealed trait DocRendering {
     case Paragraph(Chain(Summary(in) :: Nil)) if skipSummary ⇒ Nil
     case Paragraph(in)                                       ⇒ <p>{ inlineToHtml(in) }</p>
     case Code(data) ⇒
-      <pre class={ "scala" }><code class={ "scala" }>{ data }</code></pre>
+      <pre class={ "scala" }><code class={ "scala" }>{ formatCode(data) }</code></pre>
     case UnorderedList(items) ⇒
       <ul>{ listItemsToHtml(items) }</ul>
     case OrderedList(items, listStyle) ⇒
