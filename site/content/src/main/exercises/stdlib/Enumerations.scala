@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Enumerations
+/** enumerations
   *
-  * Enumerations Description
+  * enumerations
   */
 object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
@@ -15,7 +15,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     *
     * `Value` assigns a numerical value to fields:
     */
-  def createEnumerationEnumerations(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
+  def createEnumerationEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object Planets extends Enumeration {
       val Mercury = Value
       val Venus = Value
@@ -42,7 +42,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     *
     * You can create an enumeration with your own index and your own Strings, in this exercise we will start with an index of one and use Greek names instead of Roman:
     */
-  def ownIndexEnumerations(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
+  def ownIndexEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object GreekPlanets extends Enumeration {
 
       val Mercury = Value(1, "Hermes")
@@ -71,7 +71,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     *
     * Enumerations can be declared in one line if you are merely setting variables to `Value`:
     */
-  def oneLineEnumerations(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
+  def oneLineEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object Planets extends Enumeration {
       val Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto = Value
     }
@@ -90,7 +90,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     *
     * Enumerations can be declared with a string value only:
     */
-  def stringValueEnumerations(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
+  def stringValueEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object GreekPlanets extends Enumeration {
 
       val Mercury = Value("Hermes")

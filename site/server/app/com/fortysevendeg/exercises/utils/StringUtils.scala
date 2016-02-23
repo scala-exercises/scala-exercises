@@ -23,10 +23,16 @@ object StringUtils {
 
   def camelCaseWithoutSpaces(s: String): String = s.replaceAll("""\s""", "")
 
+  def lowerUnderscoreToHumanReadable(s: String): String =
+    s.replaceAll("_", " ").split(" ").map(_.capitalize).mkString(" ")
+
   implicit class CamelCaseString(s: String) {
     def humanizeCamelCase: String = StringUtils.camelCaseToHumanReadable(s)
 
     def removeSpaces: String = StringUtils.camelCaseWithoutSpaces(s)
+
+    def humanizeUnderscore: String = StringUtils.lowerUnderscoreToHumanReadable(s)
+
   }
 
   object ExerciseType {

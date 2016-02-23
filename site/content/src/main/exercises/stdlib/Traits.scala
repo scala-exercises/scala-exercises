@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Traits
+/** traits
   *
-  * Traits Description
+  * traits
   */
 object Traits extends FlatSpec with Matchers with exercise.Section {
 
@@ -104,7 +104,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     *
     * Traits are polymorphic. Any type can be referred to by another type if related by extension:
     */
-  def polymorphicTraits(res0: String, res1: String, res2: String, res3: String) {
+  def polymorphicTraits(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean) {
     case class Event(name: String)
 
     trait EventListener {
@@ -132,7 +132,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     *
     * Traits can have concrete implementations that can be mixed into concrete classes with its own state:
     */
-  def implementatedTraits(res0: String, res1: String) {
+  def implementatedTraits(res0: Int, res1: Int) {
     trait Logging {
       var logCache = List[String]()
 
@@ -163,6 +163,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
     welder.logCache.size should be(res0)
     baker.logCache.size should be(res1)
+
   }
 
   /** previouslyInstantiatedTraits
@@ -189,6 +190,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
+
   }
 
   /** fromLeftToRightTraits
@@ -221,6 +223,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
+
   }
 
   /** duplicateInstantiationTraits
@@ -253,6 +256,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
+
   }
 
   /** diamondOfDeathTraits
@@ -291,6 +295,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     sb = sb :+ "Created C1"
 
     sb.mkString(";") should be(res0)
+
   }
 
 }

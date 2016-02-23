@@ -24,7 +24,7 @@ object addSize extends Poly2 {
     }
 
 
-/** HeterogenousLists
+/** heterogenous_lists
   *
   * shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
   * 

@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Literal Booleans
+/** literal_booleans
   *
-  * Literal Booleans Description
+  * literal_booleans
   */
 object LiteralBooleans extends FlatSpec with Matchers with exercise.Section {
 
@@ -13,7 +13,7 @@ object LiteralBooleans extends FlatSpec with Matchers with exercise.Section {
     *
     * Boolean literals are either true or false, using the true or false keyword
     */
-  def litealBooleanLiteralBooleans(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
+  def litealBooleanLiteralBooleans(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean, res4: Boolean, res5: Boolean) {
     val a = true
     val b = false
     val c = 1 > 2

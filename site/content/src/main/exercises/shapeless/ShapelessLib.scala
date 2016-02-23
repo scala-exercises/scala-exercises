@@ -6,7 +6,7 @@
 package shapeless
 package exercises
 
-/** Shapeless
+/** shapeless
   *
   * Exercises for shapeless
   */

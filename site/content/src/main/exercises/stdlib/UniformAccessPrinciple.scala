@@ -3,9 +3,9 @@ package stdlib
 import stdlib.UniformAccessPrincipleHelper._
 import org.scalatest._
 
-/** Uniform Access Principle
+/** uniform_access_principle
   *
-  * Uniform Access Principle Description
+  * uniform_access_principle
   */
 object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Section {
 
@@ -34,7 +34,7 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
     * }}}
     * Can access age as parameterless method:
     */
-  def uniformAccessPrincipleUniformAccessPrinciple(res0: String) {
+  def uniformAccessPrincipleUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingMethod(2010, 2003)
     me.age should be(res0)
 
@@ -50,7 +50,7 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
     *
     * Can access age as property:
     */
-  def asPropertyUniformAccessPrinciple(res0: String) {
+  def asPropertyUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingProperty(2010, 2003)
     me.age should be(res0)
   }
@@ -59,7 +59,7 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
     *
     * What happens when I update current year using property
     */
-  def updatingPropertyUniformAccessPrinciple(res0: String) {
+  def updatingPropertyUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingProperty(2010, 2003)
 
     me.currentYear = 2011
@@ -70,7 +70,7 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
     *
     * What happens when I update current year using method:
     */
-  def updateUsingMethodUniformAccessPrinciple(res0: String) {
+  def updateUsingMethodUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingMethod(2010, 2003)
 
     me.currentYear = 2011

@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Higher Order Functions
+/** higher_order_functions
   *
-  * Higher Order Functions Description
+  * higher_order_functions
   */
 object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section {
 
@@ -15,7 +15,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * Scala supports first-class functions, which means you can express functions in function literal syntax, i.e.,` (x: Int) => x + 1`, and that functions can be represented by objects, which are called function values.
     */
-  def meetLamdaHigherOrderFunctions(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String) {
+  def meetLamdaHigherOrderFunctions(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int) {
     def lambda = { x: Int => x + 1 }
     def lambda2 = (x: Int) => x + 1
     val lambda3 = (x: Int) => x + 1
@@ -46,7 +46,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * An anonymous function can also take on a different look by taking out the brackets
     */
-  def differentLookHigherOrderFunctions(res0: String) {
+  def differentLookHigherOrderFunctions(res0: Int) {
     def lambda = (x: Int) => x + 1
     def result = lambda(5)
     result should be(res0)
@@ -62,7 +62,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * Here the only variable used in the function body, `i * 10`, is `i`, which is defined as a parameter to the function.
     */
-  def meetClosureHigherOrderFunctions(res0: String, res1: String) {
+  def meetClosureHigherOrderFunctions(res0: Int, res1: Int) {
     var incrementer = 1
 
     def closure = {
@@ -82,7 +82,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * We can take that closure and throw into a method and it will still hold the environment
     */
-  def holdEnvironmentHigherOrderFunctions(res0: String, res1: String) {
+  def holdEnvironmentHigherOrderFunctions(res0: Int, res1: Int) {
     def summation(x: Int, y: Int => Int) = y(x)
 
     var incrementer = 3
@@ -100,7 +100,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * Function returning another function:
     */
-  def returningFunctionHigherOrderFunctions(res0: String, res1: String, res2: String) {
+  def returningFunctionHigherOrderFunctions(res0: Boolean, res1: Int, res2: Int) {
     def addWithoutSyntaxSugar(x: Int) = {
       new Function1[Int, Int]() {
         def apply(y: Int): Int = x + y
@@ -119,7 +119,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * Function returning another function using an anonymous function:
     */
-  def returningAnonymousFunctionHigherOrderFunctions(res0: String, res1: String, res2: String) {
+  def returningAnonymousFunctionHigherOrderFunctions(res0: Boolean, res1: Int, res2: Int) {
     def addWithSyntaxSugar(x: Int) = (y: Int) => x + y
 
     addWithSyntaxSugar(1).isInstanceOf[Function1[Int, Int]] should be(res0)
@@ -133,7 +133,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * `isInstanceOf` is the same as `instanceof` in java, but in this case the parameter types can be *blanked out* using existential types with a single underline, since parameter type are unknown at runtime.
     */
-  def isInstanceOfMethodHigherOrderFunctions(res0: String) {
+  def isInstanceOfMethodHigherOrderFunctions(res0: Boolean) {
     def addWithSyntaxSugar(x: Int) = (y: Int) => x + y
 
     addWithSyntaxSugar(1).isInstanceOf[Function1[_, _]] should be(res0)

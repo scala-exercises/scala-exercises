@@ -3,7 +3,7 @@ package catslib
 import cats._
 import org.scalatest._
 
-/** Identity
+/** identity
   *
   * The identity monad can be seen as the ambient monad that encodes the
   * effect of having no effect. It is ambient in the sense that plain pure
