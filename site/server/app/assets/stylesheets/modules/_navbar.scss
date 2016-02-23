@@ -23,12 +23,10 @@
 .navbar-nav {
     li {
         > a {
-            
             padding-left: 54px;
             @media (min-width: $screen-sm-min) {
                 padding-left: 15px;
             }
-            
             .fa:before {
                 font-size: 20px;
                 display: inline-block;
@@ -42,7 +40,6 @@
                 width: 28px;
                 height: auto;
                 @include border-radius(200px);
-                
                 @media (min-width: $screen-sm-min) {
                     left: -22px;
                     top: 17px;
