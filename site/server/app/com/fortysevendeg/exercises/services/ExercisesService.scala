@@ -117,7 +117,7 @@ sealed trait RuntimeSharedConversions {
   def convertSection(section: Section) =
     shared.Section(
       name = section.name,
-      description = Option(section.description),
+      description = section.description,
       exercises = section.exercises.map(convertExercise)
     )
 

@@ -33,16 +33,15 @@ object DocParser extends DocRendering {
 
   case class ParsedSectionComment(
     name:        String,
-    description: String
+    description: Option[String]
   )
 
   def parseSectionDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedSectionComment] =
     for {
       name ← renderSummary(comment.comment)
-      description ← renderComment(comment.comment)
     } yield ParsedSectionComment(
       name = name,
-      description = description
+      description = renderComment(comment.comment).toOption
     )
 
   case class ParsedExerciseComment(
