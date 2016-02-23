@@ -19,7 +19,10 @@ import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
 
+import org.scalatest.exceptions.TestFailedException
+
 object ExercisesService extends RuntimeSharedConversions {
+  import MethodEval._
 
   lazy val methodEval = new MethodEval()
 
@@ -42,8 +45,17 @@ object ExercisesService extends RuntimeSharedConversions {
       evaluation.args
     )
     Logger.info(s"evaluation for $evaluation: $res")
+
+    def compileError(ef: EvaluationFailure[_]): String =
+      s"Compilation error: ${ef.foldedException.getMessage}"
+
+    def userError(ee: EvaluationException[_]): String = ee.e match {
+      case _: TestFailedException ⇒ "Assertion error!"
+      case e                      ⇒ s"Runtime error: ${e.getMessage}"
+    }
+
     res.toSuccessXor.bimap(
-      _.bimap(_.foldedException, _.e),
+      _.fold(compileError(_), userError(_)),
       _ ⇒ Unit
     )
   }
