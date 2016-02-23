@@ -18,5 +18,10 @@
     }
     .btn {
         margin-top: 6px;
+        margin-bottom: 30px;
+        
+        @media (min-width: $screen-sm-min) {
+            margin-bottom: 0;
+        }
     }
 }
