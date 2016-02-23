@@ -1,7 +1,6 @@
 package com.fortysevendeg.exercises
 package compiler
 
-//import cats.data.Xor
 import org.scalatest._
 
 class DocParserSpec extends FunSpec with Matchers {
