@@ -18,7 +18,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 
-import shared.User
+import shared._
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
@@ -63,12 +63,32 @@ class ApplicationController(
         libraries ← exerciseOps.getLibraries
         section ← exerciseOps.getSection(libraryName, sectionName)
         user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-      } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"))
+        libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
+      } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"), libProgress)
       ops.runTask match {
-        case Xor.Right((Some(l), Some(s), user, Some(token))) ⇒ Ok(views.html.templates.library.index(l, s, user))
-        case Xor.Right((Some(l), Some(s), user, None)) ⇒ Ok(views.html.templates.library.index(l, s, user, Option(redirectUrl))).withSession("oauth-state" → state)
-        case Xor.Right((Some(l), None, _, _)) ⇒ Redirect(l.sectionNames.head)
-        case _ ⇒ Ok("Section not found")
+        case Xor.Right((Some(l), Some(s), user, Some(token), libProgress)) ⇒ {
+          Ok(
+            views.html.templates.library.index(
+              library = l,
+              section = s,
+              user = user,
+              progress = libProgress
+            )
+          )
+        }
+        case Xor.Right((Some(l), Some(s), user, None, libProgress)) ⇒ {
+          Ok(
+            views.html.templates.library.index(
+              library = l,
+              section = s,
+              user = user,
+              progress = libProgress,
+              redirectUrl = Option(redirectUrl)
+            )
+          ).withSession("oauth-state" → state)
+        }
+        case Xor.Right((Some(l), None, _, _, _)) ⇒ Redirect(l.sectionNames.head)
+        case _                                   ⇒ Ok("Section not found")
       }
     }
   }

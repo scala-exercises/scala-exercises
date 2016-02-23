@@ -72,11 +72,37 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     } yield OverallUserProgress(list)
   }
 
+  def fetchMaybeUserProgressByLibrary(user: Option[User], libraryName: String): Free[F, LibrarySections] = {
+    user.fold(anonymousUserProgressByLibrary(libraryName))(fetchUserProgressByLibrary(_, libraryName))
+  }
+
+  private[this] def anonymousUserProgressByLibrary(libraryName: String): Free[F, LibrarySections] = {
+    EO.getLibrary(libraryName).map(_.map { lib ⇒
+      LibrarySections(
+        libraryName = lib.name,
+        sections = lib.sections.map(s ⇒ {
+          SectionInfoItem(
+            sectionName = s.name,
+            succeeded = false
+          )
+        })
+      )
+    }.getOrElse(LibrarySections(libraryName, Nil)))
+  }
+
   def fetchUserProgressByLibrary(user: User, libraryName: String): Free[F, LibrarySections] = {
     import ConnectionIOOps._
-    UPR.findUserProgressByLibrary(user, libraryName).liftF[F] map { ss ⇒
-      LibrarySections(libraryName, ss)
-    }
+    for {
+      maybeLibrary ← EO.getLibrary(libraryName)
+      sectionProgress ← UPR.findUserProgressByLibrary(user, libraryName).liftF[F]
+      librarySections = maybeLibrary.fold(Nil: List[shared.Section])(_.sections)
+      sections = librarySections.map(s ⇒ {
+        val maybeSectionProgress = sectionProgress.find(_.sectionName == s.name)
+        maybeSectionProgress.getOrElse(
+          SectionInfoItem(sectionName = s.name, succeeded = false)
+        )
+      })
+    } yield LibrarySections(libraryName, sections)
   }
 
   def fetchUserProgressByLibrarySection(
