@@ -54,17 +54,22 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     import ConnectionIOOps._
     for {
       lbs ← UPR.findByUserIdAggregated(user.id).liftF[F]
+      libNames = lbs.map(_._1)
+      completedSectionsByLibrary ← Free.freeMonad[F].sequence(
+        libNames map { name ⇒ UPR.completedSectionsByLibrary(user.id, name).liftF[F] }
+      ).map(counts ⇒ (libNames zip counts).toMap)
       items = lbs map {
-        case (libraryName, sections, succeeded) ⇒
+        case (libraryName, _, succeeded) ⇒
           EO
             .getLibrary(libraryName)
             .map(_ map (_.sections.size) getOrElse 0)
-            .map { total ⇒
+            .map { totalSections ⇒
+              val completedSections = completedSectionsByLibrary.get(libraryName).getOrElse(0)
               OverallUserProgressItem(
                 libraryName = libraryName,
-                sections = sections.toInt,
-                totalSections = total,
-                completed = succeeded && total == sections.toInt
+                sections = completedSections,
+                totalSections = totalSections,
+                completed = succeeded && completedSections == totalSections
               )
             }
       }
