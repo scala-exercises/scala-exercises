@@ -1,0 +1,17 @@
+@(redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+<!-- Modal -->
+<div class="modal fade" id="mustSignUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="myModalLabel">Sign up</h3>
+      </div>
+      <div class="modal-body">
+        <p class="text-center">
+          <a href="@redirectUrl" class="btn btn-info"><i class="fa fa-github"></i> Login with GitHub</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

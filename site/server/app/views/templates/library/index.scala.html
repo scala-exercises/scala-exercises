@@ -26,117 +26,8 @@
   </head>
   <body data-library="@library.name" data-section="@section.name">
 
-      <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
-            </button>
-            <h3 class="modal-title" id="myModalLabel">Users who have contributed to this file</h3>
-          </div>
-          <div class="modal-body">
-            <ul>
-              <li>Commits on Apr 8, 2015</li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-8 col-md-8">
-                    <img src="http://avatars3.githubusercontent.com/u/315070" alt="">
-                    <p>Update Readme.md</p>
-                    <span>remoxcoden authored on 8 apr</span>
-                  </div>
-                  <div class="col-xs-4 col-md-4">
-                    <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-8 col-md-8">
-                    <img src="http://avatars3.githubusercontent.com/u/315070" alt="">
-                    <p>Update Readme.md</p>
-                    <span>remoxcoden authored on 8 apr</span>
-                  </div>
-                  <div class="col-xs-4 col-md-4">
-                    <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-8 col-md-8">
-                    <img src="http://avatars3.githubusercontent.com/u/315070" alt="">
-                    <p>Update Readme.md</p>
-                    <span>remoxcoden authored on 8 apr</span>
-                  </div>
-                  <div class="col-xs-4 col-md-4">
-                    <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-                  </div>
-                </div>
-              </li>
-            </ul>
-            <ul>
-              <li>Commits on Apr 8, 2015</li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-8 col-md-8">
-                    <img src="http://avatars3.githubusercontent.com/u/315070" alt="">
-                    <p>Update Readme.md</p>
-                    <span>remoxcoden authored on 8 apr</span>
-                  </div>
-                  <div class="col-xs-4 col-md-4">
-                    <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-8 col-md-8">
-                    <img src="http://avatars3.githubusercontent.com/u/315070" alt="">
-                    <p>Update Readme.md</p>
-                    <span>remoxcoden authored on 8 apr</span>
-                  </div>
-                  <div class="col-xs-4 col-md-4">
-                    <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="row">
-                  <div class="col-xs-8 col-md-8">
-                    <img src="http://avatars3.githubusercontent.com/u/315070" alt="">
-                    <p>Update Readme.md</p>
-                    <span>remoxcoden authored on 8 apr</span>
-                  </div>
-                  <div class="col-xs-4 col-md-4">
-                    <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
 
-      <!-- Modal -->
-    <div class="modal fade" id="mustSignUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h3 class="modal-title" id="myModalLabel">Sign up</h3>
-          </div>
-          <div class="modal-body">
-            <p class="text-center">
-              <a href="@redirectUrl" class="btn btn-info"><i class="fa fa-github"></i> Login with GitHub</a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <header class="navbar navbar-inverse navbar-fixed-top" style="background-color: @library.color;" role="navigation">
+    <header class="navbar navbar-inverse navbar-fixed-top" style="background-color: @library.color ;" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -174,12 +65,12 @@
           </li>
 
           @for(sectionName <- library.sectionNames) {
-	    @templates.library.sectionRow(
-	      sectionName = sectionName,
-	      color = library.color,
-	      highlight = sectionName == section.name,
-	      completed = progress.sections.find(_.sectionName == sectionName).fold(false)(_.succeeded)
-	    )
+            @templates.library.sectionRow(
+              sectionName = sectionName,
+              color = library.color,
+              highlight = sectionName == section.name,
+              completed = progress.sections.find(_.sectionName == sectionName).fold(false)(_.succeeded)
+            )
           }
 
         </ul>
@@ -209,16 +100,9 @@
               </div>
 
               <div class="contributors clearfix">
-                <ul>
-                  <li><a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i>2 contributors</a>
-                  </li>
-                  <li>
-                    <a data-toggle="tooltip" data-placement="bottom" title="redxoms" href="#"><img src="http://avatars3.githubusercontent.com/u/315070" alt=""></a>
-                  </li>
-                  <li>
-                    <a data-toggle="tooltip" data-placement="bottom" title="jorgegalindocruces" href="#"><img src="http://avatars3.githubusercontent.com/u/315070" alt=""></a>
-                  </li>
-                </ul>
+
+                @templates.library.contributors()
+
                 <ul>
                   <li> <a href="#"><i class="fa fa-pencil"></i>Edit exercises</a>
                   </li>
@@ -232,7 +116,10 @@
       </section>
       @templates.library.footer()
     </div>
-      
+
+    @templates.library.commits_modal()
+    @templates.library.mustsignup_modal(redirectUrl)
+
       <!-- JS -->
     <script src="@routes.Assets.at("lib/highlightjs/highlight.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/languages/scala.min.js")" type="text/javascript"></script>
