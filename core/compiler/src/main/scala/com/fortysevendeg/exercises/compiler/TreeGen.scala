@@ -34,7 +34,7 @@ case class TreeGen[U <: Universe](
   }
 
   def makeSection(
-    name: String, description: String,
+    name: String, description: Option[String],
     exerciseTerms: List[TermName]
   ) = {
     val term = makeTermName("Section", name)
