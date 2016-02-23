@@ -1,25 +1,25 @@
 # --- !Ups
 
 CREATE TABLE "users" (
-    id bigserial primary key,
-    login varchar(255) UNIQUE NOT NULL,
-    name varchar(255),
-    githubId varchar(255) UNIQUE NOT NULL,
-    pictureUrl varchar(255) NOT NULL,
-    githubUrl varchar(255) NOT NULL,
-    email varchar(255)
+    id BIGSERIAL PRIMARY KEY,
+    login VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
+    githubId VARCHAR(255) UNIQUE NOT NULL,
+    pictureUrl VARCHAR(255) NOT NULL,
+    githubUrl VARCHAR(255) NOT NULL,
+    email VARCHAR(255)
 );
 
 CREATE TABLE "userProgress" (
-    id bigserial primary key,
-    userId bigint not null,
-    libraryName varchar(255) not null,
-    sectionName varchar(255) not null,
-    method varchar(255) not null,
-    version int not null,
-    exerciseType varchar(255) not null,
-    args text[],
-    succeeded boolean not null default false,
+    id BIGSERIAL PRIMARY KEY,
+    userId BIGINT NOT NULL,
+    libraryName VARCHAR(255) NOT NULL,
+    sectionName VARCHAR(255) NOT NULL,
+    method VARCHAR(255) NOT NULL,
+    version int NOT NULL,
+    exerciseType VARCHAR(255) NOT NULL,
+    args text[] NOT NULL,
+    succeeded BOOLEAN NOT NULL DEFAULT false,
 FOREIGN KEY (userId) REFERENCES users (id));
 
 # --- !Downs

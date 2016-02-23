@@ -5,7 +5,6 @@
 
 package com.fortysevendeg.exercises.controllers
 
-import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
@@ -64,7 +63,7 @@ class ExercisesController(
       method = evaluation.method,
       version = evaluation.version,
       exerciseType = ExerciseType fromString evaluation.exerciseType,
-      args = evaluation.args.headOption map (_ ⇒ evaluation.args),
+      args = evaluation.args,
       succeeded = success
     )
 }
