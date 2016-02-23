@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Parent Classes
+/** parent_classes
   *
-  * Parent Classes Description
+  * parent_classes
   */
 object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 
@@ -54,7 +54,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * A class can be placed inside an abstract class just like in java:
     */
-  def abstractClassParentClasses(res0: String) {
+  def abstractClassParentClasses(res0: Int) {
     abstract class Soldier(val firstName: String, val lastName: String) {
 
       class Catch(val number: Long) {

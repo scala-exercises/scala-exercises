@@ -3,9 +3,9 @@ package stdlib
 import stdlib.ObjectsHelper._
 import org.scalatest._
 
-/** Objects
+/** objects
   *
-  * Objects Description
+  * objects
   */
 object Objects extends FlatSpec with Matchers with exercise.Section {
 
@@ -35,7 +35,7 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     *
     * Here is proof an object is a singleton, and not a static method in a class
     */
-  def notStaticMethodObjects(res0: String, res1: String) {
+  def notStaticMethodObjects(res0: Boolean, res1: Boolean) {
     object Greeting {
       def english = "Hi"
 
@@ -100,7 +100,7 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     * }}}
     * Try to understand how bullets are decreasing while agents are shooting.
     */
-  def sharingVariablesObjects(res0: String) {
+  def sharingVariablesObjects(res0: Int) {
     val bond = new SecretAgent("James Bond")
     val felix = new SecretAgent("Felix Leitner")
     val jason = new SecretAgent("Jason Bourne")

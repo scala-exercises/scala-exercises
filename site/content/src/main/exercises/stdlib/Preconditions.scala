@@ -3,9 +3,9 @@ package stdlib
 import stdlib.PreconditionsHelper._
 import org.scalatest._
 
-/** Preconditions
+/** preconditions
   *
-  * Preconditions Description
+  * preconditions
   */
 object Preconditions extends FlatSpec with Matchers with exercise.Section {
 
@@ -42,7 +42,7 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     * }}}
     * On precondition violation, intercept expects type of exception thrown. *Instruction: use Intercept to catch the type of exception thrown by an invalid precondition*
     */
-  def preconditionsPreconditions(res0: String) {
+  def preconditionsPreconditions(res0: Int) {
     val myInstance = new WithParameterRequirement("Do you really like my hair?")
     myInstance.myValue should be(res0)
 

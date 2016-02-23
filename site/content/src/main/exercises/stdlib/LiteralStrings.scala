@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Literal Strings
+/** literal_strings
   *
-  * Literal Strings Description
+  * literal_strings
   */
 object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
 
@@ -61,19 +61,16 @@ object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
     a should be(res0)
   }
 
-  //TODO Improve compiler to detect properly multiline literals
-
+  //TODO Support multiline comments
   //  /** multilineLiteralStrings
   //    *
   //    * Multiline String literals are surrounded by three quotation marks.
   //    */
-  //  def multilineLiteralStrings(res0: String) {
+  //  def multilineLiteralStrings(res0: Int) {
   //    val a =
   //      """An apple a day
   //keeps the doctor away"""
   //    a.split('\n').size should be(res0) //a.split('\n').size determines the number of lines
-  //
-  //
   //  }
   //
   //  /** stripMarginLiteralStrings
@@ -95,8 +92,6 @@ object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
   //    * a.stripMargin.split('\n')(1).charAt(0)
   //    * gets the first character of the second line
   //    */
-  //
-  //
   //  }
 
 }

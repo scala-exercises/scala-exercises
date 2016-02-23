@@ -2,18 +2,18 @@ package stdlib
 
 import org.scalatest._
 
-/** Range
+/** rangeexercises
   *
-  * Range Description
+  * rangeexercises
   */
 object RangeExercises extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** upperNotInclusiveRange
+  /** upperNotInclusiveRangeExercises
     *
     * A range's upper bound is not inclusive:
     */
-  def upperNotInclusiveRange(res0: String, res1: String, res2: String) {
+  def upperNotInclusiveRangeExercises(res0: Int, res1: Int, res2: Int) {
     val someNumbers = Range(0, 10)
     val second = someNumbers(1)
     val last = someNumbers.last
@@ -23,22 +23,22 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     last should be(res2)
   }
 
-  /** unitlRange
+  /** unitlRangeExercises
     *
     * Ranges can be specified using 'until'.
     */
-  def unitlRange(res0: String) {
+  def unitlRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 10)
     val otherRange = 0 until 10
 
     (someNumbers == otherRange) should be(res0)
   }
 
-  /** incrementsRange
+  /** incrementsRangeExercises
     *
     * Range can specify a step for an increment:
     */
-  def incrementsRange(res0: String, res1: String, res2: String) {
+  def incrementsRangeExercises(res0: Int, res1: Int, res2: Int) {
     val someNumbers = Range(2, 10, 3)
     val second = someNumbers(1)
     val last = someNumbers.last
@@ -48,32 +48,32 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     last should be(res2)
   }
 
-  /** upperInIncrementRange
+  /** upperInIncrementRangeExercises
     *
     * A range does not include its upper bound, even in a step increment:
     */
-  def upperInIncrementRange(res0: String, res1: String, res2: String) {
+  def upperInIncrementRangeExercises(res0: Boolean, res1: Boolean, res2: Boolean) {
     val someNumbers = Range(0, 34, 2)
     someNumbers.contains(33) should be(res0)
     someNumbers.contains(32) should be(res1)
     someNumbers.contains(34) should be(res2)
   }
 
-  /** specifyUpperRange
+  /** specifyUpperRangeExercises
     *
     * Range can specify to include its upper bound value
     */
-  def specifyUpperRange(res0: String) {
+  def specifyUpperRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 34).inclusive
 
     someNumbers.contains(34) should be(res0)
   }
 
-  /** inclusiveWithToRange
+  /** inclusiveWithToRangeExercises
     *
     * Inclusive ranges can be specified using 'to'.
     */
-  def inclusiveWithToRange(res0: String) {
+  def inclusiveWithToRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 34).inclusive
     val otherRange = 0 to 34
 

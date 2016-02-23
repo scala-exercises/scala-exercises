@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Asserts
+/** asserts
   *
-  * Asserts Description
   */
 object Asserts extends FlatSpec with Matchers with exercise.Section {
 
@@ -13,9 +12,9 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     *
     * ScalaTest makes three assertions available by default in any style trait. You can use:
     *
-    * - `assert` for general assertions;
-    * - `assertResult` to differentiate expected from actual values;
-    * - `intercept` to ensure a bit of code throws an expected exception.
+    *    - `assert` for general assertions;
+    *    - `assertResult` to differentiate expected from actual values;
+    *    - `intercept` to ensure a bit of code throws an expected exception.
     *
     * In any Scala program, you can write assertions by invoking `assert` and passing in a `Boolean` expression:
     *
@@ -43,7 +42,7 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     *
     * Come on, your turn: true and false values can be compared with should matchers
     */
-  def scalaTestAsserts(res0: String) {
+  def scalaTestAsserts(res0: Boolean) {
     true should be(res0)
   }
 
@@ -63,7 +62,7 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     *
     * Sometimes we expect you to fill in the values
     */
-  def valuesAsserts(res0: String) {
+  def valuesAsserts(res0: Int) {
     assert(res0 == 1 + 1)
   }
 

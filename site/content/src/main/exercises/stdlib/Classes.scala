@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Classes
+/** classes
   *
-  * Classes Description
+  * classes
   */
 object Classes extends FlatSpec with Matchers with exercise.Section {
 

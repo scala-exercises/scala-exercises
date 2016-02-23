@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Case Classes
+/** case_classes
   *
-  * Case Classes Description
+  * case_classes
   */
 object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
@@ -92,7 +92,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes have an automatic equals method that works:
     */
-  def caseClassesSupportCaseClasses(res0: String, res1: String, res2: String, res3: String) {
+  def caseClassesSupportCaseClasses(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean) {
     case class Person(first: String, last: String)
 
     val p1 = new Person("Fred", "Jones")
@@ -110,7 +110,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes have an automatic hashcode method that works:
     */
-  def hascodeMethodCaseClasses(res0: String, res1: String) {
+  def hascodeMethodCaseClasses(res0: Boolean, res1: Boolean) {
     case class Person(first: String, last: String)
 
     val p1 = new Person("Fred", "Jones")
@@ -125,7 +125,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes can be created in a convenient way:
     */
-  def creationCaseClasses(res0: String, res1: String, res2: String) {
+  def creationCaseClasses(res0: Boolean, res1: Boolean, res2: Boolean) {
     case class Dog(name: String, breed: String)
 
     val d1 = Dog("Scooby", "Doberman")
@@ -198,7 +198,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes can have default and named parameters:
     */
-  def parametersCaseClasses(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String, res6: String, res7: String, res8: String, res9: String, res10: String, res11: String, res12: String) {
+  def parametersCaseClasses(res0: String, res1: String, res2: Int, res3: String, res4: String, res5: String, res6: Int, res7: String, res8: String, res9: String, res10: Int, res11: String, res12: Boolean) {
     case class Person(first: String, last: String, age: Int = 0, ssn: String = "")
     val p1 = Person("Fred", "Jones", 23, "111-22-3333")
     val p2 = Person("Samantha", "Jones") // note missing age and ssn
@@ -227,7 +227,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes can be disassembled to their constituent parts as a tuple:
     */
-  def asTupleCaseClasses(res0: String, res1: String, res2: String, res3: String) {
+  def asTupleCaseClasses(res0: String, res1: String, res2: Int, res3: String) {
     case class Person(first: String, last: String, age: Int = 0, ssn: String = "")
     val p1 = Person("Fred", "Jones", 23, "111-22-3333")
 
@@ -243,7 +243,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes are Serializable
     */
-  def serializableCaseClasses(res0: String, res1: String) {
+  def serializableCaseClasses(res0: Boolean, res1: Boolean) {
     case class PersonCC(firstName: String, lastName: String)
     val indy = PersonCC("Indiana", "Jones")
 

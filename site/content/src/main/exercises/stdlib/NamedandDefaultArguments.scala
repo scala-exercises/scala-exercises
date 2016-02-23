@@ -3,9 +3,9 @@ package stdlib
 import stdlib.NamedandDefaultArgumentsHelper._
 import org.scalatest._
 
-/** Named and Default Arguments
+/** named_and_default_arguments
   *
-  * Named and Default Arguments Description
+  * named_and_default_arguments
   */
 object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Section {
 
@@ -70,7 +70,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * Can specify arguments in any order if you use their names:
     */
-  def classWithoutParametersNamedandDefaultArguments(res0: String, res1: String, res2: String) {
+  def classWithoutParametersNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithoutClassParameters()
 
     // what happens if you change the order of these parameters (nothing)
@@ -84,7 +84,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * Can default arguments if you leave them off:
     */
-  def defaultArgumentsNamedandDefaultArguments(res0: String, res1: String, res2: String) {
+  def defaultArgumentsNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithoutClassParameters()
     val myColor = me.addColorsWithDefaults(green = 255)
 
@@ -95,7 +95,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * Can access class parameters and specify arguments in any order if you use their names:
     */
-  def anyOrderNamedandDefaultArguments(res0: String, res1: String, res2: String) {
+  def anyOrderNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithClassParameters(40, 50, 60)
     val myColor = me.addColors(green = 50, red = 60, blue = 40)
 
@@ -106,7 +106,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * Can access class parameters and default arguments if you leave them off
     */
-  def accessClassParametersNamedandDefaultArguments(res0: String, res1: String, res2: String) {
+  def accessClassParametersNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithClassParameters(10, 20, 30)
     val myColor = me.addColorsWithDefaults(green = 70)
 
@@ -117,7 +117,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * Can default class parameters and have default arguments too
     */
-  def defaultClassArgumentsNamedandDefaultArguments(res0: String, res1: String, res2: String) {
+  def defaultClassArgumentsNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithClassParametersInClassDefinition()
     val myColor = me.addColorsWithDefaults(green = 70)
 
@@ -128,7 +128,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * Default parameters can be functional too
     */
-  def functionalDefaulParametersNamedandDefaultArguments(res0: String, res1: String) {
+  def functionalDefaulParametersNamedandDefaultArguments(res0: Int, res1: Int) {
     def reduce(a: Int, f: (Int, Int) => Int = _ + _): Int = f(a, a)
 
     reduce(5) should equal(res0)

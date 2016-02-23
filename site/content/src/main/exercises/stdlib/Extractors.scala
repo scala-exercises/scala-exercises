@@ -2,11 +2,10 @@ package stdlib
 
 import org.scalatest._
 
-/** Extractors
+/** extractors
   *
-  * Extractors Description
+  * extractors
   */
-
 object Extractors extends FlatSpec with Matchers with exercise.Section {
 
 
@@ -62,15 +61,13 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     }
 
     result should be(res0)
-
-
   }
 
   /** calledUnapplyExtractors
     *
     * What's an extractor? In Scala it's a method in any `object` called `unapply`, and that method is used to disassemble the object given by returning a tuple wrapped in an option. Extractors can be used to assign values:
     */
-  def calledUnapplyExtractors(res0: String, res1: String, res2: String, res3: String) {
+  def calledUnapplyExtractors(res0: String, res1: String, res2: Int, res3: Int) {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
 
     object ChopShop {
@@ -83,8 +80,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     b should be(res1)
     c should be(res2)
     d should be(res3)
-
-
   }
 
   /** patternMatchingExtractors
@@ -105,8 +100,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
 
     x._1 should be(res0)
     x._2 should be(res1)
-
-
   }
 
   /** withWildcardExtractors
@@ -128,8 +121,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
 
     x._1 should be(res0)
     x._2 should be(res1)
-
-
   }
 
   /** multipleUnapplyExtractors
@@ -152,8 +143,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     }
 
     result should be(res0)
-
-
   }
 
   /** anyObjectExtractors
@@ -173,8 +162,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     }
 
     result should be(res0)
-
-
   }
 
   /** asAssignmentExtractors
@@ -200,8 +187,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     a should be(res0)
     b should be(res1)
     c should be(res2)
-
-
   }
 
   /** unapplyForPatternMatchingExtractors
@@ -229,8 +214,6 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     }
 
     result should be(res0)
-
-
   }
 
 }

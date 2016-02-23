@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** ByName Parameter
+/** byname_parameter
   *
-  * ByName Parameter Description
+  * byname_parameter
   */
 object ByNameParameter extends FlatSpec with Matchers with exercise.Section {
 

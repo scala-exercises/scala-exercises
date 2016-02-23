@@ -4,6 +4,6 @@
 <li class="actives">
   <span class="bullet-active" @if(completed) { style="background-color: @color;" }></span>
   <a href="@sectionName" @if(highlight){ style="color: @color; font-weight: bold;" } >
-    @sectionName.humanizeCamelCase
+    @sectionName.humanizeUnderscore
   </a>
 </li>

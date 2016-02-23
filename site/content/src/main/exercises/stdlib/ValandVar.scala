@@ -2,9 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/** Val and Var
+/** val_and_var
   *
-  * Val and Var Description
+  * val_and_var
   */
 object ValandVar extends FlatSpec with Matchers with exercise.Section {
 
@@ -30,7 +30,7 @@ object ValandVar extends FlatSpec with Matchers with exercise.Section {
     *
     * Your turn. Remember, `var`'s may be reassigned,
     */
-  def mutableOrInmutableValandVar(res0: String, res1: String) {
+  def mutableOrInmutableValandVar(res0: Int, res1: Int) {
     var a = 5
     a should be(res0)
     a = 7
@@ -41,14 +41,13 @@ object ValandVar extends FlatSpec with Matchers with exercise.Section {
     *
     * but `val`'s may not be reassigned.
     */
-  def valIsInmutableValandVar(res0: String) {
+  def valIsInmutableValandVar(res0: Int) {
     val a = 5
     a should be(res0)
 
     // What happens if you uncomment these lines?
     // a = 7
     // a should be (7)
-
     /** Remember that `val` does not lock down the internal state of the variable, only its assignment.  Let us consider an Array being declared as `val`.
       *
       * {{{

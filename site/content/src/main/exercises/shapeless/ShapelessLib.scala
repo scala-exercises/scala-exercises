@@ -1,6 +1,6 @@
 package shapelessex
 
-/** Shapeless
+/** shapeless
   *
   * Exercises for shapeless
   */

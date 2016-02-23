@@ -2,15 +2,16 @@ package stdlib
 
 import org.scalatest._
 
-/** PatternMatching
+/** pattern_matching
   *
-  * Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
+  * pattern_matching
   */
 object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
 
   /** patternMatchingMechanismPatternMatching
     *
+    * Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
     * Here is a small example which shows how to match against an integer value:
     *
     * {{{
@@ -109,29 +110,26 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
   }
 
   //TODO: Improve compiler to ignore regular expressions in the body of the exercise
-
-  //  /** regularExpressionsPatternMatching
-  //    *
-  //    * Pattern matching can be done on regular expression groups:
-  //    */
-  //  def regularExpressionsPatternMatching(res0: String, res1: String) {
-  //    val EatingRegularExpression = """Eating Alert: bear=([^,]+),\s+source=(.+)""".r //.r turns a String to a regular expression
-  //    val SittingRegularExpression =
-  //      """Sitting Alert: bear=([^,]+),\s+source=(.+)""".r
-  //    val SleepingRegularExpression = """Sleeping Alert: bear=([^,]+),\s+source=(.+)""".r
-  //
-  //    def goldilocks(expr: String) = expr match {
-  //      case (EatingRegularExpression(bear, source)) => "%s said someone's been eating my %s".format(bear, source)
-  //      case (SittingRegularExpression(bear, source)) => "%s said someone's been sitting on my %s".format(bear, source)
-  //      case (SleepingRegularExpression(bear, source)) => "%s said someone's been sleeping in my %s".format(bear, source)
-  //      case _ => "what?"
-  //    }
-  //
-  //    goldilocks("Eating Alert: bear=Papa, source=porridge") should be(res0)
-  //    goldilocks("Sitting Alert: bear=Mama, source=chair") should be(res1)
-  //
-  //
-  //  }
+//  /** regularExpressionsPatternMatching
+//    *
+//    * Pattern matching can be done on regular expression groups:
+//    */
+//  def regularExpressionsPatternMatching(res0: String, res1: String) {
+//    val EatingRegularExpression = """Eating Alert: bear=([^,]+),\s+source=(.+)""".r //.r turns a String to a regular expression
+//    val SittingRegularExpression =
+//      """Sitting Alert: bear=([^,]+),\s+source=(.+)""".r
+//    val SleepingRegularExpression = """Sleeping Alert: bear=([^,]+),\s+source=(.+)""".r
+//
+//    def goldilocks(expr: String) = expr match {
+//      case (EatingRegularExpression(bear, source)) => "%s said someone's been eating my %s".format(bear, source)
+//      case (SittingRegularExpression(bear, source)) => "%s said someone's been sitting on my %s".format(bear, source)
+//      case (SleepingRegularExpression(bear, source)) => "%s said someone's been sleeping in my %s".format(bear, source)
+//      case _ => "what?"
+//    }
+//
+//    goldilocks("Eating Alert: bear=Papa, source=porridge") should be(res0)
+//    goldilocks("Sitting Alert: bear=Mama, source=chair") should be(res1)
+//  }
 
   /** createCaseStatementPatternMatching
     *
