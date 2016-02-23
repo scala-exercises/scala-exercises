@@ -13,10 +13,10 @@ import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
 
-/** Main entry point and service for libraries, categories and exercises discovery + evaluation
-  */
-object ExercisesService {
-  lazy val methodEval = new MethodEval()
+import org.scalatest.exceptions.TestFailedException
+
+object ExercisesService extends RuntimeSharedConversions {
+  import MethodEval._
 
   val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {
@@ -37,8 +37,17 @@ object ExercisesService {
       evaluation.args
     )
     Logger.info(s"evaluation for $evaluation: $res")
+
+    def compileError(ef: EvaluationFailure[_]): String =
+      s"Compilation error: ${ef.foldedException.getMessage}"
+
+    def userError(ee: EvaluationException[_]): String = ee.e match {
+      case _: TestFailedException ⇒ "Assertion error!"
+      case e                      ⇒ s"Runtime error: ${e.getMessage}"
+    }
+
     res.toSuccessXor.bimap(
-      _.bimap(_.foldedException, _.e),
+      _.fold(compileError(_), userError(_)),
       _ ⇒ Unit
     )
   }

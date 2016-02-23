@@ -21,7 +21,6 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 
-import shared._
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
