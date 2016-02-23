@@ -33,16 +33,15 @@ object DocParser extends DocRendering {
 
   case class ParsedSectionComment(
     name:        String,
-    description: String
+    description: Option[String]
   )
 
   def parseSectionDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedSectionComment] =
     for {
       name ← renderSummary(comment.comment)
-      description ← renderComment(comment.comment)
     } yield ParsedSectionComment(
       name = name,
-      description = description
+      description = renderComment(comment.comment).toOption
     )
 
   case class ParsedExerciseComment(
@@ -102,9 +101,9 @@ sealed trait DocRendering {
     Xor.catchNonFatal(
       ScalaFormatter.format(wrapCode(code))
     ) match {
-      case Xor.Right(result) ⇒ unwrapCode(result)
-      case _                 ⇒ code
-    }
+        case Xor.Right(result) ⇒ unwrapCode(result)
+        case _                 ⇒ code
+      }
   }
 
   def blockToHtml(block: Block)(implicit skipSummary: Boolean): NodeSeq = block match {
