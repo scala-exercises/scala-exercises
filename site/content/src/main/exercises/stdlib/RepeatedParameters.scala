@@ -5,7 +5,6 @@ import org.scalatest._
 
 /** repeated_parameters
   *
-  * repeated_parameters
   */
 object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {
 

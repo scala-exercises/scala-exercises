@@ -5,7 +5,6 @@ import org.scalatest._
 
 /** objects
   *
-  * objects
   */
 object Objects extends FlatSpec with Matchers with exercise.Section {
 

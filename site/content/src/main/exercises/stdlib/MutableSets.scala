@@ -6,7 +6,6 @@ import scala.collection.mutable
 
 /** mutable_sets
   *
-  * mutable_sets
   */
 object MutableSets extends FlatSpec with Matchers with exercise.Section {
 

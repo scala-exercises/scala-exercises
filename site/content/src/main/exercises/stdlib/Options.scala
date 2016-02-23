@@ -5,7 +5,6 @@ import org.scalatest._
 
 /** options
   *
-  * options
   */
 object Options extends FlatSpec with Matchers with exercise.Section {
 

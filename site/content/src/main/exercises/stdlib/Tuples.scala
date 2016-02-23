@@ -6,7 +6,6 @@ import org.scalatest._
 
 /** tuples
   *
-  * tuples
   */
 object Tuples extends FlatSpec with Matchers with exercise.Section {
 

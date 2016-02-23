@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** sequences_and_arrays
   *
-  * sequences_and_arrays
   */
 object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
 

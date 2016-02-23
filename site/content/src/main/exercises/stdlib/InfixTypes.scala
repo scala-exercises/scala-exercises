@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** infix_types
   *
-  * infix_types
   */
 object InfixTypes extends FlatSpec with Matchers with exercise.Section {
 

@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** type_signatures
   *
-  * type_signatures
   */
 object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 

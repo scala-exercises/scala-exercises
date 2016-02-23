@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** infix_prefix_and_postfix_operators
   *
-  * infix_prefix_and_postfix_operators
   */
 object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exercise.Section {
 

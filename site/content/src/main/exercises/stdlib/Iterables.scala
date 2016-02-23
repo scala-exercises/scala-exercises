@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** iterables
   *
-  * iterables
   */
 object Iterables extends FlatSpec with Matchers with exercise.Section {
 

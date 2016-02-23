@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** traits
   *
-  * traits
   */
 object Traits extends FlatSpec with Matchers with exercise.Section {
 

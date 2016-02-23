@@ -6,7 +6,6 @@ import Stream.cons
 
 /** traversables
   *
-  * traversables
   */
 object Traversables extends FlatSpec with Matchers with exercise.Section {
 

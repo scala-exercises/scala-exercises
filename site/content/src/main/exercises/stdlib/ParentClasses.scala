@@ -4,7 +4,6 @@ import org.scalatest._
 
 /** parent_classes
   *
-  * parent_classes
   */
 object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 

@@ -5,7 +5,6 @@ import org.scalatest._
 
 /** preconditions
   *
-  * preconditions
   */
 object Preconditions extends FlatSpec with Matchers with exercise.Section {
 
