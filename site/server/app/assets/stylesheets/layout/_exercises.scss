@@ -17,6 +17,8 @@
     }
     .hljs {
         background: $gray-lighter;
+        padding: 30px;
+        box-shadow: inset 3px 0 rgba(0,0,0, 0.1);
     }
     .exercise-pre {
         min-height: 60px;
