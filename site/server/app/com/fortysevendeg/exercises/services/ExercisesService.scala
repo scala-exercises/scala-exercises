@@ -48,6 +48,15 @@ object ExercisesService extends RuntimeSharedConversions {
     )
   }
 
+  def reorderLibraries(topLibNames: List[String], libraries: List[shared.Library]): List[shared.Library] = {
+    libraries.sortBy(lib ⇒ {
+      val idx = topLibNames.indexOf(lib.name)
+      if (idx == -1)
+        Integer.MAX_VALUE
+      else
+        idx
+    })
+  }
 }
 
 sealed trait RuntimeSharedConversions {
