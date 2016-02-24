@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.RepeatedParametersHelper._
+import RepeatedParametersHelper._
 import org.scalatest._
 
 /** repeated_parameters

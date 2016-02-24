@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.TypeVarianceHelper._
+import TypeVarianceHelper._
 import org.scalatest._
 
 /** type_variance

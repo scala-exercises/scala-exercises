@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.NamedandDefaultArgumentsHelper._
+import NamedandDefaultArgumentsHelper._
 import org.scalatest._
 
 /** named_and_default_arguments
