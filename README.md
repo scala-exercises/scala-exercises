@@ -1,15 +1,26 @@
-[![Build Status](https://api.travis-ci.org/47deg/scala-exercises.svg?branch=version-2)](https://travis-ci.org/47deg/scala-exercises?branch=version-2) [![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
+[![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
+[![Build status](https://badges.gitter.im/Join%20Chat.svg)](https://travis-ci.org/47deg/scala-exercises.svg?branch=master)
 
-[![Join the chat at https://gitter.im/47deg/scala-exercises](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/47deg/scala-exercises?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+#Scala Exercises
 
-# Scala Exercises
+------------------------
 
-This is second iteration of Scala Exercises. Version 1 is available by going to the
-[master](https://github.com/47deg/scala-exercises/tree/master) branch.
+## How it works
 
-Version 2 is under active development and is rapidly approaching a public release.
+"Scala Exercises" brings exercises for the Stdlib, Cats, Shapeless and many other great libraries for Scala. Offering hundreds of solvable exercises organized into several categories covering the basics of the Scala language and it's most important libraries.
+
+- LEARN: Each category includes an explanation of the basics. Learn the concepts through simple code samples.
+
+- SOLVE: Each exercise is a unit test that must pass successfully, complete the exercise by filling in the blanks. Receive instant feedback as your answers are validated in real-time.
+
+- SHARE: The system will consider the category complete when all its exercises are successfully done. Don't forget to share your progress on social networks before moving on to the next category!
+
+- EDIT: After completing a category, you'll be able to go back and edit it. Add new exercises or improve existing ones by sending a pull-request.
+
 
 ## Getting Started Locally
+
+If you wish to contribute to this project you'd need to run it locally.
 
 The project has two main directories, `core` and `site`, each with a SBT project.
 
@@ -25,8 +36,6 @@ is a bit more stable the exercise compiler plugin will be published and it will
 be easy to create new exercises for existing Scala libraries.
 
 If you'd like to run the server, you will need to set up PostgreSQL locally.
-
-    // TODO: bootstrap DB steps here
 
 Once this is done, you can navigate to the `site` directory and launch
 SBT. From there, `run` should launch the Play app.
