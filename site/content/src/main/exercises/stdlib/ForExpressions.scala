@@ -8,9 +8,7 @@ import org.scalatest._
 object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** forLoopsForExpressions
-    *
-    * For loops can be simple:
+  /** For loops can be simple:
     */
   def forLoopsForExpressions(res0: Int) {
     val someNumbers = Range(0, 10)
@@ -21,9 +19,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
     sum should equal(res0)
   }
 
-  /** additionalLogicForExpressions
-    *
-    * For loops can contain additional logic:
+  /** For loops can contain additional logic:
     */
   def additionalLogicForExpressions(res0: Int) {
     val someNumbers = Range(0, 10)
@@ -36,9 +32,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** canBeNestedForExpressions
-    *
-    * For expressions can nest, with later generators varying more rapidly than earlier ones:
+  /** For expressions can nest, with later generators varying more rapidly than earlier ones:
     */
   def canBeNestedForExpressions(res0: Int, res1: Int) {
     val xValues = Range(1, 5)
@@ -49,9 +43,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
     coordinates(4) should be(res0, res1)
   }
 
-  /** readableCodeForExpressions
-    *
-    * Using `for` we can make more readable code
+  /** Using `for` we can make more readable code
     */
   def readableCodeForExpressions(res0: String) {
     val nums = List(List(1), List(2), List(3), List(4), List(5))

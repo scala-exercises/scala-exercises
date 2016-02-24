@@ -7,10 +7,7 @@ import org.scalatest._
   */
 object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
-
-  /** patternMatchingMechanismPatternMatching
-    *
-    * Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
+  /** Scala has a built-in general pattern matching mechanism. It allows to match on any sort of data with a first-match policy.
     * Here is a small example which shows how to match against an integer value:
     *
     * {{{
@@ -44,9 +41,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     myStuff should be(res0)
   }
 
-  /** returnComplexPatternMatching
-    *
-    * Pattern matching can return complex somethings:
+  /** Pattern matching can return complex somethings:
     */
   def returnComplexPatternMatching(res0: Int, res1: Int, res2: Int) {
     val stuff = "blue"
@@ -61,9 +56,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     myStuff should be(res0, res1, res2)
   }
 
-  /** complexExpressionsPatternMatching
-    *
-    * Pattern matching can match complex expressions:
+  /** Pattern matching can match complex expressions:
     */
   def complexExpressionsPatternMatching(res0: String) {
     def goldilocks(expr: Any) = expr match {
@@ -76,9 +69,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     goldilocks(("porridge", "Mama")) should be(res0)
   }
 
-  /** wildcardParsPatternMatching
-    *
-    * Pattern matching can wildcard parts of expressions:
+  /** Pattern matching can wildcard parts of expressions:
     */
   def wildcardParsPatternMatching(res0: String, res1: String) {
     def goldilocks(expr: Any) = expr match {
@@ -92,9 +83,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     goldilocks(("chair", "Mama")) should be(res1)
   }
 
-  /** substitutePartsPatternMatching
-    *
-    * Pattern matching can substitute parts of expressions:
+  /** Pattern matching can substitute parts of expressions:
     */
   def substitutePartsPatternMatching(res0: String, res1: String) {
     def goldilocks(expr: Any) = expr match {
@@ -130,9 +119,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 //    goldilocks("Sitting Alert: bear=Mama, source=chair") should be(res1)
 //  }
 
-  /** createCaseStatementPatternMatching
-    *
-    * A backquote can be used to refer to a stable variable in scope to create a case statement. This prevents what is called "Variable Shadowing"
+  /** A backquote can be used to refer to a stable variable in scope to create a case statement. This prevents what is called "Variable Shadowing"
     */
   def createCaseStatementPatternMatching(res0: String, res1: String, res2: String, res3: String) {
     val foodItem = "porridge"
@@ -150,9 +137,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     goldilocks(("beer", "Cousin")) should be(res3)
   }
 
-  /** stableVariblePatternMatching
-    *
-    * A backquote can be used to refer to a method parameter as a stable variable to create a case statement:
+  /** A backquote can be used to refer to a method parameter as a stable variable to create a case statement:
     */
   def stableVariblePatternMatching(res0: Boolean, res1: Boolean, res2: Boolean) {
     def patternEquals(i: Int, j: Int) = j match {
@@ -164,9 +149,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     patternEquals(9, 9) should be(res2)
   }
 
-  /** againstListsPatternMatching
-    *
-    * To pattern match against a `List`, the list can be broken out into parts, in this case the head `x` and the tail `xs`. Since the case doesn't terminate in `Nil`, `xs` is interpreted as the rest of the list:
+  /** To pattern match against a `List`, the list can be broken out into parts, in this case the head `x` and the tail `xs`. Since the case doesn't terminate in `Nil`, `xs` is interpreted as the rest of the list:
     */
   def againstListsPatternMatching(res0: Int) {
     val secondElement = List(1, 2, 3) match {
@@ -177,9 +160,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     secondElement should be(res0)
   }
 
-  /** againstListsIIPatternMatching
-    *
-    * To obtain the second element you can expand on the pattern. Where `x` is the first element, `y` is the second element, and `xs` is the rest:
+  /** To obtain the second element you can expand on the pattern. Where `x` is the first element, `y` is the second element, and `xs` is the rest:
     */
   def againstListsIIPatternMatching(res0: Int) {
     val secondElement = List(1, 2, 3) match {
@@ -190,9 +171,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     secondElement should be(res0)
   }
 
-  /** againstListsIIIPatternMatching
-    *
-    * Same koan as above, but we are pattern matching a list with only one item!
+  /** Same koan as above, but we are pattern matching a list with only one item!
     */
   def againstListsIIIPatternMatching(res0: Int) {
     val secondElement = List(1) match {
@@ -203,9 +182,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     secondElement should be(res0)
   }
 
-  /** againstListsIVPatternMatching
-    *
-    * To pattern match against `List`, you can also establish a pattern match if you know the exact number of elements in a `List`:
+  /** To pattern match against `List`, you can also establish a pattern match if you know the exact number of elements in a `List`:
     */
   def againstListsIVPatternMatching(res0: Int) {
     val r = List(1, 2, 3) match {

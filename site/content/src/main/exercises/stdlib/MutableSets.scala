@@ -10,9 +10,7 @@ import scala.collection.mutable
 object MutableSets extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** easilyCreatedMutableSets
-    *
-    * Mutable sets can be created easily:
+  /** Mutable sets can be created easily:
     */
   def easilyCreatedMutableSets(res0: Int, res1: Boolean) {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -21,9 +19,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet contains "Oregon" should be(res1)
   }
 
-  /** removeElementMutableSets
-    *
-    * Mutable sets can have elements removed:
+  /** Mutable sets can have elements removed:
     */
   def removeElementMutableSets(res0: Boolean) {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -31,9 +27,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet contains "Ohio" should be(res0)
   }
 
-  /** removeWithTuplesMutableSets
-    *
-    * Mutable sets can have tuples of elements removed:
+  /** Mutable sets can have tuples of elements removed:
     */
   def removeWithTuplesMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -42,9 +36,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet.size should be(res1)
   }
 
-  /** addWithTuplesMutableSets
-    *
-    * Mutable sets can have tuples of elements added
+  /** Mutable sets can have tuples of elements added
     */
   def addWithTuplesMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Wisconsin")
@@ -53,9 +45,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet.size should be(res1)
   }
 
-  /** addedElementsMutableSets
-    *
-    * Mutable sets can have Lists of elements added:
+  /** Mutable sets can have Lists of elements added:
     */
   def addedElementsMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Wisconsin")
@@ -64,9 +54,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet.size should be(res1)
   }
 
-  /** removedElementsMutableSets
-    *
-    * Mutable sets can have Lists of elements removed:
+  /** Mutable sets can have Lists of elements removed:
     */
   def removedElementsMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -75,9 +63,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     mySet.size should be(res1)
   }
 
-  /** clearSetMutableSets
-    *
-    * Mutable sets can be cleared:
+  /** Mutable sets can be cleared:
     */
   def clearSetMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")

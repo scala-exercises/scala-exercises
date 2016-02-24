@@ -8,18 +8,14 @@ import org.scalatest._
 object Formatting extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** placedInFormatFormatting
-    *
-    * String can be placed in format:
+  /** String can be placed in format:
     */
   def placedInFormatFormatting(res0: String) {
     val s = "Hello World"
     "Application %s".format(s) should be(res0)
   }
 
-  /** characterFormatting
-    *
-    * Character Literals can be a single character:
+  /** Character Literals can be a single character:
     */
   def characterFormatting(res0: String, res1: String) {
     val a = 'a'
@@ -33,9 +29,7 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
     "%c".format(b) should be(res1)
   }
 
-  /** escapeSequenceFormatting
-    *
-    * Character Literals can be an escape sequence, including octal or hexidecimal:
+  /** Character Literals can be an escape sequence, including octal or hexidecimal:
     */
   def escapeSequenceFormatting(res0: String, res1: String, res2: String, res3: String) {
     val c = '\u0061' //unicode for a
@@ -50,18 +44,14 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
     "%c".format(f) should be(res3)
   }
 
-  /** includingNumbersFormatting
-    *
-    * Formatting can also include numbers:
+  /** Formatting can also include numbers:
     */
   def includingNumbersFormatting(res0: String) {
     val j = 190
     "%d bottles of beer on the wall" format j - 100 should be(res0)
   }
 
-  /** anyNumberOfItemsFormatting
-    *
-    * Formatting can be used for any number of items, like a string and a number:
+  /** Formatting can be used for any number of items, like a string and a number:
     */
   def anyNumberOfItemsFormatting(res0: String) {
     val j = 190

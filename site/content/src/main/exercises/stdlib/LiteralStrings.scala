@@ -8,9 +8,7 @@ import org.scalatest._
 object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** characterLiteralsLiteralStrings
-    *
-    * Character Literals are quoted with single quotes:
+  /** Character Literals are quoted with single quotes:
     */
   def characterLiteralsLiteralStrings(res0: String, res1: String) {
     val a = 'a'
@@ -20,9 +18,7 @@ object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
     b.toString should be(res1)
   }
 
-  /** characterLiteralsUnicodeLiteralStrings
-    *
-    * Character Literals can use hexadecimal Unicode
+  /** Character Literals can use hexadecimal Unicode
     */
   def characterLiteralsUnicodeLiteralStrings(res0: String) {
     val c = '\u0061' //unicode for a
@@ -30,18 +26,14 @@ object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
     c.toString should be(res0)
   }
 
-  /** characterLiteralsOctalLiteralStrings
-    *
-    * Character Literals can use octal as well
+  /** Character Literals can use octal as well
     */
   def characterLiteralsOctalLiteralStrings(res0: String) {
     val d = '\141' //octal for a
     d.toString should be(res0)
   }
 
-  /** escapeSequenceLiteralStrings
-    *
-    * Character Literals can use escape sequences
+  /** Character Literals can use escape sequences
     */
   def escapeSequenceLiteralStrings(res0: String, res1: String) {
     val e = '\"'
@@ -51,9 +43,7 @@ object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
     f.toString should be(res1)
   }
 
-  /** oneLineLiteralStrings
-    *
-    * One-Line String Literals are surrounded by quotation marks.
+  /** One-Line String Literals are surrounded by quotation marks.
     */
   def oneLineLiteralStrings(res0: String) {
     val a = "To be or not to be"

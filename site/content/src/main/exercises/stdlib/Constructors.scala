@@ -8,9 +8,7 @@ import org.scalatest._
 object Constructors extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** primaryConstructorConstructors
-    *
-    * Primary Constructor
+  /** Primary Constructor
     *
     * In Java we have a no-args default constructor which is provided for every class which doesn't provide its own constructor methods. On a similar lines Primary Constructor in Scala is the kind-of default constructor in the way every class in Scala would have a Primary Constructor.
     *

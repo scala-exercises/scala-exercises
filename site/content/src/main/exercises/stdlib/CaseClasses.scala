@@ -8,9 +8,7 @@ import org.scalatest._
 object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** caseClassesSupportCaseClasses
-    *
-    * Scala supports the notion of _case classes_. Case classes are regular classes which export their constructor parameters and which provide a recursive decomposition mechanism via pattern matching.
+  /** Scala supports the notion of _case classes_. Case classes are regular classes which export their constructor parameters and which provide a recursive decomposition mechanism via pattern matching.
     *
     * Here is an example for a class hierarchy which consists of an abstract super class `Term` and three concrete case classes `Var`, `Fun`, and `App`.
     *
@@ -105,9 +103,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     (p1 eq p3) should be(res3) // not identical, merely equal
   }
 
-  /** hascodeMethodCaseClasses
-    *
-    * Case classes have an automatic hashcode method that works:
+  /** Case classes have an automatic hashcode method that works:
     */
   def hascodeMethodCaseClasses(res0: Boolean, res1: Boolean) {
     case class Person(first: String, last: String)
@@ -120,9 +116,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     (p1.hashCode == p3.hashCode) should be(res1)
   }
 
-  /** creationCaseClasses
-    *
-    * Case classes can be created in a convenient way:
+  /** Case classes can be created in a convenient way:
     */
   def creationCaseClasses(res0: Boolean, res1: Boolean, res2: Boolean) {
     case class Dog(name: String, breed: String)
@@ -146,9 +140,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     d1.toString should be(res0)
   }
 
-  /** propertiesCaseClasses
-    *
-    * Case classes have automatic properties:
+  /** Case classes have automatic properties:
     */
   def propertiesCaseClasses(res0: String, res1: String) {
     case class Dog(name: String, breed: String)
@@ -158,9 +150,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     d1.breed should be(res1)
   }
 
-  /** mutablePropertiesCaseClasses
-    *
-    * Case classes can have mutable properties:
+  /** Case classes can have mutable properties:
     */
   def mutablePropertiesCaseClasses(res0: String, res1: String, res2: String, res3: String) {
     case class Dog(var name: String, breed: String) // you can rename a dog, but change its breed? nah!
@@ -175,9 +165,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     d1.breed should be(res3)
   }
 
-  /** alteringCaseClassesCaseClasses
-    *
-    * There are safer alternatives for altering case classes:
+  /** There are safer alternatives for altering case classes:
     */
   def alteringCaseClassesCaseClasses(res0: String, res1: String, res2: String, res3: String) {
     case class Dog(name: String, breed: String) // Doberman
@@ -193,9 +181,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     d2.breed should be(res3) // copied from the original
   }
 
-  /** parametersCaseClasses
-    *
-    * Case classes can have default and named parameters:
+  /** Case classes can have default and named parameters:
     */
   def parametersCaseClasses(res0: String, res1: String, res2: Int, res3: String, res4: String, res5: String, res6: Int, res7: String, res8: String, res9: String, res10: Int, res11: String, res12: Boolean) {
     case class Person(first: String, last: String, age: Int = 0, ssn: String = "")
@@ -222,9 +208,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     (p1 == p4) should be(res12)
   }
 
-  /** asTupleCaseClasses
-    *
-    * Case classes can be disassembled to their constituent parts as a tuple:
+  /** Case classes can be disassembled to their constituent parts as a tuple:
     */
   def asTupleCaseClasses(res0: String, res1: String, res2: Int, res3: String) {
     case class Person(first: String, last: String, age: Int = 0, ssn: String = "")
@@ -238,9 +222,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     parts._4 should be(res3)
   }
 
-  /** serializableCaseClasses
-    *
-    * Case classes are Serializable
+  /** Case classes are Serializable
     */
   def serializableCaseClasses(res0: Boolean, res1: Boolean) {
     case class PersonCC(firstName: String, lastName: String)

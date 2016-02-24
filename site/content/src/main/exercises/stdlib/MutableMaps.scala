@@ -10,9 +10,7 @@ import scala.collection.mutable
 object MutableMaps extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** easilyCreatedMutableMaps
-    *
-    * Mutable maps can be created easily:
+  /** Mutable maps can be created easily:
     */
   def easilyCreatedMutableMaps(res0: Int, res1: Boolean) {
     val myMap = mutable.Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -21,9 +19,7 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap contains "OR" should be(res1)
   }
 
-  /** removeElementMutableMaps
-    *
-    * Mutable maps can have elements removed:
+  /** Mutable maps can have elements removed:
     */
   def removeElementMutableMaps(res0: Boolean) {
     val myMap = mutable.Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -31,9 +27,7 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap contains "OH" should be(res0)
   }
 
-  /** removeWithTuplesMutableMaps
-    *
-    * Mutable maps can have tuples of elements removed:
+  /** Mutable maps can have tuples of elements removed:
     */
   def removeWithTuplesMutableMaps(res0: Boolean, res1: Int) {
     val myMap = mutable.Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -42,9 +36,7 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res1)
   }
 
-  /** addWithTuplesMutableMaps
-    *
-    * Mutable maps can have tuples of elements added:
+  /** Mutable maps can have tuples of elements added:
     */
   def addWithTuplesMutableMaps(res0: Boolean, res1: Int) {
     val myMap = mutable.Map("MI" -> "Michigan", "WI" -> "Wisconsin")
@@ -53,9 +45,7 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res1)
   }
 
-  /** addedElementsMutableMaps
-    *
-    * Mutable maps can have Lists of elements added:
+  /** Mutable maps can have Lists of elements added:
     */
   def addedElementsMutableMaps(res0: Boolean, res1: Int) {
     val myMap = mutable.Map("MI" -> "Michigan", "WI" -> "Wisconsin")
@@ -64,9 +54,7 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res1)
   }
 
-  /** removedElementsMutableMaps
-    *
-    * Mutable maps can have Lists of elements removed:
+  /** Mutable maps can have Lists of elements removed:
     */
   def removedElementsMutableMaps(res0: Boolean, res1: Int) {
     val myMap = mutable.Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -75,9 +63,7 @@ object MutableMaps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res1)
   }
 
-  /** clearMapMutableMaps
-    *
-    * Mutable maps can be cleared:
+  /** Mutable maps can be cleared:
     */
   def clearMapMutableMaps(res0: Boolean, res1: Int) {
     val myMap = mutable.Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")

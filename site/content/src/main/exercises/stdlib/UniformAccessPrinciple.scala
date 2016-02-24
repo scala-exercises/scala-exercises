@@ -9,9 +9,7 @@ import org.scalatest._
 object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** uniformAccessPrincipleUniformAccessPrinciple
-    *
-    * The Scala language implements a programming concept known as the [Uniform Access Principle](http://en.wikipedia.org/wiki/Uniform_access_principle) which was first put forth by Bertrand Meyer, inventor of the Eiffel programming language.
+  /** The Scala language implements a programming concept known as the [Uniform Access Principle](http://en.wikipedia.org/wiki/Uniform_access_principle) which was first put forth by Bertrand Meyer, inventor of the Eiffel programming language.
     *
     * This principle states that variables and parameterless functions should be accessed using the same syntax. Scala supports this principle by not allowing parentheses to be placed at call sites of parameterless functions. As a result, a parameterless function definition can be changed to a val, or vice versa, without affecting client code.
     *
@@ -45,18 +43,14 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
       * }}} */
   }
 
-  /** asPropertyUniformAccessPrinciple
-    *
-    * Can access age as property:
+  /** Can access age as property:
     */
   def asPropertyUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingProperty(2010, 2003)
     me.age should be(res0)
   }
 
-  /** updatingPropertyUniformAccessPrinciple
-    *
-    * What happens when I update current year using property
+  /** What happens when I update current year using property
     */
   def updatingPropertyUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingProperty(2010, 2003)
@@ -65,9 +59,7 @@ object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Secti
     me.age should be(res0)
   }
 
-  /** updateUsingMethodUniformAccessPrinciple
-    *
-    * What happens when I update current year using method:
+  /** What happens when I update current year using method:
     */
   def updateUsingMethodUniformAccessPrinciple(res0: Int) {
     val me = new CalculatesAgeUsingMethod(2010, 2003)

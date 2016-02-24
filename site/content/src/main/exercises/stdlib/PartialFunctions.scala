@@ -8,9 +8,7 @@ import org.scalatest._
 object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** partialFunctionPartialFunctions
-    *
-    * A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait `PartialFunction` requires that the method `isDefinedAt` and `apply` be implemented.
+  /** A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait `PartialFunction` requires that the method `isDefinedAt` and `apply` be implemented.
     */
   def partialFunctionPartialFunctions(res0: Int, res1: Int) {
     val doubleEvens: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {
@@ -33,9 +31,7 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     whatToDo(4) should be(res1)
   }
 
-  /** caseStatementsPartialFunctions
-    *
-    * Case statements are a quick way to create partial functions. When you create a case statement, the `apply` and `isDefinedAt` is created for you.
+  /** Case statements are a quick way to create partial functions. When you create a case statement, the `apply` and `isDefinedAt` is created for you.
     */
   def caseStatementsPartialFunctions(res0: Int, res1: Int) {
     //These case statements are called case statements with guards
@@ -51,9 +47,7 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     whatToDo(4) should be(res1)
   }
 
-  /** andThenPartialFunctions
-    *
-    * The result of partial functions can have an `andThen` function added to the end of the chain
+  /** The result of partial functions can have an `andThen` function added to the end of the chain
     */
   def andThenPartialFunctions(res0: Int, res1: Int) {
     //These are called case statements with guards
@@ -70,9 +64,7 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     whatToDo(4) should be(res1)
   }
 
-  /** chainOfLogicPartialFunctions
-    *
-    * The result of partial functions can have an `andThen` function added to the end of the chain used to continue onto another chain of logic:
+  /** The result of partial functions can have an `andThen` function added to the end of the chain used to continue onto another chain of logic:
     */
   def chainOfLogicPartialFunctions(res0: String, res1: String) {
     val doubleEvens: PartialFunction[Int, Int] = {

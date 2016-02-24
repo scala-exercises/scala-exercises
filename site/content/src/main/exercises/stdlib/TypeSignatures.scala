@@ -8,9 +8,7 @@ import org.scalatest._
 object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** typeSignatureTypeSignatures
-    *
-    * A method's *type signature* comprises its name, the number, order, and types of its parameters, if any, and its result type. The type signature of a class, trait, or singleton object comprises its name, the type signatures of all of its members and constructors, and its declared inheritance and mixin relations.
+  /** A method's *type signature* comprises its name, the number, order, and types of its parameters, if any, and its result type. The type signature of a class, trait, or singleton object comprises its name, the type signatures of all of its members and constructors, and its declared inheritance and mixin relations.
     *
     * In Java you declare a generic type within a `<>`, in Scala it is `[]`
     *
@@ -43,18 +41,14 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     (intRand.draw < Int.MaxValue) should be(res0)
   }
 
-  /** retrieveMetaInformationTypeSignatures
-    *
-    * Class meta-information can be retrieved by class name by using `classOf[className]`
+  /** Class meta-information can be retrieved by class name by using `classOf[className]`
     */
   def retrieveMetaInformationTypeSignatures(res0: String, res1: String) {
     classOf[String].getCanonicalName should be(res0)
     classOf[String].getSimpleName should be(res1)
   }
 
-  /** deriveMetaInformationTypeSignatures
-    *
-    * Class meta-information can be derived from an object reference using `getClass()`
+  /** Class meta-information can be derived from an object reference using `getClass()`
     */
   def deriveMetaInformationTypeSignatures(res0: String, res1: String, res2: String) {
     val zoom = "zoom"
@@ -63,9 +57,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     zoom.getClass.getSimpleName should be(res2)
   }
 
-  /** isInstanceOfFunctionTypeSignatures
-    *
-    * `isInstanceOf[className]` is used to determine the if an object reference is an instance of given class:
+  /** `isInstanceOf[className]` is used to determine the if an object reference is an instance of given class:
     */
   def isInstanceOfFunctionTypeSignatures(res0: Boolean) {
     trait Randomizer[A] {
@@ -83,9 +75,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     intRand.draw.isInstanceOf[Int] should be(res0)
   }
 
-  /** asInstanceOfFunctionTypeSignatures
-    *
-    * `asInstanceOf[className]` is used to cast one reference to another:
+  /** `asInstanceOf[className]` is used to cast one reference to another:
     */
   def asInstanceOfFunctionTypeSignatures(res0: Boolean) {
     trait Randomizer[A] {
@@ -105,9 +95,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     intRand2.isInstanceOf[IntRandomizer] should be(res0)
   }
 
-  /** classCastExceptionIfUncompatibleTypeSignatures
-    *
-    * `asInstanceOf[className]` will throw a *ClassCastException* if a class derived from and the class target aren't from the same inheritance branch:
+  /** `asInstanceOf[className]` will throw a *ClassCastException* if a class derived from and the class target aren't from the same inheritance branch:
     *
     * {{{
     * trait Randomizer[A] {

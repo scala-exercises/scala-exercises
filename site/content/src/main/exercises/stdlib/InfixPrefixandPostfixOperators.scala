@@ -8,9 +8,7 @@ import org.scalatest._
 object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** singleParameterInfixPrefixandPostfixOperators
-    *
-    * Any method which takes a single parameter can be used as an infix operator: `a.m(b)` can be written `a m b`.
+  /** Any method which takes a single parameter can be used as an infix operator: `a.m(b)` can be written `a m b`.
     */
   def singleParameterInfixPrefixandPostfixOperators(res0: Int, res1: Int) {
     val g: Int = 3
@@ -18,9 +16,7 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     g.+(4) should be(res1) // same result but not using the infix operator
   }
 
-  /** notWithTwoInfixPrefixandPostfixOperators
-    *
-    * Infix Operators do NOT work if an object has a method that takes two parameters:
+  /** Infix Operators do NOT work if an object has a method that takes two parameters:
     */
   def notWithTwoInfixPrefixandPostfixOperators(res0: Int, res1: Int) {
     val g: String = "Check out the big brains on Brad!"
@@ -32,9 +28,7 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     g.indexOf('o', 7) should be(res1) //indexOf(Char, Int) must use standard java/scala calls
   }
 
-  /** postfixOperatorInfixPrefixandPostfixOperators
-    *
-    * Any method which does not require a parameter can be used as a postfix operator: `a.m` can be written `a m`.
+  /** Any method which does not require a parameter can be used as a postfix operator: `a.m` can be written `a m`.
     *
     * For instance `a.##(b)` can be written `a ## b` and `a.!` can be written `a!`
     *
@@ -49,18 +43,14 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     //Hint: The answer is "1f"
   }
 
-  /** startsWithUnaryInfixPrefixandPostfixOperators
-    *
-    * Prefix operators work if an object has a method name that starts with `unary_` :
+  /** Prefix operators work if an object has a method name that starts with `unary_` :
     */
   def startsWithUnaryInfixPrefixandPostfixOperators(res0: String) {
     val g: Int = 31
     (-g) should be(res0)
   }
 
-  /** ourOwnOperatorInfixPrefixandPostfixOperators
-    *
-    * Here we create our own prefix operator for our own class. The only identifiers that can be used as prefix operators are `+`, `-`, `!`, and `~`:
+  /** Here we create our own prefix operator for our own class. The only identifiers that can be used as prefix operators are `+`, `-`, `!`, and `~`:
     */
   def ourOwnOperatorInfixPrefixandPostfixOperators(res0: String, res1: String) {
     class Stereo {
