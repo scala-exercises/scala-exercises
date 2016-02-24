@@ -119,7 +119,7 @@ case class Compiler() {
         println(s" with section ${sectionInfo.comment.name}")
         println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
         sectionInfo.exercises.foreach { exerciseInfo ⇒
-          println(s"  with exercise ${exerciseInfo.comment.name}")
+          println(s"  with exercise ${exerciseInfo.symbol}")
           println(s"   description: ${exerciseInfo.comment.description.map(oneline)}")
         }
       }
@@ -139,7 +139,6 @@ case class Compiler() {
         sectionInfo.exercises.foreach { exerciseInfo ⇒
           println("  ~ exercise")
           println(s"   • symbol        ${exerciseInfo.symbol}")
-          println(s"   - name          ${exerciseInfo.comment.name}")
           println(s"   - description   ${exerciseInfo.comment.description.map(oneline)}")
         }
       }
@@ -155,7 +154,7 @@ case class Compiler() {
             sectionInfo.exercises
               .map { exerciseInfo ⇒
                 treeGen.makeExercise(
-                  name = exerciseInfo.comment.name,
+                  name = internal.unapplyRawName(exerciseInfo.symbol.name),
                   description = exerciseInfo.comment.description,
                   code = exerciseInfo.code,
                   qualifiedMethod = exerciseInfo.qualifiedMethod,
@@ -237,7 +236,7 @@ case class Compiler() {
       process(symbol).reverse
     }
 
-    private def unapplyRawName(name: Name): String = name match {
+    private[compiler] def unapplyRawName(name: Name): String = name match {
       case TermName(value) ⇒ value
       case TypeName(value) ⇒ value
     }

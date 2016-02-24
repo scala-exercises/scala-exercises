@@ -45,20 +45,15 @@ object DocParser extends DocRendering {
     )
 
   case class ParsedExerciseComment(
-    name:        String,
     description: Option[String],
     explanation: Option[String]
   )
 
   def parseExerciseDocComment(comment: SourceTextExtraction#ExtractedComment): Xor[String, ParsedExerciseComment] =
-    for {
-      name ← renderSummary(comment.comment)
-    } yield ParsedExerciseComment(
-      name = name,
-      description = renderComment(comment.comment).toOption,
+    Xor.right(ParsedExerciseComment(
+      description = renderAll(comment.comment),
       explanation = None
-    )
-
+    ))
 }
 
 sealed trait DocRendering {
@@ -83,6 +78,11 @@ sealed trait DocRendering {
     val nodes = bodyToHtml(comment.body)(true)
     if (nodes.isEmpty) Xor.left("missing body for comment")
     else Xor.right(Xhtml.toXhtml(nodes))
+  }
+
+  def renderAll(comment: Comment): Option[String] = {
+    // TODO: return None for empty comments?
+    Some(Xhtml.toXhtml(bodyToHtml(comment.body)(false)))
   }
 
   def bodyToHtml(body: Body)(implicit skipSummary: Boolean): NodeSeq =
