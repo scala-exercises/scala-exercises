@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.OptionsHelper._
+import OptionsHelper._
 import org.scalatest._
 
 /** options

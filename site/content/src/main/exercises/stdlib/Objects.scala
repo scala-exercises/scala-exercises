@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.ObjectsHelper._
+import ObjectsHelper._
 import org.scalatest._
 
 /** objects

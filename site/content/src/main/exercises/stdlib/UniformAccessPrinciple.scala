@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.UniformAccessPrincipleHelper._
+import UniformAccessPrincipleHelper._
 import org.scalatest._
 
 /** uniform_access_principle
