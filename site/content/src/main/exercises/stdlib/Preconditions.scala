@@ -1,6 +1,6 @@
 package stdlib
 
-import stdlib.PreconditionsHelper._
+import PreconditionsHelper._
 import org.scalatest._
 
 /** preconditions
