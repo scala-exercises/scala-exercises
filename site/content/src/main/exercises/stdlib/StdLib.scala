@@ -7,7 +7,7 @@ package stdlib
 
 /** std_lib
   *
-  * Scala fuses object-oriented and functional programming in a statically typed programming language
+  * Scala fuses object-oriented and functional programming in a statically typed programming language.
   */
 object StdLib extends exercise.Library {
 
