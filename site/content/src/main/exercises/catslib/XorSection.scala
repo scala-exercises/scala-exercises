@@ -38,7 +38,7 @@ object XorStyleWithAdts {
     parse(s).flatMap(reciprocal).map(stringify)
 }
 
-/** Xor
+/** xor
   *
   * In day-to-day programming, it is fairly common to find ourselves writing functions that
   * can fail. For instance, querying a service may result in a connection issue, or some

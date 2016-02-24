@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** For Expressions
+/** for_expressions
   *
-  * For Expressions Description
   */
 object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
@@ -13,7 +12,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
     *
     * For loops can be simple:
     */
-  def forLoopsForExpressions(res0: String) {
+  def forLoopsForExpressions(res0: Int) {
     val someNumbers = Range(0, 10)
     var sum = 0
     for (i <- someNumbers)
@@ -26,7 +25,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
     *
     * For loops can contain additional logic:
     */
-  def additionalLogicForExpressions(res0: String) {
+  def additionalLogicForExpressions(res0: Int) {
     val someNumbers = Range(0, 10)
     var sum = 0
 
@@ -34,13 +33,14 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
       if (i % 2 == 0) sum += i
 
     sum should equal(res0)
+
   }
 
   /** canBeNestedForExpressions
     *
     * For expressions can nest, with later generators varying more rapidly than earlier ones:
     */
-  def canBeNestedForExpressions(res0: String, res1: String) {
+  def canBeNestedForExpressions(res0: Int, res1: Int) {
     val xValues = Range(1, 5)
     val yValues = Range(1, 3)
     val coordinates = for {
@@ -69,6 +69,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
     // or the same as
     nums.flatten.filter(_ % 2 == 0) should be(result)
+
   }
 
 }

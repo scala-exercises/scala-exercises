@@ -30,14 +30,23 @@
                 width: 34px;
                 height: auto;
                 float: left;
+                border-radius: 200px;
+                -webkit-border-radius: 200px;
+                -moz-border-radius: 200px;
+                -o-border-radius: 200px;
             }
             p {
                 color: $gray-base;
                 font-weight: 600;
                 margin-bottom: 0;
+                font-size: 13px;
             }
             span {
                 display: block;
+                font-size: 12px;
+                a {
+                    color: $gray-darker;
+                }
             }
             p,
             span {

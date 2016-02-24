@@ -1,6 +1,6 @@
 package catslib
 
-/** Cats
+/** cats
   *
   * These are exercises of the cats library.
   */

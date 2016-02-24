@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Empty Values
+/** empty_values
   *
-  * Empty Values Description
   */
 object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
@@ -13,23 +12,23 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     *
     * ==null==
     *
-    * Scala's `null` is the same as in Java. Any reference type can be `null`, like Strings, Objects, or your own classes. Also just like Java, value types like Ints can't be `null`. 
+    * Scala's `null` is the same as in Java. Any reference type can be `null`, like Strings, Objects, or your own classes. Also just like Java, value types like Ints can't be `null`.
     *
     * ==Null==
     *
-    * [Null](http://www.scala-lang.org/api/current/index.html#scala.Null) is a trait whose only instance is `null`. It is a subtype of all reference types, but not of value types. It purpose in existing is to make it so reference types can be assigned `null` and value types can't. 
+    * [[http://www.scala-lang.org/api/current/index.html#scala.Null Null]] is a trait whose only instance is `null`. It is a subtype of all reference types, but not of value types. It purpose in existing is to make it so reference types can be assigned `null` and value types can't.
     *
     * ==Nothing==
     *
-    * [Nothing](http://www.scala-lang.org/api/current/index.html#scala.Nothing) is a trait that is guaranteed to have _zero_ instances. It is a subtype of all other types. It has two main reasons for existing: to provide a return type for methods that **never** return normally (i.e. a method that always throws an exception). The other reason is to provide a type for Nil (explained below). 
+    * [[http://www.scala-lang.org/api/current/index.html#scala.Nothing Nothing]] is a trait that is guaranteed to have _zero_ instances. It is a subtype of all other types. It has two main reasons for existing: to provide a return type for methods that **never** return normally (i.e. a method that always throws an exception). The other reason is to provide a type for Nil (explained below).
     *
     * ==Unit==
     *
-    * [Unit](http://www.scala-lang.org/api/current/index.html#scala.Unit) in Scala is the equivalent of `void` in Java. It's used in a function's signature when that function doesn't return a value.
+    * [[http://www.scala-lang.org/api/current/index.html#scala.Unit Unit]] in Scala is the equivalent of `void` in Java. It's used in a function's signature when that function doesn't return a value.
     *
     * ==Nil==
     *
-    * [Nil](http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Nil$) is just an empty list, exactly like the result of `List()`. It is of type `List[Nothing]`. And since we know there are no instances of Nothing, we now have a list that is statically verifiable as empty. Nice to have. 
+    * [[http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Nil$ Nil]] is just an empty list, exactly like the result of `List()`. It is of type `List[Nothing]`. And since we know there are no instances of Nothing, we now have a list that is statically verifiable as empty. Nice to have.
     *
     * An empty list can be represented by another nothing value: *Nil*
     */
@@ -41,7 +40,7 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     *
     * [[http://www.scala-lang.org/api/current/index.html#scala.None None]] is the counterpart to [[http://www.scala-lang.org/api/current/index.html#scala.Some Some]], used when you're using Scala's [[http://www.scala-lang.org/api/current/index.html#scala.Option Option]] class to help avoid `null` references.
     *
-    * *None* equals *None*:
+    * `None` equals `None`:
     */
   def avoidingNullEmptyValues(res0: String) {
     assert(None === res0)
@@ -49,7 +48,7 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** identicalNoneEmptyValues
     *
-    * *None* should be identical to *None*:
+    * `None` should be identical to `None`:
     */
   def identicalNoneEmptyValues(res0: String) {
     val a = None
@@ -59,7 +58,7 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** noneToStringEmptyValues
     *
-    * *None* can be converted to a *String*:
+    * `None` can be converted to a *String*:
     */
   def noneToStringEmptyValues(res0: String) {
     assert(None.toString === res0)
@@ -67,7 +66,7 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** noneToListEmptyValues
     *
-    * *None* can be converted to an empty list
+    * `None` can be converted to an empty list
     */
   def noneToListEmptyValues(res0: String) {
     val a = None
@@ -76,15 +75,15 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** noneAsEmptyEmptyValues
     *
-    * *None* is considered empty
+    * `None` is considered empty
     */
-  def noneAsEmptyEmptyValues(res0: String) {
+  def noneAsEmptyEmptyValues(res0: Boolean) {
     assert(None.isEmpty === res0)
   }
 
   /** noneToAnyEmptyValues
     *
-    * *None* can be cast *Any*, *AnyRef* or *AnyVal*
+    * `None` can be cast `Any`, *AnyRef* or `AnyVal`
     */
   def noneToAnyEmptyValues(res0: String, res1: String, res2: String) {
     assert(None.asInstanceOf[Any] === res0)
@@ -94,9 +93,9 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** noneWithOptionEmptyValues
     *
-    * *None* can be used with *Option* instead of null references
+    * `None` can be used with `Option` instead of null references
     */
-  def noneWithOptionEmptyValues(res0: String, res1: String) {
+  def noneWithOptionEmptyValues(res0: Boolean, res1: String) {
     val optional: Option[String] = None
     assert(optional.isEmpty === res0)
     assert(optional === res1)
@@ -104,9 +103,9 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** someAgainstNoneEmptyValues
     *
-    * *Some* is the opposite of *None* for *Option* types
+    * `Some` is the opposite of `None` for `Option` types
     */
-  def someAgainstNoneEmptyValues(res0: String, res1: String) {
+  def someAgainstNoneEmptyValues(res0: Boolean, res1: Boolean) {
     val optional: Option[String] = Some("Some Value")
     assert((optional == None) === res0, "Some(value) should not equal None")
     assert(optional.isEmpty === res1, "Some(value) should not be empty")
@@ -114,7 +113,7 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** getOrElseEmptyValues
     *
-    * `Option.getOrElse` can be used to provide a default in the case of *None*:
+    * `Option.getOrElse` can be used to provide a default in the case of `None`:
     */
   def getOrElseEmptyValues(res0: String, res1: String) {
     val optional: Option[String] = Some("Some Value")

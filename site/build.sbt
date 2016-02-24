@@ -56,6 +56,7 @@ lazy val server = (project in file("server"))
       "org.webjars" %% "webjars-play" % "2.3.0",
       "org.webjars" % "bootstrap-sass" % "3.2.0",
       "org.webjars" % "highlightjs" % "8.7",
+      "org.webjars.npm" % "highlight.js" % "9.1.0",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,

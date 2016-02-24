@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Partial Functions
+/** partial_functions
   *
-  * Partial Functions Description
   */
 object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 
@@ -13,7 +12,7 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     *
     * A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait `PartialFunction` requires that the method `isDefinedAt` and `apply` be implemented.
     */
-  def partialFunctionPartialFunctions(res0: String, res1: String) {
+  def partialFunctionPartialFunctions(res0: Int, res1: Int) {
     val doubleEvens: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {
       //States that this partial function will take on the task
       def isDefinedAt(x: Int) = x % 2 == 0
@@ -38,7 +37,7 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     *
     * Case statements are a quick way to create partial functions. When you create a case statement, the `apply` and `isDefinedAt` is created for you.
     */
-  def caseStatementsPartialFunctions(res0: String, res1: String) {
+  def caseStatementsPartialFunctions(res0: Int, res1: Int) {
     //These case statements are called case statements with guards
     val doubleEvens: PartialFunction[Int, Int] = {
       case x if (x % 2) == 0 => x * 2
@@ -56,7 +55,7 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     *
     * The result of partial functions can have an `andThen` function added to the end of the chain
     */
-  def andThenPartialFunctions(res0: String, res1: String) {
+  def andThenPartialFunctions(res0: Int, res1: Int) {
     //These are called case statements with guards
     val doubleEvens: PartialFunction[Int, Int] = {
       case x if (x % 2) == 0 => x * 2

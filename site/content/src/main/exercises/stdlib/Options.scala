@@ -3,9 +3,8 @@ package stdlib
 import stdlib.OptionsHelper._
 import org.scalatest._
 
-/** Options
+/** options
   *
-  * Options Description
   */
 object Options extends FlatSpec with Matchers with exercise.Section {
 
@@ -45,6 +44,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     intercept[java.util.NoSuchElementException] {
       value2.get
     }
+
   }
 
   /** getOrElseOptions
@@ -60,13 +60,14 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     value2 getOrElse {
       "default function"
     } should be(res2)
+
   }
 
   /** isEmptyOptions
     *
     * Checking whether option has value:
     */
-  def isEmptyOptions(res0: String, res1: String) {
+  def isEmptyOptions(res0: Boolean, res1: Boolean) {
     val value1 = maybeItWillReturnSomething(true)
     val value2 = maybeItWillReturnSomething(false)
 
@@ -78,7 +79,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * Option can also be used with pattern matching:
     */
-  def matchOptions(res0: String, res1: String) {
+  def matchOptions(res0: Float, res1: Float) {
     val someValue: Option[Double] = Some(20.0)
     val value = someValue match {
       case Some(v) => v
@@ -116,7 +117,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * Another operation is `fold`. this operation will extract the value from the option, or provide a default if the value is `None`
     */
-  def foldOptions(res0: String, res1: String) {
+  def foldOptions(res0: Int, res1: Int) {
     val number: Option[Int] = Some(3)
     val noNumber: Option[Int] = None
     val result1 = number.fold(0)(_ * 3)

@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Formatting
+/** formatting
   *
-  * Formatting Description
   */
 object Formatting extends FlatSpec with Matchers with exercise.Section {
 

@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Sequences and Arrays
+/** sequences_and_arrays
   *
-  * Sequences and Arrays Description
   */
 object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
 
@@ -15,7 +14,7 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     *
     * A list can be converted to an array:
     */
-  def sequentialCollectionSequencesandArrays(res0: String, res1: String, res2: String) {
+  def sequentialCollectionSequencesandArrays(res0: Int, res1: Int, res2: Int) {
     val l = List(1, 2, 3)
     val a = l.toArray
     a should equal(Array(res0, res1, res2))

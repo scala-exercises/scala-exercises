@@ -2,14 +2,15 @@ package stdlib
 
 import org.scalatest._
 
-/** Implicits
+/** implicits
   *
-  * A method with implicit parameters can be applied to arguments just like a normal method. In this case the implicit label has no effect. However, if such a method misses arguments for its implicit parameters, such arguments will be automatically provided.
   */
 object Implicits extends FlatSpec with Matchers with exercise.Section {
 
 
   /** implicitsParametersImplicits
+    *
+    * A method with implicit parameters can be applied to arguments just like a normal method. In this case the implicit label has no effect. However, if such a method misses arguments for its implicit parameters, such arguments will be automatically provided.
     *
     * The actual arguments that are eligible to be passed to an implicit parameter fall into two categories: * First, eligible are all identifiers x that can be accessed at the point of the method call without a prefix and that denote an implicit definition or an implicit parameter. * Second, eligible are also all members of companion modules of the implicit parameter's type that are labeled implicit.
     *
@@ -107,7 +108,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     *
     * Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:
     */
-  def asDefaultImplicits(res0: BigDecimal, res1: BigDecimal) {
+  def asDefaultImplicits(res0: Float, res1: Float) {
     def howMuchCanIMake_?(hours: Int)(implicit dollarsPerHour: BigDecimal) = dollarsPerHour * hours
 
     implicit var hourlyRate = BigDecimal(34.00)

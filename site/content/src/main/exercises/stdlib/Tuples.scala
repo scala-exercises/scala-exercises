@@ -4,9 +4,8 @@ import java.util.Date
 
 import org.scalatest._
 
-/** Tuples
+/** tuples
   *
-  * Tuples Description
   */
 object Tuples extends FlatSpec with Matchers with exercise.Section {
 
@@ -39,7 +38,7 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
     *
     * Tuples may be of mixed type:
     */
-  def mixedTypeTuples(res0: String, res1: String) {
+  def mixedTypeTuples(res0: Int, res1: String) {
     val tuple5 = ("a", 1, 2.2, new Date(), BigDecimal(5))
 
     tuple5._2 should be(res0)
@@ -50,7 +49,7 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
     *
     * You can assign multiple variables at once using tuples:
     */
-  def assignVariablesTuples(res0: String, res1: String, res2: String) {
+  def assignVariablesTuples(res0: String, res1: Int, res2: Float) {
     val student = ("Sean Rogers", 21, 3.5)
     val (name, age, gpa) = student
 
@@ -63,7 +62,7 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
     *
     * Tuples items can be swapped on a Tuple 2
     */
-  def swappedTuples(res0: String, res1: String) {
+  def swappedTuples(res0: Int, res1: String) {
     val tuple = ("apple", 3).swap
     tuple._1 should be(res0)
     tuple._2 should be(res1)

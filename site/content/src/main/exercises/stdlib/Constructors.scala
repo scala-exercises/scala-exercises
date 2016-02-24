@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Constructors
+/** constructors
   *
-  * Constructors Description
   */
 object Constructors extends FlatSpec with Matchers with exercise.Section {
 
@@ -26,10 +25,9 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *
     * In the above example the primary constructor didn't accept any parameters. But the primary constructor can also accepts parameters, this is where it is different from default constructors in Java. Let me not try to draw an analogy any further.
     *
-    *
     * {{{
     * class Employee(val firstName:String,
-    *   val lastName:String) {
+    * val lastName:String) {
     *
     *   override def toString():String = {
     *     "First Name: " + firstName + " Last Name: " + lastName
@@ -68,7 +66,7 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *   var city:String = _
     *
     *   def this(firstName:String, lastName: String,
-    *     city:String, age:Int) {
+    *   city:String, age:Int) {
     *     this(firstName, lastName, city)
     *     this.age = age
     *   }
@@ -94,6 +92,7 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     * ^
     * one error found
     * }}}
+    *
     *
     * The error clearly says what's wrong. One would have to take care of this, though the compiler would report such issues, but its always good to know.
     *

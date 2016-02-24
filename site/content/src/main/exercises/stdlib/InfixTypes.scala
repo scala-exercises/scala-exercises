@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Infix Types
+/** infix_types
   *
-  * Infix Types Description
   */
 object InfixTypes extends FlatSpec with Matchers with exercise.Section {
 

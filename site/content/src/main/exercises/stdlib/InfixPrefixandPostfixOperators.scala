@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Infix Prefix and Postfix Operators
+/** infix_prefix_and_postfix_operators
   *
-  * Infix Prefix and Postfix Operators Description
   */
 object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exercise.Section {
 
@@ -13,7 +12,7 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     *
     * Any method which takes a single parameter can be used as an infix operator: `a.m(b)` can be written `a m b`.
     */
-  def singleParameterInfixPrefixandPostfixOperators(res0: String, res1: String) {
+  def singleParameterInfixPrefixandPostfixOperators(res0: Int, res1: Int) {
     val g: Int = 3
     (g + 4) should be(res0) // + is an infix operator
     g.+(4) should be(res1) // same result but not using the infix operator
@@ -23,7 +22,7 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     *
     * Infix Operators do NOT work if an object has a method that takes two parameters:
     */
-  def notWithTwoInfixPrefixandPostfixOperators(res0: String, res1: String) {
+  def notWithTwoInfixPrefixandPostfixOperators(res0: Int, res1: Int) {
     val g: String = "Check out the big brains on Brad!"
 
     g indexOf 'o' should be(res0) //indexOf(Char) can be used as an infix operator
@@ -40,9 +39,9 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
     * For instance `a.##(b)` can be written `a ## b` and `a.!` can be written `a!`
     *
     * **Postfix operators** have lower precedence than **infix operators**, so:
-    * - `foo bar baz` means `foo.bar(baz)`.
-    * - `foo bar baz bam` means `(foo.bar(baz)).bam`
-    * - `foo bar baz bam bim` means `(foo.bar(baz)).bam(bim)`.
+    *    - `foo bar baz` means `foo.bar(baz)`.
+    *    - `foo bar baz bam` means `(foo.bar(baz)).bam`
+    *    - `foo bar baz bam bim` means `(foo.bar(baz)).bam(bim)`.
     */
   def postfixOperatorInfixPrefixandPostfixOperators(res0: String) {
     val g: Int = 31

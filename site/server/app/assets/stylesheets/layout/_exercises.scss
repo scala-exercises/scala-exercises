@@ -12,11 +12,18 @@
     padding: 30px;
     background: #fff;
     line-height: 1.6;
+    h4 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
     p {
         font-size: floor(($font-size-base * 1.15));
     }
     .hljs {
         background: $gray-lighter;
+        padding: 30px;
+        box-shadow: inset 3px 0 rgba(0,0,0, 0.1);
     }
     .exercise-pre {
         min-height: 60px;

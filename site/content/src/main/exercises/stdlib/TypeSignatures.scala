@@ -2,9 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** Type Signatures
+/** type_signatures
   *
-  * Type Signatures Description
   */
 object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
@@ -28,7 +27,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     * A trait can be declared containing a type, where a concrete implementer will satisfy the type:
     *
     */
-  def typeSignatureTypeSignatures(res0: String) {
+  def typeSignatureTypeSignatures(res0: Boolean) {
     trait Randomizer[A] {
       def draw(): A
     }
@@ -68,7 +67,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * `isInstanceOf[className]` is used to determine the if an object reference is an instance of given class:
     */
-  def isInstanceOfFunctionTypeSignatures(res0: String) {
+  def isInstanceOfFunctionTypeSignatures(res0: Boolean) {
     trait Randomizer[A] {
       def draw(): A
     }
@@ -88,7 +87,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * `asInstanceOf[className]` is used to cast one reference to another:
     */
-  def asInstanceOfFunctionTypeSignatures(res0: String) {
+  def asInstanceOfFunctionTypeSignatures(res0: Boolean) {
     trait Randomizer[A] {
       def draw(): A
     }
@@ -131,7 +130,7 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * `null.asInstanceOf[className]` can be used to generate basic default values
     */
-  def classCastExceptionIfUncompatibleTypeSignatures(res0: String, res1: String, res2: String) {
+  def classCastExceptionIfUncompatibleTypeSignatures(res0: String, res1: Int, res2: Int) {
     null.asInstanceOf[String] should be(res0)
     null.asInstanceOf[Int] should be(res1)
     null.asInstanceOf[Short] should be(res2)
