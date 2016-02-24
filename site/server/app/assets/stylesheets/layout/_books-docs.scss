@@ -2,10 +2,6 @@
 // -----------------------------------------------------
 #books-docs {
     background: $books-docs-bg;
-    i {
-        color: $books-docs-icons-color;
-        font-size: ceil(($font-size-base * 1.6));
-    }
     h3 {
         display: inline-block;
         padding-left: ($padding-base-horizontal * 0.4);
@@ -15,13 +11,22 @@
     p {
         color: $books-docs-text-color;
         line-height: 1.6;
+        margin-top: 8px;
     }
     .btn {
         margin-top: 6px;
         margin-bottom: 30px;
-        
+
         @media (min-width: $screen-sm-min) {
             margin-bottom: 0;
+        }
+    }
+
+    a {
+        &:hover {
+            p {
+                color: rgba(255, 255, 255, 0.9);
+            }
         }
     }
 }

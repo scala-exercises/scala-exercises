@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.5.2 (25235) - http://www.bohemiancoding.com/sketch -->
+    <title>logo_book</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="logo_book" sketch:type="MSLayerGroup">
+            <rect id="Bounds" sketch:type="MSShapeGroup" x="0" y="0" width="32" height="32"></rect>
+            <g id="Icon" transform="translate(4.000000, 0.000000)" fill="#14A8BA" sketch:type="MSShapeGroup">
+                <path d="M21.7152589,4.032 L21.7152589,29.824 C21.7152589,30.304 21.3392371,30.688 20.8692098,30.688 L2.56948229,30.688 C1.84877384,30.688 1.25340599,30.08 1.25340599,29.344 L1.25340599,29.248 C1.25340599,28.384 1.94277929,27.712 2.75749319,27.712 L19.2084469,27.712 C19.6784741,27.712 20.0544959,27.328 20.0544959,26.848 L20.0544959,0.864 C20.0544959,0.384 19.6784741,0 19.2084469,0 L2.19346049,0 C0.971389646,0 -1.77635684e-15,1.024 -1.77635684e-15,2.24 L-1.77635684e-15,29.184 L-1.77635684e-15,29.152 L-1.77635684e-15,29.376 C-1.77635684e-15,30.816 1.15940054,32 2.56948229,32 L21.2765668,32 C22.2166213,32 23,31.2 23,30.24 L23,4.128 C23,3.744 22.6866485,3.424 22.3106267,3.424 L22.3106267,3.424 C21.9972752,3.424 21.7152589,3.712 21.7152589,4.032 L21.7152589,4.032 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>
