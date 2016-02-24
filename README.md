@@ -8,7 +8,7 @@
 
 ## How it works
 
-"Scala Exercises" brings exercises for the Stdlib, Cats, Shapeless and many other great libraries for Scala. Offering hundreds of solvable exercises organized into several categories covering the basics of the Scala language and it's most important libraries.
+"Scala Exercises" brings exercises for the Stdlib, Cats, Shapeless and many other great libraries for Scala to your browser. Offering hundreds of solvable exercises organized into several categories covering the basics of the Scala language and it's most important libraries.
 
 - LEARN: Each category includes an explanation of the basics. Learn the concepts through simple code samples.
 
