@@ -110,9 +110,8 @@ object XorStyleWithAdts {
   *
   */
 object XorSection extends FlatSpec with Matchers with exercise.Section {
-  /** xorMapRightBias
-    *
-    * More often than not we want to just bias towards one side and call it a day - by convention,
+
+  /** More often than not we want to just bias towards one side and call it a day - by convention,
     * the right side is most often chosen. This is the primary difference between `Xor` and `Either` -
     * `Xor` is right-biased. `Xor` also has some more convenient methods on it, but the most
     * crucial one is the right-biased being built-in.
@@ -128,9 +127,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     left.map(_ + 1) should be(Xor.left(res1))
   }
 
-  /** xorMonad
-    *
-    * Because `Xor` is right-biased, it is possible to define a `Monad` instance for it. You
+  /** Because `Xor` is right-biased, it is possible to define a `Monad` instance for it. You
     * could also define one for `Either` but due to how it's encoded it may seem strange to fix a
     * bias direction despite it intending to be flexible in that regard. The `Monad` instance for
     * `Xor` is consistent with the behavior of the data type itself, whereas the one for `Either`
@@ -165,9 +162,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     left.flatMap(x => Xor.right(x + 1)) should be(Xor.left(res1))
   }
 
-  /** xorErrors
-    *
-    * = Using `Xor` instead of exceptions =
+  /** = Using `Xor` instead of exceptions =
     *
     * As a running example, we will have a series of functions that will parse a string into an integer,
     * take the reciprocal, and then turn the reciprocal into a string.
@@ -216,9 +211,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     XorStyle.parse("2").isRight should be(res1)
   }
 
-  /** xorComposition
-    *
-    * Now, using combinators like `flatMap` and `map`, we can compose our functions together. Will the following incantations return a `Xor.Right` value?
+  /** Now, using combinators like `flatMap` and `map`, we can compose our functions together. Will the following incantations return a `Xor.Right` value?
     *
     */
   def xorComposition(res0: Boolean, res1: Boolean, res2: Boolean) = {
@@ -229,9 +222,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     magic("Not a number").isRight should be (res2)
   }
 
-  /**
-    *
-    * With the composite function that we actually care about, we can pass in strings and then pattern
+  /** With the composite function that we actually care about, we can pass in strings and then pattern
     * match on the exception. Because `Xor` is a sealed type (often referred to as an algebraic data type,
     * or ADT), the compiler will complain if we do not check both the `Left` and `Right` case.
     *
@@ -256,9 +247,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     result should be(res0)
   }
 
-  /** xorErrorsAsAdts
-    *
-    * Instead of using exceptions as our error value, let's instead enumerate explicitly the things that
+  /** Instead of using exceptions as our error value, let's instead enumerate explicitly the things that
     * can go wrong in our program.
     *
     * {{{
@@ -299,9 +288,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     result should be(res0)
   }
 
-  /** xorInTheLarge
-    *
-    * = Xor in the small, Xor in the large =
+  /** = Xor in the small, Xor in the large =
     *
     * Once you start using `Xor` for all your error-handling, you may quickly run into an issue where
     * you need to call into two separate modules which give back separate kinds of errors.
@@ -430,9 +417,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     left.leftMap(_.reverse) should be (Xor.Left(res2))
   }
 
-  /** xorWithExceptions
-    *
-    * There will inevitably come a time when your nice `Xor` code will have to interact with exception-throwing
+  /** There will inevitably come a time when your nice `Xor` code will have to interact with exception-throwing
     * code. Handling such situations is easy enough.
     *
     * {{{
@@ -463,8 +448,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     Xor.catchNonFatal(1 / 0).isLeft should be(res1)
   }
 
-  /**
-    * = Additional syntax =
+  /** = Additional syntax =
     *
     * For using Xor's syntax on arbitrary data types, you can import `cats.syntax.xor._`. This will
     * make possible to use the `left` and `right` methods:
