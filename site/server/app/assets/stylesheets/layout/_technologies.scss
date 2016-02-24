@@ -23,7 +23,12 @@
                 p {
                     margin-bottom: $line-height-computed;
                     line-height: 1.6;
+		    @media (min-width: $screen-sm-min) {
+ 		        height: 70px;
+			overflow: hidden;
+		    }
                 }
+
             }
             .panel-heading {
                 border: none;
