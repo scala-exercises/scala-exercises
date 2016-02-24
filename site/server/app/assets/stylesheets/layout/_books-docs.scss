@@ -2,9 +2,6 @@
 // -----------------------------------------------------
 #books-docs {
     background: $books-docs-bg;
-    
-    
-    
     h3 {
         display: inline-block;
         padding-left: ($padding-base-horizontal * 0.4);
@@ -19,15 +16,14 @@
     .btn {
         margin-top: 6px;
         margin-bottom: 30px;
-        
+
         @media (min-width: $screen-sm-min) {
             margin-bottom: 0;
         }
     }
-    
+
     a {
         &:hover {
-            
             p {
                 color: rgba(255, 255, 255, 0.9);
             }
