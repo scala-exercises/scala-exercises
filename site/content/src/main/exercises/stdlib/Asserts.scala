@@ -8,9 +8,7 @@ import org.scalatest._
 object Asserts extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** scalaTestAsserts
-    *
-    * ScalaTest makes three assertions available by default in any style trait. You can use:
+  /** ScalaTest makes three assertions available by default in any style trait. You can use:
     *
     *    - `assert` for general assertions;
     *    - `assertResult` to differentiate expected from actual values;
@@ -46,9 +44,7 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     true should be(res0)
   }
 
-  /** booleansAsserts
-    *
-    * Booleans in asserts can test equality.
+  /** Booleans in asserts can test equality.
     */
   def booleansAsserts(res0: String) {
     val v1 = 4
@@ -58,9 +54,7 @@ object Asserts extends FlatSpec with Matchers with exercise.Section {
     /** `===` is an assert. It is from ScalaTest, not from the Scala language. */
   }
 
-  /** valuesAsserts
-    *
-    * Sometimes we expect you to fill in the values
+  /** Sometimes we expect you to fill in the values
     */
   def valuesAsserts(res0: Int) {
     assert(res0 == 1 + 1)

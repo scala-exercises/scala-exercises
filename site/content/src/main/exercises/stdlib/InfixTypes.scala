@@ -8,9 +8,7 @@ import org.scalatest._
 object InfixTypes extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** infixTypeInfixTypes
-    *
-    * An infix type `T1 op T2` consists of an infix operator `op` which gets applied to two
+  /** An infix type `T1 op T2` consists of an infix operator `op` which gets applied to two
     * type operands `T1` and `T2`. The type is equivalent to the type application `op[T1,T2]`.
     *
     * The infix operator op may be an arbitrary identifier, except for `*`, which is reserved
@@ -33,9 +31,7 @@ object InfixTypes extends FlatSpec with Matchers with exercise.Section {
     announceCouple(new Loves(romeo, juliet)) should be(res0)
   }
 
-  /** infixOperatorInfixTypes
-    *
-    * Of course we can make this a bit more elegant by creating an infix operator method to use with our infix type:
+  /** Of course we can make this a bit more elegant by creating an infix operator method to use with our infix type:
     */
   def infixOperatorInfixTypes(res0: String) {
     case class Person(name: String) {

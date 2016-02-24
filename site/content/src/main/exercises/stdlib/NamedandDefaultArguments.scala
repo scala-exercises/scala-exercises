@@ -9,9 +9,7 @@ import org.scalatest._
 object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** classWithoutParametersNamedandDefaultArguments
-    *
-    * When calling methods and functions, you can use the name of the variables explicitly in the call, like so:
+  /** When calling methods and functions, you can use the name of the variables explicitly in the call, like so:
     *
     * {{{
     * def printName(first:String, last:String) = {
@@ -79,9 +77,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     myColor should equal(res0, res1, res2)
   }
 
-  /** defaultArgumentsNamedandDefaultArguments
-    *
-    * Can default arguments if you leave them off:
+  /** Can default arguments if you leave them off:
     */
   def defaultArgumentsNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithoutClassParameters()
@@ -90,9 +86,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     myColor should equal(res0, res1, res2)
   }
 
-  /** anyOrderNamedandDefaultArguments
-    *
-    * Can access class parameters and specify arguments in any order if you use their names:
+  /** Can access class parameters and specify arguments in any order if you use their names:
     */
   def anyOrderNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithClassParameters(40, 50, 60)
@@ -101,9 +95,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     myColor should equal(res0, res1, res2)
   }
 
-  /** accessClassParametersNamedandDefaultArguments
-    *
-    * Can access class parameters and default arguments if you leave them off
+  /** Can access class parameters and default arguments if you leave them off
     */
   def accessClassParametersNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithClassParameters(10, 20, 30)
@@ -112,9 +104,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     myColor should equal(res0, res1, res2)
   }
 
-  /** defaultClassArgumentsNamedandDefaultArguments
-    *
-    * Can default class parameters and have default arguments too
+  /** Can default class parameters and have default arguments too
     */
   def defaultClassArgumentsNamedandDefaultArguments(res0: Int, res1: Int, res2: Int) {
     val me = new WithClassParametersInClassDefinition()
@@ -123,9 +113,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     myColor should equal(res0, res1, res2)
   }
 
-  /** functionalDefaulParametersNamedandDefaultArguments
-    *
-    * Default parameters can be functional too
+  /** Default parameters can be functional too
     */
   def functionalDefaulParametersNamedandDefaultArguments(res0: Int, res1: Int) {
     def reduce(a: Int, f: (Int, Int) => Int = _ + _): Int = f(a, a)

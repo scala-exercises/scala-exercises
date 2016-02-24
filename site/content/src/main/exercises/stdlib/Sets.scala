@@ -8,9 +8,7 @@ import org.scalatest._
 object Sets extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** noDuplicatesSets
-    *
-    * `Set`s are `Iterable`s that contain no duplicate elements. The operations on sets are summarized in the following table for general sets and in the table after that for mutable sets. They fall into the following categories:
+  /** `Set`s are `Iterable`s that contain no duplicate elements. The operations on sets are summarized in the following table for general sets and in the table after that for mutable sets. They fall into the following categories:
     *
     * *   **Tests** `contains`, `apply`, `subsetOf`. The `contains` method asks whether a set contains a given element. The `apply` method for a set is the same as `contains`, so `set(elem)` is the same as `set contains elem`. That means sets can also be used as test functions that return true for the elements they contain.
     * *   **Additions** `+` and `++`, which add one or more elements to a set, yielding a new set.
@@ -24,18 +22,14 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     mySet.size should be(res0)
   }
 
-  /** distinctValuesSets
-    *
-    * Sets contain distinct values:
+  /** Sets contain distinct values:
     */
   def distinctValuesSets(res0: Int) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Michigan")
     mySet.size should be(res0)
   }
 
-  /** easilyAddedSets
-    *
-    * Sets can be added to easily:
+  /** Sets can be added to easily:
     */
   def easilyAddedSets(res0: Boolean, res1: Boolean) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -45,9 +39,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     mySet.contains("Illinois") should be(res1)
   }
 
-  /** mixedTypeSets
-    *
-    * Sets may be of mixed type:
+  /** Sets may be of mixed type:
     */
   def mixedTypeSets(res0: Boolean, res1: Boolean) {
     val mySet = Set("Michigan", "Ohio", 12)
@@ -56,9 +48,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     mySet.contains("MI") should be(res1)
   }
 
-  /** checkExistenceSets
-    *
-    * Sets can be checked for member existence:
+  /** Sets can be checked for member existence:
     */
   def checkExistenceSets(res0: Boolean, res1: Boolean) {
     val mySet = Set("Michigan", "Ohio", 12)
@@ -67,9 +57,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     mySet("MI") should be(res1)
   }
 
-  /** easilyRemovedSets
-    *
-    * Set elements can be removed easily:
+  /** Set elements can be removed easily:
     */
   def easilyRemovedSets(res0: Boolean, res1: Boolean) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -79,9 +67,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     mySet.contains("Michigan") should be(res1)
   }
 
-  /** multipleRemovingSets
-    *
-    * Set elements can be removed in multiple:
+  /** Set elements can be removed in multiple:
     */
   def multipleRemovingSets(res0: Boolean, res1: Boolean, res2: Int) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -92,9 +78,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.size should be(res2)
   }
 
-  /** tupleRemovingSets
-    *
-    * Set elements can be removed with a tuple:
+  /** Set elements can be removed with a tuple:
     */
   def tupleRemovingSets(res0: Boolean, res1: Boolean, res2: Int) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -105,9 +89,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.size should be(res2)
   }
 
-  /** nonexistentRemovalSets
-    *
-    * Attempted removal of nonexistent elements from a set is handled gracefully:
+  /** Attempted removal of nonexistent elements from a set is handled gracefully:
     */
   def nonexistentRemovalSets(res0: Boolean) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -116,9 +98,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.equals(mySet) should be(res0)
   }
 
-  /** easilyIteratedSets
-    *
-    * Sets can be iterated easily:
+  /** Sets can be iterated easily:
     */
   def easilyIteratedSets(res0: Int) {
     val mySet = Set(1, 3, 4, 9)
@@ -129,9 +109,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     sum should be(res0)
   }
 
-  /** easilyIntersectedSets
-    *
-    * Two sets can be intersected easily:
+  /** Two sets can be intersected easily:
     */
   def easilyIntersectedSets(res0: Boolean) {
     val mySet1 = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -142,9 +120,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.equals(Set("Michigan", "Wisconsin")) should be(res0)
   }
 
-  /** easilyJoinedSets
-    *
-    * Two sets can be joined as their union easily:
+  /** Two sets can be joined as their union easily:
     */
   def easilyJoinedSets(res0: Boolean) {
     val mySet1 = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -154,9 +130,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.equals(Set("Michigan", "Wisconsin", "Ohio", "Iowa", "Minnesota")) should be(res0)
   }
 
-  /** subsetSets
-    *
-    * A set is either a subset of another set or it isn't:
+  /** A set is either a subset of another set or it isn't:
     */
   def subsetSets(res0: Boolean, res1: Boolean) {
     val mySet1 = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -167,9 +141,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     mySet3 subsetOf mySet1 should be(res1)
   }
 
-  /** easilyObtainedDifferencesSets
-    *
-    * The difference between two sets can be obtained easily:
+  /** The difference between two sets can be obtained easily:
     */
   def easilyObtainedDifferencesSets(res0: Boolean) {
     val mySet1 = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
@@ -179,9 +151,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.equals(Set("Ohio", "Iowa")) should be(res0)
   }
 
-  /** equivalencySets
-    *
-    * Set equivalency is independent of order:
+  /** Set equivalency is independent of order:
     */
   def equivalencySets(res0: Boolean) {
     val mySet1 = Set("Michigan", "Ohio", "Wisconsin", "Iowa")

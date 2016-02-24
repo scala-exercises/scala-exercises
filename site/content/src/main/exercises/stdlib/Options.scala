@@ -9,9 +9,7 @@ import org.scalatest._
 object Options extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** conceptOptions
-    *
-    * If you have worked with Java at all in the past, it is very likely that you have come across a `NullPointerException` at some time (other languages will throw similarly named errors in such a case). Usually this happens because some method returns null when you were not expecting it and thus not dealing with that possibility in your client code. A value of `null` is often abused to represent an absent optional value.
+  /** If you have worked with Java at all in the past, it is very likely that you have come across a `NullPointerException` at some time (other languages will throw similarly named errors in such a case). Usually this happens because some method returns null when you were not expecting it and thus not dealing with that possibility in your client code. A value of `null` is often abused to represent an absent optional value.
     *
     * Scala tries to solve the problem by getting rid of `null` values altogether and providing its own type for representing optional values, i.e. values that may be present or not: the `Option[A]` trait.
     *
@@ -25,9 +23,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     nullValue should be(res1)
   }
 
-  /** maybeItWillReturnSomethingOptions
-    *
-    * Having:
+  /** Having:
     *
     * {{{
     * def maybeItWillReturnSomething(flag: Boolean): Option[String] = {
@@ -47,9 +43,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** getOrElseOptions
-    *
-    * Using `getOrElse` we can provide a default value ("No value") when the optional argument (`None`) does not exist:
+  /** Using `getOrElse` we can provide a default value ("No value") when the optional argument (`None`) does not exist:
     */
   def getOrElseOptions(res0: String, res1: String, res2: String) {
     val value1 = maybeItWillReturnSomething(true)
@@ -63,9 +57,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** isEmptyOptions
-    *
-    * Checking whether option has value:
+  /** Checking whether option has value:
     */
   def isEmptyOptions(res0: Boolean, res1: Boolean) {
     val value1 = maybeItWillReturnSomething(true)
@@ -75,9 +67,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     value2.isEmpty should be(res1)
   }
 
-  /** matchOptions
-    *
-    * Option can also be used with pattern matching:
+  /** Option can also be used with pattern matching:
     */
   def matchOptions(res0: Float, res1: Float) {
     val someValue: Option[Double] = Some(20.0)
@@ -94,9 +84,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     value1 should be(res1)
   }
 
-  /** mapOptions
-    *
-    * An alternative for pattern matching is performing collection style operations.
+  /** An alternative for pattern matching is performing collection style operations.
     * This is possible because an option could be looked at as a collection with either one or zero elements.
     *
     * One of these operations is `map`. this operation allows to map the inner value to a different type while preserving the option
@@ -113,9 +101,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     /** Note that the type of result1 is now Option[Double], thanks to the scala type inference. */
   }
 
-  /** foldOptions
-    *
-    * Another operation is `fold`. this operation will extract the value from the option, or provide a default if the value is `None`
+  /** Another operation is `fold`. this operation will extract the value from the option, or provide a default if the value is `None`
     */
   def foldOptions(res0: Int, res1: Int) {
     val number: Option[Int] = Some(3)

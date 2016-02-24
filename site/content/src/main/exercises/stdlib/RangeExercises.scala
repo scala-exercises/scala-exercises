@@ -7,10 +7,7 @@ import org.scalatest._
   */
 object RangeExercises extends FlatSpec with Matchers with exercise.Section {
 
-
-  /** upperNotInclusiveRangeExercises
-    *
-    * A range's upper bound is not inclusive:
+  /** A range's upper bound is not inclusive:
     */
   def upperNotInclusiveRangeExercises(res0: Int, res1: Int, res2: Int) {
     val someNumbers = Range(0, 10)
@@ -22,9 +19,7 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     last should be(res2)
   }
 
-  /** unitlRangeExercises
-    *
-    * Ranges can be specified using 'until'.
+  /** Ranges can be specified using 'until'.
     */
   def unitlRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 10)
@@ -33,9 +28,7 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     (someNumbers == otherRange) should be(res0)
   }
 
-  /** incrementsRangeExercises
-    *
-    * Range can specify a step for an increment:
+  /** Range can specify a step for an increment:
     */
   def incrementsRangeExercises(res0: Int, res1: Int, res2: Int) {
     val someNumbers = Range(2, 10, 3)
@@ -47,9 +40,7 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     last should be(res2)
   }
 
-  /** upperInIncrementRangeExercises
-    *
-    * A range does not include its upper bound, even in a step increment:
+  /** A range does not include its upper bound, even in a step increment:
     */
   def upperInIncrementRangeExercises(res0: Boolean, res1: Boolean, res2: Boolean) {
     val someNumbers = Range(0, 34, 2)
@@ -58,9 +49,7 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     someNumbers.contains(34) should be(res2)
   }
 
-  /** specifyUpperRangeExercises
-    *
-    * Range can specify to include its upper bound value
+  /** Range can specify to include its upper bound value
     */
   def specifyUpperRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 34).inclusive
@@ -68,9 +57,7 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
     someNumbers.contains(34) should be(res0)
   }
 
-  /** inclusiveWithToRangeExercises
-    *
-    * Inclusive ranges can be specified using 'to'.
+  /** Inclusive ranges can be specified using 'to'.
     */
   def inclusiveWithToRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 34).inclusive

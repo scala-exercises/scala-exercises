@@ -8,9 +8,7 @@ import org.scalatest._
 object Traits extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** similarToInterfacesTraits
-    *
-    * Similar to *interfaces* in Java, traits are used to define object types by specifying the signature of the supported methods. Unlike Java, Scala allows traits to be partially implemented; i.e. it is possible to define default implementations for some methods. In contrast to classes, traits may not have constructor parameters.
+  /** Similar to *interfaces* in Java, traits are used to define object types by specifying the signature of the supported methods. Unlike Java, Scala allows traits to be partially implemented; i.e. it is possible to define default implementations for some methods. In contrast to classes, traits may not have constructor parameters.
     *
     * Here is an example:
     *
@@ -72,9 +70,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     myListener.listen(evt) should be(res0)
   }
 
-  /** extendsFromOneTraits
-    *
-    * A class can only extend from one class or trait, any subsequent extension should use the keyword `with`:
+  /** A class can only extend from one class or trait, any subsequent extension should use the keyword `with`:
     */
   def extendsFromOneTraits(res0: String) {
     case class Event(name: String)
@@ -99,9 +95,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     myListener.listen(evt) should be(res0)
   }
 
-  /** polymorphicTraits
-    *
-    * Traits are polymorphic. Any type can be referred to by another type if related by extension:
+  /** Traits are polymorphic. Any type can be referred to by another type if related by extension:
     */
   def polymorphicTraits(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean) {
     case class Event(name: String)
@@ -127,9 +121,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     myListener.isInstanceOf[AnyRef] should be(res3)
   }
 
-  /** implementatedTraits
-    *
-    * Traits can have concrete implementations that can be mixed into concrete classes with its own state:
+  /** Traits can have concrete implementations that can be mixed into concrete classes with its own state:
     */
   def implementatedTraits(res0: Int, res1: Int) {
     trait Logging {
@@ -165,9 +157,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** previouslyInstantiatedTraits
-    *
-    * Traits are instantiated before a classes instantiation:
+  /** Traits are instantiated before a classes instantiation:
     */
   def previouslyInstantiatedTraits(res0: String) {
     var sb = List[String]()
@@ -192,9 +182,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** fromLeftToRightTraits
-    *
-    * Traits are instantiated before a classes instantiation from left to right:
+  /** Traits are instantiated before a classes instantiation from left to right:
     */
   def fromLeftToRightTraits(res0: String) {
     var sb = List[String]()
@@ -225,9 +213,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** duplicateInstantiationTraits
-    *
-    * Instantiations are tracked and will not allow a duplicate instantiation. " + Note T1 extends T2, and C1 also extends T2, but T2 is only instantiated once:
+  /** Instantiations are tracked and will not allow a duplicate instantiation. " + Note T1 extends T2, and C1 also extends T2, but T2 is only instantiated once:
     */
   def duplicateInstantiationTraits(res0: String) {
     var sb = List[String]()
@@ -258,9 +244,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** diamondOfDeathTraits
-    *
-    * The diamond of [death](http://en.wikipedia.org/wiki/Diamond_problem) is avoided since instantiations are tracked and will not allow multiple instantiations:
+  /** The diamond of [death](http://en.wikipedia.org/wiki/Diamond_problem) is avoided since instantiations are tracked and will not allow multiple instantiations:
     */
   def diamondOfDeathTraits(res0: String) {
     var sb = List[String]()

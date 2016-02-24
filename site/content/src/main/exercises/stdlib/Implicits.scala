@@ -8,11 +8,7 @@ import org.scalatest._
 object Implicits extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** implicitsParametersImplicits
-    *
-    * A method with implicit parameters can be applied to arguments just like a normal method. In this case the implicit label has no effect. However, if such a method misses arguments for its implicit parameters, such arguments will be automatically provided.
-    *
-    * The actual arguments that are eligible to be passed to an implicit parameter fall into two categories: * First, eligible are all identifiers x that can be accessed at the point of the method call without a prefix and that denote an implicit definition or an implicit parameter. * Second, eligible are also all members of companion modules of the implicit parameter's type that are labeled implicit.
+  /** The actual arguments that are eligible to be passed to an implicit parameter fall into two categories: * First, eligible are all identifiers x that can be accessed at the point of the method call without a prefix and that denote an implicit definition or an implicit parameter. * Second, eligible are also all members of companion modules of the implicit parameter's type that are labeled implicit.
     *
     * In the following example we define a method sum which computes the sum of a list of elements using the monoid's add and unit operations. Please note that implicit values can not be top-level, they have to be members of a template.
     *
@@ -62,9 +58,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     20.isOdd should be(res1)
   }
 
-  /** importedImplicits
-    *
-    * Implicits rules can be imported into your scope with an import:
+  /** Implicits rules can be imported into your scope with an import:
     */
   def importedImplicits(res0: Boolean, res1: Boolean) {
     object MyPredef {
@@ -104,9 +98,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     add(3, 6).intValue == 9 should be(res4)
   }
 
-  /** asDefaultImplicits
-    *
-    * Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:
+  /** Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:
     */
   def asDefaultImplicits(res0: Float, res1: Float) {
     def howMuchCanIMake_?(hours: Int)(implicit dollarsPerHour: BigDecimal) = dollarsPerHour * hours
@@ -119,9 +111,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     howMuchCanIMake_?(95) should be(res1)
   }
 
-  /** listOfImplicitsImplicits
-    *
-    * Implicit Function Parameters can contain a list of implicits:
+  /** Implicit Function Parameters can contain a list of implicits:
     */
   def listOfImplicitsImplicits(res0: String, res1: String) {
     def howMuchCanIMake_?(hours: Int)(implicit amount: BigDecimal, currencyName: String) =
@@ -136,9 +126,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     howMuchCanIMake_?(95) should be(res1)
   }
 
-  /** defaultArgumentsImplicits
-    *
-    * Default arguments though are preferred to Implicit Function Parameters
+  /** Default arguments though are preferred to Implicit Function Parameters
     */
   def defaultArgumentsImplicits(res0: String, res1: String) {
     def howMuchCanIMake_?(hours: Int, amount: BigDecimal = 34, currencyName: String = "Dollars") =

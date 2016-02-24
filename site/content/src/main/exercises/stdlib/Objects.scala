@@ -9,9 +9,7 @@ import org.scalatest._
 object Objects extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** singletonObjects
-    *
-    * An object is a singleton. One object, that's it. This object is a replacement of static in Java, and is called upon much in the same way.
+  /** An object is a singleton. One object, that's it. This object is a replacement of static in Java, and is called upon much in the same way.
     */
   def singletonObjects(res0: String, res1: String, res2: String, res3: String) {
     object Greeting {
@@ -30,9 +28,7 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     Greeting.magyar should be(res3)
   }
 
-  /** notStaticMethodObjects
-    *
-    * Here is proof an object is a singleton, and not a static method in a class
+  /** Here is proof an object is a singleton, and not a static method in a class
     */
   def notStaticMethodObjects(res0: Boolean, res1: Boolean) {
     object Greeting {
@@ -55,9 +51,7 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     x eq z should be(res1)
   }
 
-  /** companionObjectObjects
-    *
-    * An object that has the same name as class is called a companion object, it is used to contain factories for the class that it complements.
+  /** An object that has the same name as class is called a companion object, it is used to contain factories for the class that it complements.
     */
   def companionObjectObjects(res0: String) {
     class Movie(val name: String, val year: Short)
@@ -77,9 +71,7 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     Movie.academyAwardBestMoviesForYear(1932).get.name should be(res0)
   }
 
-  /** sharingVariablesObjects
-    *
-    * A companion object stores shared variables and values for every instantiated class to share. Having next companion object `SecretAgent`:
+  /** A companion object stores shared variables and values for every instantiated class to share. Having next companion object `SecretAgent`:
     * {{{
     * class SecretAgent(val name: String) {
     *   def shoot(n: Int) {
@@ -115,9 +107,7 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
     SecretAgent.bullets should be(res0)
   }
 
-  /** privateValuesObjects
-    *
-    * A companion object can also see private values and variables of the instantiated objects
+  /** A companion object can also see private values and variables of the instantiated objects
     */
   def privateValuesObjects(res0: String, res1: String, res2: String, res3: String) {
     class Person(val name: String, private val superheroName: String) //The superhero name is private!

@@ -8,9 +8,7 @@ import org.scalatest._
 object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** allValuesAreObjectsParentClasses
-    *
-    * In contrast to Java, all values in Scala are objects (including numerical values and functions). Since Scala is class-based, all values are instances of a class.
+  /** In contrast to Java, all values in Scala are objects (including numerical values and functions). Since Scala is class-based, all values are instances of a class.
     *
     * Class hierarchy is linear, a class can only extend from one parent class:
     *
@@ -24,9 +22,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
     pilot.lastName should be(res1)
   }
 
-  /** polymorphicParentClasses
-    *
-    * A class that extends from another is polymorphic:
+  /** A class that extends from another is polymorphic:
     */
   def polymorphicParentClasses(res0: String, res1: String) {
     class Soldier(val firstName: String, val lastName: String) {}
@@ -40,9 +36,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
     soldier.lastName should be(res1)
   }
 
-  /** abstractClassParentClasses
-    *
-    * An abstract class, as in Java, cannot be instantiated and only inherited:
+  /** An abstract class, as in Java, cannot be instantiated and only inherited:
     *
     * {{{
     * abstract class Soldier(val firstName: String, val lastName: String) {}

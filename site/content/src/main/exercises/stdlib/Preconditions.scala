@@ -9,9 +9,7 @@ import org.scalatest._
 object Preconditions extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** preconditionsPreconditions
-    *
-    * One of the benefits of object-oriented programming is that it allows you to encapsulate data inside objects so that you can ensure the data is valid throughout its lifetime. In the case of an immutable object such as *Rational*, this means that you should ensure the data is valid when the object is constructed.
+  /** One of the benefits of object-oriented programming is that it allows you to encapsulate data inside objects so that you can ensure the data is valid throughout its lifetime. In the case of an immutable object such as *Rational*, this means that you should ensure the data is valid when the object is constructed.
     *
     * Given that a zero denominator is an invalid state for a *Rational* number, you should not let a *Rational* be constructed if a zero is passed in the d parameter.
     *

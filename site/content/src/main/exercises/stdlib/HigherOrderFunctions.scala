@@ -8,9 +8,7 @@ import org.scalatest._
 object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** meetLamdaHigherOrderFunctions
-    *
-    * Meet lambda. Scala provides a relatively lightweight syntax for defining anonymous functions. Anonymous functions in source code are called function literals and at run time, function literals are instantiated into objects called function values.
+  /** Meet lambda. Scala provides a relatively lightweight syntax for defining anonymous functions. Anonymous functions in source code are called function literals and at run time, function literals are instantiated into objects called function values.
     *
     * Scala supports first-class functions, which means you can express functions in function literal syntax, i.e.,` (x: Int) => x + 1`, and that functions can be represented by objects, which are called function values.
     */
@@ -41,9 +39,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     result5 should be(res5)
   }
 
-  /** differentLookHigherOrderFunctions
-    *
-    * An anonymous function can also take on a different look by taking out the brackets
+  /** An anonymous function can also take on a different look by taking out the brackets
     */
   def differentLookHigherOrderFunctions(res0: Int) {
     def lambda = (x: Int) => x + 1
@@ -51,11 +47,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     result should be(res0)
   }
 
-  /** meetClosureHigherOrderFunctions
-    *
-    * Meet closure. A closure is a function, whose return value depends on the value of one or more variables declared outside this function. Consider the following piece of code with anonymous function:
-    *
-    * {{{
+  /** {{{
     * val multiplier = (i:Int) => i * 10
     * }}}
     *
@@ -77,9 +69,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     result2 should be(res1)
   }
 
-  /** holdEnvironmentHigherOrderFunctions
-    *
-    * We can take that closure and throw into a method and it will still hold the environment
+  /** We can take that closure and throw into a method and it will still hold the environment
     */
   def holdEnvironmentHigherOrderFunctions(res0: Int, res1: Int) {
     def summation(x: Int, y: Int => Int) = y(x)
@@ -95,9 +85,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     result2 should be(res1)
   }
 
-  /** returningFunctionHigherOrderFunctions
-    *
-    * Function returning another function:
+  /** Function returning another function:
     */
   def returningFunctionHigherOrderFunctions(res0: Boolean, res1: Int, res2: Int) {
     def addWithoutSyntaxSugar(x: Int) = {
@@ -114,9 +102,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     fiveAdder(5) should be(res2)
   }
 
-  /** returningAnonymousFunctionHigherOrderFunctions
-    *
-    * Function returning another function using an anonymous function:
+  /** Function returning another function using an anonymous function:
     */
   def returningAnonymousFunctionHigherOrderFunctions(res0: Boolean, res1: Int, res2: Int) {
     def addWithSyntaxSugar(x: Int) = (y: Int) => x + y
@@ -128,9 +114,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     fiveAdder(5) should be(res2)
   }
 
-  /** isInstanceOfMethodHigherOrderFunctions
-    *
-    * `isInstanceOf` is the same as `instanceof` in java, but in this case the parameter types can be *blanked out* using existential types with a single underline, since parameter type are unknown at runtime.
+  /** `isInstanceOf` is the same as `instanceof` in java, but in this case the parameter types can be *blanked out* using existential types with a single underline, since parameter type are unknown at runtime.
     */
   def isInstanceOfMethodHigherOrderFunctions(res0: Boolean) {
     def addWithSyntaxSugar(x: Int) = (y: Int) => x + y
@@ -138,9 +122,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     addWithSyntaxSugar(1).isInstanceOf[Function1[_, _]] should be(res0)
   }
 
-  /** functionAsParameterHigherOrderFunctions
-    *
-    * Function taking another function as parameter. Helps in composing functions.
+  /** Function taking another function as parameter. Helps in composing functions.
     *
     * Hint: a map method applies the function to each element of a list
     */
