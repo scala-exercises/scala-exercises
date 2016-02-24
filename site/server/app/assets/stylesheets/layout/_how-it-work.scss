@@ -4,6 +4,7 @@
     padding-bottom: ($padding-large-vertical * 18);
 }
 
+
 .steps {
     position: relative;
     .step {
@@ -34,6 +35,8 @@
                 border: 16px solid $gray-lighter;
             }
         }
+        
+
         .bubble {
             opacity: 0;
             transition: opacity 0.3s linear;
@@ -134,6 +137,16 @@
         }
     }
 }
+
+.steps .step .bubble { opacity: 0; transition:opacity 0.3s linear;}
+.steps>div:first-of-type .step .bubble {opacity: 1;}
+.steps>div:first-of-type .step a {background: #1293a3; }
+.steps:hover>div:first-of-type .step .bubble {opacity: 0;}
+.steps:hover>div:first-of-type .step a {background: #DCDCDC ;}
+.steps:hover>div:first-of-type .step:hover .bubble {opacity: 1;}
+.steps:hover>div:first-of-type .step:hover a {background: #1293a3; }
+
+
 
 hr {
     position: absolute;
