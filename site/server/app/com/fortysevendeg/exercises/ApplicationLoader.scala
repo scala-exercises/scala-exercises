@@ -60,7 +60,6 @@ class Components(context: Context)
         case _                           ⇒ None
       }
       (user, pass, newUrl) ← parsed
-      _ = Logger.warn("Parsed : " + List(user, pass, newUrl).mkString("\n"))
       transactor = HikariTransactor[Task](driver, newUrl, user, pass).attemptRun match {
         case \/-(t) ⇒ Some(t)
         case -\/(e) ⇒ None
