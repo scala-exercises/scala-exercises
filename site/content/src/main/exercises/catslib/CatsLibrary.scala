@@ -2,7 +2,7 @@ package catslib
 
 /** cats
   *
-  * These are exercises of the cats library.
+  * Cats is an experimental library intended to provide abstractions for functional programming in the Scala programming language.
   */
 object CatsLibrary extends exercise.Library {
   override def color = Some("#4CAAF6")
