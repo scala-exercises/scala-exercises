@@ -8,9 +8,7 @@ import org.scalatest._
 object ValandVar extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** mutableOrInmutableValandVar
-    *
-    * Scala allows one to decide whether a variable is immutable or mutable. Immutable is read-only whereas mutable is read-write. Immutable variables are declared with the keyword `val`.
+  /** Scala allows one to decide whether a variable is immutable or mutable. Immutable is read-only whereas mutable is read-write. Immutable variables are declared with the keyword `val`.
     *
     * {{{
     * val age:Int = 22
@@ -36,9 +34,7 @@ object ValandVar extends FlatSpec with Matchers with exercise.Section {
     a should be(res1)
   }
 
-  /** valIsInmutableValandVar
-    *
-    * but `val`'s may not be reassigned.
+  /** but `val`'s may not be reassigned.
     */
   def valIsInmutableValandVar(res0: Int) {
     val a = 5

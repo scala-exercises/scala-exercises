@@ -8,9 +8,7 @@ import org.scalatest._
 object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** createEnumerationEnumerations
-    *
-    * To create an enumeration, create an object that extends the abstract class `Enumeration`, and set a `val` variable to the method `Value`.  This is a trick to give values to each `val`.
+  /** To create an enumeration, create an object that extends the abstract class `Enumeration`, and set a `val` variable to the method `Value`.  This is a trick to give values to each `val`.
     *
     * `Value` assigns a numerical value to fields:
     */
@@ -37,9 +35,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     (Planets.Neptune == Planets.Jupiter) should be(res5)
   }
 
-  /** ownIndexEnumerations
-    *
-    * You can create an enumeration with your own index and your own Strings, in this exercise we will start with an index of one and use Greek names instead of Roman:
+  /** You can create an enumeration with your own index and your own Strings, in this exercise we will start with an index of one and use Greek names instead of Roman:
     */
   def ownIndexEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object GreekPlanets extends Enumeration {
@@ -66,9 +62,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     (GreekPlanets.Neptune == GreekPlanets.Jupiter) should be(res5)
   }
 
-  /** oneLineEnumerations
-    *
-    * Enumerations can be declared in one line if you are merely setting variables to `Value`:
+  /** Enumerations can be declared in one line if you are merely setting variables to `Value`:
     */
   def oneLineEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object Planets extends Enumeration {
@@ -85,9 +79,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     (Planets.Neptune == Planets.Jupiter) should be(res5)
   }
 
-  /** stringValueEnumerations
-    *
-    * Enumerations can be declared with a string value only:
+  /** Enumerations can be declared with a string value only:
     */
   def stringValueEnumerations(res0: Int, res1: Int, res2: String, res3: String, res4: Boolean, res5: Boolean) {
     object GreekPlanets extends Enumeration {
@@ -113,9 +105,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
     (GreekPlanets.Neptune == GreekPlanets.Jupiter) should be(res5)
   }
 
-  /** extendingValueEnumerations
-    *
-    * You can extend the `Enumeration` by extending the `Value` class.
+  /** You can extend the `Enumeration` by extending the `Value` class.
     */
   def extendingValueEnumerations(res0: String, res1: String) {
     object Planets extends Enumeration {

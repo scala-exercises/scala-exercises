@@ -25,9 +25,7 @@ object addSize extends Poly2 {
   */
 object HListExercises extends FlatSpec with Matchers with exercise.Section {
 
-  /** Map
-    *
-    *  It has a `map` operation, applying a polymorphic function value across its elements. This means that it subsumes both
+  /** It has a `map` operation, applying a polymorphic function value across its elements. This means that it subsumes both
     * typical `HList`'s and also `KList`'s (`HList`'s whose elements share a common outer type constructor).
     */
   def exerciseMap(res0: Option[Int], res1 : Option[String]) = {
@@ -44,9 +42,7 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     opts should be (res0 :: res1 :: HNil)
   }
 
-  /** Flat Map
-    *
-    * It also has a flatMap Operation
+  /** It also has a flatMap Operation
     */
   def exerciseFlatMap(res0 : Int, res1 : String, res2 : Boolean) = {
     import poly.identity
@@ -57,9 +53,7 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** Polymorphic fold
-    *
-    * It has a set of fully polymorphic fold operations which take a polymorphic binary function value. The fold is sensitive
+  /** It has a set of fully polymorphic fold operations which take a polymorphic binary function value. The fold is sensitive
     * to the static types of all of the elements of the `HList`. Given the earlier definition of size,
     * {{{
     * object addSize extends Poly2 {
@@ -78,9 +72,7 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
   }
 
 
-  /** Zipper
-    *
-    * It also has a zipper for traversal and persistent update
+  /** It also has a zipper for traversal and persistent update
     */
   def exerciseZipper(res0 : Int, res1 : (String, Int), res2 : Double, res3 : Int, res4 : String, res5 : String, res6 : Double) = {
     import syntax.zipper._

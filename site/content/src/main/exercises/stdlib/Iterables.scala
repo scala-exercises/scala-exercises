@@ -8,9 +8,7 @@ import org.scalatest._
 object Iterables extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** collectionIterablesIterables
-    *
-    * The next trait from the top in the collections hierarchy is `Iterable`. All methods in this trait are defined in terms of an abstract method, `iterator`, which yields the collection's elements one by one. The `foreach` method from trait `Traversable` is implemented in `Iterable` in terms of `iterator`. Here is the actual implementation:
+  /** The next trait from the top in the collections hierarchy is `Iterable`. All methods in this trait are defined in terms of an abstract method, `iterator`, which yields the collection's elements one by one. The `foreach` method from trait `Traversable` is implemented in `Iterable` in terms of `iterator`. Here is the actual implementation:
     *
     *
     * def foreach[U](f: Elem => U): Unit = {
@@ -32,9 +30,7 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     }
   }
 
-  /** groupedIterables
-    *
-    * `grouped` will return an fixed sized Iterable chucks of an Iterable
+  /** `grouped` will return an fixed sized Iterable chucks of an Iterable
     */
   def groupedIterables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
@@ -44,9 +40,7 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     it.next() should be(List(res6, res7, res8))
   }
 
-  /** slidingIterables
-    *
-    * `sliding` will return an Iterable that shows a sliding window of an Iterable.
+  /** `sliding` will return an Iterable that shows a sliding window of an Iterable.
     */
   def slidingIterables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
@@ -56,9 +50,7 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     it.next() should be(List(res6, res7, res8))
   }
 
-  /** slidingWindowIterables
-    *
-    * `sliding` can take the size of the window as well the size of the step during each iteration
+  /** `sliding` can take the size of the window as well the size of the step during each iteration
     */
   def slidingWindowIterables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
@@ -68,27 +60,21 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     it.next() should be(List(res6, res7, res8))
   }
 
-  /** takeRightIterables
-    *
-    * `takeRight` is the opposite of 'take' in Traversable.  It retrieves the last elements of an Iterable.
+  /** `takeRight` is the opposite of 'take' in Traversable.  It retrieves the last elements of an Iterable.
     */
   def takeRightIterables(res0: Int, res1: Int, res2: Int) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
     (list takeRight 3) should be(List(res0, res1, res2))
   }
 
-  /** dropRightIterables
-    *
-    * `dropRight` will drop the number of elements from the right.
+  /** `dropRight` will drop the number of elements from the right.
     */
   def dropRightIterables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
     (list dropRight 3) should be(List(res0, res1, res2, res3, res4, res5))
   }
 
-  /** zipIterables
-    *
-    * `zip` will stitch two iterables into an iterable of pairs of corresponding elements from both iterables.
+  /** `zip` will stitch two iterables into an iterable of pairs of corresponding elements from both iterables.
     *
     * E.g. `Iterable(x1, x2, x3) zip Iterable(y1, y2, y3)` will return `((x1,y1), (x2, y2), (x3, y3))`:
     */
@@ -98,9 +84,7 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     (xs zip ys) should be(List((res0, res1), (res2, res3), (res4, res5)))
   }
 
-  /** sameSizeZipIterables
-    *
-    * If two Iterables aren't the same size, then `zip` will only zip what can only be paired.
+  /** If two Iterables aren't the same size, then `zip` will only zip what can only be paired.
     *
     * E.g. `Iterable(x1, x2, x3) zip Iterable(y1, y2)` will return `((x1,y1), (x2, y2))`
     *
@@ -111,9 +95,7 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     (xs zip ys) should be(List((res0, res1), (res2, res3)))
   }
 
-  /** zipAllIterables
-    *
-    * If two Iterables aren't the same size, then `zipAll` can provide fillers for what it couldn't find a complement for:
+  /** If two Iterables aren't the same size, then `zipAll` can provide fillers for what it couldn't find a complement for:
     *
     * E.g. `Iterable(x1, x2, x3) zipAll (Iterable(y1, y2), x, y)` will return `((x1,y1), (x2, y2), (x3, y)))`
     */
@@ -129,18 +111,14 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** zipWithIndexIterables
-    *
-    * `zipWithIndex` will zip an Iterable with it's integer index
+  /** `zipWithIndex` will zip an Iterable with it's integer index
     */
   def zipWithIndexIterables(res0: String, res1: String, res2: Int, res3: String) {
     val xs = List("Manny", "Moe", "Jack")
     xs.zipWithIndex should be(List((res0, 0), (res1, res2), (res3, 2)))
   }
 
-  /** sameElementsIterables
-    *
-    * `sameElements` will return true if the two iterables produce the same elements in the same order:
+  /** `sameElements` will return true if the two iterables produce the same elements in the same order:
     */
   def sameElementsIterables(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean) {
     val xs = List("Manny", "Moe", "Jack")

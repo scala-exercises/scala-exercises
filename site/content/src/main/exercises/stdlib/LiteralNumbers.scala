@@ -8,9 +8,7 @@ import org.scalatest._
 object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** integerLiteralsLiteralNumbers
-    *
-    * Integer Literals are 32-bit and can be created from decimal, hexadecimal:
+  /** Integer Literals are 32-bit and can be created from decimal, hexadecimal:
     */
   def integerLiteralsLiteralNumbers(res0: Int, res1: Int, res2: Int, res3: Int, res4: String, res5: String, res6: String) {
     val a = 2
@@ -29,9 +27,7 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
     h should be(res6) //Hint: 30F = 783
   }
 
-  /** longLiteralsLiteralNumbers
-    *
-    * Long Literals are 64 bit, are specified by appending an `L` or `l` at the end:
+  /** Long Literals are 64 bit, are specified by appending an `L` or `l` at the end:
     */
   def longLiteralsLiteralNumbers(res0: Int, res1: Int, res2: Int, res3: Int, res4: String, res5: String, res6: String) {
     val a = 2L
@@ -51,9 +47,7 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
     h should be(res6) //Hint: 30F = 783
   }
 
-  /** floatsAndDoublesLiteralNumbers
-    *
-    * Float and Double Literals are IEEE 754 for specific, Float are 32-bit length, Doubles are 64-bit.
+  /** Float and Double Literals are IEEE 754 for specific, Float are 32-bit length, Doubles are 64-bit.
     * Floats can be coerced using a f or F suffix, and Doubles can be coerced using a d or D suffix.
     * Exponent are specified using e or E.
     */

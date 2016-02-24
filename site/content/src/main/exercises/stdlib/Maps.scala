@@ -7,10 +7,7 @@ import org.scalatest._
   */
 object Maps extends FlatSpec with Matchers with exercise.Section {
 
-
-  /** keyAndValueMaps
-    *
-    * A `Map` is an `Iterable` consisting of pairs of keys and values (also named mappings or associations). Scala's Predef class offers an implicit conversion that lets you write `key -> value` as an alternate syntax for the pair `(key, value)`. For instance `Map("x" -> 24, "y" -> 25, "z" -> 26)` means exactly the same as `Map(("x", 24), ("y", 25), ("z", 26))`, but reads better.
+  /** A `Map` is an `Iterable` consisting of pairs of keys and values (also named mappings or associations). Scala's Predef class offers an implicit conversion that lets you write `key -> value` as an alternate syntax for the pair `(key, value)`. For instance `Map("x" -> 24, "y" -> 25, "z" -> 26)` means exactly the same as `Map(("x", 24), ("y", 25), ("z", 26))`, but reads better.
     *
     * The fundamental operations on maps are similar to those on sets. They are summarized in the following table and fall into the following categories:
     *
@@ -27,18 +24,14 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res0)
   }
 
-  /** distinctPairingsMaps
-    *
-    * Maps contain distinct pairings:
+  /** Maps contain distinct pairings:
     */
   def distinctPairingsMaps(res0: Int) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "MI" -> "Michigan")
     myMap.size should be(res0)
   }
 
-  /** easilyAddedMaps
-    *
-    * Maps can be added to easily:
+  /** Maps can be added to easily:
     */
   def easilyAddedMaps(res0: Boolean) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "MI" -> "Michigan")
@@ -46,9 +39,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     aNewMap.contains("IL") should be(res0)
   }
 
-  /** canBeIteratedMaps
-    *
-    * Map values can be iterated:
+  /** Map values can be iterated:
     */
   def canBeIteratedMaps(res0: Int, res1: String, res2: String) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "MI" -> "Michigan")
@@ -61,9 +52,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     lastElement should be(res2) //Failed presumption: The order in maps is not guaranteed
   }
 
-  /** duplicatedKeyInsertionMaps
-    *
-    * Maps insertion with duplicate key updates previous entry with subsequent value:
+  /** Maps insertion with duplicate key updates previous entry with subsequent value:
     */
   def duplicatedKeyInsertionMaps(res0: Int, res1: String) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "MI" -> "Meechigan")
@@ -73,9 +62,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
 
   }
 
-  /** mixedTypeKeysMaps
-    *
-    * Map keys may be of mixed type:
+  /** Map keys may be of mixed type:
     */
   def mixedTypeKeysMaps(res0: String, res1: String) {
     val myMap = Map("Ann Arbor" -> "MI", 49931 -> "MI")
@@ -83,9 +70,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap(49931) should be(res1)
   }
 
-  /** mixedTypeValuesMaps
-    *
-    * Mixed type values can be added to a map:
+  /** Mixed type values can be added to a map:
     */
   def mixedTypeValuesMaps(res0: Int, res1: Int, res2: Int, res3: Int) {
     val myMap = scala.collection.mutable.Map.empty[String, Any]
@@ -96,9 +81,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap("Ann Arbor") should be((res1, res2, res3))
   }
 
-  /** mayBeAccessedMaps
-    *
-    * Maps may be accessed:
+  /** Maps may be accessed:
     */
   def mayBeAccessedMaps(res0: String, res1: String) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -106,9 +89,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap("IA") should be(res1)
   }
 
-  /** easilyRemovedMaps
-    *
-    * Map elements can be removed easily:
+  /** Map elements can be removed easily:
     */
   def easilyRemovedMaps(res0: Boolean, res1: Boolean) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -117,9 +98,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap.contains("MI") should be(res1)
   }
 
-  /** keyNotFoundMaps
-    *
-    * Accessing a map by key results in an exception if key is not found:
+  /** Accessing a map by key results in an exception if key is not found:
     */
   def keyNotFoundMaps(res0: Boolean) {
     val myMap = Map("OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -131,9 +110,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     blewWithException should be(res0)
   }
 
-  /** removedInMultipleMaps
-    *
-    * Map elements can be removed in multiple:
+  /** Map elements can be removed in multiple:
     */
   def removedInMultipleMaps(res0: Boolean, res1: Boolean, res2: Boolean, res3: Int, res4: Int) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -147,9 +124,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res4)
   }
 
-  /** removedWithTupleMaps
-    *
-    * Map elements can be removed with a tuple:
+  /** Map elements can be removed with a tuple:
     */
   def removedWithTupleMaps(res0: Boolean, res1: Boolean, res2: Boolean, res3: Int, res4: Int) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -162,9 +137,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap.size should be(res4)
   }
 
-  /** attemptedRemovalMaps
-    *
-    * Attempted removal of nonexistent elements from a map is handled gracefully:
+  /** Attempted removal of nonexistent elements from a map is handled gracefully:
     */
   def attemptedRemovalMaps(res0: Boolean) {
     val myMap = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")
@@ -173,9 +146,7 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     aNewMap.equals(myMap) should be(res0)
   }
 
-  /** orderIndependentMaps
-    *
-    * Map equivalency is independent of order:
+  /** Map equivalency is independent of order:
     */
   def orderIndependentMaps(res0: Boolean) {
     val myMap1 = Map("MI" -> "Michigan", "OH" -> "Ohio", "WI" -> "Wisconsin", "IA" -> "Iowa")

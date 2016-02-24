@@ -16,9 +16,7 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
     }
 
 
-  /** Choose
-    *
-    * choose is a function from Sets to Options with no type specific cases
+  /** choose is a function from Sets to Options with no type specific cases
     * {{{
     * object choose extends (Set ~> Option) {
     * def apply[T](s : Set[T]) = s.headOption
@@ -33,9 +31,7 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
     choose(Set('a', 'b', 'c')) should be(res1)
   }
 
-  /** Pair Apply
-    *
-    * Being polymorphic, they may be passed as arguments to functions or methods and then applied to values of different types
+  /** Being polymorphic, they may be passed as arguments to functions or methods and then applied to values of different types
     * within those functions,
     *
     * {{{
@@ -51,9 +47,7 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
     pairApply(choose) should be (res0, res1)
   }
 
-  /** Monomorphic choose
-    *
-    * They are nevertheless interoperable with ordinary monomorphic function values.
+  /** They are nevertheless interoperable with ordinary monomorphic function values.
     * choose is convertible to an ordinary monomorphic function value and can be
     * mapped across an ordinary Scala List
     */
@@ -61,9 +55,7 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
     (List(Set(1, 3, 5), Set(2, 4, 6)) map choose) should be (List(res1, res0))
   }
 
-  /** Size
-    *
-    * However, they are [more general than natural transformations][polyblog2] and are able to capture type-specific cases
+  /** However, they are [more general than natural transformations][polyblog2] and are able to capture type-specific cases
     * which, as we'll see below, makes them ideal for generic programming,
     * size is a function from Ints or Strings or pairs to a 'size' defined
     * by type specific cases
@@ -84,4 +76,3 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
   }
 
 }
-

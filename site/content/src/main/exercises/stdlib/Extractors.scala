@@ -8,9 +8,7 @@ import org.scalatest._
 object Extractors extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** extractorsExtractors
-    *
-    * In Scala, patterns can be defined independently of case classes. To this end, a method named `unapply` is defined to yield a so-called extractor.
+  /** In Scala, patterns can be defined independently of case classes. To this end, a method named `unapply` is defined to yield a so-called extractor.
     *
     * For instance, the following code defines an extractor object `Twice`.
     *
@@ -62,9 +60,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     result should be(res0)
   }
 
-  /** calledUnapplyExtractors
-    *
-    * What's an extractor? In Scala it's a method in any `object` called `unapply`, and that method is used to disassemble the object given by returning a tuple wrapped in an option. Extractors can be used to assign values:
+  /** What's an extractor? In Scala it's a method in any `object` called `unapply`, and that method is used to disassemble the object given by returning a tuple wrapped in an option. Extractors can be used to assign values:
     */
   def calledUnapplyExtractors(res0: String, res1: String, res2: Int, res3: Int) {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
@@ -81,9 +77,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     d should be(res3)
   }
 
-  /** patternMatchingExtractors
-    *
-    * Of course an extractor can be used in pattern matching...
+  /** Of course an extractor can be used in pattern matching...
     */
   def patternMatchingExtractors(res0: String, res1: String) {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
@@ -101,9 +95,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     x._2 should be(res1)
   }
 
-  /** withWildcardExtractors
-    *
-    * Since we aren't really using u and v in the previous pattern matching with can replace them with _.
+  /** Since we aren't really using u and v in the previous pattern matching with can replace them with _.
     */
   def withWildcardExtractors(res0: String, res1: String) {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
@@ -122,9 +114,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     x._2 should be(res1)
   }
 
-  /** multipleUnapplyExtractors
-    *
-    * As long as the method signatures aren't the same, you can have as many unapply methods as you want:
+  /** As long as the method signatures aren't the same, you can have as many unapply methods as you want:
     */
   def multipleUnapplyExtractors(res0: String) {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short)
@@ -144,9 +134,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     result should be(res0)
   }
 
-  /** anyObjectExtractors
-    *
-    * An extractor can be any stable object, including instantiated classes with an unapply method.
+  /** An extractor can be any stable object, including instantiated classes with an unapply method.
     */
   def anyObjectExtractors(res0: String) {
     class Car(val make: String, val model: String, val year: Short, val topSpeed: Short) {
@@ -163,9 +151,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     result should be(res0)
   }
 
-  /** asAssignmentExtractors
-    *
-    * What is typical is to create a custom extractor in the companion object of the class. In this exercise, we use it as an assignment:
+  /** What is typical is to create a custom extractor in the companion object of the class. In this exercise, we use it as an assignment:
     */
   def asAssignmentExtractors(res0: String, res1: String, res2: String) {
     class Employee(val firstName: String,
@@ -188,9 +174,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
     c should be(res2)
   }
 
-  /** unapplyForPatternMatchingExtractors
-    *
-    * In this exercise we use the unapply for pattern matching employee objects
+  /** In this exercise we use the unapply for pattern matching employee objects
     */
   def unapplyForPatternMatchingExtractors(res0: String) {
     class Employee(val firstName: String,

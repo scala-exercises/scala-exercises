@@ -29,8 +29,7 @@ import org.scalatest._
   */
 object IdentitySection extends FlatSpec with Matchers with exercise.Section {
 
-  /**
-    * We can freely compare values of `Id[T]` with unadorned
+  /** We can freely compare values of `Id[T]` with unadorned
     * values of type `T`.
     */
   def identityType(res0: Int) {
@@ -38,8 +37,7 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     anId should be (res0)
   }
 
-  /**
-    * Using this type declaration, we can treat our Id type constructor as a
+  /** Using this type declaration, we can treat our Id type constructor as a
     * `Monad` and as a `Comonad`. The `pure`
     * method, which has type `A => Id[A]` just becomes the identity
     * function.  The `map` method from `Functor` just becomes function
@@ -57,8 +55,7 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     Applicative[Id].pure(42) should be (res0)
   }
 
-  /**
-    * Compare the signatures of `map` and `flatMap` and `coflatMap`:
+  /** Compare the signatures of `map` and `flatMap` and `coflatMap`:
     *
     * {{{
     *   def map[A, B](fa: Id[A])(f: A => B): Id[B]
@@ -87,4 +84,3 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     Comonad[Id].coflatMap(fortytwo)(_ + 1) should be (res0)
   }
 }
-

@@ -8,9 +8,7 @@ import org.scalatest._
 object Classes extends FlatSpec with Matchers with exercise.Section {
 
 
-  /** classWithValParameterClasses
-    *
-    * Classes in Scala are static templates that can be instantiated into many objects at runtime.
+  /** Classes in Scala are static templates that can be instantiated into many objects at runtime.
     * Here is a class definition which defines a class Point:
     *
     * {{{
@@ -61,9 +59,7 @@ object Classes extends FlatSpec with Matchers with exercise.Section {
     aClass.name should be(res0)
   }
 
-  /** classWithVarParameterClasses
-    *
-    * `var` parameters in class definition define getter and setter:
+  /** `var` parameters in class definition define getter and setter:
     */
   def classWithVarParameterClasses(res0: String, res1: String) {
     class ClassWithVarParameter(var description: String)
