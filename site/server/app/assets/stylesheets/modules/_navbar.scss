@@ -1,0 +1,54 @@
+// Navbar
+// -----------------------------------------------------
+.navbar {
+    margin-bottom: 0;
+}
+
+.navbar-brand {
+    font-size: $font-size-large;
+    span {
+        display: inline-block;
+        padding-left: 44px;
+        font-family: $headings-font-family;
+    }
+    .section-name {
+        padding-left: 0;
+    }
+    > svg {
+        position: absolute;
+        top: 17px;
+    }
+}
+
+.navbar-nav {
+    li {
+        > a {
+            padding-left: 54px;
+            @media (min-width: $screen-sm-min) {
+                padding-left: 15px;
+            }
+            .fa:before {
+                font-size: 20px;
+                display: inline-block;
+                vertical-align: -10%;
+                margin-right: 8px;
+            }
+            img {
+                position: absolute;
+                left: 15px;
+                top: 8px;
+                width: 28px;
+                height: auto;
+                @include border-radius(200px);
+                @media (min-width: $screen-sm-min) {
+                    left: -22px;
+                    top: 17px;
+                }
+            }
+        }
+    }
+}
+
+.navbar-collapse {
+    border-top: none;
+}

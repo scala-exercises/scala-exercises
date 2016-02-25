@@ -1,0 +1,10 @@
+// Spread the world
+// -----------------------------------------------------
+#spread-the-world {
+    background: $spread-bg;
+    text-align: center;
+    padding: ($padding-large-vertical * 2);
+    @media (min-width: $screen-sm-min) {
+        padding: ($padding-large-vertical * 6)
+    }
+}

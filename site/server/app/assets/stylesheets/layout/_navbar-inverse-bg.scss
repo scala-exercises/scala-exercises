@@ -1,0 +1,57 @@
+// How it work
+// -----------------------------------------------------
+.steps {
+    position: relative;
+    .step {
+        text-align: center;
+        a {
+            background: $step-bg;
+            display: inline-block;
+            color: #fff;
+            height: 56px;
+            width: 56px;
+            outline: 8px solid $gray-lighter;
+            font-size: ceil(($font-size-base * 1.6));
+            line-height: ($line-height-base * 1.7);
+            @include border-radius(200px);
+            &:hover,
+            &:focus,
+            &:active {
+                text-decoration: none;
+                background: darken($step-bg, 5%);
+            }
+            @media (min-width: $screen-sm-min) {
+                height: 72px;
+                width: 72px;
+                outline: 16px solid $gray-lighter;
+                font-size: ceil(($font-size-base * 2.1));
+                line-height: ($line-height-base * 1.7);
+            }
+        }
+        .active {
+            background: $step-active-bg;
+            &:hover {
+                text-decoration: none;
+                background: darken($step-active-bg, 5%);
+            }
+        }
+    }
+}
+
+hr {
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    border: none;
+    background: $step-bg;
+    margin: {
+        top: 28px;
+        bottom: 0;
+    }
+    @media (min-width: $screen-sm-min) {
+        margin: {
+            top: 36px;
+            bottom: 0;
+        }
+    }
+}

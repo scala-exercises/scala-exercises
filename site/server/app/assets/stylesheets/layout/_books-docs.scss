@@ -1,0 +1,32 @@
+// Books docs
+// -----------------------------------------------------
+#books-docs {
+    background: $books-docs-bg;
+    h3 {
+        display: inline-block;
+        padding-left: ($padding-base-horizontal * 0.4);
+        margin-bottom: ($line-height-computed / 1.5);
+        color: $books-docs-heading-color;
+    }
+    p {
+        color: $books-docs-text-color;
+        line-height: 1.6;
+        margin-top: 8px;
+    }
+    .btn {
+        margin-top: 6px;
+        margin-bottom: 30px;
+
+        @media (min-width: $screen-sm-min) {
+            margin-bottom: 0;
+        }
+    }
+
+    a {
+        &:hover {
+            p {
+                color: rgba(255, 255, 255, 0.9);
+            }
+        }
+    }
+}

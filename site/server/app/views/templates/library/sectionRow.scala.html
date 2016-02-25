@@ -1,0 +1,9 @@
+@(sectionName: String, color: String, highlight: Boolean, completed: Boolean)(implicit request: RequestHeader)
+@import com.fortysevendeg.exercises.utils.StringUtils._
+
+<li class="actives">
+  <span class="bullet-active" @if(completed) { style="background-color: @color;" }></span>
+  <a href="@sectionName" @if(highlight){ style="color: @color; font-weight: bold;" } >
+    @sectionName.humanizeUnderscore
+  </a>
+</li>

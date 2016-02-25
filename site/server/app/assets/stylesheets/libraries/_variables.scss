@@ -1,0 +1,169 @@
+// Variables Bootstrap
+// -----------------------------------------------------
+
+$scala:                           #F05C59;
+$akka:                            #14A8BA;
+$play:                            #91C754;
+$slick:                           #FFAC32;
+$spark:                           #FF784D;
+$scalaz:                          #32ABA0;
+$shapeless:                       #6573C4;
+$cats:                            #4CAAF6;
+
+// Colors
+
+$gray-base:                      #3C4F58;
+$gray-darker:                    #455A64;
+$gray-dark:                      #6A7B83;
+$gray-soft:                      #999999;
+$gray:                           #DCDCDC;
+$gray-light:                     #F0F0F0;
+$gray-lighter:                   #F5F5F5;
+$brand-primary:                  $akka;
+$input-unsolved:                 #607D8B;
+$input-solved:                   #4CAF50;
+$input-errored:                  #F44336;
+
+
+// Scaffolding
+
+$body-bg:                        $gray-lighter;
+
+// Typography
+
+$font-family-sans-serif:         "Open Sans", Helvetica, Arial, sans-serif;
+
+$font-size-base:          14px;
+
+$font-size-h1:            floor(($font-size-base * 2.6));
+$font-size-h2:            floor(($font-size-base * 1.7));
+$font-size-h3:            ceil(($font-size-base * 1.3));
+$font-size-h4:            ceil(($font-size-base * 0.93));
+$font-size-h5:            $font-size-base;
+$font-size-h6:            ceil(($font-size-base * 0.85));
+
+
+$headings-font-family:           "Raleway", sans-serif;
+$headings-font-weight:           500;
+$headings-color:                 $gray-base;
+
+
+// Components
+
+$border-radius-base:             3px;
+$border-radius-large:            3px;
+$border-radius-small:            2px;
+
+
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius-base:         $border-radius-base !default;
+$btn-border-radius-large:        $border-radius-large !default;
+$btn-border-radius-small:        $border-radius-small !default;
+
+// Buttons
+$btn-default-color:              $gray-darker;
+$btn-default-border:             #DEDEDE;
+
+$btn-primary-border:             transparent;
+
+
+// Dropdowns
+
+$dropdown-border:                rgba(0,0,0,.05);
+
+
+
+// Navbar
+
+$navbar-height:                  60px;
+$navbar-inverse-bg:              $gray-base;
+$navbar-inverse-border:          transparent;
+
+
+$navbar-inverse-link-active-bg:  transparent;
+
+// Inverted navbar toggle
+$navbar-inverse-toggle-hover-bg:            transparent;
+$navbar-inverse-toggle-border-color:        transparent;
+
+
+// Jumbotron
+
+$jumbotron-color:                #C1CBCF;
+$jumbotron-bg:                   $gray-darker;
+$jumbotron-heading-color:        #fff;
+$jumbotron-heading-font-size:    ceil(($font-size-base * 3));
+
+// Modals
+
+$modal-header-border-color:      #EAEAEA;
+$modal-inner-padding:            25px !default;
+
+$modal-title-padding:            25px !default;
+
+
+// Progress bars
+
+$progress-bg:                    #D4D4D4;
+$progress-border-radius:         50px;
+
+// Panels
+
+$panel-body-padding:             20px;
+$panel-heading-padding:          12px 20px;
+
+
+
+// Variables Global
+// -----------------------------------------------------
+
+// Technologies
+
+$technologies-bg:                 $gray-light;
+
+$scala:                           #F05C59;
+$akka:                            #14A8BA;
+$play:                            #91C754;
+$slick:                           #FFAC32;
+$spark:                           #FF784D;
+$scalaz:                          #32ABA0;
+$shapeless:                       #6573C4;
+$cats:                            #4CAAF6;
+
+
+// How it works
+
+$step-bg:                         #DCDCDC;
+$step-active-bg:                  $brand-primary;
+
+$step-title:                      #C4C4C4;
+$step-title-active:               $gray-darker;
+
+
+// Spread the world
+
+$spread-bg:                       $gray-light;
+
+
+// Books docs
+
+$books-docs-bg:                   $gray-darker;
+$books-docs-text-color:           #A2ACB1;
+$books-docs-heading-color:        #fff;
+$books-docs-icons-color:          $brand-primary;
+
+// Footer
+
+$dark-link-color:                 $gray-dark;
+$dark-link-color-hover:           #B1B8BC;
+$light-link-color:                $gray-dark;
+$light-link-color-hover:          $gray-darker;
+
+// Sidebar
+
+$sidebar-link-color:              $gray-dark;
+$sidebar-link-color-hover:        $gray-darker;
+
+// Exercises
+
+$line-divider:                    #EAEAEA;

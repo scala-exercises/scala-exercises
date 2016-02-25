@@ -1,0 +1,167 @@
+// How it work
+// -----------------------------------------------------
+#work {
+    padding-bottom: ($padding-large-vertical * 18);
+}
+
+
+.steps {
+    position: relative;
+    .step {
+        text-align: center;
+        a {
+            background: $step-bg;
+            display: inline-block;
+            color: #fff;
+            height: 70px;
+            width: 70px;
+            border: 8px solid $gray-lighter;
+            font-size: ceil(($font-size-base * 1.6));
+            line-height: ($line-height-base * 1.7);
+            @include border-radius(200px);
+            &:hover,
+            &:focus,
+            &:active {
+                text-decoration: none;
+                background: $step-bg;
+                cursor: default;
+            }
+            @media (min-width: $screen-sm-min) {
+                height: 100px;
+                width: 100px;
+                //outline: 16px solid $gray-lighter;
+                font-size: ceil(($font-size-base * 2.1));
+                line-height: ($line-height-base * 1.6);
+                border: 16px solid $gray-lighter;
+            }
+        }
+        
+
+        .bubble {
+            opacity: 0;
+            transition: opacity 0.3s linear;
+        }
+        div {
+            > span {
+                position: relative;
+                color: $step-title;
+                display: inline-block;
+                margin-top: ($padding-large-vertical * 1.5);
+                @media (min-width: $screen-sm-min) {
+                    font-size: $font-size-large;
+                    p {
+                        font-size: $font-size-base;
+                        text-align: left;
+                        color: $text-color;
+                    }
+                }
+            }
+        }
+        .content-info {
+            position: absolute;
+            padding: 30px;
+            left: -20px;
+            top: 45px;
+            width: 350px;
+            background: #fff;
+            @include box-shadow(0 1px 0 rgba(0, 0, 0, .05));
+        }
+        .content-info:after {
+            bottom: 100%;
+            left: 30px;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+            border-color: rgba(#fff, 0);
+            border-bottom-color: #fff;
+            border-width: 13px;
+        }
+        span.fourth {
+            .content-info {
+                left: -255px;
+            }
+            .content-info:after {
+                left: 286px;
+            }
+        }
+        @media (max-width: $screen-sm-min) {
+            .content-info {
+                top: 40px;
+                width: 280px;
+                padding: 20px;
+            }
+            span.second {
+                .content-info {
+                    left: -80px;
+                }
+                .content-info:after {
+                    left: 85px;
+                }
+            }
+            span.third {
+                .content-info {
+                    left: -130px;
+                }
+                .content-info:after {
+                    left: 135px;
+                }
+            }
+            span.fourth {
+                .content-info {
+                    left: -210px;
+                }
+                .content-info:after {
+                    left: 234px;
+                }
+            }
+        }
+    }
+    .step:hover {
+        .bubble {
+            opacity: 1
+        }
+        div {
+            > span {
+                color: $step-title-active;
+            }
+        }
+        a {
+            background: $step-active-bg;
+            &:hover {
+                text-decoration: none;
+                background: $step-active-bg;
+            }
+        }
+    }
+}
+
+.steps .step .bubble { opacity: 0; transition:opacity 0.3s linear;}
+.steps>div:first-of-type .step .bubble {opacity: 1;}
+.steps>div:first-of-type .step a {background: #1293a3; }
+.steps:hover>div:first-of-type .step .bubble {opacity: 0;}
+.steps:hover>div:first-of-type .step a {background: #DCDCDC ;}
+.steps:hover>div:first-of-type .step:hover .bubble {opacity: 1;}
+.steps:hover>div:first-of-type .step:hover a {background: #1293a3; }
+
+
+
+hr {
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    border: none;
+    background: $step-bg;
+    margin: {
+        top: 32px;
+        bottom: 0;
+    }
+    @media (min-width: $screen-sm-min) {
+        margin: {
+            top: 48px;
+            bottom: 0;
+        }
+    }
+}
