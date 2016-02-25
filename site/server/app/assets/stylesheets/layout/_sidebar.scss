@@ -1,0 +1,101 @@
+// Sidebar
+// -----------------------------------------------------
+#wrapper {
+    padding: {
+        left: 0;
+        top: 60px;
+    }
+    @include transition(all 0.5s ease);
+    @media (min-width: $screen-sm-min) {
+        padding-left: 260px;
+    }
+}
+
+#sidebar {
+    padding: 0;
+    position: fixed;
+    left: 260px;
+    height: 100%;
+    width: 260px;
+    margin-left: -520px;
+    overflow-y: auto;
+    background: $gray-light;
+    @include transition(all 0.5s ease);
+    @media (min-width: $screen-sm-min) {
+        margin-left: -260px;
+    }
+    ul {
+        padding: 0 25px;
+        padding-bottom: 50px;
+        position: absolute;
+        width: 260px;
+        li {
+            display: block;
+            position: relative;
+            padding: 8px 0;
+            span {
+                position: absolute;
+                left: 0;
+                top: 14px;
+                width: 8px;
+                height: 8px;
+                background: #E0E0E0;
+                @include border-radius (50px);
+                z-index: 30;
+            }
+            .bullet-active {
+                background: $gray;
+            }
+            a {
+                display: inline-block;
+                color: $sidebar-link-color;
+                padding-left: 18px;
+            }
+            &.active,
+            &:hover,
+            &:focus,
+            &:active {
+                a {
+                    color: #333;
+                }
+            }
+            &:first-child {
+                padding: 0;
+            }
+        }
+    }
+    .sources {
+        position: absolute;
+        left: 30px;
+        bottom: 70px;
+        a {
+            color: $gray-dark;
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
+    a {
+        &:hover,
+        &:focus,
+        &:active {
+            text-decoration: none;
+            color: $sidebar-link-color-hover;
+        }
+    }
+}
+
+#content-detail {
+    width: 100%;
+    padding: 0;
+    @media (min-width: $screen-sm-min) {
+        position: relative;
+        padding: 15px;
+    }
+}
+
+#wrapper.toggled {
+    #sidebar {
+        margin-left: -260px;
+    }
+}

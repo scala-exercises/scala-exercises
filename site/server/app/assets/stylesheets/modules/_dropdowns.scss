@@ -1,0 +1,18 @@
+// Dropdown menus
+// -----------------------------------------------------
+.dropdown-menu {
+    @include box-shadow(0 4px 4px rgba(0, 0, 0, 0.05));
+    border-top: none;
+    > li > a {
+        padding: 8px 20px;
+    }
+}
+
+@media (min-width: $grid-float-breakpoint) {
+    .navbar-right {
+        .dropdown-menu {
+            right: 5px;
+            left: auto;
+        }
+    }
+}

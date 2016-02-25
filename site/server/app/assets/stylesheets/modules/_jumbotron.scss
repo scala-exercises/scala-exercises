@@ -1,0 +1,17 @@
+// Jumbotron
+// -----------------------------------------------------
+.jumbotron {
+    position: relative;
+    margin-bottom: 0;
+    //background: linear-gradient(rgba($gray-darker, 1), rgba($gray-darker, 0.7)), url(../img/jumbotron_background.jpg) no-repeat top center;
+    background: linear-gradient(rgba($gray-darker, 1), rgba($gray-base, 0.4));
+    @include image-size;
+    @media screen and (min-width: $screen-sm-min) {
+        padding-top: ($jumbotron-padding * 2);
+        padding-bottom: ($jumbotron-padding * 2);
+        h1,
+        .h1 {
+            font-size: $jumbotron-heading-font-size;
+        }
+    }
+}

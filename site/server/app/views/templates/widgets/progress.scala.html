@@ -1,0 +1,17 @@
+@(progress: Int, total: Int, color: String)
+
+@import scala.util.Try
+
+@defining(Try(100 * progress / total) getOrElse 0) { percent =>
+  <div class="content-progres-bar">
+    <div class="progress">
+      <div class="progress-bar"
+	   role="progressbar"
+	   aria-valuenow="@percent"
+	   aria-valuemin="0"
+	   aria-valuemax="100"
+	   style="background-color: @color; width : @percent% ;"></div>
+    </div>
+    <span> @progress / @total </span>
+  </div>
+}

@@ -1,0 +1,27 @@
+// Buttons
+// -----------------------------------------------------
+.btn-primary {
+    border: none;
+}
+
+.btn-lg {
+    @include button-size(($padding-large-vertical * 1.4), ($padding-large-horizontal * 3.2), $font-size-base, $line-height-large, $btn-border-radius-large);
+}
+
+.btn-sm {
+    font-size: $font-size-base;
+}
+
+.btn-xs {
+    @include button-size(($padding-xs-vertical * 2), ($padding-xs-horizontal * 1.8), $font-size-small, $line-height-small, $btn-border-radius-small);
+}
+
+// Technologies
+.panel-body {
+    div {
+        text-align: center;
+    }
+    .btn-sm {
+        padding: ($padding-small-vertical * 1.1) ($padding-small-horizontal * 4);
+    }
+}

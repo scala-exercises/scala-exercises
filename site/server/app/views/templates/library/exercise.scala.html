@@ -1,0 +1,20 @@
+@(library: shared.Library, section: shared.Section, exercise: shared.Exercise)(implicit request: RequestHeader)
+
+  <div class="exercise unsolved" data-method="@exercise.method">
+
+    @(Html(exercise.description.getOrElse("")))
+
+    <div class="highlight">
+
+      <span class="bullet-state"></span>
+
+      <div class="compile">
+        <button type="button" tabIndex="-1" class="btn btn-default btn-xs"><i class="fa fa-play"></i> Run</button>
+      </div>
+      <pre class="exercise-pre scala"><code class="exercise-code scala">@exercise.code</code></pre>
+    </div>
+    <div class="log"></div>
+
+    @(Html(exercise.explanation.getOrElse("")))
+
+  </div>
