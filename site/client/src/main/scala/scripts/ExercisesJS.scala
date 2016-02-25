@@ -7,12 +7,12 @@ package scripts
 
 import rx._
 import utils.DomHandler._
+
 import scala.scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import shared.IO
 import IO._
-
 import model._
 import model.Exercises._
 import actions._
@@ -25,8 +25,8 @@ object ExercisesJS extends js.JSApp {
     val states: Var[State] = Var(Nil)
     val actions: Var[Action] = Var(Start)
 
-    case class ClientExercise(method: String, arguments: Seq[String] = Nil) {
-      def isFilled: Boolean = !arguments.exists(_.isEmpty) && arguments.nonEmpty
+    def setState(s: State): IO[Unit] = io {
+      states() = s
     }
 
     def triggerAction(action: Action): IO[Unit] = {
@@ -68,5 +68,5 @@ object ExercisesJS extends js.JSApp {
     } yield ()
 
     program.unsafePerformIO()
-
   }
+}

@@ -8,6 +8,12 @@ package com.fortysevendeg.exercises.services
 import com.fortysevendeg.exercises.Exercises
 import com.fortysevendeg.exercises.MethodEval
 
+import play.api.Logger
+
+import scala.reflect.runtime.{ universe ⇒ ru }
+import scala.reflect.runtime.{ currentMirror ⇒ cm }
+import scala.tools.reflect.ToolBox
+
 import cats.data.Xor
 import cats.data.Ior
 import cats.std.option._
@@ -17,6 +23,8 @@ import org.scalatest.exceptions.TestFailedException
 
 object ExercisesService extends RuntimeSharedConversions {
   import MethodEval._
+
+  lazy val methodEval = new MethodEval()
 
   val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {

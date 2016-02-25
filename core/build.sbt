@@ -42,6 +42,7 @@ lazy val runtime = (project in file("runtime"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
+      Dep.scala.compiler(scalaVersion),
       Dep.cats.core
     )
   ))

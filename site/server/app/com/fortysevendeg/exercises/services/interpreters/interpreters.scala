@@ -8,7 +8,6 @@ package com.fortysevendeg.exercises.services.interpreters
 import cats.{ Monad, Eval, ~>, ApplicativeError, Applicative }
 import cats.data.Xor
 import cats.free.Free
-
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.repositories.{ UserRepository, UserProgressRepository }
 import com.fortysevendeg.exercises.services.free._
@@ -46,7 +45,6 @@ trait Interpreters[M[_]] {
       case GetSection(libraryName, sectionName) ⇒ A.pureEval(Eval.later(section(libraryName, sectionName)))
       case Evaluate(evalInfo)                   ⇒ A.pureEval(Eval.later(evaluate(evalInfo)))
     }
-
   }
 
   implicit def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOp ~> M = new (UserOp ~> M) {
@@ -82,7 +80,6 @@ trait Interpreters[M[_]] {
       case DBFailure(error) ⇒ A.raiseError(error)
     }
   }
-
 }
 
 /** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
@@ -128,7 +125,6 @@ trait TaskInstances {
     override def handleErrorWith[A](fa: Task[A])(f: Throwable ⇒ Task[A]): Task[A] =
       fa.handleWith({ case x ⇒ f(x) })
   }
-
 }
 
 trait IdInstances {

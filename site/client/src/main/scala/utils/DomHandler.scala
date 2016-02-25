@@ -8,7 +8,6 @@ package utils
 import org.scalajs.dom.ext.KeyCode
 import scala.scalajs.js
 import org.scalajs.dom
-import org.scalajs.dom.ext.KeyCode
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
 import shared.IO
@@ -28,20 +27,6 @@ object DomHandler {
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
   }
-
-  /** Assigns behaviors to the keyup event for inputs elements.
-    */
-  def onInputKeyUp(onkeyup: (String, Seq[String]) ⇒ IO[Unit]): IO[Unit] = io {
-    allInputs foreach (input ⇒ {
-      $(input).keyup((e: dom.Event) ⇒ {
-        (for {
-          _ ← OptionT(setInputWidth(input) map (_.some))
-          methodName ← OptionT(io(methodParent(input)))
-          exercise ← OptionT(io(findExerciseByMethod(methodName)))
-          inputsValues = getInputsValues(exercise)
-          _ ← OptionT(onkeyup(methodName, inputsValues) map (_.some))
-        } yield ()).value.unsafePerformIO()
-      })
 
   /** Highlights every preformatted code block.
     */
@@ -150,7 +135,7 @@ object DomHandler {
 
   def methodParent(input: HTMLInputElement): Option[String] = methodName($(input).closest(".exercise").getDiv)
 
-  def allInputs: Seq[HTMLInputElement] = $(".exercise-code>input").inputs
+  def allInputs: IO[List[HTMLInputElement]] = io { $(".exercise-code>input").inputs.toList }
 
   def inputs(el: HTMLElement): List[HTMLInputElement] = $(el).find("input").inputs.toList
 

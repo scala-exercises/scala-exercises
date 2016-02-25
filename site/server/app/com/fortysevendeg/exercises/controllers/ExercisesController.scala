@@ -29,18 +29,14 @@ class ExercisesController(
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
-    AuthenticationAction(BodyParsers.parse.json) { request ⇒
-      request.body.validate[ExerciseEvaluation] match {
-        case JsSuccess(evaluation, _) ⇒
-
-          userOps.getUserByLogin(request.userId).runTask match {
-            case Xor.Right(Some(user)) ⇒
-              val eval = for {
-                exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
-                _ ← userProgressOps.saveUserProgress(
-                  mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
-                )
-              } yield exerciseEvaluation
+    AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
+      (evaluation: ExerciseEvaluation, user: User) ⇒
+        val eval = for {
+          exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
+          _ ← userProgressOps.saveUserProgress(
+            mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
+          )
+        } yield exerciseEvaluation
 
         eval.runTask.fold(
           e ⇒ BadRequest(s"Evaluation failed : $e"),

@@ -16,16 +16,6 @@ import play.api.db.evolutions.{ DynamicEvolutions, EvolutionsComponents }
 import play.api.db.{ DBComponents, HikariCPComponents }
 import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
-import play.api.routing.Router
-
-import com.fortysevendeg.exercises.app._
-import com.fortysevendeg.shared.free._
-import com.fortysevendeg.exercises.services.free._
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
-import com.fortysevendeg.exercises.controllers._
-import com.fortysevendeg.exercises.utils._
-import com.fortysevendeg.exercises.models.{ UserDoobieStore }
-
 import router.Routes
 
 import scala.concurrent.ExecutionContext.Implicits.global
