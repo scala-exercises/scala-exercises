@@ -6,7 +6,7 @@
 package com.fortysevendeg.exercises.controllers
 
 import shared._
-import play.api.libs.json.{ Reads, Json, Writes }
+import play.api.libs.json._
 
 trait JsonFormats {
 
@@ -19,6 +19,10 @@ trait JsonFormats {
   implicit val librarySectionExerciseWrites: Writes[LibrarySectionExercise] = Json.writes[LibrarySectionExercise]
 
   implicit val librarySectionArgsWrites: Writes[LibrarySectionArgs] = Json.writes[LibrarySectionArgs]
+
+  implicit val exerciseTypeReads: Reads[ExerciseType] = (
+    (JsPath \ "exerciseType").read[String]
+  ).map(ExerciseType.fromString)
 
   implicit val exerciseEvaluationReads: Reads[ExerciseEvaluation] = Json.reads[ExerciseEvaluation]
 

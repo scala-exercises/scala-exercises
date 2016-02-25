@@ -17,7 +17,7 @@ case class UserProgress(
   sectionName:  String,
   method:       String,
   version:      Int,
-  exerciseType: String       = "Other",
+  exerciseType: ExerciseType = Other,
   args:         List[String],
   succeeded:    Boolean
 )
