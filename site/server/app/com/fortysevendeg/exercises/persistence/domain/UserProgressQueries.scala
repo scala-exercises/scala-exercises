@@ -5,17 +5,12 @@
 
 package com.fortysevendeg.exercises.persistence.domain
 
-import shared.UserProgress
+import shared._
 import shapeless._
 import ops.record._
+import doobie.imports._
 
 object SaveUserProgress {
-
-  sealed abstract class ExerciseType extends Product with Serializable
-
-  case object Koans extends ExerciseType
-
-  case object Other extends ExerciseType
 
   case class Request(
       userId:       Long,
@@ -29,7 +24,7 @@ object SaveUserProgress {
   ) {
 
     def asUserProgress(id: Long): UserProgress =
-      UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
+      UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType, args, succeeded)
   }
 
 }
@@ -42,6 +37,14 @@ object UserProgressQueries {
     userProgressKeys()
       .to[List]
       .map { case Symbol(s) ⇒ s.toLowerCase }
+
+  object Implicits {
+    implicit val ExerciseTypeMeta: Meta[ExerciseType] =
+      Meta[String].nxmap(
+        ExerciseType.fromString,
+        ExerciseType.toString
+      )
+  }
 
   private[this] val commonFindBy =
     """SELECT

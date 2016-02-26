@@ -9,7 +9,6 @@ import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
-import com.fortysevendeg.exercises.utils.StringUtils.ExerciseType
 import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports._
 import play.api.libs.json.JsValue
@@ -55,7 +54,7 @@ class ExercisesController(
       sectionName = evaluation.sectionName,
       method = evaluation.method,
       version = evaluation.version,
-      exerciseType = ExerciseType fromString evaluation.exerciseType,
+      exerciseType = evaluation.exerciseType,
       args = evaluation.args,
       succeeded = success
     )

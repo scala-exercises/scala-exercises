@@ -9,8 +9,9 @@ import com.fortysevendeg.exercises.persistence.PersistenceModule
 import com.fortysevendeg.exercises.persistence.domain._
 import com.fortysevendeg.exercises.persistence.repositories.UserProgressRepository._
 import doobie.imports._
-import shared.{ SectionInfoItem, LibrarySectionExercise, User, UserProgress }
+import shared.{ SectionInfoItem, LibrarySectionExercise, User, UserProgress, ExerciseType }
 import com.fortysevendeg.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
+import Q.Implicits._
 import doobie.contrib.postgresql.pgtypes._
 
 case class SectionProgress(libraryName: String, succeeded: Boolean, exerciseList: List[LibrarySectionExercise])
@@ -139,7 +140,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
           .updateWithGeneratedKeys[InsertParams, UserProgress](
             Q.insert,
             Q.allFields,
-            (userId, libraryName, sectionName, method, version, exerciseType.toString, args, succeeded)
+            (userId, libraryName, sectionName, method, version, exerciseType, args, succeeded)
           )
       case Some(userP) ⇒
         update(request.asUserProgress(userP.id))
@@ -169,8 +170,8 @@ object UserProgressRepository {
   type FindByLibraryParams = (Long, String)
   type FindBySectionParams = (Long, String, String)
   type FindByExerciseVerionParams = (Long, String, String, String, Int)
-  type UpdateParams = (String, String, String, Int, String, List[String], Boolean, Long)
-  type InsertParams = (Long, String, String, String, Int, String, List[String], Boolean)
+  type UpdateParams = (String, String, String, Int, ExerciseType, List[String], Boolean, Long)
+  type InsertParams = (Long, String, String, String, Int, ExerciseType, List[String], Boolean)
 
   //Queries output:
   type FindByLibraryOutput = (String, Boolean)

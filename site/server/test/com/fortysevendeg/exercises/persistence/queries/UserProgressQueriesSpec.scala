@@ -20,6 +20,8 @@ class UserProgressQueriesSpec
     with AnalysisSpec
     with DatabaseInstance {
 
+  import Q.Implicits._
+
   check(Query[Unit, UserProgress](Q.all))
   check(Query[Long, UserProgress](Q.findById))
   check(Query[Long, UserProgress](Q.findByUserId))

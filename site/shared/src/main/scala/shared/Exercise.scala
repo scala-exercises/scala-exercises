@@ -39,10 +39,22 @@ case class ExerciseEvaluation(
   sectionName:  String,
   method:       String,
   version:      Int,
-  exerciseType: String,
+  exerciseType: ExerciseType,
   args:         List[String]
 )
 
 object ExerciseEvaluation {
   type Result = String Xor Any
 }
+
+sealed abstract class ExerciseType extends Product with Serializable
+case object Koans extends ExerciseType
+case object Other extends ExerciseType
+
+object ExerciseType {
+  def fromString(s: String): ExerciseType =
+    Vector(Koans, Other).find(_.toString == s) getOrElse Other
+
+  def toString(e: ExerciseType): String = e.toString
+}
+
