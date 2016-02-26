@@ -100,6 +100,7 @@ object SourceTextExtraction {
     def parseComment(comment: String): Comment
   }
 
+  // TODO: move to util file?
   private[compiler] def makeDocCommentParser[G <: Global](g: G): DocCommentParser[g.type] = {
     new CommentFactoryBase with MemberLookupBase with DocCommentParser[g.type] {
       override val global: g.type = g

@@ -9,6 +9,7 @@ package compiler
 import scala.reflect.internal.Chars.isWhitespace
 import scalariform.formatter.{ ScalaFormatter }
 
+import cats.Id
 import cats.data.Xor
 import cats.syntax.option._
 
