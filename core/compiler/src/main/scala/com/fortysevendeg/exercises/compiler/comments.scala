@@ -56,11 +56,11 @@ object CommentFactory {
 
 object CommentParsing {
 
-  type Empty[A] = { type EMPTY }
-  val Empty: Empty[Nothing] = new { type EMPTY = Unit }
+  sealed trait Empty[+A]
+  object Empty extends Empty[Nothing]
 
-  type Ignore[A] = { type IGNORE }
-  val Ignore: Ignore[Nothing] = new { type IGNORE = Unit }
+  sealed trait Ignore[+A]
+  object Ignore extends Ignore[Nothing]
 
   trait ParseK[A[_]] {
     def fromXor[T](xor: Xor[String, T]): Xor[String, A[T]]
