@@ -48,9 +48,9 @@ private[compiler] sealed trait CommentFactory[G <: Global] {
   def parse(comment: String): Comment
 }
 
-object CommentFactory {
+private[compiler] object CommentFactory {
 
-  private[compiler] def apply[G <: Global](g: G): CommentFactory[g.type] = {
+  def apply[G <: Global](g: G): CommentFactory[g.type] = {
     new CommentFactoryBase with MemberLookupBase with CommentFactory[g.type] {
       override val global: g.type = g
       import global._
@@ -71,47 +71,94 @@ object CommentFactory {
 
 }
 
-object CommentParsing {
+/** Special containers used for parsing and rendering. */
+private[compiler] object CommentZed {
 
+  /** Empty container for values that should raise an error
+    * if they are present.
+    */
   sealed trait Empty[+A]
-  object Empty extends Empty[Nothing]
+  object Empty extends Empty[Nothing] {
+    implicit val emptyFunctor = new Functor[Empty] {
+      def map[A, B](fa: Empty[A])(f: A ⇒ B) = Empty
+    }
+  }
 
+  /** Ignore container for values that we want to completely ignore during
+    * parsing.
+    */
   sealed trait Ignore[+A]
-  object Ignore extends Ignore[Nothing]
+  object Ignore extends Ignore[Nothing] {
+    implicit val ignoreFunctor = new Functor[Ignore] {
+      def map[A, B](fa: Ignore[A])(f: A ⇒ B) = Ignore
+    }
+  }
+}
 
+private[compiler] object CommentParsing {
+  import CommentZed._
+
+  /** Parse container typeclass */
   trait ParseK[A[_]] {
-    def fromXor[T](xor: Xor[String, T]): Xor[String, A[T]]
+    /** Take a potential value and map it into the desired
+      * container. If the value coming in is `Xor.Left`, then the value
+      * was not present during parsing. An incoming value of `Xor.Right`
+      * indicates that a value was parsed. An output of `Xor.Left` indicates
+      * that an error should be raised. And an output value of `Xor.Right`
+      * indicates that the value was parsed and mapped into the appropriate
+      * container.
+      */
+    def fromXor[T](value: Xor[String, T]): Xor[String, A[T]]
   }
 
   object ParseK {
     def apply[A[_]](implicit instance: ParseK[A]): ParseK[A] = instance
 
+    /** A required value, which is always passed directly through.
+      * A value that wasn't present during parsing will raise an error.
+      */
     implicit val idParseK = new ParseK[Id] {
-      override def fromXor[T](xor: Xor[String, T]) = xor
+      override def fromXor[T](value: Xor[String, T]) = value
     }
 
+    /** Parse an optional value. The result is always the right side `Xor`
+      * projection because the value is optional and shouldn't fail.
+      */
     implicit val optionParseK = new ParseK[Option] {
-      override def fromXor[T](xor: Xor[String, T]) =
-        Xor.right(xor.toOption)
+      override def fromXor[T](value: Xor[String, T]) =
+        Xor.right(value.toOption)
     }
 
+    /** Parse a value that shouldn't exist. The input `Xor` is swapped
+      * so that a parsed input value yields an error and a nonexistant
+      * input value yields a success.
+      */
     implicit val emptyParseK = new ParseK[Empty] {
-      override def fromXor[T](xor: Xor[String, T]) =
-        xor.swap.bimap(
+      override def fromXor[T](value: Xor[String, T]) =
+        value.swap.bimap(
           _ ⇒ "Unexpected value",
           _ ⇒ Empty
         )
     }
 
+    /** Parse a value that we're indifferent about. The result is
+      * always success with a placeholder value.
+      */
     implicit val ignoreParseK = new ParseK[Ignore] {
       override def fromXor[T](xor: Xor[String, T]) =
         Xor.right(Ignore)
     }
   }
 
+  /** Type capturing the parse mode for the name, description,
+    * and explanation fields.
+    */
   type ParseMode = {
+    /** Name field parsing */
     type N[A]
+    /** Description field parsing */
     type D[A]
+    /** Explanation field parsing */
     type E[A]
   }
 
@@ -121,15 +168,21 @@ object CommentParsing {
       type D[A] = D0[A]
       type E[A] = E0[A]
     }
-    type Library = ParseMode.Aux[Id, Id, Option]
-    type Section = ParseMode.Aux[Id, Option, Option]
+
+    // the main parse modes
+    type Library = ParseMode.Aux[Id, Id, Empty]
+    type Section = ParseMode.Aux[Id, Option, Empty]
     type Exercise = ParseMode.Aux[Option, Option, Option]
 
+    // isolated parse modes for specific fields
+    // -- this is mainly used for testing
     type Name[A[_]] = ParseMode.Aux[A, Ignore, Ignore]
     type Description[A[_]] = ParseMode.Aux[Ignore, A, Ignore]
     type Explanation[A[_]] = ParseMode.Aux[Ignore, Ignore, A]
   }
 
+  /** A parsed comment with the values stored in the appropriate containers
+    */
   case class ParsedComment[N[_], D[_], E[_]](
     name:        N[String],
     description: D[Body],
@@ -141,9 +194,9 @@ object CommentParsing {
     evN: ParseK[A#N],
     evD: ParseK[A#D],
     evE: ParseK[A#E]
-  ): String Xor ParsedComment[A#N, A#D, A#E] = parseRaw(comment)
+  ): String Xor ParsedComment[A#N, A#D, A#E] = parse0(comment)
 
-  def parseRaw[N[_]: ParseK, D[_]: ParseK, E[_]: ParseK](comment: Comment): String Xor ParsedComment[N, D, E] = {
+  private[this] def parse0[N[_]: ParseK, D[_]: ParseK, E[_]: ParseK](comment: Comment): String Xor ParsedComment[N, D, E] = {
     val params = comment.valueParams
 
     lazy val nameXor = {
@@ -151,8 +204,10 @@ object CommentParsing {
         case Body(List(Paragraph(Chain(List(Summary(Text(value))))))) ⇒ value.trim
       }
       val name2 = name1.filter(_.lines.length == 1)
-
-      Xor.fromOption(name2, "Expected single name value defined as '@param name <value>'")
+      Xor.fromOption(
+        name2,
+        "Expected single name value defined as '@param name <value>'"
+      )
     }
 
     lazy val descriptionXor = comment.body match {
@@ -161,7 +216,8 @@ object CommentParsing {
     }
 
     lazy val explanationXor = Xor.fromOption(
-      params.get("explanation"), "Expected explanation defined as '@param explanation <...extended value...>'"
+      params.get("explanation"),
+      "Expected explanation defined as '@param explanation <...extended value...>'"
     )
 
     for {
@@ -181,6 +237,9 @@ object CommentParsing {
 object CommentRendering {
   import CommentParsing.{ ParsedComment, ParseMode }
 
+  /** A rendered comment. This leverages the same container types
+    * used during parsing.
+    */
   case class RenderedComment[N[_], D[_], E[_]](
     name:        N[String],
     description: D[String],

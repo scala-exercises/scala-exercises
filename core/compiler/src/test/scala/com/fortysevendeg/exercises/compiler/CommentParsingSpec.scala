@@ -7,6 +7,8 @@ import cats.Id
 import cats.data.Xor
 
 class CommentParsingSpec extends FunSpec with Matchers with Inside {
+  import CommentParsing.ParseMode
+  import CommentZed._
 
   val content1 = "This is comment content 1"
   val content2 = "This is comment content 2"
@@ -109,8 +111,6 @@ class CommentParsingSpec extends FunSpec with Matchers with Inside {
   }
 
   describe("doc parsing") {
-
-    import CommentParsing.{ ParseMode, Empty }
 
     it("properly handles names") {
 
@@ -228,6 +228,21 @@ class CommentParsingSpec extends FunSpec with Matchers with Inside {
         }
       }
 
+    }
+  }
+
+  describe("parsing/rendering library comments") {
+    it("works -- TODO, improve these") {
+
+      val comment = commentFactory.parse(s"""
+        |/** This is my comment
+        |  * It's really nice
+        |  * @param name Name
+        |  */""".stripMargin)
+
+      val rendered = Comments.parseAndRender[ParseMode.Library](comment)
+
+      assert(rendered.isRight, s", $rendered")
     }
 
   }
