@@ -7,7 +7,6 @@ import cats.Id
 import cats.data.Xor
 
 class CommentParsingSpec extends FunSpec with Matchers with Inside {
-  //import CommentParsing._
 
   val content1 = "This is comment content 1"
   val content2 = "This is comment content 2"

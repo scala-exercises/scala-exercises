@@ -16,8 +16,8 @@ class CompilerSpec extends FunSpec with Matchers {
     it("works") {
 
       val code = """
-      /** Sample Library
-        * This is a sample library.
+      /** This is the sample library.
+        * @param name Sample Library
         */
       object SampleLibrary extends exercise.Library {
         override def sections = List(
@@ -25,9 +25,10 @@ class CompilerSpec extends FunSpec with Matchers {
         )
       }
 
-      /** Section 1
-        * This is section 1.
+      /** This is section 1.
         * It has a multi line description.
+        *
+        * @param name Section 1
         */
       object Section1 extends exercise.Section {
         /** This is example exercise 1! */
@@ -49,7 +50,7 @@ class CompilerSpec extends FunSpec with Matchers {
         .asInstanceOf[exercise.Library]
 
       val res = Compiler().compile(library, code :: Nil, "sample")
-      assert(res.isRight)
+      assert(res.isRight, s"""; ${res.fold(identity, _ ⇒ "")}""")
     }
   }
 

@@ -20,9 +20,26 @@ import scala.xml.Xhtml
 
 import scalariform.formatter.{ ScalaFormatter }
 
-import cats.{ Id, Monad }
+import cats.{ Id, Functor }
 import cats.data.Xor
-import cats.syntax.option._
+
+/** Facade for the different layers of comment processing. */
+object Comments {
+
+  import CommentParsing.ParseK
+  import CommentParsing.ParseMode
+
+  def parseAndRender[A <: ParseMode](comment: Comment)(
+    implicit
+    evPKN: ParseK[A#N],
+    evPKD: ParseK[A#D],
+    evPKE: ParseK[A#E],
+    evFD:  Functor[A#D],
+    evFE:  Functor[A#E]
+  ) =
+    CommentParsing.parse[A](comment).map(CommentRendering.render(_))
+
+}
 
 private[compiler] sealed trait CommentFactory[G <: Global] {
   val global: G
@@ -94,8 +111,8 @@ object CommentParsing {
 
   type ParseMode = {
     type N[A]
-    type D[B]
-    type E[B]
+    type D[A]
+    type E[A]
   }
 
   object ParseMode {
@@ -105,7 +122,7 @@ object CommentParsing {
       type E[A] = E0[A]
     }
     type Library = ParseMode.Aux[Id, Id, Option]
-    type Section = ParseMode.Aux[Option, Id, Option]
+    type Section = ParseMode.Aux[Id, Option, Option]
     type Exercise = ParseMode.Aux[Option, Option, Option]
 
     type Name[A[_]] = ParseMode.Aux[A, Ignore, Ignore]
@@ -162,7 +179,7 @@ object CommentParsing {
 }
 
 object CommentRendering {
-  import CommentParsing.ParsedComment
+  import CommentParsing.{ ParsedComment, ParseMode }
 
   case class RenderedComment[N[_], D[_], E[_]](
     name:        N[String],
@@ -170,14 +187,22 @@ object CommentRendering {
     explanation: E[String]
   )
 
-  def render[N[_], D[_]: Monad, E[_]: Monad](parsedComment: ParsedComment[N, D, E]): RenderedComment[N, D, E] =
+  object RenderedComment {
+    type Aux[A <: ParseMode] = RenderedComment[A#N, A#D, A#E]
+
+    type Library = Aux[ParseMode.Library]
+    type Section = Aux[ParseMode.Section]
+    type Exercise = Aux[ParseMode.Exercise]
+  }
+
+  def render[N[_], D[_]: Functor, E[_]: Functor](parsedComment: ParsedComment[N, D, E]): RenderedComment[N, D, E] =
     RenderedComment(
       name = parsedComment.name,
-      description = Monad[D].map(parsedComment.description)(render),
-      explanation = Monad[E].map(parsedComment.explanation)(render)
+      description = Functor[D].map(parsedComment.description)(renderBody),
+      explanation = Functor[E].map(parsedComment.explanation)(renderBody)
     )
 
-  def render(body: Body): String =
+  def renderBody(body: Body): String =
     Xhtml.toXhtml(body.blocks flatMap (renderBlock(_)))
 
   private[this] def renderBlock(block: Block): NodeSeq = block match {
