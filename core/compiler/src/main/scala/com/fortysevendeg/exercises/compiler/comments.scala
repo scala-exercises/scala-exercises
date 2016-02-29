@@ -25,13 +25,53 @@ import cats.data.Xor
 
 /** Facade for the different layers of comment processing. */
 object Comments {
-
-  type ParseMode = CommentParsing.ParseMode
-  val ParseMode = CommentParsing.ParseMode
-
+  import CommentZed._
   import CommentParsing.ParseK
 
-  def parseAndRender[A <: ParseMode](comment: Comment)(
+  /** Type capturing the types for the name, description,
+    * and explanation fields.
+    */
+  type Mode = {
+    /** Name field type */
+    type N[A]
+    /** Description field type */
+    type D[A]
+    /** Explanation field type */
+    type E[A]
+  }
+
+  object Mode {
+    type Aux[N0[_], D0[_], E0[_]] = Mode {
+      type N[A] = N0[A]
+      type D[A] = D0[A]
+      type E[A] = E0[A]
+    }
+
+    /** Library comments. Required name. Required description.
+      * Require no description.
+      */
+    type Library = Aux[Id, Id, Empty]
+
+    /** Section comments. Require name. Optional description.
+      * Require no description.
+      */
+    type Section = Aux[Id, Option, Empty]
+
+    /** Exercise comments. Optional name. Optional description.
+      * Optional explanation.
+      */
+    type Exercise = Aux[Option, Option, Option]
+
+    // Isolated parse modes for specific fields.
+    // Each one ignores everything except the respective field.
+    // Note -- this is mainly used for testing.
+    type Name[A[_]] = Aux[A, Ignore, Ignore]
+    type Description[A[_]] = Aux[Ignore, A, Ignore]
+    type Explanation[A[_]] = Aux[Ignore, Ignore, A]
+  }
+
+  /** Helper function to parse and render a given comment. */
+  def parseAndRender[A <: Mode](comment: Comment)(
     implicit
     evPKN: ParseK[A#N],
     evPKD: ParseK[A#D],
@@ -101,6 +141,7 @@ private[compiler] object CommentZed {
 }
 
 private[compiler] object CommentParsing {
+  import Comments.Mode
   import CommentZed._
 
   /** Parse value container typeclass */
@@ -155,37 +196,6 @@ private[compiler] object CommentParsing {
     }
   }
 
-  /** Type capturing the parse mode for the name, description,
-    * and explanation fields.
-    */
-  type ParseMode = {
-    /** Name field parsing */
-    type N[A]
-    /** Description field parsing */
-    type D[A]
-    /** Explanation field parsing */
-    type E[A]
-  }
-
-  object ParseMode {
-    type Aux[N0[_], D0[_], E0[_]] = ParseMode {
-      type N[A] = N0[A]
-      type D[A] = D0[A]
-      type E[A] = E0[A]
-    }
-
-    // the main parse modes
-    type Library = ParseMode.Aux[Id, Id, Empty]
-    type Section = ParseMode.Aux[Id, Option, Empty]
-    type Exercise = ParseMode.Aux[Option, Option, Option]
-
-    // isolated parse modes for specific fields
-    // -- this is mainly used for testing
-    type Name[A[_]] = ParseMode.Aux[A, Ignore, Ignore]
-    type Description[A[_]] = ParseMode.Aux[Ignore, A, Ignore]
-    type Explanation[A[_]] = ParseMode.Aux[Ignore, Ignore, A]
-  }
-
   /** A parsed comment with the values stored in the appropriate types
     */
   case class ParsedComment[N[_], D[_], E[_]](
@@ -194,7 +204,11 @@ private[compiler] object CommentParsing {
     explanation: E[Body]
   )
 
-  def parse[A <: ParseMode](comment: Comment)(
+  object ParsedComment {
+    type Aux[A <: Mode] = ParsedComment[A#N, A#D, A#E]
+  }
+
+  def parse[A <: Mode](comment: Comment)(
     implicit
     evN: ParseK[A#N],
     evD: ParseK[A#D],
@@ -240,7 +254,8 @@ private[compiler] object CommentParsing {
 }
 
 private[compiler] object CommentRendering {
-  import CommentParsing.{ ParsedComment, ParseMode }
+  import Comments.Mode
+  import CommentParsing.ParsedComment
 
   /** A rendered comment. This leverages the same types
     * used during parsing.
@@ -252,11 +267,7 @@ private[compiler] object CommentRendering {
   )
 
   object RenderedComment {
-    type Aux[A <: ParseMode] = RenderedComment[A#N, A#D, A#E]
-
-    type Library = Aux[ParseMode.Library]
-    type Section = Aux[ParseMode.Section]
-    type Exercise = Aux[ParseMode.Exercise]
+    type Aux[A <: Mode] = RenderedComment[A#N, A#D, A#E]
   }
 
   def render[N[_], D[_]: Functor, E[_]: Functor](parsedComment: ParsedComment[N, D, E]): RenderedComment[N, D, E] =

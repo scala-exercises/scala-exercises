@@ -39,8 +39,8 @@ class CommentZedSpec extends FunSpec {
 }
 
 class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
-  import CommentParsing.ParseMode
   import CommentZed._
+  import Comments.Mode
 
   val content1 = "This is comment content 1"
   val content2 = "This is comment content 2"
@@ -148,14 +148,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
       comments.withoutNames.foreach { comment ⇒
 
-        inside(CommentParsing.parse[ParseMode.Name[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
           case Xor.Left(_) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Name[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Option]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.name shouldEqual None
         }
-        inside(CommentParsing.parse[ParseMode.Name[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Empty]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.name shouldEqual Empty
         }
@@ -164,15 +164,15 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
       comments.withNames.foreach { comment ⇒
 
-        inside(CommentParsing.parse[ParseMode.Name[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.name shouldEqual comments.name
         }
-        inside(CommentParsing.parse[ParseMode.Name[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Option]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.name shouldEqual Some(comments.name)
         }
-        inside(CommentParsing.parse[ParseMode.Name[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Empty]](comment)) {
           case Xor.Left(_) ⇒
         }
 
@@ -182,13 +182,13 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       /*
       comments.invalidNames.foreach { comment ⇒
 
-        inside(CommentParsing.parse[ParseMode.Name[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
           case Xor.Left(_) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Name[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Option]](comment)) {
           case Xor.Left(_) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Name[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Name[Empty]](comment)) {
           case Xor.Left(_) ⇒
         }
       }
@@ -200,14 +200,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
       comments.withoutDescriptions.foreach { comment ⇒
 
-        inside(CommentParsing.parse[ParseMode.Description[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Description[Id]](comment)) {
           case Xor.Left(_) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Description[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Description[Option]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.description shouldEqual None
         }
-        inside(CommentParsing.parse[ParseMode.Description[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Description[Empty]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.description shouldEqual Empty
         }
@@ -215,14 +215,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       }
 
       comments.withDescriptions.foreach { comment ⇒
-        inside(CommentParsing.parse[ParseMode.Description[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Description[Id]](comment)) {
           case Xor.Right(parsed) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Description[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Description[Option]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.description shouldBe defined
         }
-        inside(CommentParsing.parse[ParseMode.Description[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Description[Empty]](comment)) {
           case Xor.Left(_) ⇒
         }
       }
@@ -233,14 +233,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
       comments.withoutExplanations.foreach { comment ⇒
 
-        inside(CommentParsing.parse[ParseMode.Explanation[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Explanation[Id]](comment)) {
           case Xor.Left(_) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Explanation[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Explanation[Option]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.explanation shouldEqual None
         }
-        inside(CommentParsing.parse[ParseMode.Explanation[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Explanation[Empty]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.explanation shouldEqual Empty
         }
@@ -248,14 +248,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       }
 
       comments.withExplanations.foreach { comment ⇒
-        inside(CommentParsing.parse[ParseMode.Explanation[Id]](comment)) {
+        inside(CommentParsing.parse[Mode.Explanation[Id]](comment)) {
           case Xor.Right(parsed) ⇒
         }
-        inside(CommentParsing.parse[ParseMode.Explanation[Option]](comment)) {
+        inside(CommentParsing.parse[Mode.Explanation[Option]](comment)) {
           case Xor.Right(parsed) ⇒
             parsed.explanation shouldBe defined
         }
-        inside(CommentParsing.parse[ParseMode.Explanation[Empty]](comment)) {
+        inside(CommentParsing.parse[Mode.Explanation[Empty]](comment)) {
           case Xor.Left(_) ⇒
         }
       }
@@ -272,7 +272,7 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
         |  * @param name Name
         |  */""".stripMargin)
 
-      val rendered = Comments.parseAndRender[ParseMode.Library](comment)
+      val rendered = Comments.parseAndRender[Mode.Library](comment)
 
       assert(rendered.isRight, s", $rendered")
     }
