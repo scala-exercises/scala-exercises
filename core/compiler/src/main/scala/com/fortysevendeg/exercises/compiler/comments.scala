@@ -43,6 +43,7 @@ object Comments {
 
 }
 
+/* Our interface for interacting with Scaladoc's comment factory. */
 private[compiler] sealed trait CommentFactory[G <: Global] {
   val global: G
   def parse(comment: global.DocComment): Comment
@@ -52,6 +53,7 @@ private[compiler] sealed trait CommentFactory[G <: Global] {
 
 private[compiler] object CommentFactory {
 
+  /** Create a comment factory instance for a given global. */
   def apply[G <: Global](g: G): CommentFactory[g.type] = {
     new CommentFactoryBase with MemberLookupBase with CommentFactory[g.type] {
       override val global: g.type = g
@@ -101,7 +103,7 @@ private[compiler] object CommentZed {
 private[compiler] object CommentParsing {
   import CommentZed._
 
-  /** Parse type typeclass */
+  /** Parse value container typeclass */
   trait ParseK[A[_]] {
     /** Take a potential value and map it into the desired
       * type. If the value coming in is `Xor.Left`, then the value
@@ -237,7 +239,7 @@ private[compiler] object CommentParsing {
 
 }
 
-object CommentRendering {
+private[compiler] object CommentRendering {
   import CommentParsing.{ ParsedComment, ParseMode }
 
   /** A rendered comment. This leverages the same types
