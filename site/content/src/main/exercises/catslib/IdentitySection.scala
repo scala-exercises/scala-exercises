@@ -3,9 +3,7 @@ package catslib
 import cats._
 import org.scalatest._
 
-/** identity
-  *
-  * The identity monad can be seen as the ambient monad that encodes the
+/** The identity monad can be seen as the ambient monad that encodes the
   * effect of having no effect. It is ambient in the sense that plain pure
   * values are values of `Id`.
   *
@@ -26,6 +24,7 @@ import org.scalatest._
   * val y: Int = x
   * }}}
   *
+  * @param name identity
   */
 object IdentitySection extends FlatSpec with Matchers with exercise.Section {
 

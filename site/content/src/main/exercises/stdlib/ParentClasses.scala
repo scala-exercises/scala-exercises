@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** parent_classes
+/** @param name parent_classes
   *
   */
 object ParentClasses extends FlatSpec with Matchers with exercise.Section {

@@ -3,8 +3,7 @@ package stdlib
 import TypeVarianceHelper._
 import org.scalatest._
 
-/** type_variance
-  *
+/** @param name type_variance
   */
 object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 

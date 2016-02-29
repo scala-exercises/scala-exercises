@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** literal_booleans
+/** @param name literal_booleans
   *
   */
 object LiteralBooleans extends FlatSpec with Matchers with exercise.Section {

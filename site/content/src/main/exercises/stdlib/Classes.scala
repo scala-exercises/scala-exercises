@@ -2,8 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** classes
-  *
+/**
+  * @param name classes
   */
 object Classes extends FlatSpec with Matchers with exercise.Section {
 

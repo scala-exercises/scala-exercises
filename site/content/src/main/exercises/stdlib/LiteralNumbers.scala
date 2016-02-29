@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** literal_numbers
+/** @param name literal_numbers
   *
   */
 object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {

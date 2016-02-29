@@ -6,9 +6,7 @@ import cats._
 import cats.std.option._
 import cats.std.list._
 
-/** functor
-  *
-  * A `Functor` is a ubiquitous type class involving types that have one
+/** A `Functor` is a ubiquitous type class involving types that have one
   * "hole", i.e. types which have the shape `F[?]`, such as `Option`,
   * `List` and `Future`. (This is in contrast to a type like `Int` which has
   * no hole, or `Tuple2` which has two holes (`Tuple2[?,?]`)).
@@ -67,6 +65,7 @@ import cats.std.list._
   * Without kind-projector, we'd have to write this as something like
   * `({type F[A] = Function1[In,A]})#F`, which is much harder to read and understand.
   *
+  * @param name functor
   */
 object FunctorSection extends FlatSpec with Matchers with exercise.Section {
   /**

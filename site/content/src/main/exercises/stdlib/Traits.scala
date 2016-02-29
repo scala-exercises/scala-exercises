@@ -2,8 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** traits
-  *
+/** @param name traits
   */
 object Traits extends FlatSpec with Matchers with exercise.Section {
 

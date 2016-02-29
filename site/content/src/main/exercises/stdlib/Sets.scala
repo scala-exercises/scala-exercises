@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** sets
+/** @param name sets
   *
   */
 object Sets extends FlatSpec with Matchers with exercise.Section {

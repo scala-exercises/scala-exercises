@@ -3,7 +3,7 @@ package stdlib
 import RepeatedParametersHelper._
 import org.scalatest._
 
-/** repeated_parameters
+/** @param name repeated_parameters
   *
   */
 object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {

@@ -2,8 +2,8 @@ package stdlib
 
 import org.scalatest._
 
-/** asserts
-  *
+/**
+  * @param name asserts
   */
 object Asserts extends FlatSpec with Matchers with exercise.Section {
 

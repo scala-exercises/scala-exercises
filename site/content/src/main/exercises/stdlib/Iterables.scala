@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** iterables
+/** @param name iterables
   *
   */
 object Iterables extends FlatSpec with Matchers with exercise.Section {

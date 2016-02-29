@@ -3,7 +3,7 @@ package stdlib
 import OptionsHelper._
 import org.scalatest._
 
-/** options
+/** @param name options
   *
   */
 object Options extends FlatSpec with Matchers with exercise.Section {

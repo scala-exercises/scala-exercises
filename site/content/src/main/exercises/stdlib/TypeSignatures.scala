@@ -2,8 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** type_signatures
-  *
+/** @param name type_signatures
   */
 object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 

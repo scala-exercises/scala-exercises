@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** partially_applied_functions
+/** @param name partially_applied_functions
   *
   */
 object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Section {

@@ -4,8 +4,7 @@ import org.scalatest._
 
 import Stream.cons
 
-/** traversables
-  *
+/** @param name traversables
   */
 object Traversables extends FlatSpec with Matchers with exercise.Section {
 
