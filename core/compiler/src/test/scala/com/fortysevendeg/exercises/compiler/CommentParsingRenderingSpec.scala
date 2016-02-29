@@ -3,10 +3,42 @@ package compiler
 
 import org.scalatest._
 
+import org.scalacheck.Arbitrary
+
 import cats.Id
 import cats.data.Xor
+import cats.laws.discipline.FunctorTests
 
-class CommentParsingSpec extends FunSpec with Matchers with Inside {
+class CommentZedSpec extends FunSpec {
+  import CommentZed._
+
+  describe("Empty comment algebra") {
+
+    implicit def emptyArbitrary[A]: Arbitrary[Empty[A]] =
+      Arbitrary(Empty)
+
+    it("should pass Functor laws") {
+      val rs = FunctorTests[Empty].functor[Int, Int, Int]
+      rs.all.check
+    }
+
+  }
+
+  describe("Ignore comment algebra") {
+
+    implicit def emptyIgnore[A]: Arbitrary[Ignore[A]] =
+      Arbitrary(Ignore)
+
+    it("should pass Functor laws") {
+      val rs = FunctorTests[Ignore].functor[Int, Int, Int]
+      rs.all.check
+    }
+
+  }
+
+}
+
+class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
   import CommentParsing.ParseMode
   import CommentZed._
 

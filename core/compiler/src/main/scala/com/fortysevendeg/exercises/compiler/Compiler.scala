@@ -23,8 +23,6 @@ class CompilerJava {
 }
 
 case class Compiler() {
-  import CommentParsing.ParseMode
-
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
   def compile(library: exercise.Library, sources: List[String], targetPackage: String) = {
@@ -62,7 +60,7 @@ case class Compiler() {
       library: exercise.Library
     ) = for {
       symbol ← internal.instanceToClassSymbol(library)
-      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[ParseMode.Library])
+      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Comments.ParseMode.Library])
         .leftMap(enhanceDocError(symbol))
       sections ← library.sections.toList
         .map(internal.instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
@@ -77,7 +75,7 @@ case class Compiler() {
     def maybeMakeSectionInfo(
       symbol: ClassSymbol
     ) = for {
-      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[ParseMode.Section])
+      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Comments.ParseMode.Section])
         .leftMap(enhanceDocError(symbol))
       exercises ← symbol.toType.decls.toList
         .filter(symbol ⇒
@@ -96,7 +94,7 @@ case class Compiler() {
     def maybeMakeExerciseInfo(
       symbol: MethodSymbol
     ) = for {
-      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[ParseMode.Exercise])
+      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Comments.ParseMode.Exercise])
         .leftMap(enhanceDocError(symbol))
       code ← internal.resolveMethodBody(symbol)
     } yield ExerciseInfo(

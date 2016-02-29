@@ -20,14 +20,16 @@ import scala.xml.Xhtml
 
 import scalariform.formatter.{ ScalaFormatter }
 
-import cats.{ Id, Functor }
+import cats.{ Id, Eq, Functor }
 import cats.data.Xor
 
 /** Facade for the different layers of comment processing. */
 object Comments {
 
+  type ParseMode = CommentParsing.ParseMode
+  val ParseMode = CommentParsing.ParseMode
+
   import CommentParsing.ParseK
-  import CommentParsing.ParseMode
 
   def parseAndRender[A <: ParseMode](comment: Comment)(
     implicit
@@ -71,26 +73,27 @@ private[compiler] object CommentFactory {
 
 }
 
-/** Special containers used for parsing and rendering. */
+/** Special types used for parsing and rendering. */
 private[compiler] object CommentZed {
-
-  /** Empty container for values that should raise an error
+  /** Empty type for values that should raise an error
     * if they are present.
     */
   sealed trait Empty[+A]
-  object Empty extends Empty[Nothing] {
-    implicit val emptyFunctor = new Functor[Empty] {
-      def map[A, B](fa: Empty[A])(f: A ⇒ B) = Empty
-    }
-  }
+  object Empty extends SingletonFunctor[Empty] with Empty[Nothing]
 
-  /** Ignore container for values that we want to completely ignore during
+  /** Ignore type for values that we want to completely ignore during
     * parsing.
     */
   sealed trait Ignore[+A]
-  object Ignore extends Ignore[Nothing] {
-    implicit val ignoreFunctor = new Functor[Ignore] {
-      def map[A, B](fa: Ignore[A])(f: A ⇒ B) = Ignore
+  object Ignore extends SingletonFunctor[Ignore] with Ignore[Nothing]
+
+  /** Functor, for a singleton type. */
+  sealed trait SingletonFunctor[F[+_]] { instance: F[Nothing] ⇒
+    implicit def singletonEq[A]: Eq[F[A]] = new Eq[F[A]] {
+      def eqv(a1: F[A], a2: F[A]): Boolean = a1 == a2 // always true?
+    }
+    implicit val singletonFunctor = new Functor[F] {
+      def map[A, B](fa: F[A])(f: A ⇒ B) = instance
     }
   }
 }
@@ -98,15 +101,15 @@ private[compiler] object CommentZed {
 private[compiler] object CommentParsing {
   import CommentZed._
 
-  /** Parse container typeclass */
+  /** Parse type typeclass */
   trait ParseK[A[_]] {
     /** Take a potential value and map it into the desired
-      * container. If the value coming in is `Xor.Left`, then the value
+      * type. If the value coming in is `Xor.Left`, then the value
       * was not present during parsing. An incoming value of `Xor.Right`
       * indicates that a value was parsed. An output of `Xor.Left` indicates
       * that an error should be raised. And an output value of `Xor.Right`
       * indicates that the value was parsed and mapped into the appropriate
-      * container.
+      * type.
       */
     def fromXor[T](value: Xor[String, T]): Xor[String, A[T]]
   }
@@ -181,7 +184,7 @@ private[compiler] object CommentParsing {
     type Explanation[A[_]] = ParseMode.Aux[Ignore, Ignore, A]
   }
 
-  /** A parsed comment with the values stored in the appropriate containers
+  /** A parsed comment with the values stored in the appropriate types
     */
   case class ParsedComment[N[_], D[_], E[_]](
     name:        N[String],
@@ -237,7 +240,7 @@ private[compiler] object CommentParsing {
 object CommentRendering {
   import CommentParsing.{ ParsedComment, ParseMode }
 
-  /** A rendered comment. This leverages the same container types
+  /** A rendered comment. This leverages the same types
     * used during parsing.
     */
   case class RenderedComment[N[_], D[_], E[_]](
