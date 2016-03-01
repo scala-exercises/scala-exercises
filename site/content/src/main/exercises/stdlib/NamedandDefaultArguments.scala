@@ -3,7 +3,7 @@ package stdlib
 import NamedandDefaultArgumentsHelper._
 import org.scalatest._
 
-/** named_and_default_arguments
+/** @param name named_and_default_arguments
   *
   */
 object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Section {

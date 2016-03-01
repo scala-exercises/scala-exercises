@@ -26,7 +26,7 @@ import cats.syntax.semigroup._
 
 class SourceTextExtraction {
   private lazy val docGlobal = new DocExtractionGlobal()
-  private lazy val commentParser = SourceTextExtraction.makeDocCommentParser(docGlobal)
+  private lazy val commentFactory = CommentFactory(docGlobal)
   private lazy val boundExtractRaw = SourceTextExtraction.extractRaw(docGlobal)(_)
   private lazy val boundReadCode = MethodBodyReader.read(docGlobal)(_)
 
@@ -62,7 +62,7 @@ class SourceTextExtraction {
     Extracted(
       extractions >>= {
         _.comments.map { kv ⇒
-          kv._1.map(nameToString) → new ExtractedComment(kv._2.raw, commentParser.parseComment(kv._2))
+          kv._1.map(nameToString) → new ExtractedComment(kv._2.raw, commentFactory.parse(kv._2))
         }
       } toMap,
       extractions >>= {
@@ -92,32 +92,6 @@ class SourceTextExtraction {
   * in a tree.
   */
 object SourceTextExtraction {
-
-  private[compiler] sealed trait DocCommentParser[G <: Global] {
-    val global: G
-    def parseComment(comment: global.DocComment): Comment
-    // at the moment, this is provided for testing
-    def parseComment(comment: String): Comment
-  }
-
-  private[compiler] def makeDocCommentParser[G <: Global](g: G): DocCommentParser[g.type] = {
-    new CommentFactoryBase with MemberLookupBase with DocCommentParser[g.type] {
-      override val global: g.type = g
-      import global._
-      override def parseComment(comment: DocComment) = {
-        val nowarnings = settings.nowarn.value
-        settings.nowarn.value = true
-        try parseAtSymbol(comment.raw, comment.raw, comment.pos)
-        finally settings.nowarn.value = nowarnings
-      }
-      override def parseComment(comment: String) = parseComment(DocComment(comment))
-      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo] = None
-      override def chooseLink(links: List[LinkTo]): LinkTo = links.headOption.orNull
-      override def toString(link: LinkTo): String = "No link"
-      override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternal] = None
-      override def warnNoLink: Boolean = false
-    }
-  }
 
   type Path[G <: Global] = List[G#Name]
   case class RawAcc[G <: Global](

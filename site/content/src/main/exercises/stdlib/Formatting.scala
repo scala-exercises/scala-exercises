@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** formatting
+/** @param name formatting
   *
   */
 object Formatting extends FlatSpec with Matchers with exercise.Section {

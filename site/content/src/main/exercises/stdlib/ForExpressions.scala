@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** for_expressions
+/** @param name for_expressions
   *
   */
 object ForExpressions extends FlatSpec with Matchers with exercise.Section {

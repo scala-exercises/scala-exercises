@@ -4,7 +4,7 @@ import java.util.Date
 
 import org.scalatest._
 
-/** tuples
+/** @param name tuples
   *
   */
 object Tuples extends FlatSpec with Matchers with exercise.Section {

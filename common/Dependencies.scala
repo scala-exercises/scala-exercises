@@ -13,6 +13,7 @@ trait Dependencies {
   object cats {
     val Version  = "0.4.1"
     val core     = "org.typelevel" %% "cats-core" % Version
+    val laws     = "org.typelevel" %% "cats-laws" % Version
   }
 
   object scala {

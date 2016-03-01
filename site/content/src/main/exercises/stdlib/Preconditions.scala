@@ -3,7 +3,7 @@ package stdlib
 import PreconditionsHelper._
 import org.scalatest._
 
-/** preconditions
+/** @param name preconditions
   *
   */
 object Preconditions extends FlatSpec with Matchers with exercise.Section {

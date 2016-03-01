@@ -29,7 +29,9 @@ lazy val compiler = (project in file("compiler"))
   )).settings(libraryDependencies  <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       Dep.scala.compiler(scalaVersion),
-      Dep.cats.core)
+      Dep.cats.core) ++
+    testlibs(
+      Dep.cats.laws)
   ))
   .dependsOn(definitions)
   .dependsOn(runtime % "test")

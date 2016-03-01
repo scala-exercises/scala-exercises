@@ -2,8 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** val_and_var
-  *
+/** @param name val_and_var
   */
 object ValandVar extends FlatSpec with Matchers with exercise.Section {
 

@@ -15,6 +15,9 @@ import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
 
+import Comments.Mode
+import CommentRendering.RenderedComment
+
 class CompilerJava {
   def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String] = {
     Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, targetPackage)
@@ -23,7 +26,6 @@ class CompilerJava {
 }
 
 case class Compiler() {
-
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
   def compile(library: exercise.Library, sources: List[String], targetPackage: String) = {
@@ -35,20 +37,21 @@ case class Compiler() {
 
     case class LibraryInfo(
       symbol:   ClassSymbol,
-      comment:  DocParser.ParsedLibraryComment,
+      comment:  RenderedComment.Aux[Mode.Library],
       sections: List[SectionInfo],
-      color:    Option[String]
+      // TODO: consider deriving color from a comment param
+      color: Option[String]
     )
 
     case class SectionInfo(
       symbol:    ClassSymbol,
-      comment:   DocParser.ParsedSectionComment,
+      comment:   RenderedComment.Aux[Mode.Section],
       exercises: List[ExerciseInfo]
     )
 
     case class ExerciseInfo(
       symbol:          MethodSymbol,
-      comment:         DocParser.ParsedExerciseComment,
+      comment:         RenderedComment.Aux[Mode.Exercise],
       code:            String,
       qualifiedMethod: String
     )
@@ -60,7 +63,7 @@ case class Compiler() {
       library: exercise.Library
     ) = for {
       symbol ← internal.instanceToClassSymbol(library)
-      comment ← (internal.resolveComment(symbol) >>= DocParser.parseLibraryDocComment)
+      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Mode.Library])
         .leftMap(enhanceDocError(symbol))
       sections ← library.sections.toList
         .map(internal.instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
@@ -75,7 +78,7 @@ case class Compiler() {
     def maybeMakeSectionInfo(
       symbol: ClassSymbol
     ) = for {
-      comment ← (internal.resolveComment(symbol) >>= DocParser.parseSectionDocComment)
+      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Mode.Section])
         .leftMap(enhanceDocError(symbol))
       exercises ← symbol.toType.decls.toList
         .filter(symbol ⇒
@@ -94,7 +97,7 @@ case class Compiler() {
     def maybeMakeExerciseInfo(
       symbol: MethodSymbol
     ) = for {
-      comment ← (internal.resolveComment(symbol) >>= DocParser.parseExerciseDocComment)
+      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Mode.Exercise])
         .leftMap(enhanceDocError(symbol))
       code ← internal.resolveMethodBody(symbol)
     } yield ExerciseInfo(
@@ -151,16 +154,15 @@ case class Compiler() {
       val (sectionTerms, sectionAndExerciseTrees) =
         libraryInfo.sections.map { sectionInfo ⇒
           val (exerciseTerms, exerciseTrees) =
-            sectionInfo.exercises
-              .map { exerciseInfo ⇒
-                treeGen.makeExercise(
-                  name = internal.unapplyRawName(exerciseInfo.symbol.name),
-                  description = exerciseInfo.comment.description,
-                  code = exerciseInfo.code,
-                  qualifiedMethod = exerciseInfo.qualifiedMethod,
-                  explanation = exerciseInfo.comment.explanation
-                )
-              }.unzip
+            sectionInfo.exercises.map { exerciseInfo ⇒
+              treeGen.makeExercise(
+                name = internal.unapplyRawName(exerciseInfo.symbol.name),
+                description = exerciseInfo.comment.description,
+                code = exerciseInfo.code,
+                qualifiedMethod = exerciseInfo.qualifiedMethod,
+                explanation = exerciseInfo.comment.explanation
+              )
+            }.unzip
 
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
@@ -206,10 +208,10 @@ case class Compiler() {
       Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
         .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
 
-    def resolveComment(symbol: Symbol): Xor[String, SourceTextExtraction#ExtractedComment] = {
+    def resolveComment(symbol: Symbol) /*: Xor[String, Comment] */ = {
       val path = symbolToPath(symbol)
       Xor.fromOption(
-        sourceExtracted.comments.get(path),
+        sourceExtracted.comments.get(path).map(_.comment),
         s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
       )
     }

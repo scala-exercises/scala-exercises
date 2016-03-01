@@ -1,8 +1,7 @@
 package stdlib
 
-/** My Library
-  *
-  * This is my Library
+/** This is my Library
+  * @param name My Library
   */
 object SampleLibrary extends exercise.Library {
 

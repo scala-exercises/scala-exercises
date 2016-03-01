@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** empty_values
+/** @param name empty_values
   *
   */
 object EmptyValues extends FlatSpec with Matchers with exercise.Section {

@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** extractors
+/** @param name extractors
   *
   */
 object Extractors extends FlatSpec with Matchers with exercise.Section {

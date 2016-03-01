@@ -38,9 +38,7 @@ object XorStyleWithAdts {
     parse(s).flatMap(reciprocal).map(stringify)
 }
 
-/** xor
-  *
-  * In day-to-day programming, it is fairly common to find ourselves writing functions that
+/** In day-to-day programming, it is fairly common to find ourselves writing functions that
   * can fail. For instance, querying a service may result in a connection issue, or some
   * unexpected JSON response.
   *
@@ -107,7 +105,7 @@ object XorStyleWithAdts {
   * Note the return types are themselves back to `Either`, so if we want to make more calls to
   * `flatMap` or `map` then we again must call `right` or `left`.
   *
-  *
+  * @param name xor
   */
 object XorSection extends FlatSpec with Matchers with exercise.Section {
 

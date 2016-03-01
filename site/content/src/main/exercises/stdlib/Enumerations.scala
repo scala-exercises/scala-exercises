@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** enumerations
+/** @param name enumerations
   *
   */
 object Enumerations extends FlatSpec with Matchers with exercise.Section {

@@ -4,7 +4,7 @@ import org.scalatest._
 
 import scala.collection.mutable
 
-/** mutable_sets
+/** @param name mutable_sets
   *
   */
 object MutableSets extends FlatSpec with Matchers with exercise.Section {

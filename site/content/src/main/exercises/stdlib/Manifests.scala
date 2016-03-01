@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** manifests
+/** @param name manifests
   *
   */
 object Manifests extends FlatSpec with Matchers with exercise.Section {

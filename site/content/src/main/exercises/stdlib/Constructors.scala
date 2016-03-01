@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** constructors
+/** @param name constructors
   *
   */
 object Constructors extends FlatSpec with Matchers with exercise.Section {

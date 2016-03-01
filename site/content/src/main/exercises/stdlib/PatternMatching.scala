@@ -2,7 +2,7 @@ package stdlib
 
 import org.scalatest._
 
-/** pattern_matching
+/** @param name pattern_matching
   *
   */
 object PatternMatching extends FlatSpec with Matchers with exercise.Section {

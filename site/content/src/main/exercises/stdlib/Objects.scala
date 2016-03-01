@@ -3,7 +3,7 @@ package stdlib
 import ObjectsHelper._
 import org.scalatest._
 
-/** objects
+/** @param name objects
   *
   */
 object Objects extends FlatSpec with Matchers with exercise.Section {

@@ -1,19 +1,19 @@
 package stdlib
 
-/** Section Bar
+/** This is a Section Foo
   *
-  * This is a Section
+  * @param name Section Foo
   */
-object BarSection extends exercise.Section {
+object FooSection extends exercise.Section {
 
-  /** Exercise bar 1 */
-  def bar1(value: String) {
-    println(s"bar 1: $value")
+  /** Exercise foo 1 */
+  def foo1(value: String) {
+    println(s"foo 1: $value")
   }
 
-  /** Exercise bar 2 */
-  def bar2(value: String) {
-    println(s"bar 2: $value")
+  /** Exercise foo 2 */
+  def foo2(value: String) {
+    println(s"foo 2: $value")
     FooBarHelper.help()
   }
 

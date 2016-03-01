@@ -3,7 +3,7 @@ package stdlib
 import UniformAccessPrincipleHelper._
 import org.scalatest._
 
-/** uniform_access_principle
+/** @param name uniform_access_principle
   *
   */
 object UniformAccessPrinciple extends FlatSpec with Matchers with exercise.Section {
