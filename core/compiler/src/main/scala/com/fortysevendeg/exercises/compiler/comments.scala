@@ -48,12 +48,12 @@ object Comments {
     }
 
     /** Library comments. Required name. Required description.
-      * Require no description.
+      * Require no explanation.
       */
     type Library = Aux[Id, Id, Empty]
 
     /** Section comments. Require name. Optional description.
-      * Require no description.
+      * Require no explanation.
       */
     type Section = Aux[Id, Option, Empty]
 
