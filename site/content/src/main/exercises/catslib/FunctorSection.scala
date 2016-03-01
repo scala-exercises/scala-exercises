@@ -105,7 +105,7 @@ object FunctorSection extends FlatSpec with Matchers with exercise.Section {
     *  We can now apply the `lenOption` function to `Option` instances.
     *
     */
-  def liftingToAFunctor(res0: Int) = {
+  def liftingToAFunctor(res0: Option[Int]) = {
     val lenOption: Option[String] => Option[Int] = Functor[Option].lift(_.length)
     lenOption(Some("Hello")) should be(res0)
   }
