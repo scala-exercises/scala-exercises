@@ -6,6 +6,8 @@
 package com.fortysevendeg.exercises.utils
 
 import cats.data.Xor
+import cats.std.option._
+import cats.syntax.cartesian._
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import com.fortysevendeg.exercises.services.free.UserOps
@@ -62,11 +64,11 @@ class OAuth2Controller(
 
   case class GitHubUser(
     login:     String,
-    name:      String,
+    name:      Option[String],
     githubId:  Long,
     avatarUrl: String,
     htmlUrl:   String,
-    email:     String
+    email:     Option[String]
   )
 
   implicit val readGithubUser: Reads[GitHubUser] = Json.reads[GitHubUser]
@@ -85,61 +87,50 @@ class OAuth2Controller(
   } yield response
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
-    (for {
-      code ← codeOpt
-      state ← stateOpt
-      oauthState ← request.session.get("oauth-state")
-    } yield {
+    lazy val missingParams = Future.successful(BadRequest("Missing query parameters: make sure `code` and `state` are present."))
 
+    val params: Option[(String, String, String)] = (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
+
+    params.fold(missingParams)(params ⇒ {
+      val (code, state, oauthState) = params
       if (state == oauthState) {
-        getToken(code).map { accessToken ⇒
-          val successURL = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()
-          Redirect(successURL).withSession("oauth-token" → accessToken)
-        }.recover {
+        (for {
+          accessToken ← getToken(code)
+          successURL = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()
+        } yield Redirect(successURL).withSession("oauth-token" → accessToken)).recover {
           case ex: IllegalStateException ⇒ Unauthorized(ex.getMessage)
         }
       } else {
         Future.successful(BadRequest("Invalid github login"))
       }
-    }).getOrElse(Future.successful(BadRequest("No parameters supplied")))
+    })
   }
 
   def success() = Action.async { request ⇒
-    // xxx: option
-    request.session.get("oauth-token").fold(Future.successful(Unauthorized("Unauthorized"))) { authToken ⇒
-      // xxx: future
-      ws.url("https://api.github.com/user").
-        withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
-        get().map { response ⇒
-          // TODO: refactor to Reads
-          val login = (response.json \ "login").as[String]
-          val name = (response.json \ "name").asOpt[String]
-          val githubId = (response.json \ "id").as[Long]
-          val avatarUrl = (response.json \ "avatar_url").as[String]
-          val htmlUrl = (response.json \ "html_url").as[String]
-          val email = (response.json \ "email").asOpt[String]
-
-          // TODO: user user ops instead of repository + transactor
-          val ops = for {
-            user ← userOps.getOrCreate(UserCreation.Request(
-              login,
-              name,
-              githubId.toString,
-              avatarUrl,
-              htmlUrl,
-              email
-            ))
-          } yield user
-
-          ops.runTask match {
-            case Xor.Right(_) ⇒ Redirect(request.headers.get("referer") match {
-              case Some(url) if !url.contains("github") ⇒ url
-              case _                                    ⇒ "/"
-            }).withSession("oauth-token" → authToken, "user" → login)
-            case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
-          }
-
-        }
+    lazy val unauthorized = Future.successful(Unauthorized("Missing OAuth token"))
+    request.session.get("oauth-token").fold(unauthorized) { authToken ⇒
+      for {
+        maybeGhUser ← fetchGitHubUser(authToken)
+        response = maybeGhUser.fold(InternalServerError("Failed to fetch GitHub profile"))(ghUser ⇒
+          userOps.getOrCreate(
+            UserCreation.Request(
+              ghUser.login,
+              ghUser.name,
+              ghUser.githubId.toString,
+              ghUser.avatarUrl,
+              ghUser.htmlUrl,
+              ghUser.email
+            )
+          ).runTask match {
+              case Xor.Right(_) ⇒ Redirect(
+                request.headers.get("referer") match {
+                  case Some(url) if !url.contains("github") ⇒ url
+                  case _                                    ⇒ "/"
+                }
+              )
+              case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
+            })
+      } yield response
     }
   }
 
