@@ -23,8 +23,6 @@ trait UserRepository {
 
   def create(user: UserCreation.Request): ConnectionIO[UserCreation.Response]
 
-  def getOrCreate(user: UserCreation.Request): ConnectionIO[UserCreation.Response]
-
   def deleteAll(): ConnectionIO[Int]
 
   def delete(id: Long): ConnectionIO[Boolean]
@@ -58,11 +56,6 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
       user ← getByLogin(login)
     } yield user.fold(UserCreation.DuplicateName.left[User])(_.right[UserCreation.DuplicateName.type])
   }
-
-  override def getOrCreate(user: UserCreation.Request): ConnectionIO[UserCreation.Response] = for {
-    maybeUser ← getByLogin(user.login)
-    theUser ← maybeUser.fold(create(user))(_.right[UserCreation.CreationError].point[ConnectionIO])
-  } yield theUser
 
   override def delete(id: Long): ConnectionIO[Boolean] = persistence.update[Long](Q.deleteById, id) map (_ > 0)
 

@@ -6,9 +6,11 @@
 package com.fortysevendeg.exercises.utils
 
 import cats.data.Xor
+import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
-import com.fortysevendeg.exercises.persistence.repositories.UserRepository
+import com.fortysevendeg.exercises.services.free.UserOps
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 import doobie.imports._
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.libs.ws._
@@ -34,14 +36,15 @@ object OAuth2 {
 
 class OAuth2Controller(
     implicit
-    T:  Transactor[Task],
-    ws: WSClient,
-    UR: UserRepository
+    userOps: UserOps[ExercisesApp],
+    T:       Transactor[Task],
+    ws:      WSClient
 ) extends Controller with ProdInterpreters {
 
   import OAuth2._
 
   def getToken(code: String): Future[String] = {
+    // TODO: extract request to fn
     val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
       .withQueryString(
         "client_id" → githubAuthId,
@@ -51,6 +54,8 @@ class OAuth2Controller(
         withHeaders(HeaderNames.ACCEPT → MimeTypes.JSON).
         post(Results.EmptyContent())
 
+    // TODO: for-comprehension
+    // TODO: Reads[] for token response payload
     tokenResponse.flatMap { response ⇒
       (response.json \ "access_token").asOpt[String].fold(Future.failed[String](new IllegalStateException("Sod off!"))) { accessToken ⇒
         Future.successful(accessToken)
@@ -67,7 +72,8 @@ class OAuth2Controller(
 
       if (state == oauthState) {
         getToken(code).map { accessToken ⇒
-          Redirect(com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()).withSession("oauth-token" → accessToken)
+          val successURL = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()
+          Redirect(successURL).withSession("oauth-token" → accessToken)
         }.recover {
           case ex: IllegalStateException ⇒ Unauthorized(ex.getMessage)
         }
@@ -78,10 +84,13 @@ class OAuth2Controller(
   }
 
   def success() = Action.async { request ⇒
+    // xxx: option
     request.session.get("oauth-token").fold(Future.successful(Unauthorized("Unauthorized"))) { authToken ⇒
+      // xxx: future
       ws.url("https://api.github.com/user").
         withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
         get().map { response ⇒
+          // TODO: refactor to Reads
           val login = (response.json \ "login").as[String]
           val name = (response.json \ "name").asOpt[String]
           val githubId = (response.json \ "id").as[Long]
@@ -89,22 +98,25 @@ class OAuth2Controller(
           val htmlUrl = (response.json \ "html_url").as[String]
           val email = (response.json \ "email").asOpt[String]
 
-          UR.getOrCreate(
-            UserCreation.Request(
+          // TODO: user user ops instead of repository + transactor
+          val ops = for {
+            user ← userOps.getOrCreate(UserCreation.Request(
               login,
               name,
               githubId.toString,
               avatarUrl,
               htmlUrl,
               email
-            )
-          ).transact(T).run match {
-              case Xor.Right(_) ⇒ Redirect(request.headers.get("referer") match {
-                case Some(url) if !url.contains("github") ⇒ url
-                case _                                    ⇒ "/"
-              }).withSession("oauth-token" → authToken, "user" → login)
-              case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
-            }
+            ))
+          } yield user
+
+          ops.runTask match {
+            case Xor.Right(_) ⇒ Redirect(request.headers.get("referer") match {
+              case Some(url) if !url.contains("github") ⇒ url
+              case _                                    ⇒ "/"
+            }).withSession("oauth-token" → authToken, "user" → login)
+            case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
+          }
 
         }
     }
