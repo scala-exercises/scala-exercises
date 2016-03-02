@@ -73,8 +73,11 @@ class OAuth2Controller(
 
   implicit val readGithubUser: Reads[GitHubUser] = Json.reads[GitHubUser]
 
+  def githubUserRequest(authToken: String) =
+    ws.url("https://api.github.com/user").withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").get()
+
   def fetchGitHubUser(authToken: String): Future[Option[GitHubUser]] = for {
-    response ← ws.url("https://api.github.com/user").withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").get()
+    response ← githubUserRequest(authToken)
   } yield response.json.validate[GitHubUser] match {
     case ok: JsSuccess[GitHubUser] ⇒ Some(ok.get)
     case _                         ⇒ None
