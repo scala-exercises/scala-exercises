@@ -14,8 +14,9 @@ import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 import doobie.imports._
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.libs.ws._
-import play.api.mvc.{ Action, Controller, Results }
+import play.api.mvc.{ Action, Controller, Results, BodyParsers }
 import play.api.{ Application, Play }
+import play.api.libs.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -58,6 +59,24 @@ class OAuth2Controller(
     response ← githubTokenRequest(githubClientToken, githubSecretToken, code)
     theToken ← Future.successful((response.json \ "access_token").asOpt[String])
   } yield theToken
+
+  case class GitHubUser(
+    login:     String,
+    name:      String,
+    githubId:  Long,
+    avatarUrl: String,
+    htmlUrl:   String,
+    email:     String
+  )
+
+  implicit val readGithubUser: Reads[GitHubUser] = Json.reads[GitHubUser]
+
+  def fetchGitHubUser(authToken: String): Future[Option[GitHubUser]] = for {
+    response ← ws.url("https://api.github.com/user").withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").get()
+  } yield response.json.validate[GitHubUser] match {
+    case ok: JsSuccess[GitHubUser] ⇒ Some(ok.get)
+    case _                         ⇒ None
+  }
 
   def getToken(code: String): Future[String] = for {
     maybeToken ← fetchGitHubToken(githubAuthId, githubAuthSecret, code)
