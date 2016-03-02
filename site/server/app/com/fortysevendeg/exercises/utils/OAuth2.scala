@@ -43,25 +43,27 @@ class OAuth2Controller(
 
   import OAuth2._
 
-  def getToken(code: String): Future[String] = {
-    // TODO: extract request to fn
-    val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
+  def githubTokenRequest(githubClientToken: String, githubSecretToken: String, code: String) = {
+    ws.url("https://github.com/login/oauth/access_token")
       .withQueryString(
-        "client_id" → githubAuthId,
-        "client_secret" → githubAuthSecret,
+        "client_id" → githubClientToken,
+        "client_secret" → githubSecretToken,
         "code" → code
-      ).
-        withHeaders(HeaderNames.ACCEPT → MimeTypes.JSON).
-        post(Results.EmptyContent())
-
-    // TODO: for-comprehension
-    // TODO: Reads[] for token response payload
-    tokenResponse.flatMap { response ⇒
-      (response.json \ "access_token").asOpt[String].fold(Future.failed[String](new IllegalStateException("Sod off!"))) { accessToken ⇒
-        Future.successful(accessToken)
-      }
-    }
+      )
+      .withHeaders(HeaderNames.ACCEPT → MimeTypes.JSON)
+      .post(Results.EmptyContent())
   }
+
+  def fetchGitHubToken(githubClientToken: String, githubSecretToken: String, code: String): Future[Option[String]] = for {
+    response ← githubTokenRequest(githubClientToken, githubSecretToken, code)
+    theToken ← Future.successful((response.json \ "access_token").asOpt[String])
+  } yield theToken
+
+  def getToken(code: String): Future[String] = for {
+    maybeToken ← fetchGitHubToken(githubAuthId, githubAuthSecret, code)
+    err = Future.failed[String](new IllegalStateException("Unable to retrieve GitHub token."))
+    response ← maybeToken.fold(err)(Future.successful(_))
+  } yield response
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
     (for {
