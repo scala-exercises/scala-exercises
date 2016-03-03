@@ -19,6 +19,7 @@ import play.api.libs.ws._
 import play.api.mvc.{ Action, Controller, Results, BodyParsers }
 import play.api.{ Application, Play }
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -71,7 +72,14 @@ class OAuth2Controller(
     email:     Option[String]
   )
 
-  implicit val readGithubUser: Reads[GitHubUser] = Json.reads[GitHubUser]
+  implicit val readGithubUser: Reads[GitHubUser] = (
+    (JsPath \ "login").read[String] and
+    (JsPath \ "name").readNullable[String] and
+    (JsPath \ "id").read[Long] and
+    (JsPath \ "avatar_url").read[String] and
+    (JsPath \ "html_url").read[String] and
+    (JsPath \ "email").readNullable[String]
+  )(GitHubUser.apply _)
 
   def githubUserRequest(authToken: String) =
     ws.url("https://api.github.com/user").withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").get()
