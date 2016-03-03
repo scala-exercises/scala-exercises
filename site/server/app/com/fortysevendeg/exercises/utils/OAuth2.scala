@@ -6,14 +6,20 @@
 package com.fortysevendeg.exercises.utils
 
 import cats.data.Xor
+import cats.std.option._
+import cats.syntax.cartesian._
+import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
-import com.fortysevendeg.exercises.persistence.repositories.UserRepository
+import com.fortysevendeg.exercises.services.free.UserOps
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
+import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 import doobie.imports._
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.libs.ws._
-import play.api.mvc.{ Action, Controller, Results }
+import play.api.mvc.{ Action, Controller, Results, BodyParsers }
 import play.api.{ Application, Play }
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,79 +40,108 @@ object OAuth2 {
 
 class OAuth2Controller(
     implicit
-    T:  Transactor[Task],
-    ws: WSClient,
-    UR: UserRepository
+    userOps: UserOps[ExercisesApp],
+    T:       Transactor[Task],
+    ws:      WSClient
 ) extends Controller with ProdInterpreters {
 
   import OAuth2._
 
-  def getToken(code: String): Future[String] = {
-    val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
+  def githubTokenRequest(githubClientToken: String, githubSecretToken: String, code: String) = {
+    ws.url("https://github.com/login/oauth/access_token")
       .withQueryString(
-        "client_id" → githubAuthId,
-        "client_secret" → githubAuthSecret,
+        "client_id" → githubClientToken,
+        "client_secret" → githubSecretToken,
         "code" → code
-      ).
-        withHeaders(HeaderNames.ACCEPT → MimeTypes.JSON).
-        post(Results.EmptyContent())
-
-    tokenResponse.flatMap { response ⇒
-      (response.json \ "access_token").asOpt[String].fold(Future.failed[String](new IllegalStateException("Sod off!"))) { accessToken ⇒
-        Future.successful(accessToken)
-      }
-    }
+      )
+      .withHeaders(HeaderNames.ACCEPT → MimeTypes.JSON)
+      .post(Results.EmptyContent())
   }
 
-  def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
-    (for {
-      code ← codeOpt
-      state ← stateOpt
-      oauthState ← request.session.get("oauth-state")
-    } yield {
+  def fetchGitHubToken(githubClientToken: String, githubSecretToken: String, code: String): Future[Option[String]] = for {
+    response ← githubTokenRequest(githubClientToken, githubSecretToken, code)
+    theToken ← Future.successful((response.json \ "access_token").asOpt[String])
+  } yield theToken
 
+  case class GitHubUser(
+    login:     String,
+    name:      Option[String],
+    githubId:  Long,
+    avatarUrl: String,
+    htmlUrl:   String,
+    email:     Option[String]
+  )
+
+  implicit val readGithubUser: Reads[GitHubUser] = (
+    (JsPath \ "login").read[String] and
+    (JsPath \ "name").readNullable[String] and
+    (JsPath \ "id").read[Long] and
+    (JsPath \ "avatar_url").read[String] and
+    (JsPath \ "html_url").read[String] and
+    (JsPath \ "email").readNullable[String]
+  )(GitHubUser.apply _)
+
+  def githubUserRequest(authToken: String) =
+    ws.url("https://api.github.com/user").withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").get()
+
+  def fetchGitHubUser(authToken: String): Future[Option[GitHubUser]] = {
+    githubUserRequest(authToken).map(_.json.validate[GitHubUser] match {
+      case ok: JsSuccess[GitHubUser] ⇒ Some(ok.get)
+      case _                         ⇒ None
+    })
+  }
+
+  def getToken(code: String): Future[String] = for {
+    maybeToken ← fetchGitHubToken(githubAuthId, githubAuthSecret, code)
+    err = Future.failed[String](new IllegalStateException("Unable to retrieve GitHub token."))
+    response ← maybeToken.fold(err)(Future.successful(_))
+  } yield response
+
+  def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
+    lazy val missingParams = Future.successful(BadRequest("Missing query parameters: make sure `code` and `state` are present."))
+
+    val params: Option[(String, String, String)] = (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
+
+    params.fold(missingParams)(params ⇒ {
+      val (code, state, oauthState) = params
       if (state == oauthState) {
-        getToken(code).map { accessToken ⇒
-          Redirect(com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()).withSession("oauth-token" → accessToken)
-        }.recover {
+        (for {
+          accessToken ← getToken(code)
+          successURL = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.success()
+        } yield Redirect(successURL).withSession("oauth-token" → accessToken)).recover {
           case ex: IllegalStateException ⇒ Unauthorized(ex.getMessage)
         }
       } else {
         Future.successful(BadRequest("Invalid github login"))
       }
-    }).getOrElse(Future.successful(BadRequest("No parameters supplied")))
+    })
   }
 
   def success() = Action.async { request ⇒
-    request.session.get("oauth-token").fold(Future.successful(Unauthorized("Unauthorized"))) { authToken ⇒
-      ws.url("https://api.github.com/user").
-        withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").
-        get().map { response ⇒
-          val login = (response.json \ "login").as[String]
-          val name = (response.json \ "name").asOpt[String]
-          val githubId = (response.json \ "id").as[Long]
-          val avatarUrl = (response.json \ "avatar_url").as[String]
-          val htmlUrl = (response.json \ "html_url").as[String]
-          val email = (response.json \ "email").asOpt[String]
-
-          UR.getOrCreate(
+    lazy val unauthorized = Future.successful(Unauthorized("Missing OAuth token"))
+    request.session.get("oauth-token").fold(unauthorized) { authToken ⇒
+      for {
+        maybeGhUser ← fetchGitHubUser(authToken)
+        response = maybeGhUser.fold(InternalServerError("Failed to fetch GitHub profile"))(ghUser ⇒
+          userOps.getOrCreate(
             UserCreation.Request(
-              login,
-              name,
-              githubId.toString,
-              avatarUrl,
-              htmlUrl,
-              email
+              ghUser.login,
+              ghUser.name,
+              ghUser.githubId.toString,
+              ghUser.avatarUrl,
+              ghUser.htmlUrl,
+              ghUser.email
             )
-          ).transact(T).run match {
-              case Xor.Right(_) ⇒ Redirect(request.headers.get("referer") match {
-                case Some(url) if !url.contains("github") ⇒ url
-                case _                                    ⇒ "/"
-              }).withSession("oauth-token" → authToken, "user" → login)
+          ).runTask match {
+              case Xor.Right(_) ⇒ Redirect(
+                request.headers.get("referer") match {
+                  case Some(url) if !url.contains("github") ⇒ url
+                  case _                                    ⇒ "/"
+                }
+              ).withSession("oauth-token" → authToken, "user" → ghUser.login)
               case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
-            }
-
-        }
+            })
+      } yield response
     }
   }
 

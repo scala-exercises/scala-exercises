@@ -5,6 +5,7 @@
 
 package com.fortysevendeg.exercises.services.free
 
+import cats.data.Xor
 import cats.free.{ Free, Inject }
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import shared.User
@@ -36,6 +37,11 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
 
   def deleteUser(user: User): Free[F, Boolean] =
     Free.inject[UserOp, F](DeleteUser(user))
+
+  def getOrCreate(user: UserCreation.Request): Free[F, UserCreation.Response] = for {
+    maybeUser ← getUserByLogin(user.login)
+    theUser ← maybeUser.fold(createUser(user))((user: User) ⇒ Free.pure(Xor.Right(user)))
+  } yield theUser
 }
 
 /** Default implicit based DI factory from which instances of the UserOps may be obtained

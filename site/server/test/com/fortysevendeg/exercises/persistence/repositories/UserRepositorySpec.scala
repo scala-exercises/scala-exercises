@@ -95,25 +95,4 @@ class UserRepositorySpec
       }) shouldBe true
     }
   }
-
-  property("`getOrCreate` retrieves a user if already created") {
-    forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
-      repository.create(newUser).transact(transactor).run
-      repository.getOrCreate(newUser).transact(transactor).run
-
-      repository.all.transact(transactor).run.length shouldBe 1
-    }
-  }
-
-  property("`getOrCreate` creates a user if it's not already created") {
-    forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
-      repository.getOrCreate(newUser).transact(transactor).run
-
-      repository.all.transact(transactor).run.length shouldBe 1
-    }
-  }
 }

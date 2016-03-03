@@ -109,7 +109,8 @@ class ApplicationController(
   }
 
   def authStatus(implicit req: Request[AnyContent]): (String, String) = {
-    val scope = "user"
+    // NOTE: An empty OAuth scope indicates access to public info only
+    val scope = ""
     val state = UUID.randomUUID().toString
     val callbackUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.callback(None, None).absoluteURL()
     val redirectUrl = OAuth2.getAuthorizationUrl(callbackUrl, scope, state)
