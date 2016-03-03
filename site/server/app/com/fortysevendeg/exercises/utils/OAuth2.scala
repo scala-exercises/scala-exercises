@@ -49,6 +49,9 @@ class OAuth2Controller(
 
   def githubTokenRequest(githubClientToken: String, githubSecretToken: String, code: String) = {
     ws.url("https://github.com/login/oauth/access_token")
+      .withHeaders(
+        "X-Oauth-Scopes" → "user:email"
+      )
       .withQueryString(
         "client_id" → githubClientToken,
         "client_secret" → githubSecretToken,
