@@ -84,11 +84,11 @@ class OAuth2Controller(
   def githubUserRequest(authToken: String) =
     ws.url("https://api.github.com/user").withHeaders(HeaderNames.AUTHORIZATION → s"token $authToken").get()
 
-  def fetchGitHubUser(authToken: String): Future[Option[GitHubUser]] = for {
-    response ← githubUserRequest(authToken)
-  } yield response.json.validate[GitHubUser] match {
-    case ok: JsSuccess[GitHubUser] ⇒ Some(ok.get)
-    case _                         ⇒ None
+  def fetchGitHubUser(authToken: String): Future[Option[GitHubUser]] = {
+    githubUserRequest(authToken).map(_.json.validate[GitHubUser] match {
+      case ok: JsSuccess[GitHubUser] ⇒ Some(ok.get)
+      case _                         ⇒ None
+    })
   }
 
   def getToken(code: String): Future[String] = for {
