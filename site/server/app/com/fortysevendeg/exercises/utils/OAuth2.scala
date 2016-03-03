@@ -49,9 +49,6 @@ class OAuth2Controller(
 
   def githubTokenRequest(githubClientToken: String, githubSecretToken: String, code: String) = {
     ws.url("https://github.com/login/oauth/access_token")
-      .withHeaders(
-        "X-Oauth-Scopes" → "user:email"
-      )
       .withQueryString(
         "client_id" → githubClientToken,
         "client_secret" → githubSecretToken,
@@ -141,7 +138,7 @@ class OAuth2Controller(
                   case Some(url) if !url.contains("github") ⇒ url
                   case _                                    ⇒ "/"
                 }
-              )
+              ).withSession("oauth-token" → authToken, "user" → ghUser.login)
               case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
             })
       } yield response
