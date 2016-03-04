@@ -128,7 +128,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     result.isInstanceOf[Iterable[_]] should be(res0)
   }
 
-  /** `toSeq` will convert any *Traversable* to a *Seq* which is an ordered `Iterable`   and is the superclass to *List*, *Queues*, and *Vectors*. *Sequences* provide a method apply for indexing. Indices range from 0 up the the length of a sequence.
+  /** `toSeq` will convert any *Traversable* to a *Seq* which is an ordered `Iterable`   and is the superclass to *List*, *Queues*, and *Vectors*. *Sequences* provide a method apply for indexing. Indices range from 0 up the length of a sequence.
     */
   def toSeqFunctionTraversables(res0: Boolean) {
     val set = Set(4, 6, 7, 8, 9, 13, 14)
@@ -280,7 +280,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     list.slice(1, 3) should be(List(res0, res1))
   }
 
-  /** `take` will return the the first number of elements given.
+  /** `take` will return the first number of elements given.
     */
   def takeFunctionTraversables(res0: Int, res1: Int, res2: Int) {
     val list = List(10, 19, 45, 1, 22)
