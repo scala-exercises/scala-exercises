@@ -153,7 +153,7 @@ object Extractors extends FlatSpec with Matchers with exercise.Section {
 
   /** What is typical is to create a custom extractor in the companion object of the class. In this exercise, we use it as an assignment:
     */
-  def asAssignmentExtractors(res0: String, res1: String, res2: String) {
+  def asAssignmentExtractors(res0: String, res1: Option[String], res2: String) {
     class Employee(val firstName: String,
         val middleName: Option[String],
         val lastName: String)
