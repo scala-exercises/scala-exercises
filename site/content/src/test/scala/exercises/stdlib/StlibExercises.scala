@@ -324,3 +324,22 @@ class EnumerationsSpec extends Spec with Checkers {
   }
 }
 
+class ExtractorsSpec extends Spec with Checkers {
+  def `extractors` = {
+    check(
+      Test.success(
+        Extractors.extractorsExtractors _,
+        "Where's Batman?" :: HNil
+      )
+    )
+  }
+
+  def `unapply` = {
+    check(
+      Test.success(
+        Extractors.extractorsExtractors _,
+        "Where's Batman?" :: HNil
+      )
+    )
+  }
+}
