@@ -276,3 +276,51 @@ class EmptyValuesSpec extends Spec with Checkers {
     )
   }
 }
+
+class EnumerationsSpec extends Spec with Checkers {
+  def `create enumerations` = {
+    check(
+      Test.success(
+        Enumerations.createEnumerationEnumerations _,
+        0 :: 1 :: "Mercury" :: "Venus" :: true :: false :: HNil
+      )
+    )
+  }
+
+  def `create enumerations with custom indices` = {
+    check(
+      Test.success(
+        Enumerations.ownIndexEnumerations _,
+        1 :: 2 :: "Hermes" :: "Aphrodite" :: true :: false :: HNil
+      )
+    )
+  }
+
+  def `create enumerations in one line` = {
+    check(
+      Test.success(
+        Enumerations.oneLineEnumerations _,
+        0 :: 1 :: "Mercury" :: "Venus" :: true :: false :: HNil
+      )
+    )
+  }
+
+  def `create enumerations from strings` = {
+    check(
+      Test.success(
+        Enumerations.stringValueEnumerations _,
+        0 :: 1 :: "Hermes" :: "Aphrodite" :: true :: false :: HNil
+      )
+    )
+  }
+
+  def `extending enumerations` = {
+    check(
+      Test.success(
+        Enumerations.extendingValueEnumerations _,
+        5.976e+24 :: 6.37814e6 :: HNil
+      )
+    )
+  }
+}
+

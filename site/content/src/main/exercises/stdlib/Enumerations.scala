@@ -107,7 +107,7 @@ object Enumerations extends FlatSpec with Matchers with exercise.Section {
 
   /** You can extend the `Enumeration` by extending the `Value` class.
     */
-  def extendingValueEnumerations(res0: String, res1: String) {
+  def extendingValueEnumerations(res0: Double, res1: Double) {
     object Planets extends Enumeration {
 
       val G = 6.67300E-11
