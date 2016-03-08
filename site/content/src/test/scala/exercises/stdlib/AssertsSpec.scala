@@ -6,10 +6,10 @@ import shapeless.HNil
 import org.scalatest.Spec
 import org.scalatest.prop.Checkers
 
-class AssertsSpec extends Spec with Checkers {
-  // FIXME: get rid of this
-  import org.scalacheck.Shapeless._
+// FIXME: get rid of this if possible
+import org.scalacheck.Shapeless._
 
+class AssertsSpec extends Spec with Checkers {
   def `scalatest asserts` = {
     check(Test.success(Asserts.scalaTestAsserts _, true :: HNil))
   }
@@ -23,9 +23,6 @@ class AssertsSpec extends Spec with Checkers {
 }
 
 class ByNameParameterSpec extends Spec with Checkers {
-  // FIXME: get rid of this
-  import org.scalacheck.Shapeless._
-
   def `takes unit by name parameter` = {
     val right: Either[Throwable, Int] = Right(29)
 
@@ -59,9 +56,6 @@ class ByNameParameterSpec extends Spec with Checkers {
 }
 
 class CaseClassesSpec extends Spec with Checkers {
-  // FIXME: get rid of this
-  import org.scalacheck.Shapeless._
-
   def `case classes comparisons` = {
     check(
       Test.success(
@@ -152,6 +146,27 @@ class CaseClassesSpec extends Spec with Checkers {
       Test.success(
         CaseClasses.serializableCaseClasses _,
         true :: false :: HNil
+      )
+    )
+  }
+}
+
+class ClassesSpec extends Spec with Checkers {
+
+  def `classes with val parameters` = {
+    check(
+      Test.success(
+        Classes.classWithValParameterClasses _,
+        "Gandalf" :: HNil
+      )
+    )
+  }
+
+  def `classes with var parameters` = {
+    check(
+      Test.success(
+        Classes.classWithVarParameterClasses _,
+        "Flying character" :: "Flying white character" :: HNil
       )
     )
   }
