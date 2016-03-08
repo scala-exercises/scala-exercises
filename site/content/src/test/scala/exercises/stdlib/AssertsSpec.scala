@@ -171,3 +171,14 @@ class ClassesSpec extends Spec with Checkers {
     )
   }
 }
+
+class ConstructorsSpec extends Spec with Checkers {
+  def `primary constructor` = {
+    check(
+      Test.success(
+        Constructors.primaryConstructorConstructors _,
+        "defaultname" :: HNil
+      )
+    )
+  }
+}
