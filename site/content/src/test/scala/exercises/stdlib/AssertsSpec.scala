@@ -1,6 +1,7 @@
 package stdlib
 
 import shapeless._
+import shapeless.ops.function._
 
 import org.scalacheck.{ Prop, Arbitrary }
 import org.scalacheck.Gen
@@ -24,25 +25,25 @@ class AssertsSpec
     }
   }
 
-  def success[P <: Product, L <: HList](method: Function[P, Unit], answer: L)(
+  def success[F, R, L <: HList](method: F, answer: L)(
     implicit
-    T: shapeless.ops.hlist.Tupler[L],
-    A: Arbitrary[L]
+    A:     Arbitrary[L],
+    fntop: FnToProduct.Aux[F, L ⇒ R]
   ): Prop = {
-    val rightGen: Gen[P] = genTuple(answer).asInstanceOf[Gen[P]]
+    val rightGen = genRightAnswer(answer)
     val rightProp = forAll(rightGen)({ p ⇒
       try {
-        method(p)
+        fntop(method)(p)
         true
       } catch {
         case _: Throwable ⇒ false
       }
     })
 
-    val wrongGen: Gen[P] = genNotTuple(answer).asInstanceOf[Gen[P]]
+    val wrongGen = genWrongAnswer(answer)
     val wrongProp = forAll(wrongGen)({ p ⇒
       try {
-        method(p)
+        fntop(method)(p)
         false
       } catch {
         case _: Throwable ⇒ true
@@ -52,24 +53,21 @@ class AssertsSpec
     Prop.all(rightProp, wrongProp)
   }
 
-  def genTuple[L <: HList](l: L)(
-    implicit
-    tupler: shapeless.ops.hlist.Tupler[L]
-  ): Gen[_] = {
-    Gen.const(tupler(l))
+  def genRightAnswer[L <: HList](answer: L): Gen[L] = {
+    Gen.const(answer)
   }
 
-  def genNotTuple[L <: HList](l: L)(
+  def genWrongAnswer[L <: HList](l: L)(
     implicit
-    T: shapeless.ops.hlist.Tupler[L],
     A: Arbitrary[L]
-  ): Gen[_] = {
+  ): Gen[L] = {
     A.arbitrary.suchThat(_ != l)
   }
 
-  // TODO: Better way to pass method reference, this boilerplate is ridiculous
+  val theInstance = new AClass()
+
   def `we can generate right and wrong props` = {
-    val aProp = success({ foo: (Int, Int) ⇒ new AClass().aMethod _ tupled (foo) }, 1 :: 2 :: HNil)
+    val aProp = success(theInstance.aMethod _, 1 :: 2 :: HNil)
     check(aProp)
   }
 }
