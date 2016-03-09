@@ -12,7 +12,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * Scala supports first-class functions, which means you can express functions in function literal syntax, i.e.,` (x: Int) => x + 1`, and that functions can be represented by objects, which are called function values.
     */
-  def meetLamdaHigherOrderFunctions(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int) {
+  def meetLambdaHigherOrderFunctions(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int) {
     def lambda = { x: Int => x + 1 }
     def lambda2 = (x: Int) => x + 1
     val lambda3 = (x: Int) => x + 1
@@ -126,7 +126,7 @@ object HigherOrderFunctions extends FlatSpec with Matchers with exercise.Section
     *
     * Hint: a map method applies the function to each element of a list
     */
-  def functionAsParameterHigherOrderFunctions(res0: String, res1: String, res2: String) {
+  def functionAsParameterHigherOrderFunctions(res0: List[String], res1: List[String], res2: List[Int]) {
     def makeUpper(xs: List[String]) = xs map {
       _.toUpperCase
     }
