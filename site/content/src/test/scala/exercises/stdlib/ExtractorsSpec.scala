@@ -9,7 +9,6 @@ import org.scalatest.prop.Checkers
 // FIXME: get rid of this if possible
 import org.scalacheck.Shapeless._
 
-
 class ExtractorsSpec extends Spec with Checkers {
   def `extractors` = {
     check(
