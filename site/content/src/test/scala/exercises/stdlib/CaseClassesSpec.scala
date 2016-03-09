@@ -73,18 +73,16 @@ class CaseClassesSpec extends Spec with Checkers {
     )
   }
 
-  // FIXME: Shapeless doesn't find an implicit FnToProduct.Aux, why?
-  // def `case class parameters` = {
-  //   check(
-  //     Test.success(
-  //       CaseClasses.parametersCaseClasses _,
-  //       "Fred" :: "Jones" :: 23 :: "111-22-3333" ::
-  //         "Samantha" :: "Jones" :: 0 :: "111-22-3333" ::
-  //         "Fred" :: "Jones" :: 0 :: "111-22-3333" ::
-  //         "Fred" :: "Jones" :: 23 :: "111-22-3333" :: HNil
-  //     )
-  //   )
-  // }
+  def `case class parameters` = {
+    check(
+      Test.success(
+        CaseClasses.parametersCaseClasses _,
+        "Fred" :: "Jones" :: 23 :: "111-22-3333" ::
+          "Samantha" :: "Jones" :: 0 :: "" ::
+          "Fred" :: "Jones" :: 0 :: "111-22-3333" :: true :: HNil
+      )
+    )
+  }
 
   def `case classes as tuples` = {
     check(
