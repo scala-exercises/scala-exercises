@@ -45,7 +45,7 @@ object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
   /** Using `for` we can make more readable code
     */
-  def readableCodeForExpressions(res0: String) {
+  def readableCodeForExpressions(res0: List[Int]) {
     val nums = List(List(1), List(2), List(3), List(4), List(5))
 
     val result = for {
