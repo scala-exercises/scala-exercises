@@ -72,7 +72,7 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
 
   /** Lists are immutable
     */
-  def areInmutableLists(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def areImmutableLists(res0: Int, res1: Int, res2: Int, res3: Int) {
     val a = List(1, 3, 5, 7, 9)
     val b = a.filterNot(v => v == 5) // remove where value is 5
 
@@ -82,28 +82,25 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
 
   /** Lists have many useful methods
     */
-  def usefulMethodsLists(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int, res9: Int, res10: Int, res11: Int, res12: Int, res13: Int, res14: Int, res15: Int, res16: Int, res17: Int) {
+  def usefulMethodsLists(res0: Int, res1: List[Int], res2: List[Int], res3: List[Int]) {
     val a = List(1, 3, 5, 7, 9)
 
     // get the length of the list
     a.length should equal(res0)
 
     // reverse the list
-    a.reverse should equal(List(res1, res2, res3, res4, res5))
-
-    // convert the list to a string representation
-    a.toString should equal("List(res6, res7, res8, res9, res10)")
+    a.reverse should equal(res1)
 
     // map a function to double the numbers over the list
-    a.map { v => v * 2 } should equal(List(res11, res12, res13, res14, res15))
+    a.map { v => v * 2 } should equal(res2)
 
     // filter any values divisible by 3 in the list
-    a.filter { v => v % 3 == 0 } should equal(List(res16, res17))
+    a.filter { v => v % 3 == 0 } should equal(res3)
   }
 
   /** Functions over lists can use _ as shorthand
     */
-  def wildcardAsShorhandLists(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def wildcardAsShorthandLists(res0: Int, res1: Int, res2: Int, res3: Int) {
     val a = List(1, 2, 3)
 
     a.map {
@@ -144,9 +141,9 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
 
   /** You can create a list from a range
     */
-  def fromRangeLists(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int) {
+  def fromRangeLists(res0: List[Int]) {
     val a = (1 to 5).toList
-    a should be(List(res0, res1, res2, res3, res4))
+    a should be(res0)
   }
 
   /** Lists reuse their tails
