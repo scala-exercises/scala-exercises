@@ -15,7 +15,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * `Option[A]` is a container for an optional value of type `A`. If the value of type `A` is present, the `Option[A]` is an instance of `Some[A]`, containing the present value of type `A.` If the value is absent, the `Option[A]` is the object `None`.
     */
-  def conceptOptions(res0: String, res1: String) {
+  def conceptOptions(res0: String, res1: Option[String]) {
     val someValue: Option[String] = Some("I am wrapped in something")
     someValue.get should be(res0)
 
@@ -89,7 +89,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * One of these operations is `map`. this operation allows to map the inner value to a different type while preserving the option
     */
-  def mapOptions(res0: String, res1: String) {
+  def mapOptions(res0: Option[Double], res1: Option[Double]) {
     val number: Option[Int] = Some(3)
     val noNumber: Option[Int] = None
     val result1 = number.map(_ * 1.5)
