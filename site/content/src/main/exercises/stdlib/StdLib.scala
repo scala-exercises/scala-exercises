@@ -41,7 +41,6 @@ object StdLib extends exercise.Library {
     Iterables,
     Traversables,
     NamedandDefaultArguments,
-    Manifests,
     Preconditions,
     Extractors,
     ByNameParameter,
