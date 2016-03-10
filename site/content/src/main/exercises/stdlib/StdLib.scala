@@ -27,7 +27,7 @@ object StdLib extends exercise.Library {
     Formatting,
     PatternMatching,
     CaseClasses,
-    RangeExercises,
+    Ranges,
     PartiallyAppliedFunctions,
     PartialFunctions,
     Implicits,
