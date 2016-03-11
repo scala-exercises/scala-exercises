@@ -35,7 +35,7 @@ object Tuples extends FlatSpec with Matchers with exercise.Section {
   /** Tuples may be of mixed type:
     */
   def mixedTypeTuples(res0: Int, res1: String) {
-    val tuple5 = ("a", 1, 2.2, new Date(), BigDecimal(5))
+    val tuple5 = ("a", 1, 2.2, new Date(), "five")
 
     tuple5._2 should be(res0)
     tuple5._5 should be(res1)
