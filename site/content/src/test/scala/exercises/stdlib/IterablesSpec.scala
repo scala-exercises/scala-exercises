@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class IterablesSpec extends Spec with Checkers {
   def `collection iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.collectionIterablesIterables _,
         3 :: HNil
       )
@@ -21,7 +21,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `grouped iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.groupedIterables _,
         3 :: 5 :: 9 :: 11 :: 15 :: 19 :: 21 :: 24 :: 32 :: HNil
       )
@@ -30,7 +30,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `sliding iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.slidingIterables _,
         3 :: 5 :: 9 :: 5 :: 9 :: 11 :: 9 :: 11 :: 15 :: HNil
       )
@@ -39,7 +39,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `sliding window iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.slidingWindowIterables _,
         3 :: 5 :: 9 :: 11 :: 15 :: 19 :: 21 :: 24 :: 32 :: HNil
       )
@@ -48,7 +48,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `take right on iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.takeRightIterables _,
         21 :: 24 :: 32 :: HNil
       )
@@ -57,7 +57,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `drop right on iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.dropRightIterables _,
         3 :: 5 :: 9 :: 11 :: 15 :: 19 :: HNil
       )
@@ -66,7 +66,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `zipping iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.zipIterables _,
         3 :: "Bob" :: 5 :: "Ann" :: 9 :: "Stella" :: HNil
       )
@@ -75,7 +75,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `zipping different size iterables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.sameSizeZipIterables _,
         3 :: "Bob" :: 5 :: "Ann" :: HNil
       )
@@ -84,7 +84,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `zipping with zipAll` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.zipAllIterables _,
         3 :: "Bob" :: 5 :: "Ann" :: 9 :: 3 :: "Bob" :: 5 :: "Ann" :: "Stella" :: HNil
       )
@@ -93,7 +93,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `zipping with index` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.zipWithIndexIterables _,
         "Manny" :: "Moe" :: 1 :: "Jack" :: HNil
       )
@@ -102,7 +102,7 @@ class IterablesSpec extends Spec with Checkers {
 
   def `zipping with sameElements` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Iterables.sameElementsIterables _,
         true :: false :: true :: false :: HNil
       )

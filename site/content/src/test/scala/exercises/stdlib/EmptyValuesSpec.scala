@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class EmptyValuesSpec extends Spec with Checkers {
   def `empty values` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.emptyValuesEmptyValues _,
         true :: HNil
       )
@@ -21,7 +21,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `none is equal to none` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.avoidingNullEmptyValues _,
         true :: HNil
       )
@@ -30,7 +30,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `none is identical to none` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.identicalNoneEmptyValues _,
         true :: HNil
       )
@@ -39,7 +39,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `none to string` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.noneToStringEmptyValues _,
         "None" :: HNil
       )
@@ -48,7 +48,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `none to list` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.noneToListEmptyValues _,
         true :: HNil
       )
@@ -57,7 +57,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `none is empty` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.noneToListEmptyValues _,
         true :: HNil
       )
@@ -66,7 +66,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `none can be casted` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.noneToAnyEmptyValues _,
         true :: true :: true :: HNil
       )
@@ -77,7 +77,7 @@ class EmptyValuesSpec extends Spec with Checkers {
     val theOption: Option[String] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.noneWithOptionEmptyValues _,
         true :: theOption :: HNil
       )
@@ -86,7 +86,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `some vs none` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.someAgainstNoneEmptyValues _,
         false :: false :: HNil
       )
@@ -95,7 +95,7 @@ class EmptyValuesSpec extends Spec with Checkers {
 
   def `getOrElse on none` = {
     check(
-      Test.success(
+      Test.testSuccess(
         EmptyValues.getOrElseEmptyValues _,
         "Some Value" :: "No Value" :: HNil
       )

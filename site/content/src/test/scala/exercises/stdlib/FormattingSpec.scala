@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class FormattingSpec extends Spec with Checkers {
   def `strings` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Formatting.placedInFormatFormatting _,
         "Application Hello World" :: HNil
       )
@@ -21,7 +21,7 @@ class FormattingSpec extends Spec with Checkers {
 
   def `characters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Formatting.characterFormatting _,
         "a" :: "B" :: HNil
       )
@@ -30,7 +30,7 @@ class FormattingSpec extends Spec with Checkers {
 
   def `escape sequences` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Formatting.escapeSequenceFormatting _,
         "a" :: "a" :: "\"" :: "\\" :: HNil
       )
@@ -39,7 +39,7 @@ class FormattingSpec extends Spec with Checkers {
 
   def `formatting numbers` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Formatting.includingNumbersFormatting _,
         "90 bottles of beer on the wall" :: HNil
       )
@@ -48,7 +48,7 @@ class FormattingSpec extends Spec with Checkers {
 
   def `formatting variable numbers of items` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Formatting.anyNumberOfItemsFormatting _,
         "90 bottles of vodka on the wall" :: HNil
       )

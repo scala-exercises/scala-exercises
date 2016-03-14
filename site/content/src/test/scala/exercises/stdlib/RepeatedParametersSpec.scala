@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class RepeatedParametersSpec extends Spec with Checkers {
   def `multiple last parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         RepeatedParameters.theLastParameterRepeatedParameters _,
         "3 eggs can give you a delicious sandwich, protein, high cholesterol" :: HNil
       )
@@ -21,7 +21,7 @@ class RepeatedParametersSpec extends Spec with Checkers {
 
   def `collection as repeated parameter` = {
     check(
-      Test.success(
+      Test.testSuccess(
         RepeatedParameters.acceptCollectionRepeatedParameters _,
         "3 eggs can give you List(a delicious sandwich, protein, high cholesterol)" :: HNil
       )
@@ -30,7 +30,7 @@ class RepeatedParametersSpec extends Spec with Checkers {
 
   def `we can spread a collection into positional parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         RepeatedParameters.expandCollectionRepeatedParameters _,
         "3 eggs can give you a delicious sandwich, protein, high cholesterol" :: HNil
       )

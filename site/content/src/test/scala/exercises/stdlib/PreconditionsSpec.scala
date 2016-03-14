@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class PreconditionsSpec extends Spec with Checkers {
   def `can be added to constructors` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Preconditions.preconditionsPreconditions _,
         27 :: HNil
       )

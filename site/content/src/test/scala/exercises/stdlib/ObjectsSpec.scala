@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ObjectsSpec extends Spec with Checkers {
   def `singleton` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Objects.singletonObjects _,
         "Hi" :: "Hola" :: "Hallo" :: "Szia" :: HNil
       )
@@ -21,7 +21,7 @@ class ObjectsSpec extends Spec with Checkers {
 
   def `they are unique` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Objects.notStaticMethodObjects _,
         true :: true :: HNil
       )
@@ -30,7 +30,7 @@ class ObjectsSpec extends Spec with Checkers {
 
   def `companion objects` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Objects.companionObjectObjects _,
         "Grand Hotel" :: HNil
       )
@@ -40,7 +40,7 @@ class ObjectsSpec extends Spec with Checkers {
   // FIXME: can't test properly because it relies on a shared mutable var :_)
   // def `shared variables` = {
   //   check(
-  //     Test.success(
+  //     Test.testSuccess(
   //       Objects.sharingVariablesObjects _,
   //       1500 :: HNil
   //     )
@@ -49,7 +49,7 @@ class ObjectsSpec extends Spec with Checkers {
 
   def `private members` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Objects.privateValuesObjects _,
         "Superman" :: "Spiderman" :: "Batman" :: "Wonder Woman" :: HNil
       )

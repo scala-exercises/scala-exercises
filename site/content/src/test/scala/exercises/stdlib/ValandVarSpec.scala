@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ValandVarSpec extends Spec with Checkers {
   def `mutable or immutable` = {
     check(
-      Test.success(
+      Test.testSuccess(
         ValandVar.mutableOrImmutableValandVar _,
         5 :: 7 :: HNil
       )
@@ -21,7 +21,7 @@ class ValandVarSpec extends Spec with Checkers {
 
   def `val is immutable` = {
     check(
-      Test.success(
+      Test.testSuccess(
         ValandVar.valIsInmutableValandVar _,
         5 :: HNil
       )

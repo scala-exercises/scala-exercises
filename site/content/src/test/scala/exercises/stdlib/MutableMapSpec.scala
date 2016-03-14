@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class MutableMapsSpec extends Spec with Checkers {
   def `creation` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.easilyCreatedMutableMaps _,
         4 :: true :: HNil
       )
@@ -21,7 +21,7 @@ class MutableMapsSpec extends Spec with Checkers {
 
   def `removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.removeElementMutableMaps _,
         false :: HNil
       )
@@ -30,7 +30,7 @@ class MutableMapsSpec extends Spec with Checkers {
 
   def `tuple removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.removeWithTuplesMutableMaps _,
         false :: 2 :: HNil
       )
@@ -39,7 +39,7 @@ class MutableMapsSpec extends Spec with Checkers {
 
   def `tuple addition` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.addWithTuplesMutableMaps _,
         true :: 4 :: HNil
       )
@@ -48,7 +48,7 @@ class MutableMapsSpec extends Spec with Checkers {
 
   def `list addition` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.addedElementsMutableMaps _,
         true :: 4 :: HNil
       )
@@ -57,7 +57,7 @@ class MutableMapsSpec extends Spec with Checkers {
 
   def `list removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.removedElementsMutableMaps _,
         false :: 2 :: HNil
       )
@@ -66,7 +66,7 @@ class MutableMapsSpec extends Spec with Checkers {
 
   def `clear` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableMaps.clearMapMutableMaps _,
         false :: 0 :: HNil
       )

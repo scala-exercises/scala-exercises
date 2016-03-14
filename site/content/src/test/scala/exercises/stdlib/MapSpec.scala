@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class MapsSpec extends Spec with Checkers {
   def `size` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.keyAndValueMaps _,
         4 :: HNil
       )
@@ -21,7 +21,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `repeated keys` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.distinctPairingsMaps _,
         3 :: HNil
       )
@@ -30,7 +30,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `adding to maps` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.easilyAddedMaps _,
         true :: HNil
       )
@@ -39,7 +39,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `iterating over maps` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.canBeIteratedMaps _,
         3 :: "Michigan" :: "Wisconsin" :: HNil
       )
@@ -48,7 +48,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `duplicate keys` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.duplicatedKeyInsertionMaps _,
         3 :: "Meechigan" :: HNil
       )
@@ -57,7 +57,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `mixed key types` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.mixedTypeKeysMaps _,
         "MI" :: "MI" :: HNil
       )
@@ -66,7 +66,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `mixed value types` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.mixedTypeValuesMaps _,
         49931 :: 48103 :: 48104 :: 48108 :: HNil
       )
@@ -75,7 +75,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `map key access` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.mayBeAccessedMaps _,
         "Michigan" :: "Iowa" :: HNil
       )
@@ -84,7 +84,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `map element removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.easilyRemovedMaps _,
         false :: true :: HNil
       )
@@ -93,7 +93,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `not found keys` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.keyNotFoundMaps _,
         true :: HNil
       )
@@ -102,7 +102,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `multiple key removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.removedInMultipleMaps _,
         false :: true :: true :: 2 :: 4 :: HNil
       )
@@ -111,7 +111,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `key removal with tuples` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.removedWithTupleMaps _,
         false :: true :: true :: 2 :: 4 :: HNil
       )
@@ -120,7 +120,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `non-existent element removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.attemptedRemovalMaps _,
         true :: HNil
       )
@@ -129,7 +129,7 @@ class MapsSpec extends Spec with Checkers {
 
   def `maps dont have ordering` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Maps.orderIndependentMaps _,
         true :: HNil
       )

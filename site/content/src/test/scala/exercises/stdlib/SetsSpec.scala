@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class SetsSpec extends Spec with Checkers {
   def `have no duplicates` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.noDuplicatesSets _,
         4 :: HNil
       )
@@ -21,7 +21,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `all their values are distinct` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.distinctValuesSets _,
         3 :: HNil
       )
@@ -30,7 +30,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `adding values to sets` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.easilyAddedSets _,
         true :: false :: HNil
       )
@@ -39,7 +39,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `sets accept mixed types` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.mixedTypeSets _,
         true :: false :: HNil
       )
@@ -48,7 +48,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `we can check for member existence` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.checkExistenceSets _,
         true :: false :: HNil
       )
@@ -57,7 +57,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `we can remove members` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.easilyRemovedSets _,
         false :: true :: HNil
       )
@@ -66,7 +66,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `we can remove multiple members` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.multipleRemovingSets _,
         false :: true :: 2 :: HNil
       )
@@ -75,7 +75,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `we can remove multiple members with tuples` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.tupleRemovingSets _,
         false :: true :: 2 :: HNil
       )
@@ -84,7 +84,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `we can remove values that are not part of the set` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.nonexistentRemovalSets _,
         true :: HNil
       )
@@ -93,7 +93,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `we can iterate over set values` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.easilyIteratedSets _,
         17 :: HNil
       )
@@ -102,7 +102,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `set intersection` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.easilyIntersectedSets _,
         true :: HNil
       )
@@ -111,7 +111,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `set union` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.easilyJoinedSets _,
         true :: HNil
       )
@@ -120,7 +120,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `subsets` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.subsetSets _,
         false :: true :: HNil
       )
@@ -129,7 +129,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `set difference` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.easilyObtainedDifferencesSets _,
         true :: HNil
       )
@@ -138,7 +138,7 @@ class SetsSpec extends Spec with Checkers {
 
   def `set equality` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Sets.equivalencySets _,
         true :: HNil
       )

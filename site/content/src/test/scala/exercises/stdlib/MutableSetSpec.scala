@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class MutableSetsSpec extends Spec with Checkers {
   def `creation` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.easilyCreatedMutableSets _,
         4 :: true :: HNil
       )
@@ -21,7 +21,7 @@ class MutableSetsSpec extends Spec with Checkers {
 
   def `removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.removeElementMutableSets _,
         false :: HNil
       )
@@ -30,7 +30,7 @@ class MutableSetsSpec extends Spec with Checkers {
 
   def `tuple removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.removeWithTuplesMutableSets _,
         false :: 2 :: HNil
       )
@@ -39,7 +39,7 @@ class MutableSetsSpec extends Spec with Checkers {
 
   def `tuple addition` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.addWithTuplesMutableSets _,
         true :: 4 :: HNil
       )
@@ -48,7 +48,7 @@ class MutableSetsSpec extends Spec with Checkers {
 
   def `list addition` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.addedElementsMutableSets _,
         true :: 4 :: HNil
       )
@@ -57,7 +57,7 @@ class MutableSetsSpec extends Spec with Checkers {
 
   def `list removal` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.removedElementsMutableSets _,
         false :: 2 :: HNil
       )
@@ -66,7 +66,7 @@ class MutableSetsSpec extends Spec with Checkers {
 
   def `clear` = {
     check(
-      Test.success(
+      Test.testSuccess(
         MutableSets.clearSetMutableSets _,
         false :: 0 :: HNil
       )

@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class UniformAccessPrincipleSpec extends Spec with Checkers {
   def `uniform access principle` = {
     check(
-      Test.success(
+      Test.testSuccess(
         UniformAccessPrinciple.uniformAccessPrincipleUniformAccessPrinciple _,
         7 :: HNil
       )
@@ -21,7 +21,7 @@ class UniformAccessPrincipleSpec extends Spec with Checkers {
 
   def `access as a property` = {
     check(
-      Test.success(
+      Test.testSuccess(
         UniformAccessPrinciple.asPropertyUniformAccessPrinciple _,
         7 :: HNil
       )
@@ -30,7 +30,7 @@ class UniformAccessPrincipleSpec extends Spec with Checkers {
 
   def `updating a property` = {
     check(
-      Test.success(
+      Test.testSuccess(
         UniformAccessPrinciple.updatingPropertyUniformAccessPrinciple _,
         7 :: HNil
       )
@@ -39,7 +39,7 @@ class UniformAccessPrincipleSpec extends Spec with Checkers {
 
   def `updating using a method` = {
     check(
-      Test.success(
+      Test.testSuccess(
         UniformAccessPrinciple.updateUsingMethodUniformAccessPrinciple _,
         8 :: HNil
       )

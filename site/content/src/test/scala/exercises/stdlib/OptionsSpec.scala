@@ -14,7 +14,7 @@ class OptionsSpec extends Spec with Checkers {
     val theNone: Option[String] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         Options.conceptOptions _,
         "I am wrapped in something" :: theNone :: HNil
       )
@@ -23,7 +23,7 @@ class OptionsSpec extends Spec with Checkers {
 
   def `get method is dangerous` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Options.maybeItWillReturnSomethingOptions _,
         "Found value" :: HNil
       )
@@ -32,7 +32,7 @@ class OptionsSpec extends Spec with Checkers {
 
   def `getOrElse method` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Options.getOrElseOptions _,
         "Found value" :: "No value" :: "default function" :: HNil
       )
@@ -41,7 +41,7 @@ class OptionsSpec extends Spec with Checkers {
 
   def `isEmpty method` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Options.isEmptyOptions _,
         false :: true :: HNil
       )
@@ -50,7 +50,7 @@ class OptionsSpec extends Spec with Checkers {
 
   def `pattern matching` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Options.matchOptions _,
         20F :: 0F :: HNil
       )
@@ -61,7 +61,7 @@ class OptionsSpec extends Spec with Checkers {
     val theNone: Option[Double] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         Options.mapOptions _,
         Option(4.5D) :: theNone :: HNil
       )
@@ -70,7 +70,7 @@ class OptionsSpec extends Spec with Checkers {
 
   def `folding` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Options.foldOptions _,
         9 :: 0 :: HNil
       )

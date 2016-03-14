@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class TraversablesSpec extends Spec with Checkers {
   def `are at the top of collection hierarchy` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.topOfCollectionTraversables _,
         7 :: 8 :: HNil
       )
@@ -21,7 +21,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `can be mapped over` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.mapFunctionTraversables _,
         24 :: HNil
       )
@@ -30,7 +30,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `can be flattened` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.flattenFunctionTraversables _,
         List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) :: HNil
       )
@@ -39,7 +39,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `can be flatmapped` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.flatMapFunctionTraversables _,
         List(4, 8, 12, 16, 20, 24, 28, 32, 36, 40) :: HNil
       )
@@ -48,7 +48,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `can be collected` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.collectFunctionTraversables _,
         List(12, 18, 24, 42) :: HNil
       )
@@ -57,7 +57,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `can be collected part two` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.collectFunctionIITraversables _,
         List(12, 18, 28, 24, 36, 52, 42) :: HNil
       )
@@ -66,7 +66,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `foreach function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.foreachFunctionTraversables _,
         List(4, 6, 7, 8, 9, 13, 14) :: HNil
       )
@@ -75,7 +75,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to array function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toArrayFunctionTraversables _,
         true :: HNil
       )
@@ -84,7 +84,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to list function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toListFunctionTraversables _,
         true :: HNil
       )
@@ -93,7 +93,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to list function part two` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toListFunctionIITraversables _,
         true :: HNil
       )
@@ -102,7 +102,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to iterable function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toIterableFunctionTraversables _,
         true :: HNil
       )
@@ -111,7 +111,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to seq function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toSeqFunctionTraversables _,
         true :: HNil
       )
@@ -120,7 +120,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to indexed seq function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toIndexedSeqFunctionTraversables _,
         true :: HNil
       )
@@ -129,7 +129,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to stream function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toStreamFunctionTraversables _,
         true :: List(4, 6, 7) :: HNil
       )
@@ -138,7 +138,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to set function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toSetFunctionTraversables _,
         true :: HNil
       )
@@ -147,7 +147,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to map function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toMapFunctionTraversables _,
         true :: HNil
       )
@@ -156,7 +156,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `to map function part two` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.toMapFunctionIITraversables _,
         true :: HNil
       )
@@ -165,7 +165,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `nonEmpty function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.nonEmptyFunctionTraversables _,
         true :: false :: HNil
       )
@@ -174,7 +174,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `size function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.sizeFunctionTraversables _,
         2 :: HNil
       )
@@ -183,7 +183,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `hasDefiniteSize function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.hasDefiniteSizeFunctionTraversables _,
         true :: false :: HNil
       )
@@ -192,7 +192,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `head function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.headFunctionTraversables _,
         10 :: HNil
       )
@@ -203,7 +203,7 @@ class TraversablesSpec extends Spec with Checkers {
     val theNone: Option[Int] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.headOptionFunctionTraversables _,
         Option(10) :: theNone :: HNil
       )
@@ -212,7 +212,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `last function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.lastFunctionTraversables _,
         22 :: HNil
       )
@@ -223,7 +223,7 @@ class TraversablesSpec extends Spec with Checkers {
     val theNone: Option[Int] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.lastOptionFunctionTraversables _,
         Option(22) :: theNone :: HNil
       )
@@ -234,7 +234,7 @@ class TraversablesSpec extends Spec with Checkers {
     val theNone: Option[Int] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.findFunctionTraversables _,
         Option(19) :: theNone :: HNil
       )
@@ -243,7 +243,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `tail function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.tailFunctionTraversables _,
         List(19, 45, 1, 22) :: HNil
       )
@@ -252,7 +252,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `init function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.initFunctionTraversables _,
         List(10, 19, 45, 1) :: HNil
       )
@@ -261,7 +261,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `slice function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.sliceFunctionTraversables _,
         List(19, 45) :: HNil
       )
@@ -270,7 +270,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `take function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.takeFunctionTraversables _,
         List(10, 19, 45) :: HNil
       )
@@ -279,7 +279,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `take function part two` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.takeFunctionIITraversables _,
         List(2, 3, 4) :: HNil
       )
@@ -288,7 +288,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `drop function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.dropFunctionTraversables _,
         List(8, 9, 10) :: HNil
       )
@@ -297,7 +297,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `takeWhile function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.takeWhileFunctionTraversables _,
         List(87, 44, 5, 4) :: HNil
       )
@@ -306,7 +306,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `dropWhile function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.dropWhileFunctionTraversables _,
         List(200, 10, 39, 100) :: HNil
       )
@@ -315,7 +315,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `filter function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.filterFunctionTraversables _,
         Array(87, 44, 5, 4, 10, 39) :: HNil
       )
@@ -324,7 +324,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `filterNot function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.filterNotFunctionTraversables _,
         Array(200, 100) :: HNil
       )
@@ -333,7 +333,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `splitAt function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.splitAtFunctionTraversables _,
         Array(87, 44, 5) :: Array(4, 200, 10, 39, 100) :: HNil
       )
@@ -342,7 +342,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `span function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.spanFunctionTraversables _,
         Array(87, 44, 5, 4) :: Array(200, 10, 39, 100) :: HNil
       )
@@ -351,7 +351,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `partition function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.partitionFunctionTraversables _,
         Array(87, 44, 5, 4, 10, 39) :: Array(200, 100) :: HNil
       )
@@ -360,7 +360,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `groupBy function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.groupByFunctionTraversables _,
         3 :: 2 :: HNil
       )
@@ -369,7 +369,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `forall function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.forallFunctionTraversables _,
         false :: HNil
       )
@@ -378,7 +378,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `exists function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.existsFunctionTraversables _,
         true :: HNil
       )
@@ -387,7 +387,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `count function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.countFunctionTraversables _,
         6 :: HNil
       )
@@ -396,7 +396,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `foldLeft function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.foldLeftFunctionTraversables _,
         -15 :: -15 :: -15 :: -15 :: -15 :: HNil
       )
@@ -405,7 +405,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `foldRight function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.foldRightFunctionTraversables _,
         3 :: 3 :: 3 :: 3 :: 3 :: HNil
       )
@@ -414,7 +414,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `reduceLeft function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.reduceLeftFunctionTraversables _,
         15 :: "DoReMeFaSoLaTeDo" :: HNil
       )
@@ -423,7 +423,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `reduceRight function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.reduceRightFunctionTraversables _,
         15 :: "DoReMeFaSoLaTeDo" :: HNil
       )
@@ -432,7 +432,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `sum function and friends` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.sumFunctionTraversables _,
         15 :: 120 :: 5 :: 1 :: HNil
       )
@@ -442,7 +442,7 @@ class TraversablesSpec extends Spec with Checkers {
   // FIXME: this test depends on runtime timing of code
   // def `performant traversals` = {
   //   check(
-  //     Test.success(
+  //     Test.testSuccess(
   //       Traversables.performantTraversables _,
   //       false :: HNil
   //     )
@@ -451,7 +451,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `transpose function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.transposeFunctionTraversables _,
         List(1, 4, 7) :: List(2, 5, 8) :: List(3, 6, 9) :: List(1, 4) :: HNil
       )
@@ -460,7 +460,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `mkString function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.mkStringFunctionTraversables _,
         "1,2,3,4,5" :: HNil
       )
@@ -469,7 +469,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `mkString function part two` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.mkStringFunctionIITraversables _,
         ">1,2,3,4,5<" :: HNil
       )
@@ -478,7 +478,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `addString function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.addStringFunctionTraversables _,
         "I want all numbers 6-12: 6,7,8,9,10,11,12" :: HNil
       )
@@ -487,7 +487,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `views over traversables` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.viewsTraversables _,
         "Doubling 1" :: "Doubling 2" :: "Doubling 3" :: "Adding 1 to 2" :: "Adding 1 to 4" :: "Adding 1 to 6" ::
           "Doubling 1" :: "Adding 1 to 2" :: "Doubling 2" :: "Adding 1 to 4" :: "Doubling 3" :: "Adding 1 to 6" :: HNil
@@ -497,7 +497,7 @@ class TraversablesSpec extends Spec with Checkers {
 
   def `views over traversables can be forced` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Traversables.viewForceTraversables _,
         List(60, 70, 80) :: HNil
       )

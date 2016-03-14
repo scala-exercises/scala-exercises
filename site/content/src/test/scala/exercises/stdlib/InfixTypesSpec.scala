@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class InfixTypesSpec extends Spec with Checkers {
   def `infix type` = {
     check(
-      Test.success(
+      Test.testSuccess(
         InfixTypes.infixTypeInfixTypes _,
         "Romeo is in love with Juliet" :: HNil
       )
@@ -21,7 +21,7 @@ class InfixTypesSpec extends Spec with Checkers {
 
   def `infix type operators` = {
     check(
-      Test.success(
+      Test.testSuccess(
         InfixTypes.infixOperatorInfixTypes _,
         "Romeo is in love with Juliet" :: HNil
       )

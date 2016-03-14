@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class TuplesSpec extends Spec with Checkers {
   def `are indexed` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Tuples.oneIndexedTuples _,
         "apple" :: "dog" :: HNil
       )
@@ -21,7 +21,7 @@ class TuplesSpec extends Spec with Checkers {
 
   def `are heterogeneous` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Tuples.mixedTypeTuples _,
         1 :: "five" :: HNil
       )
@@ -30,7 +30,7 @@ class TuplesSpec extends Spec with Checkers {
 
   def `support multiple assignment` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Tuples.assignVariablesTuples _,
         "Sean Rogers" :: 21 :: 3.5F :: HNil
       )
@@ -39,7 +39,7 @@ class TuplesSpec extends Spec with Checkers {
 
   def `two tuple elements can be swapped` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Tuples.swappedTuples _,
         3 :: "apple" :: HNil
       )

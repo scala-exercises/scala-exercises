@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class LiteralBooleansSpec extends Spec with Checkers {
   def `are either true or false` = {
     check(
-      Test.success(
+      Test.testSuccess(
         LiteralBooleans.literalBooleanLiteralBooleans _,
         true :: false :: false :: true :: false :: false :: HNil
       )

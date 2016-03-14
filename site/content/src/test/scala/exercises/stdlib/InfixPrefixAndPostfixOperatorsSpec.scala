@@ -14,7 +14,7 @@ class OperatorsSpec extends Spec with Checkers {
 
   def `single parameter infix operators` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Operators.singleParameterInfixPrefixandPostfixOperators _,
         7 :: 7 :: HNil
       )
@@ -23,7 +23,7 @@ class OperatorsSpec extends Spec with Checkers {
 
   def `infix operators dont work with two params` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Operators.notWithTwoInfixPrefixandPostfixOperators _,
         6 :: 25 :: HNil
       )
@@ -32,7 +32,7 @@ class OperatorsSpec extends Spec with Checkers {
 
   def `postfix operators` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Operators.postfixOperatorInfixPrefixandPostfixOperators _,
         "1f" :: HNil
       )
@@ -41,7 +41,7 @@ class OperatorsSpec extends Spec with Checkers {
 
   def `unary operators` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Operators.startsWithUnaryInfixPrefixandPostfixOperators _,
         -31 :: HNil
       )
@@ -50,7 +50,7 @@ class OperatorsSpec extends Spec with Checkers {
 
   def `defining your own operators` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Operators.ourOwnOperatorInfixPrefixandPostfixOperators _,
         "on" :: "off" :: HNil
       )

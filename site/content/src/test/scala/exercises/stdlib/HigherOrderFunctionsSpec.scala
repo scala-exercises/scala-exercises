@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class HigherOrderFunctionsSpec extends Spec with Checkers {
   def `anonymous function` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.meetLambdaHigherOrderFunctions _,
         4 :: 4 :: 4 :: 4 :: 4 :: 4 :: HNil
       )
@@ -21,7 +21,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `anonymous function with different syntax` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.differentLookHigherOrderFunctions _,
         6 :: HNil
       )
@@ -30,7 +30,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `anonymous function with closure` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.meetClosureHigherOrderFunctions _,
         11 :: 12 :: HNil
       )
@@ -39,7 +39,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `anonymous functions hold the environment` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.holdEnvironmentHigherOrderFunctions _,
         13 :: 14 :: HNil
       )
@@ -48,7 +48,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `returning functions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.returningFunctionHigherOrderFunctions _,
         true :: 5 :: 10 :: HNil
       )
@@ -57,7 +57,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `returning anonymous functions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.returningAnonymousFunctionHigherOrderFunctions _,
         true :: 5 :: 10 :: HNil
       )
@@ -66,7 +66,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `is instance of method` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.isInstanceOfMethodHigherOrderFunctions _,
         true :: HNil
       )
@@ -75,7 +75,7 @@ class HigherOrderFunctionsSpec extends Spec with Checkers {
 
   def `function as a parameter` = {
     check(
-      Test.success(
+      Test.testSuccess(
         HigherOrderFunctions.functionAsParameterHigherOrderFunctions _,
         List("ABC", "XYZ", "123") :: List("abc", "xyz", "123") :: List(5, 6, 7) :: HNil
       )

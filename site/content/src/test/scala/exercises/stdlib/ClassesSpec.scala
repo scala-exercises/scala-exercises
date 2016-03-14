@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ClassesSpec extends Spec with Checkers {
   def `classes with val parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Classes.classWithValParameterClasses _,
         "Gandalf" :: HNil
       )
@@ -21,7 +21,7 @@ class ClassesSpec extends Spec with Checkers {
 
   def `classes with var parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Classes.classWithVarParameterClasses _,
         "Flying character" :: "Flying white character" :: HNil
       )

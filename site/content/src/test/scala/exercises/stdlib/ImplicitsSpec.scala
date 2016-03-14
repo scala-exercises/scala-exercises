@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ImplicitsSpec extends Spec with Checkers {
   def `implicit parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Implicits.implicitsParametersImplicits _,
         true :: false :: HNil
       )
@@ -21,7 +21,7 @@ class ImplicitsSpec extends Spec with Checkers {
 
   def `imported implicits` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Implicits.importedImplicits _,
         true :: false :: HNil
       )
@@ -30,7 +30,7 @@ class ImplicitsSpec extends Spec with Checkers {
 
   def `type conversion implicits` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Implicits.convertTypeImplicits _,
         true :: false :: true :: true :: true :: HNil
       )
@@ -42,7 +42,7 @@ class ImplicitsSpec extends Spec with Checkers {
     val sndAnswer: Float = 9025.0f
 
     check(
-      Test.success(
+      Test.testSuccess(
         Implicits.asDefaultImplicits _,
         fstAnswer :: sndAnswer :: HNil
       )
@@ -51,7 +51,7 @@ class ImplicitsSpec extends Spec with Checkers {
 
   def `multiple implicits for default parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Implicits.listOfImplicitsImplicits _,
         "1020.0 Dollars" :: "9025.0 Dollars" :: HNil
       )
@@ -60,7 +60,7 @@ class ImplicitsSpec extends Spec with Checkers {
 
   def `default arguments instead of implicits` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Implicits.defaultArgumentsImplicits _,
         "1020 Dollars" :: "2850 Dollars" :: HNil
       )

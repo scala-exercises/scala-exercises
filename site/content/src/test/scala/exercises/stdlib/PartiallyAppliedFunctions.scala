@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class PartiallyAppliedFunctionsSpec extends Spec with Checkers {
   def `partially applied functions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         PartiallyAppliedFunctions.partiallyAppliedPartiallyAppliedFunctions _,
         17 :: 15 :: HNil
       )
@@ -21,7 +21,7 @@ class PartiallyAppliedFunctionsSpec extends Spec with Checkers {
 
   def `accept any number of arguments` = {
     check(
-      Test.success(
+      Test.testSuccess(
         PartiallyAppliedFunctions.anyNumberArgumentsPartiallyAppliedFunctions _,
         15 :: 15 :: HNil
       )
@@ -30,7 +30,7 @@ class PartiallyAppliedFunctionsSpec extends Spec with Checkers {
 
   def `currying` = {
     check(
-      Test.success(
+      Test.testSuccess(
         PartiallyAppliedFunctions.curryingPartiallyAppliedFunctions _,
         true :: 20 :: 6 :: 8 :: 16 :: HNil
       )
@@ -39,7 +39,7 @@ class PartiallyAppliedFunctionsSpec extends Spec with Checkers {
 
   def `specialization` = {
     check(
-      Test.success(
+      Test.testSuccess(
         PartiallyAppliedFunctions.specializedVersionPartiallyAppliedFunctions _,
         List(12, 20, 2) :: List(11, 5, 3, 13) :: HNil
       )

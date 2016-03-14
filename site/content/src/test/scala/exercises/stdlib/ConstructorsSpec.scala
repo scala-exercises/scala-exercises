@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ConstructorsSpec extends Spec with Checkers {
   def `primary constructor` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Constructors.primaryConstructorConstructors _,
         "defaultname" :: HNil
       )

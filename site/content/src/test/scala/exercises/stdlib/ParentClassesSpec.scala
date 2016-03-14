@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ParentClassesSpec extends Spec with Checkers {
   def `all values are objects` = {
     check(
-      Test.success(
+      Test.testSuccess(
         ParentClasses.allValuesAreObjectsParentClasses _,
         "John" :: "Yossarian" :: HNil
       )
@@ -21,7 +21,7 @@ class ParentClassesSpec extends Spec with Checkers {
 
   def `subtyping` = {
     check(
-      Test.success(
+      Test.testSuccess(
         ParentClasses.polymorphicParentClasses _,
         "John" :: "Yossarian" :: HNil
       )
@@ -30,7 +30,7 @@ class ParentClassesSpec extends Spec with Checkers {
 
   def `abstract classes` = {
     check(
-      Test.success(
+      Test.testSuccess(
         ParentClasses.abstractClassParentClasses _,
         22 :: HNil
       )

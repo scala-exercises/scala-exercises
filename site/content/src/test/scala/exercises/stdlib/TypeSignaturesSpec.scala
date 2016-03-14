@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class TypeSignaturesSpec extends Spec with Checkers {
   def `type signatures` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeSignatures.typeSignatureTypeSignatures _,
         true :: HNil
       )
@@ -21,7 +21,7 @@ class TypeSignaturesSpec extends Spec with Checkers {
 
   def `class metainformation` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeSignatures.retrieveMetaInformationTypeSignatures _,
         "java.lang.String" :: "String" :: HNil
       )
@@ -30,7 +30,7 @@ class TypeSignaturesSpec extends Spec with Checkers {
 
   def `class metainformation derivation` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeSignatures.deriveMetaInformationTypeSignatures _,
         true :: "java.lang.String" :: "String" :: HNil
       )
@@ -39,7 +39,7 @@ class TypeSignaturesSpec extends Spec with Checkers {
 
   def `instanceof class` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeSignatures.isInstanceOfFunctionTypeSignatures _,
         true :: HNil
       )
@@ -48,7 +48,7 @@ class TypeSignaturesSpec extends Spec with Checkers {
 
   def `asinstanceof class` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeSignatures.asInstanceOfFunctionTypeSignatures _,
         true :: HNil
       )

@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ExtractorsSpec extends Spec with Checkers {
   def `extractors` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.extractorsExtractors _,
         "Where's Batman?" :: HNil
       )
@@ -21,7 +21,7 @@ class ExtractorsSpec extends Spec with Checkers {
 
   def `unapply` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.calledUnapplyExtractors _,
         "Chevy" :: "Camaro" :: 1978 :: 120 :: HNil
       )
@@ -30,7 +30,7 @@ class ExtractorsSpec extends Spec with Checkers {
 
   def `pattern matching` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.patternMatchingExtractors _,
         "Chevy" :: "Camaro" :: HNil
       )
@@ -39,7 +39,7 @@ class ExtractorsSpec extends Spec with Checkers {
 
   def `wildcards` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.withWildcardExtractors _,
         "Chevy" :: "Camaro" :: HNil
       )
@@ -48,7 +48,7 @@ class ExtractorsSpec extends Spec with Checkers {
 
   def `multiple extractors` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.multipleUnapplyExtractors _,
         "c: Kurt, d: Vonnegut" :: HNil
       )
@@ -57,7 +57,7 @@ class ExtractorsSpec extends Spec with Checkers {
 
   def `any object as extractor` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.anyObjectExtractors _,
         "make: Chevy, model: Camaro" :: HNil
       )
@@ -68,7 +68,7 @@ class ExtractorsSpec extends Spec with Checkers {
     val theOption: Option[String] = None
 
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.asAssignmentExtractors _,
         "Keerthi" :: theOption :: "Singri" :: HNil
       )
@@ -77,7 +77,7 @@ class ExtractorsSpec extends Spec with Checkers {
 
   def `unapply for pattern matching extractors` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Extractors.unapplyForPatternMatchingExtractors _,
         "I don't care, going on break" :: HNil
       )

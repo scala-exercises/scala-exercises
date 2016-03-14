@@ -14,7 +14,7 @@ class ByNameParameterSpec extends Spec with Checkers {
     val right: Either[Throwable, Int] = Right(29)
 
     check(
-      Test.success(
+      Test.testSuccess(
         ByNameParameter.takesUnitByNameParameter _,
         right :: HNil
       )
@@ -25,7 +25,7 @@ class ByNameParameterSpec extends Spec with Checkers {
     val right: Either[Throwable, Int] = Right(69)
 
     check(
-      Test.success(
+      Test.testSuccess(
         ByNameParameter.byNameParameter _,
         right :: HNil
       )
@@ -34,7 +34,7 @@ class ByNameParameterSpec extends Spec with Checkers {
 
   def `apply parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         ByNameParameter.withApplyByNameParameter _,
         "retzelpay" :: HNil
       )

@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class LiteralStringsSpec extends Spec with Checkers {
   def `character literals` = {
     check(
-      Test.success(
+      Test.testSuccess(
         LiteralStrings.characterLiteralsLiteralStrings _,
         "a" :: "B" :: HNil
       )
@@ -21,7 +21,7 @@ class LiteralStringsSpec extends Spec with Checkers {
 
   def `unicode character literals` = {
     check(
-      Test.success(
+      Test.testSuccess(
         LiteralStrings.characterLiteralsUnicodeLiteralStrings _,
         "a" :: HNil
       )
@@ -30,7 +30,7 @@ class LiteralStringsSpec extends Spec with Checkers {
 
   def `octal character literals` = {
     check(
-      Test.success(
+      Test.testSuccess(
         LiteralStrings.characterLiteralsOctalLiteralStrings _,
         "a" :: HNil
       )
@@ -39,7 +39,7 @@ class LiteralStringsSpec extends Spec with Checkers {
 
   def `escape sequence character literals` = {
     check(
-      Test.success(
+      Test.testSuccess(
         LiteralStrings.escapeSequenceLiteralStrings _,
         "\"" :: "\\" :: HNil
       )
@@ -48,7 +48,7 @@ class LiteralStringsSpec extends Spec with Checkers {
 
   def `one line literal strings` = {
     check(
-      Test.success(
+      Test.testSuccess(
         LiteralStrings.oneLineLiteralStrings _,
         "To be or not to be" :: HNil
       )

@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class TypeVarianceSpec extends Spec with Checkers {
   def `type variance` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.syntacticOverheadTypeVariance _,
         "Orange" :: HNil
       )
@@ -21,7 +21,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `explicit type declarations` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.typeVariableTypeVariance _,
         "Fruit" :: HNil
       )
@@ -30,7 +30,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `coercions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.coerceObjectTypeVariance _,
         "Fruit" :: HNil
       )
@@ -39,7 +39,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `variance` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.polymorphismTypeVariance _,
         "Fruit" :: HNil
       )
@@ -48,7 +48,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `variance restrictions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.covarianceInmutableTypeVariance _,
         "Orange" :: HNil
       )
@@ -57,7 +57,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `contravariance` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.contravarianceVarianceTypeVariance _,
         "Citrus" :: "Orange" :: "Tangelo" :: "Orange" :: HNil
       )
@@ -66,7 +66,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `contravariance restrictions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.contravarianceWithoutGetterTypeVariance _,
         "Citrus" :: "Citrus" :: "Citrus" :: HNil
       )
@@ -75,7 +75,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `invariance` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.invarianceVarianceTypeVariance _,
         "Citrus" :: HNil
       )
@@ -84,7 +84,7 @@ class TypeVarianceSpec extends Spec with Checkers {
 
   def `invariance restrictions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         TypeVariance.invariantTypeVariance _,
         "Citrus" :: "Citrus" :: HNil
       )

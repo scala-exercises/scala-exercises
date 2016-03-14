@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class ListsSpec extends Spec with Checkers {
   def `are homogeneous` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.similarToArraysLists _,
         false :: HNil
       )
@@ -21,7 +21,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `can be compared for equality` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.sameContentLists _,
         true :: HNil
       )
@@ -30,7 +30,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `empty lists are the same regardless of the types they hold` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.nilListsLists _,
         true :: true :: true :: true :: true :: true :: HNil
       )
@@ -39,7 +39,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `lists are easily created` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.easilyCreatedLists _,
         1 :: 2 :: 3 :: HNil
       )
@@ -48,7 +48,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `head and tail` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.headAndTailLists _,
         1 :: 2 :: 3 :: HNil
       )
@@ -57,7 +57,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `access by position` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.byPositionLists _,
         1 :: 5 :: 9 :: HNil
       )
@@ -66,7 +66,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `lists are immutable` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.areImmutableLists _,
         1 :: 3 :: 7 :: 9 :: HNil
       )
@@ -75,7 +75,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `useful list methods` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.usefulMethodsLists _,
         5 :: List(9, 7, 5, 3, 1) :: List(2, 6, 10, 14, 18) :: List(3, 9) :: HNil
       )
@@ -84,7 +84,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `wildcard for anonymous functions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.wildcardAsShorthandLists _,
         2 :: 4 :: 6 :: 2 :: HNil
       )
@@ -93,7 +93,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `functions over lists` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.functionsOverListsLists _,
         2 :: 4 :: 6 :: 1 :: 3 :: HNil
       )
@@ -102,7 +102,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `reducing lists` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.reducingListsLists _,
         16 :: 105 :: HNil
       )
@@ -111,7 +111,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `foldLeft on lists` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.foldLeftLists _,
         16 :: 26 :: 105 :: 0 :: HNil
       )
@@ -120,7 +120,7 @@ class ListsSpec extends Spec with Checkers {
 
   def `lists from range` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Lists.fromRangeLists _,
         List(1, 2, 3, 4, 5) :: HNil
       )
@@ -130,7 +130,7 @@ class ListsSpec extends Spec with Checkers {
   // FIXME: depends on #259
   // def `lists share tails` = {
   //   check(
-  //     Test.success(
+  //     Test.testSuccess(
   //       Lists.reuseTailsLists _,
   //       HNil
   //     )

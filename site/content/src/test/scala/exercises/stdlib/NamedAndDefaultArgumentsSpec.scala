@@ -14,7 +14,7 @@ class NamedandDefaultArgumentsSpec extends Spec with Checkers {
 
   def `class without parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Arguments.classWithoutParametersNamedandDefaultArguments _,
         255 :: 0 :: 0 :: HNil
       )
@@ -23,7 +23,7 @@ class NamedandDefaultArgumentsSpec extends Spec with Checkers {
 
   def `default arguments` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Arguments.defaultArgumentsNamedandDefaultArguments _,
         0 :: 255 :: 0 :: HNil
       )
@@ -32,7 +32,7 @@ class NamedandDefaultArgumentsSpec extends Spec with Checkers {
 
   def `arguments in any order` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Arguments.anyOrderNamedandDefaultArguments _,
         100 :: 100 :: 100 :: HNil
       )
@@ -41,7 +41,7 @@ class NamedandDefaultArgumentsSpec extends Spec with Checkers {
 
   def `access to class parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Arguments.accessClassParametersNamedandDefaultArguments _,
         10 :: 90 :: 30 :: HNil
       )
@@ -50,7 +50,7 @@ class NamedandDefaultArgumentsSpec extends Spec with Checkers {
 
   def `parameters in class definition` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Arguments.defaultClassArgumentsNamedandDefaultArguments _,
         0 :: 325 :: 100 :: HNil
       )
@@ -59,7 +59,7 @@ class NamedandDefaultArgumentsSpec extends Spec with Checkers {
 
   def `functional default parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         Arguments.functionalDefaulParametersNamedandDefaultArguments _,
         10 :: 25 :: HNil
       )

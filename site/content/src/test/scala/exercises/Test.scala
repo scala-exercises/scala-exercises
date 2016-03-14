@@ -15,7 +15,7 @@ import org.scalatest.prop.Checkers
 import org.scalacheck.Shapeless._
 
 object Test {
-  def success[F, R, L <: HList](method: F, answer: L)(
+  def testSuccess[F, R, L <: HList](method: F, answer: L)(
     implicit
     A:     Arbitrary[L],
     fntop: FnToProduct.Aux[F, L ⇒ R]

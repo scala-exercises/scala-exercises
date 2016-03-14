@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class SequencesandArraysSpec extends Spec with Checkers {
   def `list to array` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.sequentialCollectionSequencesandArrays _,
         1 :: 2 :: 3 :: HNil
       )
@@ -21,7 +21,7 @@ class SequencesandArraysSpec extends Spec with Checkers {
 
   def `seq to list` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.orderedElementsSequencesandArrays _,
         List(1, 2, 3) :: HNil
       )
@@ -30,7 +30,7 @@ class SequencesandArraysSpec extends Spec with Checkers {
 
   def `sequences with for comprehensions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.fromForComprehensionSequencesandArrays _,
         List(1, 2, 3, 4) :: HNil
       )
@@ -39,7 +39,7 @@ class SequencesandArraysSpec extends Spec with Checkers {
 
   def `sequences with for comprehension and conditions` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.withConditionSequencesandArrays _,
         List(3, 6, 9) :: HNil
       )
@@ -48,7 +48,7 @@ class SequencesandArraysSpec extends Spec with Checkers {
 
   def `filtered sequences` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.filterPredicateSequencesandArrays _,
         "hello" :: "you" :: HNil
       )
@@ -57,7 +57,7 @@ class SequencesandArraysSpec extends Spec with Checkers {
 
   def `filtered arrays` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.filterArraySequencesandArrays _,
         "hello" :: "again" :: HNil
       )
@@ -66,7 +66,7 @@ class SequencesandArraysSpec extends Spec with Checkers {
 
   def `map over a sequence` = {
     check(
-      Test.success(
+      Test.testSuccess(
         SequencesandArrays.mapValuesSequencesandArrays _,
         List("olleh", "dlrow") :: HNil
       )

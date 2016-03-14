@@ -12,7 +12,7 @@ import org.scalacheck.Shapeless._
 class CaseClassesSpec extends Spec with Checkers {
   def `case classes comparisons` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.caseClassesSupportEquality _,
         false :: true :: false :: false :: HNil
       )
@@ -21,7 +21,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `hash codes` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.hashcodeMethodCaseClasses _,
         false :: true :: HNil
       )
@@ -30,7 +30,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `case class creation` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.creationCaseClasses _,
         true :: false :: false :: HNil
       )
@@ -39,7 +39,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `to string method` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.toStringMethodCaseClasses _,
         "Dog(Scooby,Doberman)" :: HNil
       )
@@ -48,7 +48,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `properties` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.propertiesCaseClasses _,
         "Scooby" :: "Doberman" :: HNil
       )
@@ -57,7 +57,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `mutable properties` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.mutablePropertiesCaseClasses _,
         "Scooby" :: "Doberman" :: "Scooby Doo" :: "Doberman" :: HNil
       )
@@ -66,7 +66,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `altering case classes` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.alteringCaseClasses _,
         "Scooby" :: "Doberman" :: "Scooby Doo" :: "Doberman" :: HNil
       )
@@ -75,7 +75,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `case class parameters` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.parametersCaseClasses _,
         "Fred" :: "Jones" :: 23 :: "111-22-3333" ::
           "Samantha" :: "Jones" :: 0 :: "" ::
@@ -86,7 +86,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `case classes as tuples` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.asTupleCaseClasses _,
         "Fred" :: "Jones" :: 23 :: "111-22-3333" :: HNil
       )
@@ -95,7 +95,7 @@ class CaseClassesSpec extends Spec with Checkers {
 
   def `case classes are serializable` = {
     check(
-      Test.success(
+      Test.testSuccess(
         CaseClasses.serializableCaseClasses _,
         true :: false :: HNil
       )
