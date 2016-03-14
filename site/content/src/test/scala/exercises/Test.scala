@@ -10,6 +10,7 @@ import org.scalacheck.Gen
 import Prop.forAll
 
 import org.scalatest.Spec
+import org.scalatest.exceptions._
 import org.scalatest.prop.Checkers
 
 import org.scalacheck.Shapeless._
@@ -22,7 +23,15 @@ object Test {
   ): Prop = {
     val rightGen = genRightAnswer(answer)
     val rightProp = forAll(rightGen)({ p ⇒
-      Xor.catchNonFatal({ fntop(method)(p) }).isRight
+
+      val result = Xor.catchOnly[GeneratorDrivenPropertyCheckFailedException]({ fntop(method)(p) })
+      result match {
+        case Xor.Left(exc) ⇒ exc.cause match {
+          case Some(originalException) ⇒ throw originalException
+          case _                       ⇒ false
+        }
+        case _ ⇒ true
+      }
     })
 
     val wrongGen = genWrongAnswer(answer)
