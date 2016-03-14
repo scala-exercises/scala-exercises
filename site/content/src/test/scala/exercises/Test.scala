@@ -1,5 +1,7 @@
 package exercises
 
+import cats.data.Xor
+
 import shapeless._
 import shapeless.ops.function._
 
@@ -20,22 +22,12 @@ object Test {
   ): Prop = {
     val rightGen = genRightAnswer(answer)
     val rightProp = forAll(rightGen)({ p ⇒
-      try {
-        fntop(method)(p)
-        true
-      } catch {
-        case _: Throwable ⇒ false
-      }
+      Xor.catchNonFatal({ fntop(method)(p) }).isRight
     })
 
     val wrongGen = genWrongAnswer(answer)
     val wrongProp = forAll(wrongGen)({ p ⇒
-      try {
-        fntop(method)(p)
-        false
-      } catch {
-        case _: Throwable ⇒ true
-      }
+      Xor.catchNonFatal({ fntop(method)(p) }).isLeft
     })
 
     Prop.all(rightProp, wrongProp)
