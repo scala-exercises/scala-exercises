@@ -33,6 +33,7 @@ lazy val compiler = (project in file("compiler"))
     testlibs(
       Dep.cats.laws)
   ))
+  .settings(excludeDependencies += "org.scalariform" % "scalariform_2.10")
   .dependsOn(definitions)
   .dependsOn(runtime % "test")
 
