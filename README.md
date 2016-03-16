@@ -41,6 +41,22 @@ If you'd like to run the server, you will need to set up PostgreSQL locally.
 Once this is done, you can navigate to the `site` directory and launch
 SBT. From there, `run` should launch the Play app.
 
+### Troubleshooting
+
+If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
+global settings, likely you might have this issue running the application locally:
+
+```java.lang.NoClassDefFoundError: scalariform/formatter/preferences/SpacesAroundMultiImports$```
+
+In that case, you could solve this issue setting up your `/.sbt/0.13/plugins/plugins.sbt` file
+as follow:
+
+```
+addSbtPlugin("org.ensime" % "ensime-sbt" % "0.4.0")
+
+dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
+```
+
 ## Contributing
 
 Contributions welcome! At this time, we don't have an official contribution
