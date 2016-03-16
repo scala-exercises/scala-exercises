@@ -139,7 +139,7 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
 
   /** A backquote can be used to refer to a method parameter as a stable variable to create a case statement:
     */
-  def stableVariblePatternMatching(res0: Boolean, res1: Boolean, res2: Boolean) {
+  def stableVariablePatternMatching(res0: Boolean, res1: Boolean, res2: Boolean) {
     def patternEquals(i: Int, j: Int) = j match {
       case `i` => true
       case _ => false

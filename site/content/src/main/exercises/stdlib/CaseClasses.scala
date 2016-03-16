@@ -89,7 +89,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * Case classes have an automatic equals method that works:
     */
-  def caseClassesSupportCaseClasses(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean) {
+  def caseClassesSupportEquality(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean) {
     case class Person(first: String, last: String)
 
     val p1 = new Person("Fred", "Jones")
@@ -105,7 +105,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
   /** Case classes have an automatic hashcode method that works:
     */
-  def hascodeMethodCaseClasses(res0: Boolean, res1: Boolean) {
+  def hashcodeMethodCaseClasses(res0: Boolean, res1: Boolean) {
     case class Person(first: String, last: String)
 
     val p1 = new Person("Fred", "Jones")
@@ -167,7 +167,7 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
 
   /** There are safer alternatives for altering case classes:
     */
-  def alteringCaseClassesCaseClasses(res0: String, res1: String, res2: String, res3: String) {
+  def alteringCaseClasses(res0: String, res1: String, res2: String, res3: String) {
     case class Dog(name: String, breed: String) // Doberman
 
     val d1 = Dog("Scooby", "Doberman")

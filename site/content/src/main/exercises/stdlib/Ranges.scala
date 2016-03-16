@@ -5,7 +5,7 @@ import org.scalatest._
 /** @param name rangeexercises
   *
   */
-object RangeExercises extends FlatSpec with Matchers with exercise.Section {
+object Ranges extends FlatSpec with Matchers with exercise.Section {
 
   /** A range's upper bound is not inclusive:
     */
@@ -21,7 +21,7 @@ object RangeExercises extends FlatSpec with Matchers with exercise.Section {
 
   /** Ranges can be specified using 'until'.
     */
-  def unitlRangeExercises(res0: Boolean) {
+  def untilRangeExercises(res0: Boolean) {
     val someNumbers = Range(0, 10)
     val otherRange = 0 until 10
 

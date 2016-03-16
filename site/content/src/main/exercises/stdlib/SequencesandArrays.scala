@@ -23,7 +23,7 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
     * Any sequence can be converted to a list:
     *
     */
-  def orderedElementsSequencesandArrays(res0: String) {
+  def orderedElementsSequencesandArrays(res0: List[Int]) {
     val a = Array(1, 2, 3)
     val s = a.toSeq
     val l = s.toList
@@ -32,14 +32,14 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
 
   /** You can create a sequence from a for comprehension:
     */
-  def fromForComprehensionSequencesandArrays(res0: String) {
+  def fromForComprehensionSequencesandArrays(res0: List[Int]) {
     val s = for (v <- 1 to 4) yield v
     s.toList should be(res0)
   }
 
   /** You can create a sequence from a for comprehension with a condition:
     */
-  def withConditionSequencesandArrays(res0: String) {
+  def withConditionSequencesandArrays(res0: List[Int]) {
     val s = for (v <- 1 to 10 if v % 3 == 0) yield v
     s.toList should be(res0)
   }
@@ -62,7 +62,7 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
 
   /** You can map values in a sequence through a function:
     */
-  def mapValuesSequencesandArrays(res0: String) {
+  def mapValuesSequencesandArrays(res0: List[String]) {
     val s = Seq("hello", "world")
     val r = s map {
       _.reverse

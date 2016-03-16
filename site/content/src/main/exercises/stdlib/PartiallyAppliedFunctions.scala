@@ -41,7 +41,7 @@ object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Se
 
   /** Currying allows you to create specialized version of generalized function
     */
-  def specializedVersionPartiallyAppliedFunctions(res0: String, res1: String) {
+  def specializedVersionPartiallyAppliedFunctions(res0: List[Int], res1: List[Int]) {
     def customFilter(f: Int => Boolean)(xs: List[Int]) = {
       xs filter f
     }

@@ -30,24 +30,22 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
     *
     * An empty list can be represented by another nothing value: *Nil*
     */
-  def emptyValuesEmptyValues(res0: String) {
-    assert(List() === res0)
+  def emptyValuesEmptyValues(res0: Boolean) {
+    List() === Nil shouldBe res0
   }
 
   /** [[http://www.scala-lang.org/api/current/index.html#scala.None None]] is the counterpart to [[http://www.scala-lang.org/api/current/index.html#scala.Some Some]], used when you're using Scala's [[http://www.scala-lang.org/api/current/index.html#scala.Option Option]] class to help avoid `null` references.
     *
     * `None` equals `None`:
     */
-  def avoidingNullEmptyValues(res0: String) {
-    assert(None === res0)
+  def avoidingNullEmptyValues(res0: Boolean) {
+    None === None shouldBe res0
   }
 
   /** `None` should be identical to `None`:
     */
-  def identicalNoneEmptyValues(res0: String) {
-    val a = None
-    val b = None
-    assert(a eq res0)
+  def identicalNoneEmptyValues(res0: Boolean) {
+    None eq None shouldBe res0
   }
 
   /** `None` can be converted to a *String*:
@@ -58,9 +56,8 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** `None` can be converted to an empty list
     */
-  def noneToListEmptyValues(res0: String) {
-    val a = None
-    assert(a.toList === res0)
+  def noneToListEmptyValues(res0: Boolean) {
+    None.toList === Nil shouldBe res0
   }
 
   /** `None` is considered empty
@@ -71,15 +68,15 @@ object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
   /** `None` can be cast `Any`, *AnyRef* or `AnyVal`
     */
-  def noneToAnyEmptyValues(res0: String, res1: String, res2: String) {
-    assert(None.asInstanceOf[Any] === res0)
-    assert(None.asInstanceOf[AnyRef] === res1)
-    assert(None.asInstanceOf[AnyVal] === res2)
+  def noneToAnyEmptyValues(res0: Boolean, res1: Boolean, res2: Boolean) {
+    None.asInstanceOf[Any] === None shouldBe res0
+    None.asInstanceOf[AnyRef] === None shouldBe res1
+    None.asInstanceOf[AnyVal] === None shouldBe res2
   }
 
   /** `None` can be used with `Option` instead of null references
     */
-  def noneWithOptionEmptyValues(res0: Boolean, res1: String) {
+  def noneWithOptionEmptyValues(res0: Boolean, res1: Option[String]) {
     val optional: Option[String] = None
     assert(optional.isEmpty === res0)
     assert(optional === res1)

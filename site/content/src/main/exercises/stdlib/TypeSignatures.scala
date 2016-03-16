@@ -49,9 +49,9 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
   /** Class meta-information can be derived from an object reference using `getClass()`
     */
-  def deriveMetaInformationTypeSignatures(res0: String, res1: String, res2: String) {
+  def deriveMetaInformationTypeSignatures(res0: Boolean, res1: String, res2: String) {
     val zoom = "zoom"
-    zoom.getClass should be(res0) // Hint: classOf ...
+    zoom.getClass should be(classOf[String])
     zoom.getClass.getCanonicalName should be(res1)
     zoom.getClass.getSimpleName should be(res2)
   }
@@ -117,8 +117,8 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * `null.asInstanceOf[className]` can be used to generate basic default values
     */
-  def classCastExceptionIfUncompatibleTypeSignatures(res0: String, res1: Int, res2: Int) {
-    null.asInstanceOf[String] should be(res0)
+  def classCastExceptionIfUncompatibleTypeSignatures(res0: Boolean, res1: Int, res2: Int) {
+    null.asInstanceOf[String] == null should be(res0)
     null.asInstanceOf[Int] should be(res1)
     null.asInstanceOf[Short] should be(res2)
   }
