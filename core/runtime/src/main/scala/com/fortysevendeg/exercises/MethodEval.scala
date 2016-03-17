@@ -127,7 +127,7 @@ class MethodEval {
         success(EvaluationSuccess(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
       } catch {
         // capture exceptions thrown by the method, since they are considered success
-        case e: InvocationTargetException => success:(EvaluationException(e.getCause))
+        case e: InvocationTargetException => success(EvaluationException(e.getCause))
         case scala.util.control.NonFatal(t) => error(t)
       }
   } yield result
