@@ -45,8 +45,8 @@ class SourceTextExtraction {
   }
 
   case class Extracted(
-    comments:     Map[List[String], ExtractedComment],
-    methodBodies: Map[List[String], MethodBody]
+    comments: Map[List[String], ExtractedComment],
+    methods:  Map[List[String], MethodBody]
   )
 
   def extractAll(sources: List[String]): Extracted = {
