@@ -84,7 +84,7 @@ object FunctorSection extends FlatSpec with Matchers with exercise.Section {
     * is a `Some`:
     *
     */
-  def usingFunctor(res0: Option[Int], res1: Option[Nothing]) = {
+  def usingFunctor(res0: Option[Int], res1: Option[Int]) = {
     Functor[Option].map(Option("Hello"))(_.length) should be(res0)
     Functor[Option].map(None: Option[String])(_.length) should be(res1)
   }
