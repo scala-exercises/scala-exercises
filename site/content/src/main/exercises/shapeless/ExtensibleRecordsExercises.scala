@@ -4,7 +4,8 @@ import org.scalatest._
 import shapeless._
 import ops.hlist._
 
-/** shapeless provides an implementation of extensible records modelled as `HList`s of values tagged with the singleton types of their keys.
+/**  
+  * shapeless provides an implementation of extensible records modelled as `HList`s of values tagged with the singleton types of their keys.
   * This means that there is no concrete representation needed at all for the keys. 
   * Amongst other things this will allow subsequent work on `Generic` to map case classes directly to records with their member names 
   * encoded in their element types.
@@ -17,6 +18,8 @@ import ops.hlist._
   *   ("id"     ->>  262162091) ::
   *   ("price"  ->>  44.11) ::
   *   HNil
+  * 
+  * @param name extensible_records
   */
 object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.Section {
 
@@ -37,34 +40,35 @@ object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.S
     book("price") should be (res3)
   }
 
+  /*
   /** Keys are materialized from singleton types encoded in value type
     */
-  def keys(res0 : String("author") :: String("title") :: String("id") :: String("price") :: HNil) = {
+  def keys(res0 : ?) = {
     book.keys should be (res0)
   }
-
+   */
   /** values 
     */
   def values(res0 : String :: String :: Int :: Double :: HNil) = {
     book.values should be (res0)
   }
+   
 
-  /**  Update an existing field
+  /**  Update, Add or remove a field
     */
-  def updated(res0 : Double) = {
+  def updated(res0 : Double, res1 : Boolean, res2 : String :: String :: Double :: HNil) = {
     val newPrice = book("price") + 2.0
     val updated = book +("price" ->> newPrice)
-    updated("price") should be (res0)
-  }
 
-  /** Fields may be added or removed
-    */
-  def addRemoveField(res0 : Boolean, res1 : String :: String :: Double :: HNil) = {
+    updated("price") should be (res0)
+
     val extended = updated + ("inPrint" ->> true)
+
     extended("inPrint") should be (res0)
 
     val noId = extended - "id"
-    noId.values should be (res1)
+
+    noId.values should be (res2)
 
     //noId("id")  // Attempting to access a missing field is a compile time error
     // error: could not find implicit value for parameter selector ...

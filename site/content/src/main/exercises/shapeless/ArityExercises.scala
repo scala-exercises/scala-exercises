@@ -4,7 +4,8 @@ import org.scalatest._
 import shapeless._
 import ops.hlist._
 
-/** Conversions between tuples and HList's, and between ordinary Scala functions of arbitrary arity and functions which 
+/**  
+  * Conversions between tuples and HList's, and between ordinary Scala functions of arbitrary arity and functions which 
   * take a single corresponding HList argument allow higher order functions to abstract over the arity of the functions 
   * and values they are passed,
   * {{{
@@ -15,8 +16,13 @@ import ops.hlist._
   *   (implicit gen: Generic.Aux[P, L], fp: FnToProduct.Aux[F, L => R]) =
   *     f.toProduct(gen.to(p))
   * }}}
+  * 
+  * @param name arity
   */
-object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
+object ArityExercises extends FlatSpec with Matchers with exercise.Section {
+
+  import syntax.std.function._
+  import ops.function._
 
   object Helper {
 

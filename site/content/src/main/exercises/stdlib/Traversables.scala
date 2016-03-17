@@ -1,6 +1,7 @@
 package stdlib
 
 import org.scalatest._
+import scala.language.postfixOps
 
 import Stream.cons
 

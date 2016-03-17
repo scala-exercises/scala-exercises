@@ -3,13 +3,17 @@ package shapelessex
 import org.scalatest._
 import shapeless._
 
-/** Singleton-typed literals
+/** 
+  * Singleton-typed literals
   * 
   * Although Scala's typechecker has always represented singleton types for literal values internally, 
   * there has not previously been syntax available to express them, other than by modifying the compiler. 
   * shapeless adds support for singleton-typed literals via implicit macros. 
+  * 
+  *  @param name singletons_literals
+  *   
   */
-object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
+object SingletonExercises extends FlatSpec with Matchers with exercise.Section {
 
   /** Singleton types bridge the gap between the value level and the type level and hence allow the exploration in Scala 
     * of techniques which would typically only be available in languages with support for full-spectrum dependent types. 
@@ -32,15 +36,19 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * import shapeless._, syntax.singleton._
     * }}}
+    */ 
+  def narrow1(res0 : Witness.`23`.T) = {
+    res0.isInstanceOf[Witness.`23`.T] should be (true)
+  }
+
+  /**
     */
-  def narrow1(res0 : Int(23)) = {
-    23.narrow should be (res0)
+  def narrow2(res0 : Witness.`"foo"`.T) = {
+    res0.isInstanceOf[Witness.`"foo"`.T] should be (true)
   }
 
-  def narrow2(res0 : String("foo")) = {
-    "foo".narrow should be (res0)
-  }
-
+  /**
+    */
   def select(res0 : Int, res1 : String) = {
     val (wTrue, wFalse) = (Witness(true), Witness(false))
 
@@ -68,7 +76,7 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
     //found   : Int(23)
     //required: String
 
-    select(false)(23) should be (res1)
+    select(false)("foo") should be (res1)
   }
 
 }

@@ -2,12 +2,14 @@ package shapelessex
 
 import org.scalatest._
 import shapeless._
-import ops.hlist._
 
-/** shapeless allows standard Scala tuples to be manipulated in exactly the same ways as HLists
+/** 
+  * shapeless allows standard Scala tuples to be manipulated in exactly the same ways as HLists
   * {{{
   * import syntax.std.tuple._
   * }}}
+  * 
+  * @param name tuples
   */
 object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
 
@@ -27,7 +29,7 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
 
   /** drop
     */
-  def drop(res0 : (Boolean)) = {
+  def drop(res0 : Any) = {
     (23, "foo", true).drop(2) should be (res0)
   }
 
@@ -81,7 +83,7 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
     */
   def map(res0 : (Option[Int], Option[String], Option[Boolean])) = {
     val l = (23, "foo", true) map option
-    l = should be (res0)
+    l should be (res0)
   }
 
   /** flatMap 
@@ -91,13 +93,29 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
     l should be (res0)
   }
 
+  object sizeOf extends Poly1 {
+  implicit def caseInt = at[Int](x => 1)
+  implicit def caseString = at[String](_.length)
+  implicit def caseTuple[T, U]
+    (implicit st : Case.Aux[T, Int], su : Case.Aux[U, Int]) =
+      at[(T, U)](t => sizeOf(t._1)+sizeOf(t._2))
+}
+
   object addSize extends Poly2 {
-    implicit def default[T](implicit st: size.Case.Aux[T, Int]) =
-      at[Int, T]{ (acc, t) => acc+size(t) }
+    implicit def default[T](implicit st: sizeOf.Case.Aux[T, Int]) =
+      at[Int, T]{ (acc, t) => acc+sizeOf(t) }
   }
 
   /** fold
     *  {{{
+    * object size extends Poly1 {
+    *   implicit def caseInt = at[Int](x => 1)
+    *   implicit def caseString = at[String](_.length)
+    *   implicit def caseTuple[T, U]
+    *     (implicit st : Case.Aux[T, Int], su : Case.Aux[U, Int]) =
+    *       at[(T, U)](t => size(t._1)+size(t._2))
+    * }
+    * 
     * object addSize extends Poly2 {
     *  implicit def default[T](implicit st: size.Case.Aux[T, Int]) =
     *   at[Int, T]{ (acc, t) => acc+size(t) }
