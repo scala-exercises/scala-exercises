@@ -122,7 +122,7 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
   /** Traits can have concrete implementations that can be mixed into concrete classes with its own state:
     */
-  def implementatedTraits(res0: Int, res1: Int) {
+  def implementedTraits(res0: Int, res1: Int) {
     trait Logging {
       var logCache = List[String]()
 

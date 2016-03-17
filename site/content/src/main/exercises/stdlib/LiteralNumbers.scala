@@ -10,7 +10,7 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
 
   /** Integer Literals are 32-bit and can be created from decimal, hexadecimal:
     */
-  def integerLiteralsLiteralNumbers(res0: Int, res1: Int, res2: Int, res3: Int, res4: String, res5: String, res6: String) {
+  def integerLiteralsLiteralNumbers(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int) {
     val a = 2
     val b = 31
     val c = 0x30F
@@ -29,7 +29,7 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
 
   /** Long Literals are 64 bit, are specified by appending an `L` or `l` at the end:
     */
-  def longLiteralsLiteralNumbers(res0: Int, res1: Int, res2: Int, res3: Int, res4: String, res5: String, res6: String) {
+  def longLiteralsLiteralNumbers(res0: Long, res1: Long, res2: Long, res3: Long, res4: Long, res5: Long, res6: Long) {
     val a = 2L
     val b = 31L
     val c = 0x30FL
@@ -51,7 +51,7 @@ object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
     * Floats can be coerced using a f or F suffix, and Doubles can be coerced using a d or D suffix.
     * Exponent are specified using e or E.
     */
-  def floatsAndDoublesLiteralNumbers(res0: Float, res1: Float, res2: Float, res3: Float, res4: Float, res5: String, res6: String, res7: Float, res8: String) {
+  def floatsAndDoublesLiteralNumbers(res0: Double, res1: Double, res2: Double, res3: Double, res4: Double, res5: Double, res6: Double, res7: Double, res8: Double) {
     val a = 3.0
     val b = 3.00
     val c = 2.73

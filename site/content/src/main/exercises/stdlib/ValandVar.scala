@@ -26,7 +26,7 @@ object ValandVar extends FlatSpec with Matchers with exercise.Section {
     *
     * Your turn. Remember, `var`'s may be reassigned,
     */
-  def mutableOrInmutableValandVar(res0: Int, res1: Int) {
+  def mutableOrImmutableValandVar(res0: Int, res1: Int) {
     var a = 5
     a should be(res0)
     a = 7

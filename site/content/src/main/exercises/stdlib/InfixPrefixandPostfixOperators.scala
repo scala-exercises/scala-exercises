@@ -45,7 +45,7 @@ object InfixPrefixandPostfixOperators extends FlatSpec with Matchers with exerci
 
   /** Prefix operators work if an object has a method name that starts with `unary_` :
     */
-  def startsWithUnaryInfixPrefixandPostfixOperators(res0: String) {
+  def startsWithUnaryInfixPrefixandPostfixOperators(res0: Int) {
     val g: Int = 31
     (-g) should be(res0)
   }

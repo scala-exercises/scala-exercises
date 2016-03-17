@@ -41,40 +41,40 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `flatten` will smash all child *Traversables* within a *Traversable*
     */
-  def flattenFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int, res9: Int) {
+  def flattenFunctionTraversables(res0: List[Int]) {
     val list = List(List(1), List(2, 3, 4), List(5, 6, 7), List(8, 9, 10))
-    list.flatten should be(List(res0, res1, res2, res3, res4, res5, res6, res7, res8, res9))
+    list.flatten should be(res0)
   }
 
   /** `flatMap` will not only apply the given function on all elements of a *Traversable*, but all elements within the elements and `flatten` the results:
     */
-  def flatMapFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int, res9: Int) {
+  def flatMapFunctionTraversables(res0: List[Int]) {
     val list = List(List(1), List(2, 3, 4), List(5, 6, 7), List(8, 9, 10))
     val result = list.flatMap(_.map(_ * 4))
-    result should be(List(res0, res1, res2, res3, res4, res5, res6, res7, res8, res9))
+    result should be(res0)
   }
 
   /** `flatMap` of `Options` will filter out all `None`s and Keep the `Some`s
     */
-  def flatMapOfOptionsTraversables(res0: Int, res1: Int) {
+  def flatMapOfOptionsTraversables(res0: List[Int]) {
     val list = List(1, 2, 3, 4, 5)
     val result = list.flatMap(it => if (it % 2 == 0) Some(it) else None)
-    result should be(List(res0, res1))
+    result should be(res0)
   }
 
   /** `collect` will apply a partial function to all elements of a *Traversable* and will return a different collection. In this exercise, a case fragment is a partial function:
     */
-  def collectFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def collectFunctionTraversables(res0: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     val result = list.collect {
       case x: Int if (x % 2 == 0) => x * 3
     }
-    result should be(List(res0, res1, res2, res3))
+    result should be(res0)
   }
 
   /** `collect` will apply a partial function to all elements of a *Traversable* and will return a different collection. In this exercise, two case fragments are chained to create a more robust result:
     */
-  def collectFunctionIITraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int) {
+  def collectFunctionIITraversables(res0: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     val partialFunction1: PartialFunction[Int, Int] = {
       case x: Int if x % 2 == 0 => x * 3
@@ -83,16 +83,16 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
       case y: Int if y % 2 != 0 => y * 4
     }
     val result = list.collect(partialFunction1 orElse partialFunction2)
-    result should be(List(res0, res1, res2, res3, res4, res5, res6))
+    result should be(res0)
   }
 
   /** `foreach` will apply a function to all elements of a *Traversable*, but unlike
     * the `map` function, it will not return anything since the return type is `Unit`, which is like a `void` return type in *Java*, *C++*
     */
-  def foreachFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int) {
+  def foreachFunctionTraversables(res0: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     list.foreach(num => println(num * 4))
-    list should be(List(res0, res1, res2, res3, res4, res5, res6))
+    list should be(res0)
   }
 
   /** `toArray` will convert any *Traversable* to an `Array`, which is a special wrapper around a primitive *Java* array.
@@ -146,11 +146,11 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `toStream` will convert any *Traversable* to a `Stream` which is a lazy list where elements are evaluated as they are needed.
     */
-  def toStreamFunctionTraversables(res0: Boolean, res1: Int, res2: Int, res3: Int) {
+  def toStreamFunctionTraversables(res0: Boolean, res1: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     val result = list.toStream
     result.isInstanceOf[Stream[_]] should be(res0)
-    (result take 3) should be(List(res1, res2, res3))
+    (result take 3) should be(res1)
   }
 
   /** `toSet` will convert any *Traversable* to a *Set* which is a collection of unordered, unique values.
@@ -224,9 +224,9 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `headOption` will return the first element as an *Option* of an ordered collection, or some random element if order is not defined.  If a first element is not available, then *None* is returned.
     */
-  def headOptionFunctionTraversables(res0: Int, res1: String) {
+  def headOptionFunctionTraversables(res0: Option[Int], res1: Option[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.headOption should be(Some(res0))
+    list.headOption should be(res0)
 
     val list2 = List()
     list2.headOption should be(res1)
@@ -241,9 +241,9 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `lastOption` will return the last element as an *Option* of an ordered collection, or some random element if order is not defined.  If a last element is not available, then `None` is returned:
     */
-  def lastOptionFunctionTraversables(res0: Int, res1: String) {
+  def lastOptionFunctionTraversables(res0: Option[Int], res1: Option[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.lastOption should be(Some(res0))
+    list.lastOption should be(res0)
 
     val list2 = List()
     list2.lastOption should be(res1)
@@ -251,9 +251,9 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `find` will locate the first item that matches a predicate p as *Some* or *None* if an element is not found:
     */
-  def findFunctionTraversables(res0: Int, res1: String) {
+  def findFunctionTraversables(res0: Option[Int], res1: Option[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.find(_ % 2 != 0) should be(Some(res0))
+    list.find(_ % 2 != 0) should be(res0)
 
     val list2 = List(4, 8, 16)
     list2.find(_ % 2 != 0) should be(res1)
@@ -261,101 +261,101 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `tail` will return the rest of the collection without the head
     */
-  def tailFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def tailFunctionTraversables(res0: List[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.tail should be(List(res0, res1, res2, res3))
+    list.tail should be(res0)
   }
 
   /** `init` will return the rest of the collection without the last
     */
-  def initFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def initFunctionTraversables(res0: List[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.init should be(List(res0, res1, res2, res3))
+    list.init should be(res0)
   }
 
   /** Given a `from` index, and a `to` index, slice will return the part of the collection including `from`, and excluding `to`:
     */
-  def sliceFunctionTraversables(res0: Int, res1: Int) {
+  def sliceFunctionTraversables(res0: List[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.slice(1, 3) should be(List(res0, res1))
+    list.slice(1, 3) should be(res0)
   }
 
   /** `take` will return the first number of elements given.
     */
-  def takeFunctionTraversables(res0: Int, res1: Int, res2: Int) {
+  def takeFunctionTraversables(res0: List[Int]) {
     val list = List(10, 19, 45, 1, 22)
-    list.take(3) should be(List(res0, res1, res2))
+    list.take(3) should be(res0)
   }
 
   /** `take` is used often with *Streams*, and *Streams* after all are *Traversable*.
     */
-  def takeFunctionIITraversables(res0: Int, res1: Int, res2: Int) {
+  def takeFunctionIITraversables(res0: List[Int]) {
     def streamer(v: Int): Stream[Int] = cons(v, streamer(v + 1))
     val a = streamer(2)
-    (a take 3 toList) should be(List(res0, res1, res2))
+    (a take 3 toList) should be(res0)
   }
 
   /** `drop` will take the rest of the *Traversable* except the number of elements given
     */
-  def dropFunctionTraversables(res0: Int, res1: Int, res2: Int) {
+  def dropFunctionTraversables(res0: List[Int]) {
     def streamer(v: Int): Stream[Int] = cons(v, streamer(v + 1))
     val a = streamer(2)
-    ((a drop 6) take 3).toList should be(List(res0, res1, res2))
+    ((a drop 6) take 3).toList should be(res0)
   }
 
   /** `takeWhile` will continually accumulate elements until a predicate is no longer satisfied.
     */
-  def takeWhileFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def takeWhileFunctionTraversables(res0: List[Int]) {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
-    list.takeWhile(_ < 100) should be(List(res0, res1, res2, res3))
+    list.takeWhile(_ < 100) should be(res0)
   }
 
   /** `dropWhile` will continually drop elements until a predicate is no longer satisfied.
     */
-  def dropWhileFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int) {
+  def dropWhileFunctionTraversables(res0: List[Int]) {
     val list = List(87, 44, 5, 4, 200, 10, 39, 100)
-    list.dropWhile(_ < 100) should be(List(res0, res1, res2, res3))
+    list.dropWhile(_ < 100) should be(res0)
   }
 
   /** `filter` will take out all elements that don't satisfy a predicate. An *Array* is also *Traversable*.
     */
-  def filterFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int) {
+  def filterFunctionTraversables(res0: Array[Int]) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
-    array.filter(_ < 100) should be(Array(res0, res1, res2, res3, res4, res5))
+    array.filter(_ < 100) should be(res0)
   }
 
   /** `filterNot` will take out all elements that satisfy a predicate. An *Array* is also *Traversable*.
     */
-  def filterNotFunctionTraversables(res0: Int, res1: Int) {
+  def filterNotFunctionTraversables(res0: Array[Int]) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
-    array.filterNot(_ < 100) should be(Array(res0, res1))
+    array.filterNot(_ < 100) should be(res0)
   }
 
   /** `splitAt` will split a *Traversable* at a position, returning a 2 product   *Tuple*. `splitAt` is also defined as `(xs take n, xs drop n)`
     */
-  def splitAtFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int) {
+  def splitAtFunctionTraversables(res0: Array[Int], res1: Array[Int]) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
     val result = array splitAt 3
-    result._1 should be(Array(res0, res1, res2))
-    result._2 should be(Array(res3, res4, res5, res6, res7))
+    result._1 should be(res0)
+    result._2 should be(res1)
   }
 
   /** `span` will split a *Traversable* according to predicate, returning a 2 product *Tuple*.  `span` is also defined as `(xs takeWhile p, xs dropWhile p)`
     */
-  def spanFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int) {
+  def spanFunctionTraversables(res0: Array[Int], res1: Array[Int]) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
     val result = array span (_ < 100)
-    result._1 should be(Array(res0, res1, res2, res3))
-    result._2 should be(Array(res4, res5, res6, res7))
+    result._1 should be(res0)
+    result._2 should be(res1)
   }
 
   /** `partition` will split a *Traversable* according to predicate, returning a 2 product *Tuple*. The left hand side contains the elements satisfied by the predicate whereas the right hand side contains those that `don't`. *Array* is *Traversable*, partition is also defined as `(xs filter p, xs filterNot p)`
     */
-  def partitionFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int) {
+  def partitionFunctionTraversables(res0: Array[Int], res1: Array[Int]) {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
     val result = array partition (_ < 100)
-    result._1 should be(Array(res0, res1, res2, res3, res4, res5))
-    result._2 should be(Array(res6, res7))
+    result._1 should be(res0)
+    result._2 should be(res1)
   }
 
   /** `groupBy` will categorize a *Traversable* according to a given function, and return a map with the results.  This exercise uses *Partial Function* chaining.
@@ -423,7 +423,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     *
     * Given a `Traversable (x1, x2, x3, x4)`, an initial value of `init`, an operation `op`, `foldLeft` is defined as: `(((init op x1) op x2) op x3) op x4)`
     */
-  def foldLeftFunctionTraversables(res0: String, res1: String, res2: String, res3: String, res4: String) {
+  def foldLeftFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int) {
     val list = List(5, 4, 3, 2, 1)
     val result = (0 /: list) {
       (`running total`, `next element`) => `running total` - `next element`
@@ -523,19 +523,19 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val totalReduceLeftTime = reduceLeftEndTime.getTime - reduceLeftStartTime.getTime
     val totalReduceRightTime = reduceRightEndTime.getTime - reduceRightStartTime.getTime
 
-    //(totalReduceRightTime > totalReduceLeftTime) should be(res0)
+    (totalReduceRightTime > totalReduceLeftTime) should be(res0)
   }
 
   /** `transpose` will take a traversable of traversables and group them by their position in it's own traversable.  E.g.:
     * `((x1, x2),(y1, y2)).transpose = (x1, y1), (x2, y2)` or
     * `((x1, x2, x3),(y1, y2, y3),(z1, z2, z3)).transpose = ((x1, y1, z1), (x2, y2, z2), (x3, y3, z3))`
     */
-  def transposeFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int, res9: Int, res10: Int) {
+  def transposeFunctionTraversables(res0: List[Int], res1: List[Int], res2: List[Int], res3: List[Int]) {
     val list = List(List(1, 2, 3), List(4, 5, 6), List(7, 8, 9))
-    list.transpose should be(List(List(res0, res1, res2), List(res3, res4, res5), List(res6, res7, res8)))
+    list.transpose should be(List(res0, res1, res2))
 
     val list2 = List(List(1), List(4))
-    list2.transpose should be(List(List(res9, res10)))
+    list2.transpose should be(List(res3))
   }
 
   /** `mkString` will format a *Traversable* using a given string as the delimiter.
@@ -602,9 +602,9 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `Views` can also accept a `to` and `from` value which takes a subset and performs your view functions on the subset.
     */
-  def viewForceTraversables(res0: Int, res1: Int, res2: Int) {
+  def viewForceTraversables(res0: List[Int]) {
     val list = List(1, 2, 3, 4, 5, 6, 7, 8)
-    list.view(3, 6).map(_ + 2).map(_ * 10).force should be(List(res0, res1, res2))
+    list.view(3, 6).map(_ + 2).map(_ * 10).force should be(res0)
   }
 
 }

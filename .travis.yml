@@ -14,13 +14,14 @@ cache:
   directories:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot/
+env:
+  global:
+    JAVA_OPTS=-Xmx2g
+    SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:MaxPermSize=512m"
 install:
   - gem install sass
-env:
-  - DIR=core TASKS=test,scripted
-  - DIR=site TASKS=test
 script:
-  - cd $DIR
-  - echo ${TASKS/,/ } | xargs sbt
-  - find $HOME/.sbt -name "*.lock" | xargs rm
-  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+  - pushd core && sbt 'test' 'scripted' && popd
+  - pushd site && sbt 'project server' 'test' && popd
+  - pushd site && sbt 'project client' 'test' && popd
+  - pushd site && sbt 'project content' 'test' && popd
