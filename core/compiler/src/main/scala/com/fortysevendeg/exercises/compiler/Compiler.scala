@@ -107,12 +107,12 @@ case class Compiler() {
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Exercise])
           .leftMap(enhanceDocError(symbolPath))
-        code ← internal.resolveMethodBody(symbolPath)
+        method ← internal.resolveMethod(symbolPath)
       } yield ExerciseInfo(
         symbol = symbol,
         comment = comment,
-        code = code,
-        imports = Nil,
+        code = method.code,
+        imports = method.imports,
         qualifiedMethod = symbolPath.mkString(".")
       )
     }
@@ -226,9 +226,9 @@ case class Compiler() {
         s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
       )
 
-    def resolveMethodBody(path: List[String]): Xor[String, String] =
+    def resolveMethod(path: List[String]): Xor[String, SourceTextExtraction#ExtractedMethod] =
       Xor.fromOption(
-        sourceExtracted.methods.get(path).map(_.code),
+        sourceExtracted.methods.get(path),
         s"""Unable to retrieve code for method ${path.mkString(".")}"""
       )
 
