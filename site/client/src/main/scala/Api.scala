@@ -20,7 +20,7 @@ import org.scalajs.dom.ext.{ Ajax, AjaxException }
 
 object Client {
   def readProgress(library: String, section: String, raw: String): List[ClientExercise] = {
-    val parsedBody = read[LibrarySectionArgs](raw)
+    val parsedBody = read[SectionExercises](raw)
     parsedBody.exercises.map(e ⇒ {
       ClientExercise(
         library = library,

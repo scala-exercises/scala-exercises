@@ -10,10 +10,31 @@ import shapeless._
 import ops.record._
 import doobie.imports._
 
+case class UserProgress(
+  id:           Long,
+  userId:       Long,
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
+  exerciseType: ExerciseType = Other,
+  args:         List[String],
+  succeeded:    Boolean
+)
+case class ExerciseEvaluation(
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
+  exerciseType: ExerciseType = Other,
+  args:         List[String],
+  succeeded:    Boolean
+)
+
 object SaveUserProgress {
 
   case class Request(
-      userId:       Long,
+      user:         User,
       libraryName:  String,
       sectionName:  String,
       method:       String,
@@ -24,14 +45,14 @@ object SaveUserProgress {
   ) {
 
     def asUserProgress(id: Long): UserProgress =
-      UserProgress(id, userId, libraryName, sectionName, method, version, exerciseType, args, succeeded)
+      UserProgress(id, user.id, libraryName, sectionName, method, version, exerciseType, args, succeeded)
   }
 
 }
 
 object UserProgressQueries {
 
-  val userProgressGen = LabelledGeneric[shared.UserProgress]
+  val userProgressGen = LabelledGeneric[UserProgress]
   val userProgressKeys = Keys[userProgressGen.Repr]
   val allFields: List[String] =
     userProgressKeys()
@@ -57,6 +78,10 @@ object UserProgressQueries {
 
   val findByUserId = s"$commonFindBy WHERE userId = ?"
 
+  val findEvaluationsBySection = s"""$findByUserId AND libraryname = ? AND sectionname = ?"""
+
+  val findEvaluationByVersion = s"""$findEvaluationsBySection AND method = ? AND version = ?"""
+
   val findByUserIdAggregated =
     s"""
        SELECT libraryname, count(sectionname), bool_and(succeeded)
@@ -71,7 +96,6 @@ object UserProgressQueries {
        FROM "userProgress"
        WHERE userId = ? AND libraryname=?
        GROUP BY sectionname"""
-  s"""$commonFindBy WHERE userId = ? AND libraryName = ?"""
 
   val findBySection =
     s"""$commonFindBy WHERE userId = ? AND libraryName = ? AND sectionName = ?"""
@@ -89,7 +113,7 @@ object UserProgressQueries {
           exerciseType = ?,
           args = ?,
           succeeded = ?
-          WHERE id = ?
+          WHERE userId = ? AND libraryName = ? AND sectionName = ? AND method = ?
     """
 
   val insert =
