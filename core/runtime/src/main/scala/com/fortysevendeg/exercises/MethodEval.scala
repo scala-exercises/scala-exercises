@@ -5,6 +5,8 @@
 
 package com.fortysevendeg.exercises
 
+import scala.language.experimental.macros
+
 import java.lang.reflect.InvocationTargetException
 import scala.reflect.runtime.{ universe ⇒ ru }
 import scala.reflect.runtime.{ currentMirror ⇒ cm }
@@ -84,7 +86,7 @@ class MethodEval {
 
 
   // format: OFF
-  def eval(qualifiedMethod: String, rawArgs: List[String]): EvaluationResult[_] = {
+  def eval(qualifiedMethod: String, rawArgs: List[String], imports: List[String] = Nil): EvaluationResult[_] = {
     val result = for {
 
     lastIndex ← {
@@ -112,22 +114,37 @@ class MethodEval {
       case _                  ⇒ error(s"Expected just one argument group on method $qualifiedMethod")
     }
 
-    args ← (rawArgs zip argTypes)
-      .map { case (arg, tpe) ⇒
-        catching(toolbox.parse(arg),
-          s"Unable to parse arg $arg") >>= { parsedArg ⇒
-        catching(toolbox.eval(Typed(parsedArg, tq"$tpe")),
-          s"Unable to evaluate arg $arg as $tpe")
-      }}
-      .sequenceU
+
+    importer0 = ru.mkImporter(mirror.universe)
+    importer = importer0.asInstanceOf[ru.Importer { val from: mirror.universe.type }]
+
+    args ← (rawArgs zip argTypes).map { case (arg, tpe) ⇒
+        for {
+          parsedArg ← catching(toolbox.parse(arg),
+            s"Unable to parse arg $arg")
+
+          parsedImports ← imports.map(imp ⇒ catching(toolbox.parse(imp),
+            s"Unable to parse import '$imp'")).sequenceU
+
+          tree = q"""
+            ..$parsedImports
+            $parsedArg: $tpe
+          """
+
+          evaledArg ← catching(toolbox.eval(tree),
+              s"Unable to evaluate arg $arg as $tpe")
+
+        } yield evaledArg
+
+      }.sequenceU
 
     result ←
       try {
         success(EvaluationSuccess(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
       } catch {
         // capture exceptions thrown by the method, since they are considered success
-        case e: InvocationTargetException => success(EvaluationException(e.getCause))
-        case scala.util.control.NonFatal(t) => error(t)
+        case e: InvocationTargetException ⇒ success(EvaluationException(e.getCause))
+        case scala.util.control.NonFatal(t) ⇒ error(t)
       }
   } yield result
 
