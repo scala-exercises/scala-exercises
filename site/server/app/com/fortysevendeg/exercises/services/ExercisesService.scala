@@ -18,6 +18,7 @@ import cats.data.Xor
 import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
+import cats.syntax.option._
 
 import org.scalatest.exceptions.TestFailedException
 
@@ -40,11 +41,6 @@ object ExercisesService extends RuntimeSharedConversions {
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
   def evaluate(evaluation: shared.ExerciseEvaluation): shared.ExerciseEvaluation.Result = {
-    val res = methodEval.eval(
-      evaluation.method,
-      evaluation.args
-    )
-    Logger.info(s"evaluation for $evaluation: $res")
 
     def compileError(ef: EvaluationFailure[_]): String =
       s"Compilation error: ${ef.foldedException.getMessage}"
@@ -54,10 +50,37 @@ object ExercisesService extends RuntimeSharedConversions {
       case e                      ⇒ s"Runtime error: ${e.getMessage}"
     }
 
-    res.toSuccessXor.bimap(
-      _.fold(compileError(_), userError(_)),
-      _ ⇒ Unit
-    )
+    def eval(imports: List[String]) = {
+      val res = methodEval.eval(
+        evaluation.method,
+        evaluation.args,
+        imports
+      )
+      res.toSuccessXor.bimap(
+        _.fold(compileError(_), userError(_)),
+        _ ⇒ Unit
+      )
+    }
+
+    val imports = for {
+      
+      runtimeLibrary ← runtimeLibraries.find(_.name == evaluation.libraryName)
+        .toRightXor(s"Unable to find library ${evaluation.libraryName} when " +
+          s"attempting to evaluate method ${evaluation.method}")
+
+      runtimeSection ← runtimeLibrary.sections.find(_.name == evaluation.sectionName)
+        .toRightXor(s"Unable to find section ${evaluation.sectionName} when " +
+          s"attempting to evaluate method ${evaluation.method}")
+
+      runtimeExercise ← runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method)
+        .toRightXor(s"Unable to find exercise for method ${evaluation.method}")
+
+    } yield runtimeExercise.imports
+
+    val res = imports >>= eval
+    Logger.info(s"evaluation for $evaluation: $res")
+    res
+
   }
 
   def reorderLibraries(topLibNames: List[String], libraries: List[shared.Library]): List[shared.Library] = {
