@@ -10,19 +10,14 @@ import scala.language.implicitConversions
 import scala.language.reflectiveCalls
 
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Codec
-import scala.util.{ Try, Success, Failure }
-import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
-import java.net.URLClassLoader
 
 import sbt.{ `package` ⇒ _, _ }
 import sbt.Keys._
 import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
 
-import cats._
 import cats.data.Ior
 import cats.data.Xor
 import cats.std.all._
@@ -54,17 +49,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     inConfig(CompileMain)(
       Defaults.compileSettings ++
       Defaults.compileInputsSettings ++
-      Defaults.configTasks ++
-      redirSettings
+      Defaults.configTasks
     ) ++
     inConfig(CompileExercisesSource)(
-      // this configuration compiles code in src/main/exercises
       Defaults.compileSettings ++
       Defaults.compileInputsSettings ++
-      redirSettings ++
       Seq(
-        // adjusting source directory to be src/main/exercises
-        scalaSource := sourceDirectory.value / "exercises")
+        unmanagedSourceDirectories := Seq(baseDirectory.value / "src" / "main" / "scala")
+      )
     ) ++
     inConfig(CompileExercises)(
       // this configuration compiles source code we generate in CompileExercisesSource
@@ -82,10 +74,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       // disable any user defined source files for this scope as
       // we only want to compile the generated files
-      unmanagedSourceDirectories := Nil,
       sourceGenerators <+= generateExerciseSourcesTask,
       resourceGenerators <+= generateExerciseDescriptorTask,
-
       generateExercises <<= generateExercisesTask
     )) ++
     inConfig(Compile)(
@@ -95,33 +85,18 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     Seq(
       defaultConfiguration := Some(CompileMain),
 
-      // library dependences have to be declared at the root level
+      // library dependencies have to be declared at the root level
       ivyConfigurations   := overrideConfigs(CompileMain, CompileExercisesSource, CompileExercises)(ivyConfigurations.value),
       libraryDependencies += "com.47deg" %% "definitions" % Meta.version % CompileExercisesSource.name,
       libraryDependencies += "com.47deg" %% "runtime" % Meta.version % CompileExercises.name
     )
   // format: ON
 
-  def redirSettings = Seq(
-    // v0.13.9/main/src/main/scala/sbt/Defaults.scala
-    sourceDirectory <<= reconfigureSub(sourceDirectory),
-    sourceManaged <<= reconfigureSub(sourceManaged),
-    resourceManaged <<= reconfigureSub(resourceManaged)
-  )
-
-  /** Helper to faciliate changing the directories. By default, a configuration
-    * inheriting from Compile will compile source in
-    * `src/<configuration_name>/[scala|test|...]`. This forces the directory
-    * back to `src/main/[scala|test|...]`.
-    */
-  private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
-    (key in ThisScope.copy(config = Global), configuration) { (src, conf) ⇒ src / "main" }
-
   // for most of the work below, a captured error is an error message and/or a
   // throwable value
   private type Err = Ior[String, Throwable]
-  private implicit def errFromString(message: String) = Ior.left(message)
-  private implicit def errFromThrowable(throwable: Throwable) = Ior.right(throwable)
+  private implicit def errFromString(message: String): Ior[String, Nothing] = Ior.left(message)
+  private implicit def errFromThrowable(throwable: Throwable): Ior[Nothing, Throwable] = Ior.right(throwable)
 
   private def catching[A](f: ⇒ A)(msg: ⇒ String) =
     Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(msg, e))
@@ -169,8 +144,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     )
 
     def loadLibraryModule(name: String) = for {
-      loadedClass ← catching(loader.loadClass(name + "$"))(s"${name} not found")
-      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
+      loadedClass ← catching(loader.loadClass(name + "$"))(s"$name not found")
+      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"$name must be defined as an object")
     } yield loadedModule
 
     def invokeCompiler(compiler: COMPILER, library: AnyRef): Xor[Err, (String, String)] =
@@ -189,10 +164,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             ).toList
           }
       } leftMap (e ⇒ e: Err) >>= {
-        _ match {
-          case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
-          case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler": Err)
-        }
+        case mName :: moduleSource :: Nil ⇒ Xor.right(mName → moduleSource)
+        case _                            ⇒ Xor.left("Unexpected return value from exercise compiler": Err)
       }
 
     val result = for {
@@ -203,13 +176,11 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     } yield result
 
     result.fold({
-      _ match {
-        case Ior.Left(message) ⇒ throw new Exception(message)
-        case Ior.Right(error)  ⇒ throw error
-        case Ior.Both(message, error) ⇒
-          log.error(message)
-          throw error
-      }
+      case Ior.Left(message) ⇒ throw new Exception(message)
+      case Ior.Right(error)  ⇒ throw error
+      case Ior.Both(message, error) ⇒
+        log.error(message)
+        throw error
     }, identity)
   }
 
@@ -219,8 +190,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     val generated = generateExercises.value
     val dir = (sourceManaged in CompileExercises).value
     generated.map {
-      case (name, code) ⇒
-        val file = dir / (name.replace(".", "/") + ".scala")
+      case (fName, code) ⇒
+        val file = dir / (fName.replace(".", "/") + ".scala")
         IO.write(file, code)
         log.info(s"Generated library at $file")
         file
@@ -229,7 +200,6 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   // task responsible for outputting the exercise descriptor resource
   def generateExerciseDescriptorTask = Def.task {
-    val log = streams.value.log
     val generated = generateExercises.value
     val qualifiedLibraryInstancies = generated.map(_._1 + "$")
     val dir = (resourceManaged in CompileExercises).value
@@ -256,7 +226,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       buf += b.toByte
     }
     override def flush() {
-      if (!buf.isEmpty) {
+      if (buf.nonEmpty) {
         val message = new String(buf.toArray)
         buf.clear()
         if (message != ls) f(message)
