@@ -18,8 +18,10 @@ import ops.hlist._
   *   ("id"     ->>  262162091) ::
   *   ("price"  ->>  44.11) ::
   *   HNil
-  * 
+  * }}}
+  *
   * @param name extensible_records
+  * 
   */
 object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.Section {
 
@@ -32,7 +34,8 @@ object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.S
      ("price"  ->>  44.11) ::
   HNil
 
-
+  /**
+  */
   def resultTypes(res0 : String, res1 : String, res2 : Int, res3 : Double) = {
     book("author") should be (res0)
     book("title") should be (res1)
