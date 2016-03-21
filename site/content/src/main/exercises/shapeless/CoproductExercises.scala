@@ -55,7 +55,7 @@ object CoproductExercises extends FlatSpec with Matchers with exercise.Section {
     m.select[(String, Int)] should be (res0)
   }
 
-  /** In the same way that adding labels to the elements of an HList gives us a record, 
+  /** In the same way that adding labels To the elements of an HList gives us a record, 
     * adding labels to the elements of a Coproduct gives us a discriminated union.
     */
   def unionE(res0 : Option[Int], res1 : Option[String], res2 : Option[Boolean]) = {
