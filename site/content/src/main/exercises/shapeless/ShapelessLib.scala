@@ -14,6 +14,8 @@ object ShapelessLib extends exercise.Library {
     ArityExercises,
     HMapExercises,
     SingletonExercises,
-    SingletonTypedSymbolsExercises
+    SingletonTypedSymbolsExercises,
+    ExtensibleRecordsExercises,
+    CoproductExercises
   )
 }
