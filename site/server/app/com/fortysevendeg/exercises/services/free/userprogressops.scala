@@ -146,13 +146,6 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
           succeeded = maybeEvaluation.fold(false: Boolean)(_.succeeded)
         )
       })
-      // exercises = evaluations.map(up ⇒ {
-      //   ExerciseProgress(
-      //     methodName = up.method,
-      //     args = up.args,
-      //     succeeded = up.succeeded
-      //   )
-      // })
       totalExercises = maybeSection.fold(0)(_.exercises.size)
     } yield SectionExercises(
       libraryName = libraryName,
