@@ -61,6 +61,18 @@ class MethodEvalSpec extends FunSpec with Matchers {
       assert(res.toExecutionXor.isRight)
     }
 
+    it("interprets imports properly") {
+      val res = methodEval.eval(
+        "com.fortysevendeg.exercises.ExampleTarget.takesXorMethod",
+        "Xor.right(1)" :: Nil,
+        "import cats.data.Xor" :: Nil
+      )
+
+      res should equal(EvaluationSuccess[Boolean](true))
+      assert(res.toSuccessXor.isRight)
+      assert(res.toExecutionXor.isRight)
+    }
+
   }
 }
 
@@ -74,4 +86,6 @@ object ExampleTarget {
   def throwsExceptionMethod() {
     throw new ExampleException
   }
+
+  def takesXorMethod(xor: Xor[_, _]): Boolean = true
 }
