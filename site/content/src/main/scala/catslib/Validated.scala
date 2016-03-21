@@ -8,8 +8,7 @@ import cats.data.Xor
 
 import ValidatedHelpers._
 
-/**
-  * Imagine you are filling out a web form to signup for an account. You input your username and password and submit.
+/** Imagine you are filling out a web form to signup for an account. You input your username and password and submit.
   * Response comes back saying your username can't have dashes in it, so you make some changes and resubmit. Can't
   * have special characters either. Change, resubmit. Passwords need to have at least one capital letter. Change,
   * resubmit. Password needs to have at least one number.
@@ -21,8 +20,8 @@ import ValidatedHelpers._
   * case class ConnectionParams(url: String, port: Int)
   *
   * for {
-  *   url  <- config[String]("url")
-  *   port <- config[Int]("port")
+  * url  <- config[String]("url")
+  * port <- config[Int]("port")
   * } yield ConnectionParams(url, port)
   * }}}
   *
@@ -48,21 +47,21 @@ import ValidatedHelpers._
   *
   * {{{
   * trait Read[A] {
-  *   def read(s: String): Option[A]
+  * def read(s: String): Option[A]
   * }
   *
   * object Read {
-  *   def apply[A](implicit A: Read[A]): Read[A] = A
+  * def apply[A](implicit A: Read[A]): Read[A] = A
   *
-  *   implicit val stringRead: Read[String] =
-  *     new Read[String] { def read(s: String): Option[String] = Some(s) }
+  * implicit val stringRead: Read[String] =
+  *  new Read[String] { def read(s: String): Option[String] = Some(s) }
   *
-  *   implicit val intRead: Read[Int] =
-  *     new Read[Int] {
-  *       def read(s: String): Option[Int] =
-  *         if (s.matches("-?[0-9]+")) Some(s.toInt)
-  *         else None
-  *     }
+  * implicit val intRead: Read[Int] =
+  *  new Read[Int] {
+  *    def read(s: String): Option[Int] =
+  *      if (s.matches("-?[0-9]+")) Some(s.toInt)
+  *      else None
+  *  }
   * }
   * }}}
   *
@@ -83,8 +82,8 @@ import ValidatedHelpers._
   * sealed abstract class Validated[+E, +A]
   *
   * object Validated {
-  *   final case class Valid[+A](a: A) extends Validated[Nothing, A]
-  *   final case class Invalid[+E](e: E) extends Validated[E, Nothing]
+  * final case class Valid[+A](a: A) extends Validated[Nothing, A]
+  * final case class Invalid[+E](e: E) extends Validated[E, Nothing]
   * }
   * }}}
   *
@@ -95,30 +94,30 @@ import ValidatedHelpers._
   * import cats.data.Validated.{Invalid, Valid}
   *
   * case class Config(map: Map[String, String]) {
-  *   def parse[A : Read](key: String): Validated[ConfigError, A] =
-  *     map.get(key) match {
-  *       case None        => Invalid(MissingConfig(key))
-  *       case Some(value) =>
-  *         Read[A].read(value) match {
-  *           case None    => Invalid(ParseError(key))
-  *           case Some(a) => Valid(a)
-  *         }
-  *     }
+  * def parse[A : Read](key: String): Validated[ConfigError, A] =
+  *  map.get(key) match {
+  *    case None        => Invalid(MissingConfig(key))
+  *    case Some(value) =>
+  *      Read[A].read(value) match {
+  *        case None    => Invalid(ParseError(key))
+  *        case Some(a) => Valid(a)
+  *      }
+  *  }
   * }
   * }}}
-
+  *
   * Everything is in place to write the parallel validator. Recall that we can only do parallel
   * validation if each piece is independent. How do we enforce the data is independent? By asking
   * for all of it up front. Let's start with two pieces of data.
   *
   * {{{
   * def parallelValidate[E, A, B, C](v1: Validated[E, A], v2: Validated[E, B])(f: (A, B) => C): Validated[E, C] =
-  *   (v1, v2) match {
-  *     case (Valid(a), Valid(b))       => Valid(f(a, b))
-  *     case (Valid(_), i@Invalid(_))   => i
-  *     case (i@Invalid(_), Valid(_))   => i
-  *     case (Invalid(e1), Invalid(e2)) => ???
-  *   }
+  * (v1, v2) match {
+  *  case (Valid(a), Valid(b))       => Valid(f(a, b))
+  *  case (Valid(_), i@Invalid(_))   => i
+  *  case (i@Invalid(_), Valid(_))   => i
+  *  case (Invalid(e1), Invalid(e2)) => ???
+  * }
   * }}}
   *
   * We've run into a problem. In the case where both have errors, we want to report both. But we have
@@ -131,12 +130,12 @@ import ValidatedHelpers._
   * import cats.Semigroup
   *
   * def parallelValidate[E : Semigroup, A, B, C](v1: Validated[E, A], v2: Validated[E, B])(f: (A, B) => C): Validated[E, C] =
-  *   (v1, v2) match {
-  *     case (Valid(a), Valid(b))       => Valid(f(a, b))
-  *     case (Valid(_), i@Invalid(_))   => i
-  *     case (i@Invalid(_), Valid(_))   => i
-  *     case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
-  *   }
+  * (v1, v2) match {
+  *  case (Valid(a), Valid(b))       => Valid(f(a, b))
+  *  case (Valid(_), i@Invalid(_))   => i
+  *  case (i@Invalid(_), Valid(_))   => i
+  *  case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
+  * }
   * }}}
   *
   * Perfect! But.. going back to our example, we don't have a way to combine `ConfigError`s. But as clients,
@@ -155,7 +154,7 @@ import ValidatedHelpers._
   * import cats.std.list._
   *
   * implicit val nelSemigroup: Semigroup[NonEmptyList[ConfigError]] =
-  *   SemigroupK[NonEmptyList].algebra[ConfigError]
+  * SemigroupK[NonEmptyList].algebra[ConfigError]
   *
   * implicit val readString: Read[String] = Read.stringRead
   * implicit val readInt: Read[Int] = Read.intRead
@@ -164,8 +163,7 @@ import ValidatedHelpers._
   * @param name validated
   */
 object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
-  /**
-    * When no errors are present in the configuration, we get a `ConnectionParams` wrapped in a `Valid` instance.
+  /** When no errors are present in the configuration, we get a `ConnectionParams` wrapped in a `Valid` instance.
     */
   def noErrors(res0: Boolean, res1: String, res2: Int) = {
     val config = Config(Map(("url", "127.0.0.1"), ("port", "1337")))
@@ -179,8 +177,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     valid.getOrElse(ConnectionParams("", 0)) should be(ConnectionParams(res1, res2))
   }
 
-  /**
-    * But what happens when having one or more errors? They are accumulated in a `NonEmptyList`
+  /** But what happens when having one or more errors? They are accumulated in a `NonEmptyList`
     * wrapped in a `Invalid` instance.
     */
   def someErrors(res0: Boolean, res1: Boolean) = {
@@ -199,9 +196,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     invalid == Validated.invalid(errors) should be(res1)
   }
 
-  /**
-    *
-    * ## Apply ##
+  /** ## Apply ##
     *
     * Our `parallelValidate` function looks awfully like the `Apply#map2` function.
     *
@@ -217,20 +212,20 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.Applicative
     *
     * implicit def validatedApplicative[E : Semigroup]: Applicative[Validated[E, ?]] =
-    *   new Applicative[Validated[E, ?]] {
-    *     def ap[A, B](f: Validated[E, A => B])(fa: Validated[E, A]): Validated[E, B] =
-    *       (fa, f) match {
-    *         case (Valid(a), Valid(fab)) => Valid(fab(a))
-    *         case (i@Invalid(_), Valid(_)) => i
-    *         case (Valid(_), i@Invalid(_)) => i
-    *         case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
-    *       }
+    * new Applicative[Validated[E, ?]] {
+    *  def ap[A, B](f: Validated[E, A => B])(fa: Validated[E, A]): Validated[E, B] =
+    *    (fa, f) match {
+    *      case (Valid(a), Valid(fab)) => Valid(fab(a))
+    *      case (i@Invalid(_), Valid(_)) => i
+    *      case (Valid(_), i@Invalid(_)) => i
+    *      case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
+    *    }
     *
-    *     def pure[A](x: A): Validated[E, A] = Validated.valid(x)
-    *     def map[A, B](fa: Validated[E, A])(f: A => B): Validated[E, B] = fa.map(f)
-    *     def product[A, B](fa: Validated[E, A], fb: Validated[E, B]): Validated[E, (A, B)] =
-    *       ap(fa.map(a => (b: B) => (a, b)))(fb)
-    *   }
+    *  def pure[A](x: A): Validated[E, A] = Validated.valid(x)
+    *  def map[A, B](fa: Validated[E, A])(f: A => B): Validated[E, B] = fa.map(f)
+    *  def product[A, B](fa: Validated[E, A], fb: Validated[E, B]): Validated[E, (A, B)] =
+    *    ap(fa.map(a => (b: B) => (a, b)))(fb)
+    * }
     * }}}
     *
     * Awesome! And now we also get access to all the goodness of `Applicative`, which includes `map{2-22}`, as well as the
@@ -243,7 +238,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.data.ValidatedNel
     *
     * implicit val nelSemigroup: Semigroup[NonEmptyList[ConfigError]] =
-    *   SemigroupK[NonEmptyList].algebra[ConfigError]
+    * SemigroupK[NonEmptyList].algebra[ConfigError]
     *
     * val config = Config(Map(("name", "cat"), ("age", "not a number"), ("houseNumber", "1234"), ("lane", "feline street")))
     *
@@ -255,12 +250,12 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * val personFromConfig: ValidatedNel[ConfigError, Person] =
-    *   Apply[ValidatedNel[ConfigError, ?]].map4(config.parse[String]("name").toValidatedNel,
-    *                                            config.parse[Int]("age").toValidatedNel,
-    *                                            config.parse[Int]("house_number").toValidatedNel,
-    *                                            config.parse[String]("street").toValidatedNel) {
-    *     case (name, age, houseNumber, street) => Person(name, age, Address(houseNumber, street))
-    *   }
+    * Apply[ValidatedNel[ConfigError, ?]].map4(config.parse[String]("name").toValidatedNel,
+    *                                         config.parse[Int]("age").toValidatedNel,
+    *                                         config.parse[Int]("house_number").toValidatedNel,
+    *                                         config.parse[String]("street").toValidatedNel) {
+    *  case (name, age, houseNumber, street) => Person(name, age, Address(houseNumber, street))
+    * }
     *
     * We can now rewrite validations in terms of `Apply`.
     *
@@ -273,29 +268,29 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.Monad
     *
     * implicit def validatedMonad[E]: Monad[Validated[E, ?]] =
-    *   new Monad[Validated[E, ?]] {
-    *     def flatMap[A, B](fa: Validated[E, A])(f: A => Validated[E, B]): Validated[E, B] =
-    *       fa match {
-    *         case Valid(a)     => f(a)
-    *         case i@Invalid(_) => i
-    *       }
+    * new Monad[Validated[E, ?]] {
+    *  def flatMap[A, B](fa: Validated[E, A])(f: A => Validated[E, B]): Validated[E, B] =
+    *    fa match {
+    *      case Valid(a)     => f(a)
+    *      case i@Invalid(_) => i
+    *    }
     *
-    *     def pure[A](x: A): Validated[E, A] = Valid(x)
-    *   }
+    *  def pure[A](x: A): Validated[E, A] = Valid(x)
+    * }
     * }}}
     *
     * Note that all `Monad` instances are also `Applicative` instances, where `ap` is defined as
     *
     * {{{
     * trait Monad[F[_]] {
-    *   def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
-    *   def pure[A](x: A): F[A]
+    * def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
+    * def pure[A](x: A): F[A]
     *
-    *   def map[A, B](fa: F[A])(f: A => B): F[B] =
-    *     flatMap(fa)(f.andThen(pure))
+    * def map[A, B](fa: F[A])(f: A => B): F[B] =
+    *  flatMap(fa)(f.andThen(pure))
     *
-    *   def ap[A, B](fa: F[A])(f: F[A => B]): F[B] =
-    *     flatMap(fa)(a => map(f)(fab => fab(a)))
+    * def ap[A, B](fa: F[A])(f: F[A => B]): F[B] =
+    *  flatMap(fa)(a => map(f)(fab => fab(a)))
     * }
     * }}}
     *
@@ -326,9 +321,9 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * }}}
     */
   def sequentialValidation(res0: Boolean, res1: Boolean) = {
-    val config = Config(Map("house_number" -> "-42"))
+    val config = Config(Map("house_number" → "-42"))
 
-    val houseNumber = config.parse[Int]("house_number").andThen{ n =>
+    val houseNumber = config.parse[Int]("house_number").andThen { n ⇒
       if (n >= 0) Validated.valid(n)
       else Validated.invalid(ParseError("house_number"))
     }
@@ -338,8 +333,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     houseNumber == Validated.invalid(error) should be(res1)
   }
 
-  /**
-    * ### `withXor` ###
+  /** ### `withXor` ###
     *
     * The `withXor` method allows you to temporarily turn a `Validated` instance into an `Xor` instance and apply it to a function.
     *
@@ -347,8 +341,8 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.data.Xor
     *
     * def positive(field: String, i: Int): ConfigError Xor Int = {
-    *   if (i >= 0) Xor.right(i)
-    *   else Xor.left(ParseError(field))
+    * if (i >= 0) Xor.right(i)
+    * else Xor.left(ParseError(field))
     * }
     * }}}
     *
@@ -356,10 +350,10 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     *
     */
   def validatedAsXor(res0: Boolean, res1: Boolean) = {
-    val config = Config(Map("house_number" -> "-42"))
+    val config = Config(Map("house_number" → "-42"))
 
-    val houseNumber = config.parse[Int]("house_number").withXor{ xor: ConfigError Xor Int =>
-      xor.flatMap{ i =>
+    val houseNumber = config.parse[Int]("house_number").withXor { xor: ConfigError Xor Int ⇒
+      xor.flatMap { i ⇒
         positive("house_number", i)
       }
     }

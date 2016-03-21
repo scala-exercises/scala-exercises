@@ -6,15 +6,14 @@ import org.scalatest._
   */
 object Traits extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Similar to *interfaces* in Java, traits are used to define object types by specifying the signature of the supported methods. Unlike Java, Scala allows traits to be partially implemented; i.e. it is possible to define default implementations for some methods. In contrast to classes, traits may not have constructor parameters.
     *
     * Here is an example:
     *
     * {{{
     * trait Similarity {
-    *   def isSimilar(x: Any): Boolean
-    *   def isNotSimilar(x: Any): Boolean = !isSimilar(x)
+    * def isSimilar(x: Any): Boolean
+    * def isNotSimilar(x: Any): Boolean = !isSimilar(x)
     * }
     * }}}
     *
@@ -22,19 +21,19 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class Point(xc: Int, yc: Int) extends Similarity {
-    *   var x: Int = xc
-    *   var y: Int = yc
-    *   def isSimilar(obj: Any) =
-    *     obj.isInstanceOf[Point] &&
-    *     obj.asInstanceOf[Point].x == x
+    * var x: Int = xc
+    * var y: Int = yc
+    * def isSimilar(obj: Any) =
+    *  obj.isInstanceOf[Point] &&
+    *  obj.asInstanceOf[Point].x == x
     * }
     * object TraitsTest extends App {
-    *   val p1 = new Point(2, 3)
-    *   val p2 = new Point(2, 4)
-    *   val p3 = new Point(3, 3)
-    *   println(p1.isNotSimilar(p2))
-    *   println(p1.isNotSimilar(p3))
-    *   println(p1.isNotSimilar(2))
+    * val p1 = new Point(2, 3)
+    * val p2 = new Point(2, 4)
+    * val p3 = new Point(3, 3)
+    * println(p1.isNotSimilar(p2))
+    * println(p1.isNotSimilar(p3))
+    * println(p1.isNotSimilar(2))
     * }
     * }}}
     * Here is the output of the program:
@@ -54,12 +53,11 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
       def listen(event: Event): String
     }
 
-
     class MyListener extends EventListener {
       def listen(event: Event): String = {
         event match {
-          case Event("Moose Stampede") => "An unfortunate moose stampede occurred"
-          case _ => "Nothing of importance occurred"
+          case Event("Moose Stampede") ⇒ "An unfortunate moose stampede occurred"
+          case _                       ⇒ "Nothing of importance occurred"
         }
       }
     }
@@ -83,8 +81,8 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     class MyListener extends OurListener with EventListener {
       def listen(event: Event): String = {
         event match {
-          case Event("Woodchuck Stampede") => "An unfortunate woodchuck stampede occurred"
-          case _ => "Nothing of importance occurred"
+          case Event("Woodchuck Stampede") ⇒ "An unfortunate woodchuck stampede occurred"
+          case _                           ⇒ "Nothing of importance occurred"
         }
       }
     }
@@ -106,8 +104,8 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
     class MyListener extends EventListener {
       def listen(event: Event): String = {
         event match {
-          case Event("Moose Stampede") => "An unfortunate moose stampede occurred"
-          case _ => "Nothing of importance occurred"
+          case Event("Moose Stampede") ⇒ "An unfortunate moose stampede occurred"
+          case _                       ⇒ "Nothing of importance occurred"
         }
       }
     }
@@ -146,7 +144,6 @@ object Traits extends FlatSpec with Matchers with exercise.Section {
 
     val welder = new Welder
     welder.weld()
-
 
     val baker = new Baker
     baker.bake()

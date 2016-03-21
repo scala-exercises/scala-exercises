@@ -8,14 +8,13 @@ import org.scalatest._
   */
 object RepeatedParameters extends FlatSpec with Matchers with exercise.Section {
 
-
   /** A repeated parameter must be the last parameter and this will let you add as many extra parameters as needed.
     *
     * Given:
     *
     * {{{
     * def repeatedParameterMethod(x: Int, y: String, z: Any*) = {
-    *   "%d %ss can give you %s".format(x, y, z.mkString(", "))
+    * "%d %ss can give you %s".format(x, y, z.mkString(", "))
     * }
     * }}}
     * Resolve:

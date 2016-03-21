@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
 
-
   /** A partial function is a `trait` that when implemented can be used as building blocks to determine a solution.  The trait `PartialFunction` requires that the method `isDefinedAt` and `apply` be implemented.
     */
   def partialFunctionPartialFunctions(res0: Int, res1: Int) {
@@ -36,10 +35,10 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
   def caseStatementsPartialFunctions(res0: Int, res1: Int) {
     //These case statements are called case statements with guards
     val doubleEvens: PartialFunction[Int, Int] = {
-      case x if (x % 2) == 0 => x * 2
+      case x if (x % 2) == 0 ⇒ x * 2
     }
     val tripleOdds: PartialFunction[Int, Int] = {
-      case x if (x % 2) != 0 => x * 3
+      case x if (x % 2) != 0 ⇒ x * 3
     }
 
     val whatToDo = doubleEvens orElse tripleOdds //Here we chain the partial functions together
@@ -52,13 +51,13 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
   def andThenPartialFunctions(res0: Int, res1: Int) {
     //These are called case statements with guards
     val doubleEvens: PartialFunction[Int, Int] = {
-      case x if (x % 2) == 0 => x * 2
+      case x if (x % 2) == 0 ⇒ x * 2
     }
     val tripleOdds: PartialFunction[Int, Int] = {
-      case x if (x % 2) != 0 => x * 3
+      case x if (x % 2) != 0 ⇒ x * 3
     }
 
-    val addFive = (x: Int) => x + 5
+    val addFive = (x: Int) ⇒ x + 5
     val whatToDo = doubleEvens orElse tripleOdds andThen addFive //Here we chain the partial functions together
     whatToDo(3) should be(res0)
     whatToDo(4) should be(res1)
@@ -68,17 +67,17 @@ object PartialFunctions extends FlatSpec with Matchers with exercise.Section {
     */
   def chainOfLogicPartialFunctions(res0: String, res1: String) {
     val doubleEvens: PartialFunction[Int, Int] = {
-      case x if (x % 2) == 0 => x * 2
+      case x if (x % 2) == 0 ⇒ x * 2
     }
     val tripleOdds: PartialFunction[Int, Int] = {
-      case x if (x % 2) != 0 => x * 3
+      case x if (x % 2) != 0 ⇒ x * 3
     }
 
     val printEven: PartialFunction[Int, String] = {
-      case x if (x % 2) == 0 => "Even"
+      case x if (x % 2) == 0 ⇒ "Even"
     }
     val printOdd: PartialFunction[Int, String] = {
-      case x if (x % 2) != 0 => "Odd"
+      case x if (x % 2) != 0 ⇒ "Odd"
     }
 
     val whatToDo = doubleEvens orElse tripleOdds andThen (printEven orElse printOdd)

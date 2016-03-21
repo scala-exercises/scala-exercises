@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object InfixTypes extends FlatSpec with Matchers with exercise.Section {
 
-
   /** An infix type `T1 op T2` consists of an infix operator `op` which gets applied to two
     * type operands `T1` and `T2`. The type is equivalent to the type application `op[T1,T2]`.
     *

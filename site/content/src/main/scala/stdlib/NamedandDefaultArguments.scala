@@ -8,12 +8,11 @@ import org.scalatest._
   */
 object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Section {
 
-
   /** When calling methods and functions, you can use the name of the variables explicitly in the call, like so:
     *
     * {{{
     * def printName(first:String, last:String) = {
-    *     println(first + " " + last)
+    *  println(first + " " + last)
     * }
     *
     * printName("John","Smith") // Prints "John Smith"
@@ -25,7 +24,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * {{{
     * def printName(first:String = "John", last:String = "Smith") = {
-    *     println(first + " " + last)
+    *  println(first + " " + last)
     * }
     * printName(last = "Jones") // Prints "John Jones"
     * }}}
@@ -34,33 +33,33 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * {{{
     * class WithoutClassParameters() {
-    *   def addColors(red: Int, green: Int, blue: Int) = {
-    *     (red, green, blue)
-    *   }
+    * def addColors(red: Int, green: Int, blue: Int) = {
+    *  (red, green, blue)
+    * }
     *
-    *   def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
-    *     (red, green, blue)
-    *   }
+    * def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
+    *  (red, green, blue)
+    * }
     * }
     *
     * class WithClassParameters(val defaultRed: Int, val defaultGreen: Int, val defaultBlue: Int) {
-    *   def addColors(red: Int, green: Int, blue: Int) = {
-    *     (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *   }
+    * def addColors(red: Int, green: Int, blue: Int) = {
+    *  (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     *
-    *   def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
-    *     (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *   }
+    * def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
+    *  (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     * }
     *
     * class WithClassParametersInClassDefinition(val defaultRed: Int = 0, val defaultGreen: Int = 255, val defaultBlue: Int = 100) {
-    *   def addColors(red: Int, green: Int, blue: Int) = {
-    *     (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *   }
+    * def addColors(red: Int, green: Int, blue: Int) = {
+    *  (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     *
-    *   def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
-    *     (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *   }
+    * def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
+    *  (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     * }
     *
     * }}}
@@ -116,7 +115,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
   /** Default parameters can be functional too
     */
   def functionalDefaulParametersNamedandDefaultArguments(res0: Int, res1: Int) {
-    def reduce(a: Int, f: (Int, Int) => Int = _ + _): Int = f(a, a)
+    def reduce(a: Int, f: (Int, Int) ⇒ Int = _ + _): Int = f(a, a)
 
     reduce(5) should equal(res0)
     reduce(5, _ * _) should equal(res1)

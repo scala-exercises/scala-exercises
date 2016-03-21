@@ -8,7 +8,6 @@ import org.scalatest._
   */
 object Options extends FlatSpec with Matchers with exercise.Section {
 
-
   /** If you have worked with Java at all in the past, it is very likely that you have come across a `NullPointerException` at some time (other languages will throw similarly named errors in such a case). Usually this happens because some method returns null when you were not expecting it and thus not dealing with that possibility in your client code. A value of `null` is often abused to represent an absent optional value.
     *
     * Scala tries to solve the problem by getting rid of `null` values altogether and providing its own type for representing optional values, i.e. values that may be present or not: the `Option[A]` trait.
@@ -27,7 +26,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * def maybeItWillReturnSomething(flag: Boolean): Option[String] = {
-    *   if (flag) Some("Found value") else None
+    * if (flag) Some("Found value") else None
     * }
     * }}}
     * Represent `null` with `None` because `null` is a bad idea:
@@ -72,14 +71,14 @@ object Options extends FlatSpec with Matchers with exercise.Section {
   def matchOptions(res0: Float, res1: Float) {
     val someValue: Option[Double] = Some(20.0)
     val value = someValue match {
-      case Some(v) => v
-      case None => 0.0
+      case Some(v) ⇒ v
+      case None    ⇒ 0.0
     }
     value should be(res0)
     val noValue: Option[Double] = None
     val value1 = noValue match {
-      case Some(v) => v
-      case None => 0.0
+      case Some(v) ⇒ v
+      case None    ⇒ 0.0
     }
     value1 should be(res1)
   }

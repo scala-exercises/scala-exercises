@@ -2,17 +2,15 @@ package stdlib
 
 import org.scalatest._
 
-/**
-  * @param name asserts
+/** @param name asserts
   */
 object Asserts extends FlatSpec with Matchers with exercise.Section {
 
-
   /** ScalaTest makes three assertions available by default in any style trait. You can use:
     *
-    *    - `assert` for general assertions;
-    *    - `assertResult` to differentiate expected from actual values;
-    *    - `intercept` to ensure a bit of code throws an expected exception.
+    * - `assert` for general assertions;
+    * - `assertResult` to differentiate expected from actual values;
+    * - `intercept` to ensure a bit of code throws an expected exception.
     *
     * In any Scala program, you can write assertions by invoking `assert` and passing in a `Boolean` expression:
     *

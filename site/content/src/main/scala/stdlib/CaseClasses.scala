@@ -2,11 +2,9 @@ package stdlib
 
 import org.scalatest._
 
-/**
-  * @param name case_classes
+/** @param name case_classes
   */
 object CaseClasses extends FlatSpec with Matchers with exercise.Section {
-
 
   /** Scala supports the notion of _case classes_. Case classes are regular classes which export their constructor parameters and which provide a recursive decomposition mechanism via pattern matching.
     *
@@ -55,31 +53,31 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * object TermTest extends Application {
-    *   def printTerm(term: Term) {
-    *     term match {
-    *       case Var(n) =>
-    *         print(n)
-    *       case Fun(x, b) =>
-    *         print("^" + x + ".")
-    *         printTerm(b)
-    *       case App(f, v) =>
-    *         Console.print("(")
-    *         printTerm(f)
-    *         print(" ")
-    *         printTerm(v)
-    *         print(")")
-    *     }
-    *   }
-    *   def isIdentityFun(term: Term): Boolean = term match {
-    *     case Fun(x, Var(y)) if x == y => true
-    *     case _ => false
-    *   }
-    *   val id = Fun("x", Var("x"))
-    *   val t = Fun("x", Fun("y", App(Var("x"), Var("y"))))
-    *   printTerm(t)
-    *   println
-    *   println(isIdentityFun(id))
-    *   println(isIdentityFun(t))
+    * def printTerm(term: Term) {
+    *  term match {
+    *    case Var(n) =>
+    *      print(n)
+    *    case Fun(x, b) =>
+    *      print("^" + x + ".")
+    *      printTerm(b)
+    *    case App(f, v) =>
+    *      Console.print("(")
+    *      printTerm(f)
+    *      print(" ")
+    *      printTerm(v)
+    *      print(")")
+    *  }
+    * }
+    * def isIdentityFun(term: Term): Boolean = term match {
+    *  case Fun(x, Var(y)) if x == y => true
+    *  case _ => false
+    * }
+    * val id = Fun("x", Var("x"))
+    * val t = Fun("x", Fun("y", App(Var("x"), Var("y"))))
+    * printTerm(t)
+    * println
+    * println(isIdentityFun(id))
+    * println(isIdentityFun(t))
     * }
     * }}}
     *
@@ -229,7 +227,6 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     val indy = PersonCC("Indiana", "Jones")
 
     indy.isInstanceOf[Serializable] should be(res0)
-
 
     class Person(firstName: String, lastName: String)
     val junior = new Person("Indiana", "Jones")

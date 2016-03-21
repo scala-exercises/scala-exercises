@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object TypeVariance extends FlatSpec with Matchers with exercise.Section {
 
-
   /** A traditional objection to static typing is that it has much syntactic overhead. Scala alleviates this by providing *type inference*.
     *
     * The classic method for type inference in functional programming languages is *Hindley-Milner*, and it was first employed in ML.
@@ -74,31 +73,31 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
   /** Scala's type system has to account for class hierarchies together with polymorphism. Class hierarchies allow the expression of subtype relationships. A central question that comes up when mixing OO with polymorphism is: if `T'` is a subclass of `T`, is `Container[T']` considered a subclass of `Container[T]`? Variance annotations allow you to express the following relationships between class hierarchies & polymorphic types:
     *
     * ####Covariant:
-    *    - `C[T']` is a subclass of `C[T]`
-    *    - Scala notation: `[+T]`
+    * - `C[T']` is a subclass of `C[T]`
+    * - Scala notation: `[+T]`
     *
     * ####Contravariant:
-    *    - `C[T]` is a subclass of `C[T']`
-    *    - Scala notation: `[-T]`
+    * - `C[T]` is a subclass of `C[T']`
+    * - Scala notation: `[-T]`
     *
     * ####Invariant:
-    *    - `C[T]` and `C[T']` are not related
-    *    - Scala notation: `[T]`
+    * - `C[T]` and `C[T']` are not related
+    * - Scala notation: `[T]`
     *
     *
     * That one probably blew your mind. Now if you assign a type to the instantiation that is different to the variable type, you'll have problems. You may want to take time after this koan to compare and contrast with the previous one.
     *
     * {{{
     * class MyContainer[A](a: A)(implicit manifest: scala.reflect.Manifest[A]) {
-    *   private[this] var item = a
+    * private[this] var item = a
     *
-    *   def get = item
+    * def get = item
     *
-    *   def set(a: A) {
-    *     item = a
-    *   }
+    * def set(a: A) {
+    *  item = a
+    * }
     *
-    *   def contents = manifest.runtimeClass.getSimpleName
+    * def contents = manifest.runtimeClass.getSimpleName
     * }
     *
     * // Uncomment the following line

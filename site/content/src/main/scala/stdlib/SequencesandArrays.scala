@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Scala provides a data structure, the array, which stores a fixed-size sequential collection of elements of the same type. An array is used to store a collection of data, but it is often more useful to think of an array as a collection of variables of the same type.
     *
     * A list can be converted to an array:
@@ -33,14 +32,14 @@ object SequencesandArrays extends FlatSpec with Matchers with exercise.Section {
   /** You can create a sequence from a for comprehension:
     */
   def fromForComprehensionSequencesandArrays(res0: List[Int]) {
-    val s = for (v <- 1 to 4) yield v
+    val s = for (v ← 1 to 4) yield v
     s.toList should be(res0)
   }
 
   /** You can create a sequence from a for comprehension with a condition:
     */
   def withConditionSequencesandArrays(res0: List[Int]) {
-    val s = for (v <- 1 to 10 if v % 3 == 0) yield v
+    val s = for (v ← 1 to 10 if v % 3 == 0) yield v
     s.toList should be(res0)
   }
 

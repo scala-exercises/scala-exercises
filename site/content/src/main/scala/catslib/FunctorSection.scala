@@ -37,11 +37,11 @@ import cats.std.list._
   * import cats._
   *
   * implicit val optionFunctor: Functor[Option] = new Functor[Option] {
-  *   def map[A,B](fa: Option[A])(f: A => B) = fa map f
+  * def map[A,B](fa: Option[A])(f: A => B) = fa map f
   * }
   *
   * implicit val listFunctor: Functor[List] = new Functor[List] {
-  *   def map[A,B](fa: List[A])(f: A => B) = fa map f
+  * def map[A,B](fa: List[A])(f: A => B) = fa map f
   * }
   * }}}
   *
@@ -51,9 +51,9 @@ import cats.std.list._
   *
   * {{{
   * implicit def function1Functor[In]: Functor[Function1[In, ?]] =
-  *   new Functor[Function1[In, ?]] {
-  *     def map[A,B](fa: In => A)(f: A => B): Function1[In,B] = fa andThen f
-  *   }
+  * new Functor[Function1[In, ?]] {
+  *  def map[A,B](fa: In => A)(f: A => B): Function1[In,B] = fa andThen f
+  * }
   * }}}
   *
   * This example demonstrates the use of the
@@ -68,9 +68,7 @@ import cats.std.list._
   * @param name functor
   */
 object FunctorSection extends FlatSpec with Matchers with exercise.Section {
-  /**
-    *
-    * = Using Functor =
+  /** = Using Functor =
     *
     * == map ==
     *
@@ -89,9 +87,7 @@ object FunctorSection extends FlatSpec with Matchers with exercise.Section {
     Functor[Option].map(None: Option[String])(_.length) should be(res1)
   }
 
-  /**
-    *
-    * = Derived methods =
+  /** = Derived methods =
     *
     * == lift ==
     *
@@ -102,16 +98,15 @@ object FunctorSection extends FlatSpec with Matchers with exercise.Section {
     * lenOption(Some("abcd"))
     * }}}
     *
-    *  We can now apply the `lenOption` function to `Option` instances.
+    * We can now apply the `lenOption` function to `Option` instances.
     *
     */
   def liftingToAFunctor(res0: Option[Int]) = {
-    val lenOption: Option[String] => Option[Int] = Functor[Option].lift(_.length)
+    val lenOption: Option[String] ⇒ Option[Int] = Functor[Option].lift(_.length)
     lenOption(Some("Hello")) should be(res0)
   }
 
-  /**
-    * == fproduct ==
+  /** == fproduct ==
     *
     * `Functor` provides an `fproduct` function which pairs a value with the
     * result of applying a function to that value.
@@ -126,9 +121,7 @@ object FunctorSection extends FlatSpec with Matchers with exercise.Section {
     product.get("awesome").getOrElse(0) should be(res2)
   }
 
-  /**
-    *
-    * == compose ==
+  /** == compose ==
     *
     * Functors compose! Given any functor `F[_]` and any functor `G[_]` we can
     * create a new functor `F[G[_]]` by composing them:
