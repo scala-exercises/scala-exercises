@@ -19,21 +19,23 @@ import scala.tools.nsc.doc.base.LinkTo
 import scala.tools.nsc.doc.base.LinkToExternal
 import scala.tools.nsc.doc.base.comment.Comment
 
-import cats._
 import cats.std.all._
 import cats.syntax.flatMap._
-import cats.syntax.semigroup._
 
 class SourceTextExtraction {
-  private lazy val docGlobal = new DocExtractionGlobal()
-  private lazy val commentFactory = CommentFactory(docGlobal)
-  private lazy val boundExtractRaw = SourceTextExtraction.extractRaw(docGlobal)(_)
-  private lazy val boundReadCode = MethodBodyReader.read(docGlobal)(_)
+  lazy val global = new DocExtractionGlobal()
+  private lazy val commentFactory = CommentFactory(global)
+  private lazy val boundExtractRaw = SourceTextExtraction.extractRaw(global)(_)
+  private lazy val boundReadCode = MethodBodyReader.read(global)(_)
 
-  import docGlobal._
+  import global._
 
-  class MethodBody private[SourceTextExtraction] (lazyCode: ⇒ String) {
+  class ExtractedMethod private[SourceTextExtraction] (
+      lazyCode:    ⇒ String,
+      lazyImports: ⇒ List[String]
+  ) {
     lazy val code = lazyCode
+    lazy val imports = lazyImports
   }
 
   class ExtractedComment private[SourceTextExtraction] (
@@ -45,13 +47,13 @@ class SourceTextExtraction {
   }
 
   case class Extracted(
-    comments:     Map[List[String], ExtractedComment],
-    methodBodies: Map[List[String], MethodBody]
+    comments: Map[List[String], ExtractedComment],
+    methods:  Map[List[String], ExtractedMethod]
   )
 
   def extractAll(sources: List[String]): Extracted = {
-    new docGlobal.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
-    val extractions = docGlobal.currentRun.units.map(_.body).map(boundExtractRaw)
+    new global.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
+    val extractions = global.currentRun.units.map(_.body).map(boundExtractRaw)
       .toList // only iterable once without this call
 
     def nameToString(name: Name) = name match {
@@ -59,31 +61,34 @@ class SourceTextExtraction {
       case TypeName(value) ⇒ value
     }
 
-    Extracted(
-      extractions >>= {
-        _.comments.map { kv ⇒
-          kv._1.map(nameToString) → new ExtractedComment(kv._2.raw, commentFactory.parse(kv._2))
-        }
-      } toMap,
-      extractions >>= {
-        _.methodExprs.map { kv ⇒ kv._1.map(nameToString) → new MethodBody(boundReadCode(kv._2)) }
-      } toMap
+    def expandPath[T](kv: (List[global.Name], T)): (List[String], T) = (kv._1.map(nameToString), kv._2)
+
+    val allComments = extractions >>= { _.comments.map(expandPath) } toMap
+    val allMethods = extractions >>= { _.methods.map(expandPath) } toMap
+    val allImports = (extractions >>= { _.imports.map(expandPath) }).groupBy(_._1).mapValues(_.map(_._2))
+
+    val extractedComments = allComments.mapValues(
+      v ⇒ new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
     )
 
-  }
-
-  def extractAllComments(sources: List[String]): Map[List[String], String] = {
-    new docGlobal.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
-    val extractions = docGlobal.currentRun.units.map(_.body).map(boundExtractRaw)
-
-    extractions.flatMap { extraction ⇒
-      extraction.comments.map {
-        case (k, v) ⇒ k.collect {
-          case TermName(value) ⇒ value
-          case TypeName(value) ⇒ value
-        } → v.raw
+    val extractedMethods = allMethods.map {
+      case (k, v) ⇒ {
+        lazy val imports = k
+          .scanLeft(Nil: List[String])((a, c) ⇒ c :: a)
+          .map(_.reverse)
+          .flatMap(allImports.get).flatten
+          .collect {
+            case (order, imp) if order < v._1 ⇒ showCode(imp)
+          }
+        k → new ExtractedMethod(boundReadCode(v._2), imports)
       }
-    }.toMap
+    }
+
+    Extracted(
+      extractedComments,
+      extractedMethods
+    )
+
   }
 
 }
@@ -95,8 +100,10 @@ object SourceTextExtraction {
 
   type Path[G <: Global] = List[G#Name]
   case class RawAcc[G <: Global](
-    comments:    List[(Path[G], G#DocComment)] = Nil,
-    methodExprs: List[(Path[G], G#Tree)]       = Nil
+    comments: List[(Path[G], (Int, G#DocComment))] = Nil,
+    methods:  List[(Path[G], (Int, G#Tree))]       = Nil,
+    imports:  List[(Path[G], (Int, G#Import))]     = Nil,
+    position: Int                                  = 0
   )
 
   def extractRaw[G <: Global](g: G)(rootTree: g.Tree): RawAcc[g.type] = {
@@ -105,31 +112,33 @@ object SourceTextExtraction {
     /** Define generic accumulating traversal that visits all the nodes of
       * interest.
       */
-    def traverse[A: Semigroup](
+    def traverse[A](
       trees0:          List[(Path[g.type], Tree)],
       acc0:            A,
-      visitDocComment: (Path[g.type], g.DocComment) ⇒ A,
-      visitMethodExpr: (Path[g.type], g.Tree) ⇒ A
+      visitDocComment: (Path[g.type], g.DocComment, A) ⇒ A,
+      visitMethodExpr: (Path[g.type], g.Tree, A) ⇒ A,
+      visitImport:     (Path[g.type], g.Import, A) ⇒ A
     ): A = {
 
       // a nested function so that we don't have to include visitDocComment and
       // visitMethodExpr as trailing params on each recursive call
-      @tailrec def traversal(trees: List[(Path[g.type], Tree)], acc: A): A = trees match {
+      @tailrec def traversal(trees: List[(Path[g.type], Int, Tree)], acc: A): A = trees match {
         case Nil ⇒ acc
-        case (path, tree) :: rs ⇒ tree match {
+        case (path, order, tree) :: rs ⇒ tree match {
 
           case DocDef(comment, moduleDef @ ModuleDef(mods, _, impl)) ⇒
             val nextPath = moduleDef.name :: path
             traversal(
-              impl.body.map(nextPath → _) ::: rs,
-              visitDocComment(nextPath.reverse, comment) |+| acc
+              impl.body.zipWithIndex.map { case (body, index) ⇒ (nextPath, index, body) } ::: rs,
+              visitDocComment(nextPath.reverse, comment, acc)
             )
 
+          // TODO: is this needed?
           case DocDef(comment, classDef @ ClassDef(mods, _, Nil, impl)) ⇒
             val nextPath = classDef.name :: path
             traversal(
-              impl.body.map(nextPath → _) ::: rs,
-              visitDocComment(nextPath.reverse, comment) |+| acc
+              impl.body.zipWithIndex.map { case (body, index) ⇒ (nextPath, index, body) } ::: rs,
+              visitDocComment(nextPath.reverse, comment, acc)
             )
 
           case DocDef(comment, q"def $tname(...$paramss): $tpt = $expr") ⇒
@@ -137,38 +146,47 @@ object SourceTextExtraction {
             val nextPathReversed = nextPath.reverse
             traversal(
               rs,
-              visitMethodExpr(nextPathReversed, expr) |+|
-                visitDocComment(nextPathReversed, comment) |+| acc
+              visitMethodExpr(nextPathReversed, expr, visitDocComment(nextPathReversed, comment, acc))
             )
 
           case moduleDef @ ModuleDef(mods, _, impl) ⇒
             val nextPath = moduleDef.name :: path
             traversal(
-              impl.body.map(nextPath → _) ::: rs,
+              impl.body.zipWithIndex.map { case (body, index) ⇒ (nextPath, index, body) } ::: rs,
               acc
             )
 
+          // TODO: is this needed?
           case classDef @ ClassDef(mods, _, Nil, impl) ⇒
             val nextPath = classDef.name :: path
             traversal(
-              impl.body.map(nextPath → _) ::: rs,
+              impl.body.zipWithIndex.map { case (body, index) ⇒ (nextPath, index, body) } ::: rs,
               acc
             )
 
+          /*
+          // TODO: can this be removed?
           case q"def $tname(...$paramss): $tpt = $expr" ⇒
             val nextPath = tname :: path
             traversal(
-              (nextPath → expr) :: rs,
+              (nextPath, 0, expr) :: rs,
               acc
             )
+          */
 
           case q"package $ref { ..$topstats }" ⇒
             val nextPath =
               if (ref.name == termNames.EMPTY_PACKAGE_NAME) path
               else ref.name :: path
             traversal(
-              topstats.map(nextPath → _) ::: rs,
+              topstats.zipWithIndex.map { case (body, index) ⇒ (nextPath, index, body) } ::: rs,
               acc
+            )
+
+          case imp: g.Import ⇒
+            traversal(
+              rs,
+              visitImport(path.reverse, imp, acc)
             )
 
           case _ ⇒
@@ -179,25 +197,33 @@ object SourceTextExtraction {
         }
       }
       // go
-      traversal(trees0, acc0)
-    }
-
-    implicit def accumulatorSemigroup[G <: Global] = new Semigroup[RawAcc[G]] {
-      override def combine(x: RawAcc[G], y: RawAcc[G]) =
-        RawAcc(
-          comments = x.comments ::: y.comments,
-          methodExprs = x.methodExprs ::: y.methodExprs
-        )
+      traversal(trees0.map(kv ⇒ (kv._1, 0, kv._2)), acc0)
     }
 
     traverse[RawAcc[g.type]](
       trees0 = List(Nil → rootTree),
       acc0 = RawAcc[g.type](Nil, Nil),
-      visitDocComment = { (path, comment) ⇒
-        RawAcc(comments = (path → comment) :: Nil)
+      visitDocComment = { (path, comment, acc) ⇒
+        acc.copy(
+          comments = (path, (acc.position, comment)) :: acc.comments,
+          position = acc.position + 1
+        )
+        //RawAcc(comments = (path → comment) :: Nil)
       },
-      visitMethodExpr = { (path, expr) ⇒
-        RawAcc(methodExprs = (path → expr) :: Nil)
+      visitMethodExpr = { (path, expr, acc) ⇒
+        acc.copy(
+          methods = (path, (acc.position, expr)) :: acc.methods,
+          position = acc.position + 1
+        )
+        //RawAcc(methods = (path → expr) :: Nil)
+      },
+      visitImport = { (path, imp, acc) ⇒
+        //println("looking at import " + imp + " at position " + acc.position)
+        //println("previous import processed " + acc.imports)
+        acc.copy(
+          imports = (path, (acc.position, imp)) :: acc.imports,
+          position = acc.position + 1
+        )
       }
     )
   }

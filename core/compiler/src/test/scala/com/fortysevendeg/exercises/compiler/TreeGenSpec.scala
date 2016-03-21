@@ -22,6 +22,7 @@ class TreeGenSpec extends FunSpec with Matchers {
           description = None,
           code = "code",
           qualifiedMethod = "foo.bar",
+          imports = Nil,
           explanation = None
         ),
         treeGen.makeExercise(
@@ -29,6 +30,7 @@ class TreeGenSpec extends FunSpec with Matchers {
           description = None,
           code = "code",
           qualifiedMethod = "foo.bar",
+          imports = Nil,
           explanation = None
         )
       )
@@ -37,12 +39,14 @@ class TreeGenSpec extends FunSpec with Matchers {
         treeGen.makeSection(
           name = "Section 1",
           description = Some("This is section 1"),
-          exerciseTerms = exercises.map(_._1)
+          exerciseTerms = exercises.map(_._1),
+          imports = Nil
         ),
         treeGen.makeSection(
           name = "Section 2",
           description = Some("This is section 2"),
-          exerciseTerms = Nil
+          exerciseTerms = Nil,
+          imports = Nil
         )
       )
 

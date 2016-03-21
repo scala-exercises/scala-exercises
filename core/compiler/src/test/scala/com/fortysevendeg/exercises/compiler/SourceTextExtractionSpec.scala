@@ -3,45 +3,67 @@ package compiler
 
 import org.scalatest._
 import scala.reflect.internal.util.BatchSourceFile
+import scala.tools.nsc.Global
 
 class SourceTextExtractionSpec extends FunSpec with Matchers {
 
-  val code = """
-    /** This is a comment that gets ignored */
-    package myPackage {
-      /** This is Foo */
-      class Foo { val value = 1 }
-      /** This is Bar */
-      object Bar {
-        /** This is Bar.bar */
-        def bar() {}
-        object fizz {
-          /** This is SubBar */
-          object SubBar {
-            /** This is SubBar.subbar */
-            def subbar() {}
+  describe("source text extraction") {
+
+    val code = """
+      /** This is a comment that gets ignored */
+      import scala.collection.immutable.{ Seq => Seqq }
+      package myPackage {
+        import scala.collection._
+        /** This is Foo */
+        class Foo { val value = 1 }
+        /** This is Bar */
+        object Bar {
+          /** This is Bar.bar */
+          def bar() {}
+          import Seqq.empty
+          object fizz {
+            /** This is SubBar */
+            object SubBar {
+              /** This is SubBar.subbar */
+              def subbar() {}
+            }
           }
         }
+        import scala.io._
       }
-    }
-    """
+      """
 
-  describe("doc comment searching") {
+    val res = new SourceTextExtraction().extractAll(code :: Nil)
 
     it("should find all doc comments on classes and objects") {
-
-      val res = new SourceTextExtraction().extractAllComments(code :: Nil)
-        .map { case (k, v) ⇒ k.mkString(".") → v }
-
-      res should equal(Map(
+      res.comments.map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(Map(
         "myPackage.Bar.fizz.SubBar" → "/** This is SubBar */",
         "myPackage.Bar.fizz.SubBar.subbar" → "/** This is SubBar.subbar */",
         "myPackage.Bar.bar" → "/** This is Bar.bar */",
         "myPackage.Bar" → "/** This is Bar */",
         "myPackage.Foo" → "/** This is Foo */"
       ))
-
     }
 
+    /*
+    it("should capture imports at static scopes") {
+      res.imports.map { case (k, v) ⇒ k.mkString(".") → v.imports.map(renderImport).mkString(";") } should equal(Map(
+        "myPackage.Bar" → "Seqq.{ empty }",
+        "" → "scala.collection.immutable.{ Seq => Seqq }"
+      ))
+    }
+    */
+
   }
+
+  def renderImportSelector(sel: Global#ImportSelector): String =
+    (sel.name, sel.rename) match {
+      case (a, b) if a == b ⇒ a.toString
+      case (a, b)           ⇒ s"$a => $b"
+    }
+
+  def renderImport(imp: Global#Import): String = {
+    s"""${imp.expr.toString}.{ ${imp.selectors.map(renderImportSelector).mkString(",")} }"""
+  }
+
 }

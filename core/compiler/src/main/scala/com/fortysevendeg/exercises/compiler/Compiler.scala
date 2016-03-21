@@ -39,32 +39,34 @@ case class Compiler() {
       symbol:   ClassSymbol,
       comment:  RenderedComment.Aux[Mode.Library],
       sections: List[SectionInfo],
-      // TODO: consider deriving color from a comment param
-      color: Option[String]
+      color:    Option[String]
     )
 
     case class SectionInfo(
       symbol:    ClassSymbol,
       comment:   RenderedComment.Aux[Mode.Section],
-      exercises: List[ExerciseInfo]
+      exercises: List[ExerciseInfo],
+      imports:   List[String]                      = Nil
     )
 
     case class ExerciseInfo(
       symbol:          MethodSymbol,
       comment:         RenderedComment.Aux[Mode.Exercise],
       code:            String,
-      qualifiedMethod: String
+      qualifiedMethod: String,
+      imports:         List[String]                       = Nil
     )
 
-    def enhanceDocError(symbol: Symbol)(error: String) =
-      s"""$error in ${internal.symbolToPath(symbol).mkString(".")}"""
+    def enhanceDocError(path: List[String])(error: String) =
+      s"""$error in ${path.mkString(".")}"""
 
     def maybeMakeLibraryInfo(
       library: exercise.Library
     ) = for {
       symbol ← internal.instanceToClassSymbol(library)
-      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Mode.Library])
-        .leftMap(enhanceDocError(symbol))
+      symbolPath = internal.symbolToPath(symbol)
+      comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
+        .leftMap(enhanceDocError(symbolPath))
       sections ← library.sections.toList
         .map(internal.instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
         .sequenceU
@@ -77,35 +79,43 @@ case class Compiler() {
 
     def maybeMakeSectionInfo(
       symbol: ClassSymbol
-    ) = for {
-      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Mode.Section])
-        .leftMap(enhanceDocError(symbol))
-      exercises ← symbol.toType.decls.toList
-        .filter(symbol ⇒
-          symbol.isPublic && !symbol.isSynthetic &&
-            symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
-        .map(_.asMethod)
-        .filterNot(_.isGetter)
-        .map(maybeMakeExerciseInfo)
-        .sequenceU
-    } yield SectionInfo(
-      symbol = symbol,
-      comment = comment,
-      exercises = exercises
-    )
+    ) = {
+      val symbolPath = internal.symbolToPath(symbol)
+      for {
+        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
+          .leftMap(enhanceDocError(symbolPath))
+        exercises ← symbol.toType.decls.toList
+          .filter(symbol ⇒
+            symbol.isPublic && !symbol.isSynthetic &&
+              symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
+          .map(_.asMethod)
+          .filterNot(_.isGetter)
+          .map(maybeMakeExerciseInfo)
+          .sequenceU
+      } yield SectionInfo(
+        symbol = symbol,
+        comment = comment,
+        exercises = exercises,
+        imports = Nil
+      )
+    }
 
     def maybeMakeExerciseInfo(
       symbol: MethodSymbol
-    ) = for {
-      comment ← (internal.resolveComment(symbol) >>= Comments.parseAndRender[Mode.Exercise])
-        .leftMap(enhanceDocError(symbol))
-      code ← internal.resolveMethodBody(symbol)
-    } yield ExerciseInfo(
-      symbol = symbol,
-      comment = comment,
-      code = code,
-      qualifiedMethod = internal.symbolToPath(symbol).mkString(".")
-    )
+    ) = {
+      val symbolPath = internal.symbolToPath(symbol)
+      for {
+        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Exercise])
+          .leftMap(enhanceDocError(symbolPath))
+        method ← internal.resolveMethod(symbolPath)
+      } yield ExerciseInfo(
+        symbol = symbol,
+        comment = comment,
+        code = method.code,
+        imports = method.imports,
+        qualifiedMethod = symbolPath.mkString(".")
+      )
+    }
 
     def oneline(msg: String) = {
       val msg0 = msg.lines.mkString(s"${Console.BLUE}\\n${Console.RESET}")
@@ -160,6 +170,7 @@ case class Compiler() {
                 description = exerciseInfo.comment.description,
                 code = exerciseInfo.code,
                 qualifiedMethod = exerciseInfo.qualifiedMethod,
+                imports = exerciseInfo.imports,
                 explanation = exerciseInfo.comment.explanation
               )
             }.unzip
@@ -168,7 +179,8 @@ case class Compiler() {
             treeGen.makeSection(
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
-              exerciseTerms = exerciseTerms
+              exerciseTerms = exerciseTerms,
+              imports = sectionInfo.imports
             )
 
           (sectionTerm, sectionTree :: exerciseTrees)
@@ -208,21 +220,17 @@ case class Compiler() {
       Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
         .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
 
-    def resolveComment(symbol: Symbol) /*: Xor[String, Comment] */ = {
-      val path = symbolToPath(symbol)
+    def resolveComment(path: List[String]) /*: Xor[String, Comment] */ =
       Xor.fromOption(
         sourceExtracted.comments.get(path).map(_.comment),
         s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
       )
-    }
 
-    def resolveMethodBody(symbol: Symbol): Xor[String, String] = {
-      val path = symbolToPath(symbol)
+    def resolveMethod(path: List[String]): Xor[String, SourceTextExtraction#ExtractedMethod] =
       Xor.fromOption(
-        sourceExtracted.methodBodies.get(path).map(_.code),
+        sourceExtracted.methods.get(path),
         s"""Unable to retrieve code for method ${path.mkString(".")}"""
       )
-    }
 
     def symbolToPath(symbol: Symbol): List[String] = {
       def process(symbol: Symbol): List[String] = {
