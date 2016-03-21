@@ -51,10 +51,10 @@
     },
     {
       "preparagraph": "Default arguments though are preferred to Implicit Function Parameters",
-      "code": "def howMuchCanIMake_?(hours: Int, amount: BigDecimal = 34, currencyName: String = \"Dollars\") =\n  (amount * hours).toString() + \" \" + currencyName\n\nhowMuchCanIMake_?(30) should be(__)\n\nhowMuchCanIMake_?(95, 95) should be(__)",
+      "code": "def howMuchCanIMake_?(hours: Int, amount: BigDecimal = 34, currencyName: String = \"Dollars\") =\n  (amount * hours).toString() + \" \" + currencyName\n\nhowMuchCanIMake_?(30) should be(__)\n\nhowMuchCanIMake_?(30, 95) should be(__)",
       "solutions": [
         "\"1020 Dollars\"",
-        "\"9025 Dollars\""
+        "\"2850 Dollars\""
       ],
       "postparagraph": ""
     }
