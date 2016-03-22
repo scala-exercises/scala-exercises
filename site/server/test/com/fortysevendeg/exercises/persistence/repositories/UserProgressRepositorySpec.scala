@@ -1,21 +1,19 @@
+package com.fortysevendeg.exercises.persistence.repositories
 
 /*
  * scala-exercises-server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package com.fortysevendeg.exercises.persistence.repositories
-
-import com.fortysevendeg.exercises.persistence.domain._
-
+import com.fortysevendeg.exercises.persistence.domain.{ UserCreation, SaveUserProgress }
 import com.fortysevendeg.exercises.support.{ ArbitraryInstances, DatabaseInstance }
 import doobie.imports._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-
 import scalaz.concurrent.Task
+import shared.User
 
 class UserProgressRepositorySpec
     extends PropSpec
@@ -25,106 +23,119 @@ class UserProgressRepositorySpec
     with DatabaseInstance
     with BeforeAndAfterAll {
 
-  implicit val trx: Transactor[Task] = transactor
+  implicit val trx: Transactor[Task] = databaseTransactor
+
   val repository = implicitly[UserProgressRepository]
   val userRepository = implicitly[UserRepository]
 
-  // Generators
-  implicitly[Arbitrary[UserCreation.Request]]
-  implicitly[Arbitrary[SaveUserProgress.Request]]
-
   override def beforeAll() = {
-    repository.deleteAll().transact(transactor).run
-    userRepository.deleteAll().transact(transactor).run
+    (for {
+      _ ← repository.deleteAll()
+      _ ← userRepository.deleteAll()
+    } yield ()).transact(trx).run
   }
 
-  property("new user progress records can be created") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      val userProgress = repository.create(prg.copy(user = user)).transact(transactor).run
+  def newUser(usr: UserCreation.Request): ConnectionIO[User] = for {
+    maybeUser ← userRepository.create(usr)
+  } yield maybeUser.toOption.get
 
-      userProgress shouldBe prg.asUserProgress(userProgress.id)
+  property("new user progress records can be created") {
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        progress = prg.copy(user = user)
+        userProgress ← repository.create(progress)
+      } yield userProgress.equals(progress.asUserProgress(userProgress.id))
+
+      tx.transact(trx).run shouldBe true
     }
   }
 
   property("existing user progress records can be updated") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request, someArgs: List[String]) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      val progress = prg.copy(user = user)
-      val updatedProgress = progress.copy(args = someArgs)
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request, someArgs: List[String]) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        progress = prg.copy(user = user)
+        _ ← repository.create(progress)
+        updatedProgress = progress.copy(args = someArgs)
+        userProgress ← repository.update(updatedProgress)
+      } yield userProgress.equals(updatedProgress.asUserProgress(userProgress.id))
 
-      repository.create(progress).transact(transactor).run
-      val userProgress = repository.update(updatedProgress).transact(transactor).run
-
-      userProgress shouldBe updatedProgress.asUserProgress(user.id)
+      tx.transact(trx).run shouldBe true
     }
   }
 
   property("user progress can be fetched by section") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      repository.create(prg.copy(user = user)).transact(transactor).run
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        progress = prg.copy(user = user)
+        userProgress ← repository.create(progress)
+        currentUserProgress ← repository.getExerciseEvaluations(user = user, libraryName = prg.libraryName, sectionName = prg.sectionName)
+      } yield currentUserProgress.size.equals(1) && currentUserProgress.head.equals(userProgress)
 
-      val currentUserProgress =
-        repository.getExerciseEvaluations(
-          user = user,
-          libraryName = prg.libraryName,
-          sectionName = prg.sectionName
-        ).transact(transactor).run
-
-      currentUserProgress.size shouldBe 1
-      currentUserProgress.head shouldBe prg.asUserProgress(user.id)
+      tx.transact(trx).run shouldBe true
     }
   }
 
   property("user progress can be fetched by exercise") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      repository.create(prg).transact(transactor).run
-
-      val currentUserProgress =
-        repository.getExerciseEvaluation(
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        progress = prg.copy(user = user)
+        userProgress ← repository.create(progress)
+        currentUserProgress ← repository.getExerciseEvaluation(
           user = user,
           libraryName = prg.libraryName,
           sectionName = prg.sectionName,
           method = prg.method,
           version = prg.version
-        ).transact(transactor).run
+        )
+      } yield currentUserProgress.fold(false)(up ⇒ up.equals(userProgress))
 
-      currentUserProgress.isDefined shouldBe true
-      currentUserProgress.get shouldBe prg.asUserProgress(user.id)
+      tx.transact(trx).run shouldBe true
     }
   }
 
   property("users progress can be queried by their ID") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      val userProgress = repository.create(prg).transact(transactor).run
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        progress = prg.copy(user = user)
+        userProgress ← repository.create(progress)
+        maybeUserProgress ← repository.findById(userProgress.id)
+      } yield maybeUserProgress.fold(false)(up ⇒ {
+        up.equals(userProgress)
+      })
 
-      val maybeUserProgress = repository.findById(userProgress.id).transact(transactor).run
-      maybeUserProgress.fold(false)(up ⇒ {
-        up == prg.asUserProgress(user.id)
-      }) shouldBe true
+      tx.transact(trx).run shouldBe true
     }
+
   }
 
   property("user progress can be deleted") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      val userProgress = repository.create(prg).transact(transactor).run
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        userProgress ← repository.create(prg.copy(user = user))
+        _ ← repository.delete(userProgress.id)
+        maybeProgress ← repository.findById(userProgress.id)
+      } yield !maybeProgress.isDefined
 
-      repository.delete(userProgress.id).transact(transactor).run
-      repository.findById(userProgress.id).transact(transactor).run shouldBe empty
+      tx.transact(trx).run shouldBe true
     }
   }
 
   property("all user progress records can be deleted") {
-    forAll { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
-      val user = userRepository.create(usr).transact(transactor).run.toOption.get
-      val userProgress = repository.create(prg).transact(transactor).run
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      val tx: ConnectionIO[Boolean] = for {
+        user ← newUser(usr)
+        userProgress ← repository.create(prg.copy(user = user))
+        _ ← repository.deleteAll()
+        maybeProgress ← repository.findById(userProgress.id)
+      } yield !maybeProgress.isDefined
 
-      repository.deleteAll().transact(transactor).run
-      repository.findById(userProgress.id).transact(transactor).run shouldBe empty
+      tx.transact(trx).run shouldBe true
     }
   }
 }

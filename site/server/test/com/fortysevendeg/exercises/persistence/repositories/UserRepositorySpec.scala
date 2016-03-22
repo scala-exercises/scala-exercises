@@ -23,7 +23,8 @@ class UserRepositorySpec
     with DatabaseInstance
     with BeforeAndAfterAll {
 
-  implicit val trx: Transactor[Task] = transactor
+  implicit val transactor: Transactor[Task] = databaseTransactor
+
   val repository = implicitly[UserRepository]
   override def beforeAll() =
     repository.deleteAll.transact(transactor).run
