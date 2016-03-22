@@ -48,6 +48,17 @@ object Client {
         EvaluationResult(true, e.method)
       else
         EvaluationResult(false, e.method, r.responseText)
-    }).recover({ case exc: AjaxException ⇒ EvaluationResult(false, e.method, exc.xhr.responseText) })
+    }).recover({
+      case exc: AjaxException ⇒ {
+        EvaluationResult(
+          false,
+          e.method,
+          if (exc.isTimeout)
+            "We couldn't evaluate your exercise. You may be experiencing internet connectivity issues."
+          else
+            exc.xhr.responseText
+        )
+      }
+    })
   }
 }
