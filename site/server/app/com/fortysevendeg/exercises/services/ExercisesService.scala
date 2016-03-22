@@ -63,7 +63,7 @@ object ExercisesService extends RuntimeSharedConversions {
     }
 
     val imports = for {
-      
+
       runtimeLibrary ← runtimeLibraries.find(_.name == evaluation.libraryName)
         .toRightXor(s"Unable to find library ${evaluation.libraryName} when " +
           s"attempting to evaluate method ${evaluation.method}")
