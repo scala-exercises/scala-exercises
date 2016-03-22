@@ -5,13 +5,14 @@
 code {
     color: $gray-dark;
     background-color: $pre-bg;
+    
 }
 
 // Blocks of code
 pre {
     display: block;
     padding: $line-height-computed;
-    font-size: $font-size-base;
+    font-size: 14px;
     margin: {
         top: ($line-height-computed);
         bottom: ($line-height-computed);
@@ -26,8 +27,7 @@ pre {
     code.exercise-code {
         input {
             background-color: $pre-bg;
-            font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 14px;
             text-align: left;
             line-height: 11px;
             vertical-align: middle;
