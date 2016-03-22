@@ -1,3 +1,4 @@
+
 /*
  * scala-exercises-sbt-exercise
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
@@ -38,15 +39,13 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   override def trigger = noTrigger
 
   val CompileMain = config("compile-main")
-  val CompileExercisesSource = config("compile-exercises-source") extend CompileMain
   val CompileExercises = config("compile")
 
-  val generateExercises = TaskKey[List[(String, String)]]("pregen-exercises")
+  val generateExercises = TaskKey[List[(String, String)]]("generate-exercises")
 
   object autoImport {
     def CompileMain = ExerciseCompilerPlugin.CompileMain
     def CompileExercises = ExerciseCompilerPlugin.CompileExercises
-    def CompileExercisesSource = ExerciseCompilerPlugin.CompileExercisesSource
   }
 
   // format: OFF
@@ -57,17 +56,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       Defaults.configTasks ++
       redirSettings
     ) ++
-    inConfig(CompileExercisesSource)(
-      // this configuration compiles code in src/main/exercises
-      Defaults.compileSettings ++
-      Defaults.compileInputsSettings ++
-      redirSettings ++
-      Seq(
-        // adjusting source directory to be src/main/exercises
-        scalaSource := sourceDirectory.value / "exercises")
-    ) ++
     inConfig(CompileExercises)(
-      // this configuration compiles source code we generate in CompileExercisesSource
+      // this configuration compiles source code we generate in CompileMain
       Defaults.compileSettings ++
       Defaults.compileInputsSettings ++
       Defaults.configTasks ++ Seq(
@@ -76,7 +66,6 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       products := {
         products.value ++
-        (products in CompileExercisesSource).value ++
         (products in CompileMain).value
       },
 
@@ -96,8 +85,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       defaultConfiguration := Some(CompileMain),
 
       // library dependences have to be declared at the root level
-      ivyConfigurations   := overrideConfigs(CompileMain, CompileExercisesSource, CompileExercises)(ivyConfigurations.value),
-      libraryDependencies += "com.47deg" %% "definitions" % Meta.version % CompileExercisesSource.name,
+      ivyConfigurations   := overrideConfigs(CompileMain, CompileExercises)(ivyConfigurations.value),
+      libraryDependencies += "com.47deg" %% "definitions" % Meta.version % CompileMain.name,
       libraryDependencies += "com.47deg" %% "runtime" % Meta.version % CompileExercises.name
     )
   // format: ON
@@ -152,12 +141,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     val log = streams.value.log
     log.info("compiling scala exercises")
 
-    lazy val analysisIn = (compile in CompileExercisesSource).value
+    lazy val analysisIn = (compile in CompileMain).value
 
     lazy val libraryNames = discoverLibraries(analysisIn)
     lazy val sectionNames = discoverSections(analysisIn)
 
-    val libraryClasspath = Attributed.data((fullClasspath in CompileExercisesSource).value)
+    val libraryClasspath = Attributed.data((fullClasspath in CompileMain).value)
 
     val loader = ClasspathUtilities.toLoader(
       (Meta.compilerClasspath ++ libraryClasspath).distinct,
