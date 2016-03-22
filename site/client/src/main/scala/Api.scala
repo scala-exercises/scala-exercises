@@ -54,7 +54,7 @@ object Client {
           false,
           e.method,
           if (exc.isTimeout)
-            "We couldn't evaluate the exercise, please try again in a few minutes."
+            "We couldn't evaluate your exercise. You may be experiencing internet connectivity issues."
           else
             exc.xhr.responseText
         )
