@@ -121,15 +121,15 @@ import de.heikoseeberger.sbtheader.HeaderPlugin
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "definitions") % CompileExercisesSource)
+  .dependsOn(ProjectRef(file("../core"), "definitions") % CompileMain)
   .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
     Seq(
-      "org.scalatest" %% "scalatest" % "2.2.4" % CompileExercisesSource,
-      "com.chuusai" %% "shapeless" % "2.2.5" % CompileExercisesSource
+      "org.scalatest" %% "scalatest" % "2.2.4" % CompileMain,
+      "com.chuusai" %% "shapeless" % "2.2.5" % CompileMain
     ) ++
-    compilelibs(
+    testlibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % scalazVersion,
       "org.scalacheck" %% "scalacheck" % "1.12.5",
@@ -137,6 +137,5 @@ lazy val content = (project in file("content"))
     )
   )
   .settings(
-    HeaderPlugin.settingsFor(
-      CompileMain, CompileExercisesSource)
+    HeaderPlugin.settingsFor(CompileMain)
   )
