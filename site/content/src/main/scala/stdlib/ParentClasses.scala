@@ -41,7 +41,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * abstract class Soldier(val firstName: String, val lastName: String) {}
     *
-    * // if you uncomment this line, if will fail compilation
+    * // if you uncomment this line, it will fail compilation
     * //val soldier = new Soldier
     * }}}
     *
