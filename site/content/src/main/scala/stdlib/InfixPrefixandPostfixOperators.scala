@@ -1,6 +1,7 @@
 package stdlib
 
 import org.scalatest._
+import scala.language.postfixOps
 
 /** @param name infix_prefix_and_postfix_operators
   *

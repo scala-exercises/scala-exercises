@@ -9,6 +9,14 @@ object ShapelessLib extends exercise.Library {
 
   override def sections = List(
     PolyExercises,
-    HListExercises
+    HListExercises,
+    TuplesExercises,
+    ArityExercises,
+    HMapExercises,
+    SingletonExercises,
+    SingletonTypedSymbolsExercises,
+    ExtensibleRecordsExercises,
+    CoproductExercises,
+    GenericExercises
   )
 }

@@ -18,7 +18,9 @@ object addSize extends Poly2 {
     }
 
 
-/** shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
+/** 
+  * 
+  * shapeless provides a comprehensive Scala `HList` which has many features not shared by other HList implementations.
   *
   * @param name heterogenous_lists
   */
@@ -71,7 +73,7 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
   }
 
 
-  /** It also has a zipper for traversal and persistent update
+  /** It also has a zipper for traversal and persistent update,
     */
   def exerciseZipper(res0 : Int, res1 : (String, Int), res2 : Double, res3 : Int, res4 : String, res5 : String, res6 : Double) = {
     import syntax.zipper._
@@ -82,4 +84,79 @@ object HListExercises extends FlatSpec with Matchers with exercise.Section {
     l.toZipper.right.delete.reify should be (res3 :: res4 :: res5 :: res6 :: HNil)
 
   }
+
+  private[this] object CovariantHelper {
+
+    trait Fruit
+    case class Apple() extends Fruit
+    case class Pear() extends Fruit
+
+    type FFFF = Fruit :: Fruit :: Fruit :: Fruit :: HNil
+    type APAP = Apple :: Pear :: Apple :: Pear :: HNil
+
+    val a : Apple = Apple()
+    val p : Pear = Pear()
+     
+    val apap : APAP = a :: p :: a :: p :: HNil
+  }
+
+  import CovariantHelper._
+
+  /** It is covariant,
+    * {{{
+    *  object CovariantHelper {
+    *    
+    *  trait Fruit
+    *  case class Apple() extends Fruit
+    *  case class Pear() extends Fruit
+    * 
+    *  type FFFF = Fruit :: Fruit :: Fruit :: Fruit :: HNil
+    *  type APAP = Apple :: Pear :: Apple :: Pear :: HNil
+    * 
+    *  val a : Apple = Apple()
+    *  val p : Pear = Pear()
+    * 
+    *  val apap : APAP = a :: p :: a :: p :: HNil
+    * 
+    * }
+    * }}}
+    */
+  def exerciseCovariant(res0 : Boolean) = {
+    import scala.reflect.runtime.universe._
+
+    implicitly[TypeTag[APAP]].tpe.typeConstructor <:< typeOf[FFFF] should be (res0)
+  }
+
+  /** And it has a unify operation which converts it to an HList of elements of the least upper bound of the original types,
+    */
+  def exerciseUnify(res0 : Boolean, res1 : Boolean) = {  
+    apap.isInstanceOf[FFFF] should be (res0) 
+    apap.unify.isInstanceOf[FFFF] should be (res1) 
+  }
+
+  /** It supports conversion to an ordinary Scala List of elements of the least upper bound of the original types,
+    */
+  def exerciseConversionToList(res0 : List[Fruit]) = {
+    apap.toList should be (res0)
+  }
+
+  /** And it has a Typeable type class instance (see below), allowing, eg. vanilla List[Any]'s or HList's with 
+    * elements of type Any to be safely cast to precisely typed HList's.
+    */
+  def exerciseTypeable(res0 : Option[APAP]) = {
+    import syntax.typeable._
+
+    val ffff : FFFF = apap.unify
+    val precise: Option[APAP] = ffff.cast[APAP]
+
+    precise should be (res0)
+
+  /** These last three features make this HList dramatically more practically useful than HList's are typically thought to be: 
+    * normally the full type information required to work with them is too fragile to cross subtyping or I/O boundaries. 
+    * This implementation supports the discarding of precise information where necessary. 
+    * (eg. to serialize a precisely typed record after construction), and its later reconstruction. 
+    * (eg. a weakly typed deserialized record with a known schema can have it's precise typing reestabilished).
+    */
+  }
+
 }
