@@ -68,7 +68,8 @@ lazy val server = (project in file("server"))
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
       "org.scalacheck" %% "scalacheck" % "1.12.5",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1",
-      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion)
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion) :+
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   ))
 
 
