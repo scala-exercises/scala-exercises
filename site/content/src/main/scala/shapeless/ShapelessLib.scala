@@ -18,6 +18,7 @@ object ShapelessLib extends exercise.Library {
     ExtensibleRecordsExercises,
     CoproductExercises,
     GenericExercises,
-    LensesExercises
+    LensesExercises,
+    AutoTypeClassExercises
   )
 }
