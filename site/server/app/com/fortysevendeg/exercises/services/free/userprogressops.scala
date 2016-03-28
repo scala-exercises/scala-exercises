@@ -10,6 +10,7 @@ import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports.Transactor
 import shared._
 
+import cats.Monad
 import cats.free.Free
 import cats.free.Inject
 import cats.std.list._
@@ -34,7 +35,14 @@ final case class UpdateUserProgress(
 /** Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
   * Coproduct
   */
-class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseOps[F], DBO: DBOps[F], T: Transactor[Task]) {
+class UserProgressOps[F[_]](
+    implicit
+    I:   Inject[UserProgressOp, F],
+    EO:  ExerciseOps[F],
+    DBO: DBOps[F],
+    T:   Transactor[Task],
+    FM:  Monad[Free[F, ?]]
+) {
 
   def saveUserProgress(userProgress: SaveUserProgress.Request): Free[F, UserProgress] =
     Free.inject[UserProgressOp, F](UpdateUserProgress(userProgress))
@@ -63,7 +71,7 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
 
   def getCompletedSectionCount(user: User, library: Library): Free[F, Int] = {
     for {
-      finishedSections ← Free.freeMonad[F].sequence(
+      finishedSections ← FM.sequence(
         library.sections.map(s ⇒ {
           for {
             solvedExercises ← getSolvedExerciseCount(user, library.name, s.name)
@@ -76,7 +84,7 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
   def fetchUserProgress(user: User): Free[F, OverallUserProgress] = {
     for {
       allLibraries ← EO.getLibraries
-      libraryProgress ← Free.freeMonad[F].sequence(allLibraries.map(l ⇒ {
+      libraryProgress ← FM.sequence(allLibraries.map(l ⇒ {
         for {
           completedSections ← getCompletedSectionCount(user, l)
         } yield OverallUserProgressItem(
@@ -114,7 +122,7 @@ class UserProgressOps[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseO
     for {
       maybeLib ← EO.getLibrary(libraryName)
       libSections = maybeLib.fold(Nil: List[shared.Section])(_.sections)
-      sectionProgress ← Free.freeMonad[F].sequence(
+      sectionProgress ← FM.sequence(
         libSections.map(s ⇒ {
           for {
             solvedExercises ← getSolvedExerciseCount(user, libraryName, s.name)
