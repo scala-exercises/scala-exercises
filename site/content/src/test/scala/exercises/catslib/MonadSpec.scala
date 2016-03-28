@@ -33,7 +33,7 @@ class MonadSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         MonadSection.monadFlatmap _,
-        List(42) :: HNil
+        List(1, 1, 2, 2, 3, 3) :: HNil
       )
     )
   }

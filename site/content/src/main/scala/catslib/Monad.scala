@@ -83,7 +83,7 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     import cats._
     import cats.std.list._
 
-    Monad[List].pure(42) should be(res0)
+    Monad[List].flatMap(List(1, 2, 3))(x => List(x, x)) should be(res0)
   }
 
   /**
