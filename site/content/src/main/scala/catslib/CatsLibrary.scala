@@ -9,8 +9,12 @@ object CatsLibrary extends exercise.Library {
   override def color = Some("#4CAAF6")
 
   override def sections = List(
-    FunctorSection,
+    FunctorSection,    
+    ApplySection,
+    ApplicativeSection,
+    FoldableSection,
     IdentitySection,
-    XorSection
+    XorSection,
+    ValidatedSection
   )
 }
