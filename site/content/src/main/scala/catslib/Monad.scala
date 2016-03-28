@@ -25,7 +25,6 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    *
     * = Monad instances =
     *
     * If `Applicative` is already present and `flatten` is well-behaved,
