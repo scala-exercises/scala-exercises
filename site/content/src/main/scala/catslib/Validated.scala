@@ -36,7 +36,7 @@ import ValidatedHelpers._
   *
   * Enter `Validated`.
   *
-  * ## Parallel validation ##
+  * = Parallel validation =
   *
   * Our goal is to report any and all errors across independent bits of data. For instance, when we ask for several
   * pieces of configuration, each configuration field can be validated separately from one another. How then do we
@@ -201,7 +201,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
 
   /**
     *
-    * ## Apply ##
+    * = Apply =
     *
     * Our `parallelValidate` function looks awfully like the `Apply#map2` function.
     *
@@ -264,7 +264,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     *
     * We can now rewrite validations in terms of `Apply`.
     *
-    * ## Of `flatMap`s and `Xor`s ##
+    * = Of `flatMap`s and `Xor`s ==
     *
     * `Option` has `flatMap`, `Xor` has `flatMap`, where's `Validated`'s? Let's try to implement it - better yet,
     * let's implement the `Monad` type class.
@@ -310,11 +310,11 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * have to override `ap` to get the behavior we want. But then the behavior of `flatMap` would be inconsistent with
     * that of `ap`, not good. Therefore, `Validated` has only an `Applicative` instance.
     *
-    * ## Sequential Validation ##
+    * = Sequential Validation =
     *
     * If you do want error accumulation but occasionally run into places where you sequential validation is needed, then `Validated` provides a couple methods that may be helpful.
     *
-    * ### `andThen` ###
+    * == `andThen` ===
     *
     * The `andThen` method is similar to `flatMap` (such as `Xor.flatMap`). In the cause of success, it passes the valid value into a function that returns a new `Validated` instance.
     *
@@ -339,7 +339,7 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ### `withXor` ###
+    * == `withXor` ==
     *
     * The `withXor` method allows you to temporarily turn a `Validated` instance into an `Xor` instance and apply it to a function.
     *
