@@ -8,16 +8,20 @@ package com.fortysevendeg.exercises.persistence.queries
 import com.fortysevendeg.exercises.persistence.domain.{ UserQueries ⇒ Q }
 import com.fortysevendeg.exercises.persistence.repositories.UserRepository._
 import com.fortysevendeg.exercises.support.DatabaseInstance
+import doobie.imports._
 import doobie.contrib.specs2.analysisspec.AnalysisSpec
 import doobie.util.query.Query
 import doobie.util.update.Update
 import org.specs2.mutable.Specification
 import shared.User
+import scalaz.concurrent.Task
 
 class UserQueriesSpec
     extends Specification
     with AnalysisSpec
     with DatabaseInstance {
+
+  implicit override val transactor: Transactor[Task] = databaseTransactor
 
   check(Query[Unit, User](Q.all))
   check(Query[Long, User](Q.findById))
