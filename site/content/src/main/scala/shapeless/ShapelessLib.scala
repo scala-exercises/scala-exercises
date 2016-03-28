@@ -17,6 +17,7 @@ object ShapelessLib extends exercise.Library {
     SingletonTypedSymbolsExercises,
     ExtensibleRecordsExercises,
     CoproductExercises,
-    GenericExercises
+    GenericExercises,
+    LensesExercises
   )
 }
