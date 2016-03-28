@@ -6,7 +6,6 @@ import cats._
 import cats.std.all._
 
 /**
-  * # Applicative #
   *
   * `Applicative` extends `Apply` by adding a single method, `pure`:
   *
@@ -47,7 +46,7 @@ object ApplicativeSection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ## Applicative Functors & Monads ##
+    * = Applicative Functors & Monads =
     *
     * `Applicative` is a generalization of `Monad`, allowing expression
     * of effectful computations in a pure functional way.

@@ -45,7 +45,7 @@ import cats.syntax.cartesian._
   */
 object ApplySection extends FlatSpec with Matchers with exercise.Section {
   /**
-    * ### map ###
+    * = map =
     *
     * Since `Apply` extends `Functor`, we can use the `map` method from `Functor`:
     */
@@ -62,7 +62,7 @@ object ApplySection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ### compose ###
+    * = compose =
     *
     * And like functors, `Apply` instances also compose:
     */
@@ -73,7 +73,7 @@ object ApplySection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ### ap ###
+    * = ap =
     *
     * The `ap` method is a method that `Functor` does not have:
     */
@@ -86,7 +86,7 @@ object ApplySection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ### ap2, ap3, etc ###
+    * = ap2, ap3, etc =
     *
     * `Apply` also offers variants of `ap`. The functions `apN` (for `N` between `2` and `22`)
     *  accept `N` arguments where `ap` accepts `1`.
@@ -105,7 +105,7 @@ object ApplySection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ### map2, map3, etc ###
+    * = map2, map3, etc =
     *
     * Similarly, `mapN` functions are available:
     *
@@ -117,7 +117,7 @@ object ApplySection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ### tuple2, tuple3, etc ###
+    * = tuple2, tuple3, etc =
     *
     * Similarly, `tupleN` functions are available:
     *
@@ -128,7 +128,7 @@ object ApplySection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * ## apply builder syntax ##
+    * = apply builder syntax =
     *
     * The `|@|` operator offers an alternative syntax for the higher-arity `Apply`
     * functions (`apN`, `mapN` and `tupleN`).
