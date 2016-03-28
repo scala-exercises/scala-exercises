@@ -135,7 +135,8 @@ lazy val content = (project in file("content"))
       "org.scalaz" %% "scalaz-core" % scalazVersion,
       "org.scalacheck" %% "scalacheck" % "1.12.5",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1"
-    )
+    ) :+
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   )
   .settings(
     HeaderPlugin.settingsFor(CompileMain)
