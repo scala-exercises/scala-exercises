@@ -25,22 +25,22 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
   }
 
   /**
-    * 
+    *
     * = Monad instances =
-    * 
+    *
     * If `Applicative` is already present and `flatten` is well-behaved,
     * extending the `Applicative` to a `Monad` is trivial. To provide evidence
     * that a type belongs in the `Monad` type class, cats' implementation
     * requires us to provide an implementation of `pure` (which can be reused
     * from `Applicative`) and `flatMap`.
-    * 
+    *
     * We can use `flatten` to define `flatMap`: `flatMap` is just `map`
     * followed by `flatten`. Conversely, `flatten` is just `flatMap` using
     * the identity function `x => x` (i.e. `flatMap(_)(x => x)`).
-    * 
+    *
     * {{{
     * import cats._
-    * 
+    *
     * implicit def optionMonad(implicit app: Applicative[Option]) =
     *   new Monad[Option] {
     *     // Define flatMap using Option's flatten method
@@ -50,9 +50,9 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     *     override def pure[A](a: A): Option[A] = app.pure(a)
     *   }
     * }}}
-    * 
+    *
     * Cats already provides a `Monad` instance of `Option`.
-    * 
+    *
     */
   def monadInstances(res0: Option[Int]) = {
     import cats._
@@ -63,18 +63,18 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
 
   /**
     * = flatMap =
-    * 
+    *
     * `flatMap` is often considered to be the core function of `Monad`, and cats
     * follows this tradition by providing implementations of `flatten` and `map`
     * derived from `flatMap` and `pure`.
-    * 
+    *
     * {{{
     * implicit val listMonad = new Monad[List] {
     *   def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
     *   def pure[A](a: A): List[A] = List(a)
     * }
     * }}}
-    * 
+    *
     * Part of the reason for this is that name `flatMap` has special significance in
     * scala, as for-comprehensions rely on this method to chain together operations
     * in a monadic context.
@@ -103,19 +103,19 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
 
   /**
     * = Composition =
-    * 
+    *
     * Unlike `Functor`s and `Applicative`s
     * not all `Monad`s compose. This means that even if `M[_]` and `N[_]` are
     * both `Monad`s, `M[N[_]]` is not guaranteed to be a `Monad`.
-    * 
+    *
     * However, many common cases do. One way of expressing this is to provide
     * instructions on how to compose any outer monad (`F` in the following
     * example) with a specific inner monad (`Option` in the following
     * example).
-    * 
+    *
     * {{{
     * case class OptionT[F[_], A](value: F[Option[A]])
-    * 
+    *
     * implicit def optionTMonad[F[_]](implicit F : Monad[F]) = {
     *   new Monad[OptionT[F, ?]] {
     *     def pure[A](a: A): OptionT[F, A] = OptionT(F.pure(Some(a)))
@@ -129,13 +129,14 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     *   }
     * }
     * }}}
-    * 
+    *
     * This sort of construction is called a monad transformer. Cats already provides
     * a monad transformer for `Option` called `OptionT`.
-    * 
+    *
     */
   def monadComposition(res0: List[Option[Int]]) = {
+    import cats.std.list._
+
     optionTMonad[List].pure(42) should be(OptionT(res0))
   }
-
 }

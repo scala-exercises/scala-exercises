@@ -46,4 +46,13 @@ class MonadSpec extends Spec with Checkers {
       )
     )
   }
+
+  def `monad composition` = {
+    check(
+      Test.testSuccess(
+        MonadSection.monadComposition _,
+        List(Option(42)) :: HNil
+      )
+    )
+  }
 }
