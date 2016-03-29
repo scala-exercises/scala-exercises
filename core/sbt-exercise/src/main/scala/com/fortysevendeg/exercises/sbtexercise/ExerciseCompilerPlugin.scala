@@ -1,4 +1,3 @@
-
 /*
  * scala-exercises-sbt-exercise
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
@@ -85,9 +84,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       defaultConfiguration := Some(CompileMain),
 
       // library dependences have to be declared at the root level
-      ivyConfigurations   := overrideConfigs(CompileMain, CompileExercises)(ivyConfigurations.value),
-      libraryDependencies += "com.47deg" %% "definitions" % Meta.version % CompileMain.name,
-      libraryDependencies += "com.47deg" %% "runtime" % Meta.version % CompileExercises.name
+      ivyConfigurations   :=
+        overrideConfigs(CompileMain, CompileExercises)(ivyConfigurations.value),
+      libraryDependencies +=
+        "com.47deg" %% "definitions" % Meta.version % CompileMain.name,
+      libraryDependencies +=
+        "com.47deg" %% "runtime" % Meta.version % CompileExercises.name
     )
   // format: ON
 
@@ -104,7 +106,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     * back to `src/main/[scala|test|...]`.
     */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
-    (key in ThisScope.copy(config = Global), configuration) { (src, conf) ⇒ src / "main" }
+    (key in ThisScope.copy(config = Global), configuration) {
+      (src, conf) ⇒ src / "main"
+    }
 
   // for most of the work below, a captured error is an error message and/or a
   // throwable value
@@ -133,7 +137,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   // reflection is used to invoke a java-style interface to the exercise compiler
   private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
   private type COMPILER = {
-    def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String]
+    def compile(
+      library: AnyRef,
+      sources: Array[String], targetPackage: String
+    ): Array[String]
   }
 
   // worker task that invokes the exercise compiler
@@ -159,10 +166,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
     def loadLibraryModule(name: String) = for {
       loadedClass ← catching(loader.loadClass(name + "$"))(s"${name} not found")
-      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
+      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(
+        s"${name} must be defined as an object"
+      )
     } yield loadedModule
 
-    def invokeCompiler(compiler: COMPILER, library: AnyRef): Xor[Err, (String, String)] =
+    def invokeCompiler(
+      compiler: COMPILER, library: AnyRef
+    ): Xor[Err, (String, String)] =
       Xor.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).toSet
           .flatMap(analysisIn.relations.definesClass)
@@ -179,14 +190,20 @@ object ExerciseCompilerPlugin extends AutoPlugin {
           }
       } leftMap (e ⇒ e: Err) >>= {
         _ match {
-          case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
-          case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler": Err)
+          case moduleName :: moduleSource :: Nil ⇒
+            Xor.right(moduleName → moduleSource)
+          case _ ⇒
+            Xor.left("Unexpected return value from exercise compiler": Err)
         }
       }
 
     val result = for {
-      compilerClass ← catching(loader.loadClass(COMPILER_CLASS))("Unable to find exercise compiler class")
-      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])("Unable to create instance of exercise compiler")
+      compilerClass ← catching(loader.loadClass(COMPILER_CLASS))(
+        "Unable to find exercise compiler class"
+      )
+      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
+        "Unable to create instance of exercise compiler"
+      )
       libraries ← libraryNames.map(loadLibraryModule).toList.sequenceU
       result ← libraries.map(invokeCompiler(compiler, _)).sequenceU
     } yield result
@@ -227,7 +244,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     Seq(resourceFile)
   }
 
-  private[this] def captureStdStreams[T](fOut: (String) ⇒ Unit, fErr: (String) ⇒ Unit)(thunk: ⇒ T): T = {
+  private[this] def captureStdStreams[T](
+    fOut: (String) ⇒ Unit, fErr: (String) ⇒ Unit
+  )(thunk: ⇒ T): T = {
     val originalOut = System.out
     val originalErr = System.err
     System.setOut(new PrintStream(new LineByLineOutputStream(fOut), true))
@@ -238,12 +257,15 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     res
   }
 
-  private[this] class LineByLineOutputStream(f: (String) ⇒ Unit) extends OutputStream {
+  /** Output stream that captures an output on a line by line basis.
+    * @param f the function to invoke with each line
+    */
+  private[this] class LineByLineOutputStream(
+      f: (String) ⇒ Unit
+  ) extends OutputStream {
     val ls = System.getProperty("line.separator")
     val buf = new ArrayBuffer[Byte](200)
-    override def write(b: Int) = if (b != 0) {
-      buf += b.toByte
-    }
+    override def write(b: Int) = if (b != 0) buf += b.toByte
     override def flush() {
       if (!buf.isEmpty) {
         val message = new String(buf.toArray)
