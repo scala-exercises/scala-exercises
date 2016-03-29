@@ -78,14 +78,14 @@ object MonoidSection extends FlatSpec with Matchers with exercise.Section {
     */
   def tupleMonoid(res0: (Int, String)) = {
     implicit def tupleMonoid[A : Monoid, B : Monoid]: Monoid[(A, B)] =
-       new Monoid[(A, B)] {
-         def combine(x: (A, B), y: (A, B)): (A, B) = {
-           val (xa, xb) = x
-           val (ya, yb) = y
-           (Monoid[A].combine(xa, ya), Monoid[B].combine(xb, yb))
-         }
-         def empty: (A, B) = (Monoid[A].empty, Monoid[B].empty)
-       }
+      new Monoid[(A, B)] {
+        def combine(x: (A, B), y: (A, B)): (A, B) = {
+          val (xa, xb) = x
+          val (ya, yb) = y
+          (Monoid[A].combine(xa, ya), Monoid[B].combine(xb, yb))
+        }
+        def empty: (A, B) = (Monoid[A].empty, Monoid[B].empty)
+      }
 
     val l = List(1, 2, 3, 4, 5)
     l.foldMap(i => (i, i.toString)) should be(res0)
