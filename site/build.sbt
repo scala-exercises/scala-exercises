@@ -94,7 +94,7 @@ lazy val client = (project in file("client"))
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
-      "org.spire-math" %%% "cats-core" % "0.5.0-SNAPSHOT" changing()
+      "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
     )
   )
 
@@ -108,7 +108,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(libraryDependencies ++=
     compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.spire-math" %%% "cats-core" % "0.5.0-SNAPSHOT" changing()
+      "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
     )
   )
 
