@@ -9,7 +9,6 @@ import Stream.cons
   */
 object Traversables extends FlatSpec with Matchers with exercise.Section {
 
-
   /** At the top of the collection hierarchy is trait *Traversable*. Its only abstract operation is `foreach`:
     *
     * {{{
@@ -59,7 +58,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     */
   def flatMapOfOptionsTraversables(res0: List[Int]) {
     val list = List(1, 2, 3, 4, 5)
-    val result = list.flatMap(it => if (it % 2 == 0) Some(it) else None)
+    val result = list.flatMap(it ⇒ if (it % 2 == 0) Some(it) else None)
     result should be(res0)
   }
 
@@ -68,7 +67,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def collectFunctionTraversables(res0: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     val result = list.collect {
-      case x: Int if (x % 2 == 0) => x * 3
+      case x: Int if (x % 2 == 0) ⇒ x * 3
     }
     result should be(res0)
   }
@@ -78,10 +77,10 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def collectFunctionIITraversables(res0: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
     val partialFunction1: PartialFunction[Int, Int] = {
-      case x: Int if x % 2 == 0 => x * 3
+      case x: Int if x % 2 == 0 ⇒ x * 3
     }
     val partialFunction2: PartialFunction[Int, Int] = {
-      case y: Int if y % 2 != 0 => y * 4
+      case y: Int if y % 2 != 0 ⇒ y * 4
     }
     val result = list.collect(partialFunction1 orElse partialFunction2)
     result should be(res0)
@@ -92,7 +91,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     */
   def foreachFunctionTraversables(res0: List[Int]) {
     val list = List(4, 6, 7, 8, 9, 13, 14)
-    list.foreach(num => println(num * 4))
+    list.foreach(num ⇒ println(num * 4))
     list should be(res0)
   }
 
@@ -165,7 +164,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   /** `toMap` will convert any *Traversable* to a *Map*. How it's used depends on the original collection; if it's a *List* or *Seq*, it should be of parameterized type *Tuple2*.
     */
   def toMapFunctionTraversables(res0: Boolean) {
-    val list = List("Phoenix" -> "Arizona", "Austin" -> "Texas")
+    val list = List("Phoenix" → "Arizona", "Austin" → "Texas")
     val result = list.toMap
     result.isInstanceOf[Map[_, _]] should be(res0)
   }
@@ -173,7 +172,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   /** `toMap` will convert a *Set* to a *Map*, it should be of parameterized type *Tuple2*.
     */
   def toMapFunctionIITraversables(res0: Boolean) {
-    val set = Set("Phoenix" -> "Arizona", "Austin" -> "Texas")
+    val set = Set("Phoenix" → "Arizona", "Austin" → "Texas")
     val result = set.toMap
     result.isInstanceOf[Map[_, _]] should be(res0)
   }
@@ -181,7 +180,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   /** `isEmpty` is pretty self evident
     */
   def isEmptyFunctionTraversables(res0: Boolean, res1: Boolean) {
-    val map = Map("Phoenix" -> "Arizona", "Austin" -> "Texas")
+    val map = Map("Phoenix" → "Arizona", "Austin" → "Texas")
     map.isEmpty should be(res0)
 
     val set = Set()
@@ -191,7 +190,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   /** `nonEmpty` is pretty self evident too
     */
   def nonEmptyFunctionTraversables(res0: Boolean, res1: Boolean) {
-    val map = Map("Phoenix" -> "Arizona", "Austin" -> "Texas")
+    val map = Map("Phoenix" → "Arizona", "Austin" → "Texas")
     map.nonEmpty should be(res0)
 
     val set = Set()
@@ -201,16 +200,15 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   /** `size` provides the size of the traversable
     */
   def sizeFunctionTraversables(res0: Int) {
-    val map = Map("Phoenix" -> "Arizona", "Austin" -> "Texas")
+    val map = Map("Phoenix" → "Arizona", "Austin" → "Texas")
     map.size should be(res0)
   }
 
   /** `hasDefiniteSize` will return `true` if there is traversable that has a finite end, otherwise `false`.
     */
   def hasDefiniteSizeFunctionTraversables(res0: Boolean, res1: Boolean) {
-    val map = Map("Phoenix" -> "Arizona", "Austin" -> "Texas")
+    val map = Map("Phoenix" → "Arizona", "Austin" → "Texas")
     map.hasDefiniteSize should be(res0)
-
 
     val stream = cons(0, cons(1, Stream.empty))
     stream.hasDefiniteSize should be(res1)
@@ -365,31 +363,31 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val array = Array(87, 44, 5, 4, 200, 10, 39, 100)
 
     val oddAndSmallPartial: PartialFunction[Int, String] = {
-      case x: Int if x % 2 != 0 && x < 100 => "Odd and less than 100"
+      case x: Int if x % 2 != 0 && x < 100 ⇒ "Odd and less than 100"
     }
 
     val evenAndSmallPartial: PartialFunction[Int, String] = {
-      case x: Int if x != 0 && x % 2 == 0 && x < 100 => "Even and less than 100"
+      case x: Int if x != 0 && x % 2 == 0 && x < 100 ⇒ "Even and less than 100"
     }
 
     val negativePartial: PartialFunction[Int, String] = {
-      case x: Int if x < 0 => "Negative Number"
+      case x: Int if x < 0 ⇒ "Negative Number"
     }
 
     val largePartial: PartialFunction[Int, String] = {
-      case x: Int if x > 99 => "Large Number"
+      case x: Int if x > 99 ⇒ "Large Number"
     }
 
     val zeroPartial: PartialFunction[Int, String] = {
-      case x: Int if x == 0 => "Zero"
+      case x: Int if x == 0 ⇒ "Zero"
     }
 
     val result = array groupBy {
       oddAndSmallPartial orElse
-          evenAndSmallPartial orElse
-          negativePartial orElse
-          largePartial orElse
-          zeroPartial
+        evenAndSmallPartial orElse
+        negativePartial orElse
+        largePartial orElse
+        zeroPartial
     }
 
     (result("Even and less than 100") size) should be(res0)
@@ -427,16 +425,16 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def foldLeftFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int) {
     val list = List(5, 4, 3, 2, 1)
     val result = (0 /: list) {
-      (`running total`, `next element`) => `running total` - `next element`
+      (`running total`, `next element`) ⇒ `running total` - `next element`
     }
     result should be(res0)
 
     val result2 = list.foldLeft(0) {
-      (`running total`, `next element`) => `running total` - `next element`
+      (`running total`, `next element`) ⇒ `running total` - `next element`
     }
     result2 should be(res1)
 
-    val result3 = (0 /: list) (_ - _) //Short hand
+    val result3 = (0 /: list)(_ - _) //Short hand
     result3 should be(res2)
 
     val result4 = list.foldLeft(0)(_ - _)
@@ -452,16 +450,16 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
   def foldRightFunctionTraversables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int) {
     val list = List(5, 4, 3, 2, 1)
     val result = (list :\ 0) {
-      (`next element`, `running total`) => `next element` - `running total`
+      (`next element`, `running total`) ⇒ `next element` - `running total`
     }
     result should be(res0)
 
     val result2 = (list :\ 0) {
-      (`next element`, `running total`) => `next element` - `running total`
+      (`next element`, `running total`) ⇒ `next element` - `running total`
     }
     result2 should be(res1)
 
-    val result3 = (list :\ 0) (_ - _) //Short hand
+    val result3 = (list :\ 0)(_ - _) //Short hand
     result3 should be(res2)
 
     val result4 = list.foldRight(0)(_ - _)
@@ -516,7 +514,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     (1 to MAX_SIZE) reduceLeft (_ + _)
     val reduceLeftEndTime = new java.util.Date
 
-
     val reduceRightStartTime = new java.util.Date
     (1 to MAX_SIZE) reduceRight (_ + _)
     val reduceRightEndTime = new java.util.Date
@@ -559,7 +556,7 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     val stringBuilder = new StringBuilder()
     val list = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
     stringBuilder.append("I want all numbers 6-12: ")
-    list.filter(it => it > 5 && it < 13).addString(stringBuilder, ",")
+    list.filter(it ⇒ it > 5 && it < 13).addString(stringBuilder, ",")
     stringBuilder.mkString should be(res0)
   }
 
@@ -574,11 +571,12 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     }
 
     val l1 = lst.map {
-      x => addHistory("Doubling %s".format(x))
+      x ⇒
+        addHistory("Doubling %s".format(x))
         x * 2
     }
 
-    val l2 = l1.map { x => addHistory("Adding 1 to %s".format(x)); x + 1 }
+    val l2 = l1.map { x ⇒ addHistory("Adding 1 to %s".format(x)); x + 1 }
 
     history(0) should be(res0)
     history(1) should be(res1)
@@ -589,8 +587,8 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
     history = List[String]()
 
-    lst.view.map { x => addHistory("Doubling %s".format(x)); x * 2 }.map {
-      x => addHistory("Adding 1 to %s".format(x)); x + 1
+    lst.view.map { x ⇒ addHistory("Doubling %s".format(x)); x * 2 }.map {
+      x ⇒ addHistory("Adding 1 to %s".format(x)); x + 1
     }.force
 
     history(0) should be(res6)

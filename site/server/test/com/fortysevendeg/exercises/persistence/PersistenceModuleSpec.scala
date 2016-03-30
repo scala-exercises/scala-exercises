@@ -5,7 +5,7 @@
 
 package com.fortysevendeg.exercises.persistence
 
-import com.fortysevendeg.exercises.support.ArbitraryInstances
+import com.fortysevendeg.exercises.support.{ ArbitraryInstances, DatabaseInstance }
 import doobie.imports._
 import org.scalacheck.Shapeless._
 import org.scalacheck.{ Arbitrary, Gen }
@@ -17,9 +17,9 @@ import _root_.scalaz.concurrent.Task
 import _root_.scalaz.std.iterable._
 import scalaz.{ -\/, \/- }
 
-trait DatabaseContext {
+trait DatabaseContext extends DatabaseInstance {
 
-  def trx = DriverManagerTransactor[Task]("org.h2.Driver", "jdbc:h2:mem:test3;DB_CLOSE_DELAY=-1", "sa", "")
+  implicit val trx: Transactor[Task] = databaseTransactor
 
   case class PersistenceItem(id: Long, name: String, active: Boolean)
 
@@ -37,7 +37,7 @@ trait DatabaseContext {
   def createTable: ConnectionIO[Int] =
     sql"""
           CREATE TABLE persistence (
-          id   BIGINT AUTO_INCREMENT,
+          id   BIGSERIAL PRIMARY KEY,
           name VARCHAR NOT NULL,
           active BOOL NOT NULL)""".update.run
 
@@ -86,7 +86,8 @@ class PersistenceModuleSpec
     with Matchers
     with BeforeAndAfterEach
     with DatabaseContext
-    with ArbitraryInstances {
+    with ArbitraryInstances
+    with DatabaseInstance {
 
   override def beforeEach = {
     for {

@@ -68,7 +68,8 @@ lazy val server = (project in file("server"))
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
       "org.scalacheck" %% "scalacheck" % "1.12.5",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1",
-      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion)
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion) :+
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   ))
 
 
@@ -121,21 +122,19 @@ import de.heikoseeberger.sbtheader.HeaderPlugin
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "definitions") % CompileMain)
+  .dependsOn(ProjectRef(file("../core"), "runtime") % CompileGeneratedExercises)
   .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
-    Seq(
-      "org.scalatest" %% "scalatest" % "2.2.4" % CompileMain,
-      "com.chuusai" %% "shapeless" % "2.2.5" % CompileMain
+    compilelibs(
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "com.chuusai" %% "shapeless" % "2.2.5"
     ) ++
     testlibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % scalazVersion,
       "org.scalacheck" %% "scalacheck" % "1.12.5",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1"
-    )
-  )
-  .settings(
-    HeaderPlugin.settingsFor(CompileMain)
+    ) :+
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   )

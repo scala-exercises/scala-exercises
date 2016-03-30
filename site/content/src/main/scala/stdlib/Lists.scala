@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object Lists extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Scala Lists are quite similar to arrays which means, all the elements of a list have the same type but there are two important differences. First, lists are immutable, which means elements of a list cannot be changed by assignment. Second, lists represent a linked list whereas arrays are flat. The type of a list that has elements of type `T` is written as `List[T]`.
     *
     * `eq` tests identity (same object)
@@ -74,7 +73,7 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     */
   def areImmutableLists(res0: Int, res1: Int, res2: Int, res3: Int) {
     val a = List(1, 3, 5, 7, 9)
-    val b = a.filterNot(v => v == 5) // remove where value is 5
+    val b = a.filterNot(v ⇒ v == 5) // remove where value is 5
 
     a should equal(List(1, 3, 5, 7, 9))
     b should equal(List(res0, res1, res2, res3))
@@ -92,10 +91,10 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     a.reverse should equal(res1)
 
     // map a function to double the numbers over the list
-    a.map { v => v * 2 } should equal(res2)
+    a.map { v ⇒ v * 2 } should equal(res2)
 
     // filter any values divisible by 3 in the list
-    a.filter { v => v % 3 == 0 } should equal(res3)
+    a.filter { v ⇒ v % 3 == 0 } should equal(res3)
   }
 
   /** Functions over lists can use _ as shorthand

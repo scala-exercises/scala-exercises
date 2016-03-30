@@ -59,7 +59,7 @@ trait ArbitraryInstances extends Assertions {
     Arbitrary(for {
       user ← persistentUserArbitrary.arbitrary
       request ← {
-        arbitrary[SaveUserProgress.Request] map (p ⇒ p.copy(userId = user.id))
+        arbitrary[SaveUserProgress.Request] map (p ⇒ p.copy(user = user))
       }
     } yield UserProgressPair(request, user))
   }

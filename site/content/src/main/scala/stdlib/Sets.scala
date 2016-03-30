@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object Sets extends FlatSpec with Matchers with exercise.Section {
 
-
   /** `Set`s are `Iterable`s that contain no duplicate elements. The operations on sets are summarized in the following table for general sets and in the table after that for mutable sets. They fall into the following categories:
     *
     * *   **Tests** `contains`, `apply`, `subsetOf`. The `contains` method asks whether a set contains a given element. The `apply` method for a set is the same as `contains`, so `set(elem)` is the same as `set contains elem`. That means sets can also be used as test functions that return true for the elements they contain.
@@ -82,7 +81,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     */
   def tupleRemovingSets(res0: Boolean, res1: Boolean, res2: Int) {
     val mySet = Set("Michigan", "Ohio", "Wisconsin", "Iowa")
-    val aNewSet = mySet -("Michigan", "Ohio") // Notice: single '-' operator for tuples
+    val aNewSet = mySet - ("Michigan", "Ohio") // Notice: single '-' operator for tuples
 
     aNewSet.contains("Michigan") should be(res0)
     aNewSet.contains("Wisconsin") should be(res1)
@@ -103,7 +102,7 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
   def easilyIteratedSets(res0: Int) {
     val mySet = Set(1, 3, 4, 9)
     var sum = 0
-    for (i <- mySet)
+    for (i ← mySet)
       sum = sum + i //Of course this is the same thing as mySet.reduce(_ + _) or mySet.sum
 
     sum should be(res0)

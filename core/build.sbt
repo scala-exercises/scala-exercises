@@ -92,7 +92,9 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scripted <<= scripted dependsOn (scalariformFormat in scriptedConf),
     inConfig(scriptedConf) {
       sourceDirectories in scalariformFormat <<= sbtTestDirectory { dir =>
-        val bases = dir * "*" * "*" / "src" / "main"
+        // the scalariform tests require poorly formatted code, so
+        // ignore that dir
+        val bases = dir * "*" * ("*" -- "scalariform") / "src" / "main"
         (bases / "scala").get ++ (bases / "exercises").get
       }
     }

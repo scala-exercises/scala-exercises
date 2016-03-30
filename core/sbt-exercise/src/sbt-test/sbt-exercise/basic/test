@@ -1,8 +1,7 @@
 -$ exists target/scala-2.11/src_managed/main/defaultLib/
 -$ exists target/scala-2.11/resource_managed/main/scala-exercises/library.47
 
-> compile
-> copyResources
+> package
 
 $ exists target/scala-2.11/src_managed/main/defaultLib/
 $ exists target/scala-2.11/resource_managed/main/scala-exercises/library.47

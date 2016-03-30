@@ -8,7 +8,6 @@ import org.scalatest._
   */
 object Preconditions extends FlatSpec with Matchers with exercise.Section {
 
-
   /** One of the benefits of object-oriented programming is that it allows you to encapsulate data inside objects so that you can ensure the data is valid throughout its lifetime. In the case of an immutable object such as *Rational*, this means that you should ensure the data is valid when the object is constructed.
     *
     * Given that a zero denominator is an invalid state for a *Rational* number, you should not let a *Rational* be constructed if a zero is passed in the d parameter.
@@ -19,8 +18,8 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class Rational(n: Int, d: Int) {
-    *   require(d != 0)
-    *   override def toString = n +"/"+ d
+    *  require(d != 0)
+    *  override def toString = n +"/"+ d
     * }
     * }}}
     *
@@ -30,11 +29,11 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class WithParameterRequirement(val myValue: Int) {
-    *   require(myValue != 0)
+    *  require(myValue != 0)
     *
-    *   def this(someValue: String) {
-    *     this(someValue.size)
-    *   }
+    *  def this(someValue: String) {
+    *    this(someValue.size)
+    *  }
     * }
     * }}}
     * On precondition violation, intercept expects type of exception thrown. *Instruction: use Intercept to catch the type of exception thrown by an invalid precondition*

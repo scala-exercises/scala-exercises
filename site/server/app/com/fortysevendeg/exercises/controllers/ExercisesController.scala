@@ -33,7 +33,7 @@ class ExercisesController(
         val eval = for {
           exerciseEvaluation ← exerciseOps.evaluate(evaluation = evaluation)
           _ ← userProgressOps.saveUserProgress(
-            mkSaveProgressRequest(user.id, evaluation, exerciseEvaluation.isRight)
+            mkSaveProgressRequest(user, evaluation, exerciseEvaluation.isRight)
           )
         } yield exerciseEvaluation
 
@@ -47,9 +47,9 @@ class ExercisesController(
 
     }
 
-  private[this] def mkSaveProgressRequest(userId: Long, evaluation: ExerciseEvaluation, success: Boolean) =
+  private[this] def mkSaveProgressRequest(user: User, evaluation: ExerciseEvaluation, success: Boolean) =
     new SaveUserProgress.Request(
-      userId = userId,
+      user = user,
       libraryName = evaluation.libraryName,
       sectionName = evaluation.sectionName,
       method = evaluation.method,

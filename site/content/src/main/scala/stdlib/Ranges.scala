@@ -70,7 +70,7 @@ object Ranges extends FlatSpec with Matchers with exercise.Section {
       * If you want to create a range that is exclusive of its upper limit, then use the convenience method `until` instead of `to`: `1 until 3` generates `Range(1, 2)`.
       *
       * Ranges are represented in constant space, because they can be defined by just three numbers: their start, their end, and the stepping value. Because of this representation, most operations on ranges are extremely fast.
-      * */
+      */
   }
 
 }

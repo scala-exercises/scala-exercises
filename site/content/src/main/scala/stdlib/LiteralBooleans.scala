@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object LiteralBooleans extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Boolean literals are either true or false, using the true or false keyword
     */
   def literalBooleanLiteralBooleans(res0: Boolean, res1: Boolean, res2: Boolean, res3: Boolean, res4: Boolean, res5: Boolean) {

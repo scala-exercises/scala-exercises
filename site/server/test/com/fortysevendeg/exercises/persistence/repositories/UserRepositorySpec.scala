@@ -13,27 +13,28 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import scalaz.concurrent.Task
 
 class UserRepositorySpec
     extends PropSpec
     with GeneratorDrivenPropertyChecks
     with Matchers
-    with DatabaseInstance
     with ArbitraryInstances
+    with DatabaseInstance
     with BeforeAndAfterAll {
-  // User creation generator
-  implicitly[Arbitrary[UserCreation.Request]]
+
+  implicit val transactor: Transactor[Task] = databaseTransactor
 
   val repository = implicitly[UserRepository]
-
   override def beforeAll() =
-    implicitly[UserProgressRepository].deleteAll().transact(transactor).run
+    repository.deleteAll.transact(transactor).run
+
+  // Generators
+  implicitly[Arbitrary[UserCreation.Request]]
 
   // Properties
   property("new users can be created") {
     forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
       val storedUser = repository.create(newUser).transact(transactor).run.toOption
       storedUser.fold(false)(u ⇒ {
         u == newUser.asUser(u.id)
@@ -43,8 +44,6 @@ class UserRepositorySpec
 
   property("users can be queried by their login") {
     forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
       repository.create(newUser).transact(transactor).run
 
       val storedUser = repository.getByLogin(newUser.login).transact(transactor).run
@@ -56,8 +55,6 @@ class UserRepositorySpec
 
   property("users can be queried by their ID") {
     forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
       val storedUser = repository.create(newUser).transact(transactor).run.toOption
 
       storedUser.fold(false)(u ⇒ {
@@ -69,8 +66,6 @@ class UserRepositorySpec
 
   property("users can be deleted") {
     forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
       val storedUser = repository.create(newUser).transact(transactor).run.toOption
 
       storedUser.fold(false)(u ⇒ {
@@ -82,8 +77,6 @@ class UserRepositorySpec
 
   property("users can be updated") {
     forAll { newUser: Request ⇒
-      repository.deleteAll().transact(transactor).run
-
       repository.create(newUser).transact(transactor).run
 
       val storedUser = repository.getByLogin(newUser.login).transact(transactor).run
