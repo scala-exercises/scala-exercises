@@ -20,8 +20,27 @@ import ui.UI
 import state.State
 import effects.Effects
 
+import monix.execution.Ack
+import monix.execution.Ack.Continue
+import monix.reactive._
+import monix.reactive.subjects._
+
+import monix.execution.Scheduler.Implicits.global
+
 object ExercisesJS extends js.JSApp {
   def main(): Unit = {
+    val actionsSub = BehaviorSubject[Action](Start)
+
+    actionsSub.subscribe(new Observer[Action] {
+      def onNext(elem: Action) = {
+        println("[ACTION]: " + elem)
+        Continue
+      }
+
+      def onError(ex: Throwable) = ()
+      def onComplete() = ()
+    })
+
     val states: Var[State] = Var(Nil)
     val actions: Var[Action] = Var(Start)
 

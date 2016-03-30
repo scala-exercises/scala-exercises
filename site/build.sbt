@@ -53,6 +53,7 @@ lazy val server = (project in file("server"))
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
       "com.lihaoyi" %% "upickle" % "0.2.8",
+
       "org.webjars" %% "webjars-play" % "2.3.0",
       "org.webjars" % "bootstrap-sass" % "3.2.0",
       "org.webjars" % "highlightjs" % "8.7",
@@ -91,6 +92,7 @@ lazy val client = (project in file("client"))
       "org.scala-js" %%% "scalajs-dom" % "0.8.1",
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
       "com.lihaoyi" %%% "scalarx" % "0.2.8",
+      "io.monix" %%% "monix" % "2.0-M1",
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
