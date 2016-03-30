@@ -5,8 +5,7 @@ import org.scalatest._
 import cats._
 import MonadHelpers._
 
-/**
-  * `Monad` extends the `Applicative` type class with a
+/** `Monad` extends the `Applicative` type class with a
   * new function `flatten`. Flatten takes a value in a nested context (eg.
   * `F[F[A]]` where F is the context) and "joins" the contexts together so
   * that we have a single context (ie. `F[A]`).
@@ -14,18 +13,16 @@ import MonadHelpers._
   * @param name monad
   */
 object MonadSection extends FlatSpec with Matchers with exercise.Section {
-  /**
-    * The name `flatten` should remind you of the functions of the same name on many
+  /** The name `flatten` should remind you of the functions of the same name on many
     * classes in the standard library.
     */
   def flattenRecap(res0: Option[Int], res1: Option[Int], res2: List[Int]) = {
     Option(Option(1)).flatten should be(res0)
     Option(None).flatten should be(res1)
-    List(List(1),List(2,3)).flatten should be(res2)
+    List(List(1), List(2, 3)).flatten should be(res2)
   }
 
-  /**
-    * = Monad instances =
+  /** = Monad instances =
     *
     * If `Applicative` is already present and `flatten` is well-behaved,
     * extending the `Applicative` to a `Monad` is trivial. To provide evidence
@@ -41,13 +38,13 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     * import cats._
     *
     * implicit def optionMonad(implicit app: Applicative[Option]) =
-    *   new Monad[Option] {
-    *     // Define flatMap using Option's flatten method
-    *     override def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
-    *       app.map(fa)(f).flatten
-    *     // Reuse this definition from Applicative.
-    *     override def pure[A](a: A): Option[A] = app.pure(a)
-    *   }
+    *  new Monad[Option] {
+    *    // Define flatMap using Option's flatten method
+    *    override def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
+    *      app.map(fa)(f).flatten
+    *    // Reuse this definition from Applicative.
+    *    override def pure[A](a: A): Option[A] = app.pure(a)
+    *  }
     * }}}
     *
     * Cats already provides a `Monad` instance of `Option`.
@@ -60,8 +57,7 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     Monad[Option].pure(42) should be(res0)
   }
 
-  /**
-    * = flatMap =
+  /** = flatMap =
     *
     * `flatMap` is often considered to be the core function of `Monad`, and cats
     * follows this tradition by providing implementations of `flatten` and `map`
@@ -69,8 +65,8 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * implicit val listMonad = new Monad[List] {
-    *   def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
-    *   def pure[A](a: A): List[A] = List(a)
+    *  def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
+    *  def pure[A](a: A): List[A] = List(a)
     * }
     * }}}
     *
@@ -82,11 +78,10 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     import cats._
     import cats.std.list._
 
-    Monad[List].flatMap(List(1, 2, 3))(x => List(x, x)) should be(res0)
+    Monad[List].flatMap(List(1, 2, 3))(x ⇒ List(x, x)) should be(res0)
   }
 
-  /**
-    * = ifM =
+  /** = ifM =
     *
     * `Monad` provides the ability to choose later operations in a sequence based on
     * the results of earlier ones. This is embodied in `ifM`, which lifts an `if`
@@ -100,8 +95,7 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     Monad[List].ifM(List(true, false, true))(List(1, 2), List(3, 4)) should be(res1)
   }
 
-  /**
-    * = Composition =
+  /** = Composition =
     *
     * Unlike `Functor`s and `Applicative`s
     * not all `Monad`s compose. This means that even if `M[_]` and `N[_]` are
@@ -116,16 +110,16 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     * case class OptionT[F[_], A](value: F[Option[A]])
     *
     * implicit def optionTMonad[F[_]](implicit F : Monad[F]) = {
-    *   new Monad[OptionT[F, ?]] {
-    *     def pure[A](a: A): OptionT[F, A] = OptionT(F.pure(Some(a)))
-    *     def flatMap[A, B](fa: OptionT[F, A])(f: A => OptionT[F, B]): OptionT[F, B] =
-    *       OptionT {
-    *         F.flatMap(fa.value) {
-    *           case None => F.pure(None)
-    *           case Some(a) => f(a).value
-    *         }
-    *       }
-    *   }
+    *  new Monad[OptionT[F, ?]] {
+    *    def pure[A](a: A): OptionT[F, A] = OptionT(F.pure(Some(a)))
+    *    def flatMap[A, B](fa: OptionT[F, A])(f: A => OptionT[F, B]): OptionT[F, B] =
+    *      OptionT {
+    *        F.flatMap(fa.value) {
+    *          case None => F.pure(None)
+    *          case Some(a) => f(a).value
+    *        }
+    *      }
+    *  }
     * }
     * }}}
     *

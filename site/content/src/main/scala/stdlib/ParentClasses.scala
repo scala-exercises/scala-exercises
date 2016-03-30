@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 
-
   /** In contrast to Java, all values in Scala are objects (including numerical values and functions). Since Scala is class-based, all values are instances of a class.
     *
     * Class hierarchy is linear, a class can only extend from one parent class:
@@ -16,7 +15,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
   def allValuesAreObjectsParentClasses(res0: String, res1: String) {
     class Soldier(val firstName: String, val lastName: String) {}
     class Pilot(override val firstName: String, override val lastName: String,
-        val squadron: Long) extends Soldier(firstName, lastName)
+                val squadron: Long) extends Soldier(firstName, lastName)
     val pilot = new Pilot("John", "Yossarian", 256)
     pilot.firstName should be(res0)
     pilot.lastName should be(res1)
@@ -27,7 +26,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
   def polymorphicParentClasses(res0: String, res1: String) {
     class Soldier(val firstName: String, val lastName: String) {}
     class Pilot(override val firstName: String, override val lastName: String,
-        val squadron: Long) extends Soldier(firstName, lastName)
+                val squadron: Long) extends Soldier(firstName, lastName)
 
     val pilot = new Pilot("John", "Yossarian", 256)
     val soldier: Soldier = pilot
@@ -56,7 +55,7 @@ object ParentClasses extends FlatSpec with Matchers with exercise.Section {
 
     }
     class Pilot(override val firstName: String, override val lastName: String,
-        val squadron: Long) extends Soldier(firstName, lastName)
+                val squadron: Long) extends Soldier(firstName, lastName)
 
     val pilot = new Pilot("John", "Yossarian", 256)
     val catchNo = new pilot.Catch(22) //using the pilot instance's path, create an catch object for it.

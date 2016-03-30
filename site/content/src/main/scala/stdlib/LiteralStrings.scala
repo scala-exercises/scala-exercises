@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Character Literals are quoted with single quotes:
     */
   def characterLiteralsLiteralStrings(res0: String, res1: String) {

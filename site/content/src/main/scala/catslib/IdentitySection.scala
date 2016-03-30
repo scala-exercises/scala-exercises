@@ -33,7 +33,7 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     */
   def identityType(res0: Int) {
     val anId: Id[Int] = 42
-    anId should be (res0)
+    anId should be(res0)
   }
 
   /** Using this type declaration, we can treat our Id type constructor as a
@@ -51,15 +51,15 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     *
     */
   def pureIdentity(res0: Int) = {
-    Applicative[Id].pure(42) should be (res0)
+    Applicative[Id].pure(42) should be(res0)
   }
 
   /** Compare the signatures of `map` and `flatMap` and `coflatMap`:
     *
     * {{{
-    *   def map[A, B](fa: Id[A])(f: A => B): Id[B]
-    *   def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B]
-    *   def coflatMap[A, B](a: Id[A])(f: Id[A] => B): Id[B]
+    *  def map[A, B](fa: Id[A])(f: A => B): Id[B]
+    *  def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B]
+    *  def coflatMap[A, B](a: Id[A])(f: Id[A] => B): Id[B]
     * }}}
     *
     * You'll notice that in the flatMap signature, since `Id[B]` is the same
@@ -80,6 +80,6 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
     */
   def idComonad(res0: Int) = {
     val fortytwo: Int = 42
-    Comonad[Id].coflatMap(fortytwo)(_ + 1) should be (res0)
+    Comonad[Id].coflatMap(fortytwo)(_ + 1) should be(res0)
   }
 }

@@ -9,7 +9,6 @@ import scala.collection.mutable
   */
 object MutableSets extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Mutable sets can be created easily:
     */
   def easilyCreatedMutableSets(res0: Int, res1: Boolean) {
@@ -31,7 +30,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     */
   def removeWithTuplesMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Ohio", "Wisconsin", "Iowa")
-    mySet -=("Iowa", "Ohio")
+    mySet -= ("Iowa", "Ohio")
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
   }
@@ -40,7 +39,7 @@ object MutableSets extends FlatSpec with Matchers with exercise.Section {
     */
   def addWithTuplesMutableSets(res0: Boolean, res1: Int) {
     val mySet = mutable.Set("Michigan", "Wisconsin")
-    mySet +=("Iowa", "Ohio")
+    mySet += ("Iowa", "Ohio")
     mySet contains "Ohio" should be(res0)
     mySet.size should be(res1)
   }

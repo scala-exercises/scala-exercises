@@ -46,12 +46,12 @@ object GenericExercises extends FlatSpec with Matchers with exercise.Section {
     *
     * We can convert back and forth case class to their HList Generic representation
     */
-  def genericE(res0 : fooGen.Repr, res1 : Int) = {
+  def genericE(res0: fooGen.Repr, res1: Int) = {
     val l = fooGen.to(foo)
-    l should be (res0)
+    l should be(res0)
     val r = 13 :: l.tail
     val newFoo = fooGen.from(r)
-    newFoo.i should be (res1)
+    newFoo.i should be(res1)
   }
 
   /** Typically values of Generic for a given case class are materialized using an implicit macro,
@@ -71,22 +71,26 @@ object GenericExercises extends FlatSpec with Matchers with exercise.Section {
     * object inc extends ->((i: Int) => i+1)
     * }}}
     */
-  def structural(res0 : Int, res1 : Int, res2 : Int) = {
+  def structural(res0: Int, res1: Int, res2: Int) = {
 
     val tree: Tree[Int] =
-          Node(
-            Leaf(1),
-            Node(
-              Leaf(2),
-              Leaf(3)))
+      Node(
+        Leaf(1),
+        Node(
+          Leaf(2),
+          Leaf(3)
+        )
+      )
 
     // Transform tree by applying inc everywhere
-    everywhere(inc)(tree) should be (
+    everywhere(inc)(tree) should be(
       Node(
-            Leaf(res0),
-            Node(
-              Leaf(res1),
-              Leaf(res2)))
+        Leaf(res0),
+        Node(
+          Leaf(res1),
+          Leaf(res2)
+        )
+      )
     )
   }
 
@@ -98,7 +102,6 @@ object GenericExercises extends FlatSpec with Matchers with exercise.Section {
     * require the support of hard to maintain special case macros.
     */
   def labelled() = {
-
 
   }
 

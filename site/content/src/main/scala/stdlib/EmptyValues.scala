@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object EmptyValues extends FlatSpec with Matchers with exercise.Section {
 
-
   /** ==null==
     *
     * Scala's `null` is the same as in Java. Any reference type can be `null`, like Strings, Objects, or your own classes. Also just like Java, value types like Ints can't be `null`.

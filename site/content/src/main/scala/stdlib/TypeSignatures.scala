@@ -6,7 +6,6 @@ import org.scalatest._
   */
 object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
 
-
   /** A method's *type signature* comprises its name, the number, order, and types of its parameters, if any, and its result type. The type signature of a class, trait, or singleton object comprises its name, the type signatures of all of its members and constructors, and its declared inheritance and mixin relations.
     *
     * In Java you declare a generic type within a `<>`, in Scala it is `[]`
@@ -98,20 +97,20 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * trait Randomizer[A] {
-    *   def draw(): A
+    *  def draw(): A
     * }
     *
     * class IntRandomizer extends Randomizer[Int] {
-    *   def draw() = {
-    *     import util.Random
-    *     Random.nextInt()
-    *   }
+    *  def draw() = {
+    *    import util.Random
+    *    Random.nextInt()
+    *  }
     * }
     *
     * val intRand = new IntRandomizer
     *
     * intercept[ClassCastException] {
-    *   intRand.asInstanceOf[String] //intRand cannot be cast to String
+    *  intRand.asInstanceOf[String] //intRand cannot be cast to String
     * }
     * }}}
     *

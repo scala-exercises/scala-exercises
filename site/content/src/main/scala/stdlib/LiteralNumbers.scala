@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object LiteralNumbers extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Integer Literals are 32-bit and can be created from decimal, hexadecimal:
     */
   def integerLiteralsLiteralNumbers(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int) {

@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object Iterables extends FlatSpec with Matchers with exercise.Section {
 
-
   /** The next trait from the top in the collections hierarchy is `Iterable`. All methods in this trait are defined in terms of an abstract method, `iterator`, which yields the collection's elements one by one. The `foreach` method from trait `Traversable` is implemented in `Iterable` in terms of `iterator`. Here is the actual implementation:
     *
     *
@@ -54,7 +53,7 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
     */
   def slidingWindowIterables(res0: Int, res1: Int, res2: Int, res3: Int, res4: Int, res5: Int, res6: Int, res7: Int, res8: Int) {
     val list = List(3, 5, 9, 11, 15, 19, 21, 24, 32)
-    val it = list sliding(3, 3)
+    val it = list sliding (3, 3)
     it.next() should be(List(res0, res1, res2))
     it.next() should be(List(res3, res4, res5))
     it.next() should be(List(res6, res7, res8))
@@ -102,12 +101,11 @@ object Iterables extends FlatSpec with Matchers with exercise.Section {
   def zipAllIterables(res0: Int, res1: String, res2: Int, res3: String, res4: Int, res5: Int, res6: String, res7: Int, res8: String, res9: String) {
     val xs = List(3, 5, 9)
     val ys = List("Bob", "Ann")
-    (xs zipAll(ys, -1, "?")) should be(List((res0, res1), (res2, res3), (res4, "?")))
+    (xs zipAll (ys, -1, "?")) should be(List((res0, res1), (res2, res3), (res4, "?")))
 
     val xt = List(3, 5)
     val yt = List("Bob", "Ann", "Stella")
-    (xt zipAll(yt, -1, "?")) should be(List((res5, res6), (res7, res8), (-1, res9)))
-
+    (xt zipAll (yt, -1, "?")) should be(List((res5, res6), (res7, res8), (-1, res9)))
 
   }
 
