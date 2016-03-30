@@ -15,6 +15,7 @@ object CatsLibrary extends exercise.Library {
     ApplicativeSection,
     MonadSection,
     FoldableSection,
+    TraverseSection,
     IdentitySection,
     XorSection,
     ValidatedSection
