@@ -122,13 +122,13 @@ import de.heikoseeberger.sbtheader.HeaderPlugin
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "definitions") % CompileMain)
+  .dependsOn(ProjectRef(file("../core"), "runtime") % CompileGeneratedExercises)
   .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
-    Seq(
-      "org.scalatest" %% "scalatest" % "2.2.4" % CompileMain,
-      "com.chuusai" %% "shapeless" % "2.2.5" % CompileMain
+    compilelibs(
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "com.chuusai" %% "shapeless" % "2.2.5"
     ) ++
     testlibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
@@ -137,7 +137,4 @@ lazy val content = (project in file("content"))
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1"
     ) :+
     compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
-  )
-  .settings(
-    HeaderPlugin.settingsFor(CompileMain)
   )

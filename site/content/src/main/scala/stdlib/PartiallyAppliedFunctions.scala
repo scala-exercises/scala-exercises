@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Section {
 
-
   /** A partially applied function is a function that you do not apply any or all the arguments, creating another function. This partially applied function doesn't apply any arguments.
     */
   def partiallyAppliedPartiallyAppliedFunctions(res0: Int, res1: Int) {
@@ -42,7 +41,7 @@ object PartiallyAppliedFunctions extends FlatSpec with Matchers with exercise.Se
   /** Currying allows you to create specialized version of generalized function
     */
   def specializedVersionPartiallyAppliedFunctions(res0: List[Int], res1: List[Int]) {
-    def customFilter(f: Int => Boolean)(xs: List[Int]) = {
+    def customFilter(f: Int ⇒ Boolean)(xs: List[Int]) = {
       xs filter f
     }
     def onlyEven(x: Int) = x % 2 == 0

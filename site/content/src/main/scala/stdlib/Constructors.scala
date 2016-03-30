@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object Constructors extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Primary Constructor
     *
     * In Java we have a no-args default constructor which is provided for every class which doesn't provide its own constructor methods. On a similar lines Primary Constructor in Scala is the kind-of default constructor in the way every class in Scala would have a Primary Constructor.
@@ -16,7 +15,7 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class Employee {
-    *   var age:Int = 20
+    *  var age:Int = 20
     * }
     * }}}
     *
@@ -27,9 +26,9 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     * class Employee(val firstName:String,
     * val lastName:String) {
     *
-    *   override def toString():String = {
-    *     "First Name: " + firstName + " Last Name: " + lastName
-    *   }
+    *  override def toString():String = {
+    *    "First Name: " + firstName + " Last Name: " + lastName
+    *  }
     * }
     * }}}
     *
@@ -41,17 +40,17 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class Employee(val firstName:String, val lastName:String) {
-    *   var age:Int = 0
+    *  var age:Int = 0
     *
-    *   //Auxiliary Constructor
-    *   def this(firstName:String, lastName: String, age:Int) {
-    *     this(firstName,lastName)
-    *     this.age = age
-    *   }
+    *  //Auxiliary Constructor
+    *  def this(firstName:String, lastName: String, age:Int) {
+    *    this(firstName,lastName)
+    *    this.age = age
+    *  }
     *
-    *   override def toString():String = {
-    *     "First Name: " + firstName + " Last Name: " + lastName
-    *   }
+    *  override def toString():String = {
+    *    "First Name: " + firstName + " Last Name: " + lastName
+    *  }
     * }
     * }}}
     *
@@ -60,23 +59,23 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class Employee(val firstName:String, val lastName:String) {
-    *   var age:Int = 0
-    *   var city:String = _
+    *  var age:Int = 0
+    *  var city:String = _
     *
-    *   def this(firstName:String, lastName: String,
-    *   city:String, age:Int) {
-    *     this(firstName, lastName, city)
-    *     this.age = age
-    *   }
+    *  def this(firstName:String, lastName: String,
+    *  city:String, age:Int) {
+    *    this(firstName, lastName, city)
+    *    this.age = age
+    *  }
     *
-    *   def this(firstName:String, lastName: String, city:String) {
-    *     this(firstName,lastName)
-    *     this.city = city
-    *   }
+    *  def this(firstName:String, lastName: String, city:String) {
+    *    this(firstName,lastName)
+    *    this.city = city
+    *  }
     *
-    *   override def toString():String = {
-    *     "First Name: " + firstName + " Last Name: " + lastName
-    *   }
+    *  override def toString():String = {
+    *    "First Name: " + firstName + " Last Name: " + lastName
+    *  }
     * }
     * }}}
     *

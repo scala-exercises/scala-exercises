@@ -7,7 +7,6 @@ import org.scalatest._
   */
 object Formatting extends FlatSpec with Matchers with exercise.Section {
 
-
   /** String can be placed in format:
     */
   def placedInFormatFormatting(res0: String) {
@@ -20,7 +19,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
   def characterFormatting(res0: String, res1: String) {
     val a = 'a'
     val b = 'B'
-
 
     //format(a) is a string format, meaning the "%c".format(x)
     //will return the string representation of the char.
@@ -36,7 +34,6 @@ object Formatting extends FlatSpec with Matchers with exercise.Section {
     val d = '\141' //octal for a
     val e = '\"'
     val f = '\\'
-
 
     "%c".format(c) should be(res0)
     "%c".format(d) should be(res1)

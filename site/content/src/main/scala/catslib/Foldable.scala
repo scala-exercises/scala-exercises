@@ -5,8 +5,7 @@ import org.scalatest._
 import cats._
 import cats.implicits._
 
-/**
-  * Foldable type class instances can be defined for data structures that can be
+/** Foldable type class instances can be defined for data structures that can be
   * folded to a summary value.
   *
   * In the case of a collection (such as `List` or `Set`), these methods will fold
@@ -16,8 +15,8 @@ import cats.implicits._
   *
   * `Foldable[F]` is implemented in terms of two basic methods:
   *
-  *  - `foldLeft(fa, b)(f)` eagerly folds `fa` from left-to-right.
-  *  - `foldRight(fa, b)(f)` lazily folds `fa` from right-to-left.
+  * - `foldLeft(fa, b)(f)` eagerly folds `fa` from left-to-right.
+  * - `foldRight(fa, b)(f)` lazily folds `fa` from right-to-left.
   *
   *
   * These form the basis for many other operations, see also:
@@ -35,8 +34,7 @@ import cats.implicits._
   * @param name foldable
   */
 object FoldableSection extends FlatSpec with Matchers with exercise.Section {
-  /**
-    * = foldLeft =
+  /** = foldLeft =
     *
     * `foldLeft` is an eager left-associative fold on `F` using the given function.
     *
@@ -46,8 +44,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].foldLeft(List("a", "b", "c"), "")(_ + _) should be(res1)
   }
 
-  /**
-    * = foldRight =
+  /** = foldRight =
     *
     * `foldRight` is a lazy right-associative fold on `F` using the given function.
     * The function has the signature `(A, Eval[B]) => Eval[B]` to support laziness in
@@ -55,12 +52,11 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     *
     */
   def foldableFoldRight(res0: Int) = {
-    val lazyResult = Foldable[List].foldRight(List(1, 2, 3), Now(0))((x, rest) => Later(x + rest.value))
+    val lazyResult = Foldable[List].foldRight(List(1, 2, 3), Now(0))((x, rest) ⇒ Later(x + rest.value))
     lazyResult.value should be(res0)
   }
 
-  /**
-    * = fold =
+  /** = fold =
     *
     * `fold`, also called `combineAll`, combines every value in the foldable using the fiven `Monoid` instance.
     *
@@ -70,8 +66,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].fold(List(1, 2, 3)) should be(res1) // Hint: the implicit monoid for `Int` is the Sum monoid
   }
 
-  /**
-    * = foldMap =
+  /** = foldMap =
     *
     * `foldMap` is similar to `fold` but maps every `A` value into `B` and then
     * combines them using the given `Monoid[B]` instance.
@@ -82,8 +77,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].foldMap(List(1, 2, 3))(_.toString) should be(res1)
   }
 
-  /**
-    * = foldK =
+  /** = foldK =
     *
     * `foldK` is similar to `fold` but combines every value in the foldable using the fiven `MonoidK[G]` instance
     * instead of `Monoid[G]`.
@@ -93,8 +87,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].foldK(List(None, Option("two"), Option("three"))) should be(res1)
   }
 
-  /**
-    * = find =
+  /** = find =
     *
     * `find` searches for the first element matching the predicate, if one exists.
     */
@@ -103,8 +96,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].find(List(1, 2, 3))(_ > 5) should be(res1)
   }
 
-  /**
-    * = exists =
+  /** = exists =
     *
     * `exists` checks whether at least one element satisfies the predicate.
     */
@@ -113,8 +105,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].exists(List(1, 2, 3))(_ > 5) should be(res1)
   }
 
-  /**
-    * = forall =
+  /** = forall =
     *
     * `forall` checks whether all elements satisfy the predicate.
     */
@@ -123,8 +114,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].forall(List(1, 2, 3))(_ < 3) should be(res1)
   }
 
-  /**
-    * = toList =
+  /** = toList =
     *
     * Convert `F[A]` to `List[A]`.
     */
@@ -134,8 +124,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[Option].toList(None) should be(res2)
   }
 
-  /**
-    * = filter_ =
+  /** = filter_ =
     *
     * Convert `F[A]` to `List[A]` only including the elements that match a predicate.
     */
@@ -144,8 +133,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[Option].filter_(Option(42))(_ != 42) should be(res1)
   }
 
-  /**
-    * = traverse_ =
+  /** = traverse_ =
     *
     * `traverse` the foldable mapping `A` values to `G[B]`, and combining
     * them using `Applicative[G]` and discarding the results.
@@ -166,8 +154,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].traverse_(List("a", "b", "c"))(parseInt) should be(res1)
   }
 
-  /**
-    * = compose =
+  /** = compose =
     *
     * We can compose `Foldable[F[_]]` and `Foldable[G[_]]` instances to obtain `Foldable[F[G]]`.
     */
@@ -177,8 +164,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     FoldableListOption.fold(List(Option("1"), Option("2"), None, Option("3"))) should be(res1)
   }
 
-  /**
-    * = More Foldable methods =
+  /** = More Foldable methods =
     *
     * Hence when defining some new data structure, if we can define a `foldLeft` and
     * `foldRight` we are able to provide many other useful operations, if not always
@@ -194,6 +180,5 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
     Foldable[List].dropWhile_(List(1, 2, 3))(_ < 2) should be(res1)
     Foldable[List].takeWhile_(List(1, 2, 3))(_ < 2) should be(res2)
   }
-
 
 }

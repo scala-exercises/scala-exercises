@@ -9,7 +9,6 @@ import org.scalatest._
   */
 object Tuples extends FlatSpec with Matchers with exercise.Section {
 
-
   /** Scala tuple combines a fixed number of items together so that they can be passed around as a whole. They are one indexed. Unlike an array or list, a tuple can hold objects with different types but they are also immutable. Here is an example of a tuple holding an integer, a string, and the console:
     *
     * {{{
