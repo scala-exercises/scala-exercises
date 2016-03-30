@@ -31,7 +31,7 @@ lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
     sharedJvm,
-    content)
+    content % "runtime->compile-generated-exercises")
   .dependsOn(ProjectRef(file("../core"), "runtime"))
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
@@ -41,7 +41,7 @@ lazy val server = (project in file("server"))
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
     herokuAppName in Compile := "scala-exercises"
-)
+  )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,
