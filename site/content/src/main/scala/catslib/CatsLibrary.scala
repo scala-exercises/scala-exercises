@@ -9,6 +9,7 @@ object CatsLibrary extends exercise.Library {
 
   override def sections = List(
     MonoidSection,
+    SemigroupSection,
     FunctorSection,
     ApplySection,
     ApplicativeSection,
