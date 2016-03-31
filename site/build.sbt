@@ -31,7 +31,7 @@ lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
     sharedJvm,
-    content % "runtime->compile-generated-exercises")
+    content)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)

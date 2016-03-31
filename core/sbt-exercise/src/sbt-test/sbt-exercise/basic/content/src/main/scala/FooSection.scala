@@ -2,14 +2,12 @@ package stdlib
 
 /** This is a Section Foo
   *
-  * @param name Section Foo
+  * @param name foo
   */
 object FooSection extends exercise.Section {
 
   /** Exercise foo 1 */
-  def foo1(value: String) {
-    println(s"foo 1: $value")
-  }
+  def foo1(value: String): String = s"foo 1: $value"
 
   /** Exercise foo 2 */
   def foo2(value: String) {
