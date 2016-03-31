@@ -36,14 +36,14 @@ object SingletonExercises extends FlatSpec with Matchers with exercise.Section {
     * import shapeless._, syntax.singleton._
     * }}}
     */
-  def narrow1(res0: Witness.`23`.T) = {
-    res0.isInstanceOf[Witness.`23`.T] should be(true)
+  def narrow1(res0: Witness) = {
+    res0.value == 23 should be(true)
   }
 
   /**
     */
-  def narrow2(res0: Witness.`"foo"`.T) = {
-    res0.isInstanceOf[Witness.`"foo"`.T] should be(true)
+  def narrow2(res0: Witness) = {
+    res0.value == "foo" should be(true)
   }
 
   /**

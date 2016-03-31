@@ -70,32 +70,32 @@ object LazyExercises extends FlatSpec with Matchers with exercise.Section {
     * case object Nil extends Nil
     *
     * trait Show[T] {
-    *  def apply(t: T): String
+    * def apply(t: T): String
     * }
     *
     * object Show {
-    *  // Base case for Int
-    *  implicit def showInt: Show[Int] = new Show[Int] {
-    *    def apply(t: Int) = t.toString
-    *  }
+    * // Base case for Int
+    * implicit def showInt: Show[Int] = new Show[Int] {
+    * def apply(t: Int) = t.toString
+    * }
     *
-    *  // Base case for Nil
-    *  implicit def showNil: Show[Nil] = new Show[Nil] {
-    *    def apply(t: Nil) = "Nil"
-    *  }
+    * // Base case for Nil
+    * implicit def showNil: Show[Nil] = new Show[Nil] {
+    * def apply(t: Nil) = "Nil"
+    * }
     *
-    *  // Case for Cons[T]: note (mutually) recursive implicit argument referencing Show[List[T]]
-    *  implicit def showCons[T](implicit st: Lazy[Show[T]], sl: Lazy[Show[List[T]]]): Show[Cons[T]] = new Show[Cons[T]] {
-    *    def apply(t: Cons[T]) = s"Cons(${show(t.hd)(st.value)}, ${show(t.tl)(sl.value)})"
-    *  }
+    * // Case for Cons[T]: note (mutually) recursive implicit argument referencing Show[List[T]]
+    * implicit def showCons[T](implicit st: Lazy[Show[T]], sl: Lazy[Show[List[T]]]): Show[Cons[T]] = new Show[Cons[T]] {
+    * def apply(t: Cons[T]) = s"Cons(${show(t.hd)(st.value)}, ${show(t.tl)(sl.value)})"
+    * }
     *
-    *  // Case for List[T]: note (mutually) recursive implicit argument referencing Show[Cons[T]]
-    *  implicit def showList[T](implicit sc: Lazy[Show[Cons[T]]]): Show[List[T]] = new Show[List[T]] {
-    *    def apply(t: List[T]) = t match {
-    *      case n: Nil => show(n)
-    *      case c: Cons[T] => show(c)(sc.value)
-    *   }
-    *  }
+    * // Case for List[T]: note (mutually) recursive implicit argument referencing Show[Cons[T]]
+    * implicit def showList[T](implicit sc: Lazy[Show[Cons[T]]]): Show[List[T]] = new Show[List[T]] {
+    * def apply(t: List[T]) = t match {
+    *   case n: Nil => show(n)
+    *   case c: Cons[T] => show(c)(sc.value)
+    * }
+    * }
     * }
     *
     * def show[T](t: T)(implicit s: Show[T]) = s(t)

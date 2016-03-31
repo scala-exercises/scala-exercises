@@ -13,14 +13,14 @@ import shapeless._
   * cols.mkString("\\"", "\\", \\"", "\\"")
   *
   * def csv[N <: Nat]
-  *  (hdrs : Sized[Seq[String], N],
-  *    rows : List[Sized[Seq[String], N]]) = row(hdrs) :: rows.map(row(_))
+  * (hdrs : Sized[Seq[String], N],
+  * rows : List[Sized[Seq[String], N]]) = row(hdrs) :: rows.map(row(_))
   *
   * val hdrs = Sized("Title", "Author")
   *
   * val rows = List(
-  *  Sized("Types and Programming Languages", "Benjamin Pierce"),
-  *  Sized("The Implementation of Functional Programming Languages", "Simon Peyton-Jones")
+  * Sized("Types and Programming Languages", "Benjamin Pierce"),
+  * Sized("The Implementation of Functional Programming Languages", "Simon Peyton-Jones")
   * )
   * }}}
   *
@@ -47,8 +47,9 @@ object SizedExercises extends FlatSpec with Matchers with exercise.Section {
 
   /** In the example below we define a method `csv` whose signature guarantees at compile time that there are exactly as many
     * column headers provided as colums
+    * TODO : what would be a good exercise for stuff that can only be proven at compile time???
     */
-  def sizedEx() = {
+  def sizedEx(res0: Int) = {
 
     // hdrs and rows statically known to have the same number of columns
     val formatted = csv(hdrs, rows) // Compiles
@@ -56,6 +57,7 @@ object SizedExercises extends FlatSpec with Matchers with exercise.Section {
     // extendedHdrs has the wrong number of columns for rows
     val extendedHdrs = Sized("Title", "Author", "ISBN")
     //val badFormatted = csv(extendedHdrs, rows)             // Does not compile
+    res0 should be(1)
   }
 
 }

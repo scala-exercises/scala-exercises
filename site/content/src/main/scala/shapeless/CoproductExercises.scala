@@ -42,9 +42,9 @@ object CoproductExercises extends FlatSpec with Matchers with exercise.Section {
   /** Coproduct also supports mapping given a polymorphic function such as
     * {{{
     * object sizeM extends Poly1 {
-    *  implicit def caseInt = at[Int](i => (i, i))
-    *  implicit def caseString = at[String](s => (s, s.length))
-    *  implicit def caseBoolean = at[Boolean](b => (b, 1))
+    * implicit def caseInt = at[Int](i => (i, i))
+    * implicit def caseString = at[String](s => (s, s.length))
+    * implicit def caseBoolean = at[Boolean](b => (b, 1))
     * }
     * }}}
     */

@@ -14,11 +14,11 @@ import ops.hlist._
   * import shapeless._ ; import syntax.singleton._ ; import record._
   *
   * val book =
-  *  ("author" ->> "Benjamin Pierce") ::
-  *  ("title"  ->> "Types and Programming Languages") ::
-  *  ("id"     ->>  262162091) ::
-  *  ("price"  ->>  44.11) ::
-  *  HNil
+  * ("author" ->> "Benjamin Pierce") ::
+  * ("title"  ->> "Types and Programming Languages") ::
+  * ("id"     ->>  262162091) ::
+  * ("price"  ->>  44.11) ::
+  * HNil
   * }}}
   *
   * @param name extensible_records
@@ -59,7 +59,7 @@ object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.S
 
   /** Update, Add or remove a field
     */
-  def updated(res0: Double, res1: Boolean, res2: String :: String :: Double :: HNil) = {
+  def updated(res0: Double, res1: Boolean, res2: String :: String :: Double :: Boolean :: HNil) = {
     val newPrice = book("price") + 2.0
     val updated = book + ("price" ->> newPrice)
 
@@ -67,7 +67,7 @@ object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.S
 
     val extended = updated + ("inPrint" ->> true)
 
-    extended("inPrint") should be(res0)
+    extended("inPrint") should be(res1)
 
     val noId = extended - "id"
 
