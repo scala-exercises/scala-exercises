@@ -38,7 +38,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   override def trigger = noTrigger
 
   //val CompileMain = config("compile-main")
-  val CompileGeneratedExercises = config("compile-generated-exercises")
+  lazy val CompileGeneratedExercises = config("compile-generated-exercises")
+  lazy val CustomCompile = config("compile") extend (CompileGeneratedExercises)
 
   val generateExercises = TaskKey[List[(String, String)]]("generate-exercises")
 
@@ -75,11 +76,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
         Seq(packageBin in CompileGeneratedExercises)),
 
       ivyConfigurations   :=
-        overrideConfigs(CompileGeneratedExercises)(ivyConfigurations.value),
+        overrideConfigs(CompileGeneratedExercises, CustomCompile)(ivyConfigurations.value),
       libraryDependencies +=
         "com.47deg" %% "definitions" % Meta.version,
       libraryDependencies +=
         "com.47deg" %% "runtime" % Meta.version % CompileGeneratedExercises.name
+
+
+      //classpathConfiguration in Compile := CompileGeneratedExercises
     )
   // format: ON
 
