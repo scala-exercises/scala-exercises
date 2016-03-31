@@ -12,7 +12,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * {{{
     * def printName(first:String, last:String) = {
-    *    println(first + " " + last)
+    * println(first + " " + last)
     * }
     *
     * printName("John","Smith") // Prints "John Smith"
@@ -24,7 +24,7 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * {{{
     * def printName(first:String = "John", last:String = "Smith") = {
-    *    println(first + " " + last)
+    * println(first + " " + last)
     * }
     * printName(last = "Jones") // Prints "John Jones"
     * }}}
@@ -33,33 +33,33 @@ object NamedandDefaultArguments extends FlatSpec with Matchers with exercise.Sec
     *
     * {{{
     * class WithoutClassParameters() {
-    *  def addColors(red: Int, green: Int, blue: Int) = {
-    *    (red, green, blue)
-    *  }
+    * def addColors(red: Int, green: Int, blue: Int) = {
+    * (red, green, blue)
+    * }
     *
-    *  def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
-    *    (red, green, blue)
-    *  }
+    * def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
+    * (red, green, blue)
+    * }
     * }
     *
     * class WithClassParameters(val defaultRed: Int, val defaultGreen: Int, val defaultBlue: Int) {
-    *  def addColors(red: Int, green: Int, blue: Int) = {
-    *    (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *  }
+    * def addColors(red: Int, green: Int, blue: Int) = {
+    * (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     *
-    *  def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
-    *    (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *  }
+    * def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
+    * (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     * }
     *
     * class WithClassParametersInClassDefinition(val defaultRed: Int = 0, val defaultGreen: Int = 255, val defaultBlue: Int = 100) {
-    *  def addColors(red: Int, green: Int, blue: Int) = {
-    *    (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *  }
+    * def addColors(red: Int, green: Int, blue: Int) = {
+    * (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     *
-    *  def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
-    *    (red + defaultRed, green + defaultGreen, blue + defaultBlue)
-    *  }
+    * def addColorsWithDefaults(red: Int = 0, green: Int = 0, blue: Int = 0) = {
+    * (red + defaultRed, green + defaultGreen, blue + defaultBlue)
+    * }
     * }
     *
     * }}}

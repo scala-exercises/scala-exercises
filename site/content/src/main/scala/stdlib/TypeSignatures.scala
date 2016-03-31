@@ -97,20 +97,20 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * trait Randomizer[A] {
-    *  def draw(): A
+    * def draw(): A
     * }
     *
     * class IntRandomizer extends Randomizer[Int] {
-    *  def draw() = {
-    *    import util.Random
-    *    Random.nextInt()
-    *  }
+    * def draw() = {
+    * import util.Random
+    * Random.nextInt()
+    * }
     * }
     *
     * val intRand = new IntRandomizer
     *
     * intercept[ClassCastException] {
-    *  intRand.asInstanceOf[String] //intRand cannot be cast to String
+    * intRand.asInstanceOf[String] //intRand cannot be cast to String
     * }
     * }}}
     *

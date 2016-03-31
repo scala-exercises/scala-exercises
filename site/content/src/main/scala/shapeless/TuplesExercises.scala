@@ -29,7 +29,7 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
 
   /** drop
     */
-  def drop(res0: Any) = {
+  def drop(res0: Tuple1[Boolean]) = {
     (23, "foo", true).drop(2) should be(res0)
   }
 
@@ -112,7 +112,7 @@ object TuplesExercises extends FlatSpec with Matchers with exercise.Section {
     * implicit def caseString = at[String](_.length)
     * implicit def caseTuple[T, U]
     * (implicit st : Case.Aux[T, Int], su : Case.Aux[U, Int]) =
-    *   at[(T, U)](t => size(t._1)+size(t._2))
+    *  at[(T, U)](t => size(t._1)+size(t._2))
     * }
     *
     * object addSize extends Poly2 {

@@ -12,12 +12,12 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * object MatchTest1 extends App {
-    *  def matchTest(x: Int): String = x match {
-    *    case 1 => "one"
-    *    case 2 => "two"
-    *    case _ => "many"
-    *  }
-    *  println(matchTest(3))
+    * def matchTest(x: Int): String = x match {
+    * case 1 => "one"
+    * case 2 => "two"
+    * case _ => "many"
+    * }
+    * println(matchTest(3))
     * }
     * }}}
     *
@@ -32,13 +32,13 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     val stuff = "blue"
 
     val myStuff = stuff match {
-      case "red"   ⇒
+      case "red" ⇒
         println("RED"); 1
-      case "blue"  ⇒
+      case "blue" ⇒
         println("BLUE"); 2
       case "green" ⇒
         println("GREEN"); 3
-      case _       ⇒ println(stuff); 0 //case _ will trigger if all other cases fail.
+      case _ ⇒ println(stuff); 0 //case _ will trigger if all other cases fail.
     }
 
     myStuff should be(res0)
