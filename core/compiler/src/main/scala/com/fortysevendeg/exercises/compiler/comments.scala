@@ -299,9 +299,18 @@ private[compiler] object CommentRendering {
   }
 
   private[this] def formatCode(code: String): String = {
-    def wrap(code: String): String = s"""object Wrapper { $code }"""
+    def wrap(code: String): String = s"""// format: OFF
+      |object Wrapper {
+      |// format: ON
+      |$code
+      |// format: OFF
+      |}""".stripMargin
+
     def unwrap(code: String): String =
-      code.split("\n").drop(1).dropRight(1).map(_.drop(2)).mkString("\n")
+      code.split("\n")
+        .drop(3)
+        .dropRight(2)
+        .map(_.drop(2)).mkString("\n")
 
     Xor.catchNonFatal(ScalaFormatter.format(wrap(code))) match {
       case Xor.Right(result) ⇒ unwrap(result)
