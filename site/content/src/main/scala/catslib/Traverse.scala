@@ -8,8 +8,7 @@ import cats.syntax.all._
 
 import TraverseHelpers._
 
-/**
-  * In functional programming it is very common to encode "effects" as data types - common effects
+/** In functional programming it is very common to encode "effects" as data types - common effects
   * include `Option` for possibly missing values, `Xor` and `Validated` for possible errors, and
   * `Future` for asynchronous computations.
   *
@@ -64,7 +63,7 @@ import TraverseHelpers._
   *
   * {{{
   * trait Traverse[F[_]] {
-  *   def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
+  *  def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
   * }
   * }}}
   *
@@ -83,8 +82,7 @@ import TraverseHelpers._
   * @param name traverse
   */
 object TraverseSection extends FlatSpec with Matchers with exercise.Section {
-  /**
-    * == Choose your effect ==
+  /** == Choose your effect ==
     *
     * The type signature of `Traverse` appears highly abstract, and indeed it is - what `traverse` does as it
     * walks the `F[A]` depends on the effect of the function. Let's see some examples where `F` is taken to be
@@ -104,10 +102,10 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.syntax.traverse._
     *
     * def parseIntXor(s: String): Xor[NumberFormatException, Int] =
-    *   Xor.catchOnly[NumberFormatException](s.toInt)
+    *  Xor.catchOnly[NumberFormatException](s.toInt)
     *
     * def parseIntValidated(s: String): ValidatedNel[NumberFormatException, Int] =
-    *   Validated.catchOnly[NumberFormatException](s.toInt).toValidatedNel
+    *  Validated.catchOnly[NumberFormatException](s.toInt).toValidatedNel
     * }}}
     *
     * We can now traverse structures that contain strings parsing them into integers
@@ -118,13 +116,12 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     List("1", "abc", "3").traverseU(parseIntXor).isLeft should be(res1)
   }
 
-  /**
-    * We need proof that `NonEmptyList[A]` is a `Semigroup `for there to be an `Applicative` instance for
+  /** We need proof that `NonEmptyList[A]` is a `Semigroup `for there to be an `Applicative` instance for
     * `ValidatedNel`.
     */
   def traverseuValidated(res0: Boolean) = {
     import cats.Semigroup
-    import cats.data.{ NonEmptyList, OneAnd, ValidatedNel  }
+    import cats.data.{ NonEmptyList, OneAnd, ValidatedNel }
 
     implicit def nelSemigroup[A]: Semigroup[NonEmptyList[A]] =
       OneAnd.oneAndSemigroupK[List].algebra[A]
@@ -132,8 +129,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     List("1", "2", "3").traverseU(parseIntValidated).isValid should be(res0)
   }
 
-  /**
-    * Notice that in the `Xor` case, should any string fail to parse the entire traversal
+  /** Notice that in the `Xor` case, should any string fail to parse the entire traversal
     * is considered a failure. Moreover, once it hits its first bad parse, it will not
     * attempt to parse any others down the line (similar behavior would be found with
     * using `Option` as the effect). Contrast this with `Validated` where even
@@ -177,7 +173,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * def processTopics(topics: List[Topic]) =
-    *   topics.traverse(processTopic)
+    *  topics.traverse(processTopic)
     * }}}
     *
     * Note the nice return type - `Job[List[Result]]`. We now have one aggregate `Job` that when run,
@@ -207,7 +203,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     * Sometimes you may find yourself with a collection of data, each of which is already in an effect,
     * for instance a `List[Option[A]]`. To make this easier to work with, you want a `Option[List[A]]`.
     * Given `Option` has an `Applicative` instance, we can traverse over the list with the identity function.
-
+    *
     */
   def sequencing(res0: Option[List[Int]], res1: Option[List[Int]]) = {
     import cats.std.option._
@@ -216,8 +212,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     List(Option(1), None, Option(3)).traverse(identity) should be(res1)
   }
 
-  /**
-    * `Traverse` provides a convenience method `sequence` that does exactly this.
+  /** `Traverse` provides a convenience method `sequence` that does exactly this.
     *
     * {{{
     * List(Option(1), Option(2), Option(3)).sequence
@@ -241,7 +236,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     * import scala.concurrent.ExecutionContext.Implicits.global
     *
     * def writeManyToStore(data: List[Data]) =
-    *   data.traverse(writeToStore)
+    *  data.traverse(writeToStore)
     * }}}
     *
     * We end up with a `Future[List[Unit]]`! A `List[Unit]` is not of any use to us, and communicates the
