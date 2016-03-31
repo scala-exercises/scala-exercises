@@ -38,13 +38,13 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     * import cats._
     *
     * implicit def optionMonad(implicit app: Applicative[Option]) =
-    *  new Monad[Option] {
-    *    // Define flatMap using Option's flatten method
-    *    override def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
-    *      app.map(fa)(f).flatten
-    *    // Reuse this definition from Applicative.
-    *    override def pure[A](a: A): Option[A] = app.pure(a)
-    *  }
+    * new Monad[Option] {
+    *  // Define flatMap using Option's flatten method
+    *  override def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
+    *    app.map(fa)(f).flatten
+    *  // Reuse this definition from Applicative.
+    *  override def pure[A](a: A): Option[A] = app.pure(a)
+    * }
     * }}}
     *
     * Cats already provides a `Monad` instance of `Option`.
@@ -65,8 +65,8 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * implicit val listMonad = new Monad[List] {
-    *  def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
-    *  def pure[A](a: A): List[A] = List(a)
+    * def flatMap[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
+    * def pure[A](a: A): List[A] = List(a)
     * }
     * }}}
     *
@@ -110,16 +110,16 @@ object MonadSection extends FlatSpec with Matchers with exercise.Section {
     * case class OptionT[F[_], A](value: F[Option[A]])
     *
     * implicit def optionTMonad[F[_]](implicit F : Monad[F]) = {
-    *  new Monad[OptionT[F, ?]] {
-    *    def pure[A](a: A): OptionT[F, A] = OptionT(F.pure(Some(a)))
-    *    def flatMap[A, B](fa: OptionT[F, A])(f: A => OptionT[F, B]): OptionT[F, B] =
-    *      OptionT {
-    *        F.flatMap(fa.value) {
-    *          case None => F.pure(None)
-    *          case Some(a) => f(a).value
-    *        }
+    * new Monad[OptionT[F, ?]] {
+    *  def pure[A](a: A): OptionT[F, A] = OptionT(F.pure(Some(a)))
+    *  def flatMap[A, B](fa: OptionT[F, A])(f: A => OptionT[F, B]): OptionT[F, B] =
+    *    OptionT {
+    *      F.flatMap(fa.value) {
+    *        case None => F.pure(None)
+    *        case Some(a) => f(a).value
     *      }
-    *  }
+    *    }
+    * }
     * }
     * }}}
     *

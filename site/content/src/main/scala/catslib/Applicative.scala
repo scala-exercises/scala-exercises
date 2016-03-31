@@ -5,8 +5,7 @@ import org.scalatest._
 import cats._
 import cats.std.all._
 
-/**
-  * `Applicative` extends `Apply` by adding a single method, `pure`:
+/** `Applicative` extends `Apply` by adding a single method, `pure`:
   *
   * {{{
   * def pure[A](x: A): F[A]

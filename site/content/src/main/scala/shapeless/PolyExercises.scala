@@ -4,8 +4,7 @@ import org.scalatest._
 import shapeless._
 import poly.{ ~> }
 
-/**
-  * Ordinary Scala function values are monomorphic. shapeless, however, provides an encoding of polymorphic
+/** Ordinary Scala function values are monomorphic. shapeless, however, provides an encoding of polymorphic
   * function values. It supports natural transformations, which are familiar from libraries like Cats or Scalaz,
   *
   * @param name polymorphic_function_values

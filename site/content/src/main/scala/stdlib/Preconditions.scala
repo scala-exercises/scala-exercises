@@ -18,8 +18,8 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class Rational(n: Int, d: Int) {
-    *  require(d != 0)
-    *  override def toString = n +"/"+ d
+    * require(d != 0)
+    * override def toString = n +"/"+ d
     * }
     * }}}
     *
@@ -29,11 +29,11 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * class WithParameterRequirement(val myValue: Int) {
-    *  require(myValue != 0)
+    * require(myValue != 0)
     *
-    *  def this(someValue: String) {
-    *    this(someValue.size)
-    *  }
+    * def this(someValue: String) {
+    *  this(someValue.size)
+    * }
     * }
     * }}}
     * On precondition violation, intercept expects type of exception thrown. *Instruction: use Intercept to catch the type of exception thrown by an invalid precondition*

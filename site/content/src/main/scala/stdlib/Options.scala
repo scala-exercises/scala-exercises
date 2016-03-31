@@ -26,7 +26,7 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * def maybeItWillReturnSomething(flag: Boolean): Option[String] = {
-    *  if (flag) Some("Found value") else None
+    * if (flag) Some("Found value") else None
     * }
     * }}}
     * Represent `null` with `None` because `null` is a bad idea:

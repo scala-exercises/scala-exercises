@@ -57,9 +57,9 @@ object IdentitySection extends FlatSpec with Matchers with exercise.Section {
   /** Compare the signatures of `map` and `flatMap` and `coflatMap`:
     *
     * {{{
-    *  def map[A, B](fa: Id[A])(f: A => B): Id[B]
-    *  def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B]
-    *  def coflatMap[A, B](a: Id[A])(f: Id[A] => B): Id[B]
+    * def map[A, B](fa: Id[A])(f: A => B): Id[B]
+    * def flatMap[A, B](fa: Id[A])(f: A => Id[B]): Id[B]
+    * def coflatMap[A, B](a: Id[A])(f: Id[A] => B): Id[B]
     * }}}
     *
     * You'll notice that in the flatMap signature, since `Id[B]` is the same

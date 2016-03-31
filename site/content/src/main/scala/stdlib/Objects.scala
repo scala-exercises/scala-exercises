@@ -73,19 +73,19 @@ object Objects extends FlatSpec with Matchers with exercise.Section {
   /** A companion object stores shared variables and values for every instantiated class to share. Having next companion object `SecretAgent`:
     * {{{
     * class SecretAgent(val name: String) {
-    *  def shoot(n: Int) {
-    *    SecretAgent.decrementBullets(n)
-    *  }
+    * def shoot(n: Int) {
+    *  SecretAgent.decrementBullets(n)
+    * }
     * }
     *
     * object SecretAgent {
-    *  //This is encapsulated!
-    *  var bullets: Int = 3000
+    * //This is encapsulated!
+    * var bullets: Int = 3000
     *
-    *  private def decrementBullets(count: Int) {
-    *    if (bullets - count <= 0) bullets = 0
-    *    else bullets = bullets - count
-    *  }
+    * private def decrementBullets(count: Int) {
+    *  if (bullets - count <= 0) bullets = 0
+    *  else bullets = bullets - count
+    * }
     * }
     * }}}
     * Try to understand how bullets are decreasing while agents are shooting.
