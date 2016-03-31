@@ -91,7 +91,6 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.8.1",
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
-      "com.lihaoyi" %%% "scalarx" % "0.2.8",
       "io.monix" %%% "monix" % "2.0-M1",
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",

@@ -5,11 +5,10 @@
 
 package scripts
 
-import rx._
 import utils.DomHandler._
 
 import scala.scalajs.js
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 import shared.IO
 import IO._
@@ -20,68 +19,61 @@ import ui.UI
 import state.State
 import effects.Effects
 
-import monix.execution.Ack
-import monix.execution.Ack.Continue
 import monix.reactive._
 import monix.reactive.subjects._
-
-import monix.execution.Scheduler.Implicits.global
+import monix.execution.Scheduler.Implicits.{ global ⇒ scheduler }
 
 object ExercisesJS extends js.JSApp {
   def main(): Unit = {
-    val actionsSub = BehaviorSubject[Action](Start)
+    // A subject where every program action is published
+    val actions = BehaviorSubject[Action](Start)
 
-    actionsSub.subscribe(new Observer[Action] {
-      def onNext(elem: Action) = {
-        println("[ACTION]: " + elem)
-        Continue
-      }
+    // State is the reduction of the initial state and the stream of actions
+    val state: Observable[State] = actions.scan(Nil: State)(State.update)
 
-      def onError(ex: Throwable) = ()
-      def onComplete() = ()
-    })
+    // A stream of (State, Action) pairs that emits a value each time the state is affected
+    // by an action
+    val stateAndAction: Observable[(State, Action)] = state.zip(actions).distinct
 
-    val states: Var[State] = Var(Nil)
-    val actions: Var[Action] = Var(Start)
+    // UI modifications
+    val ui: Observable[IO[Unit]] = stateAndAction.map((sa) ⇒ UI.update(sa._1, sa._2))
 
-    def setState(s: State): IO[Unit] = io {
-      states() = s
+    // Effects that can trigger further actions
+    val effects: Observable[Future[Option[Action]]] = stateAndAction.map((sa) ⇒ Effects.perform(sa._1, sa._2))
+
+    def triggerAction(action: Action): IO[Unit] = io {
+      actions.onNext(action)
     }
 
-    def triggerAction(action: Action): IO[Unit] = {
-      actions() = action
-      val oldState = states()
-      val newState = State.update(oldState, action)
-      setState(newState)
+    def wireObservables: IO[Unit] = io {
+      ui.foreach(ioAction ⇒ {
+        ioAction.unsafePerformIO()
+      })
+      effects.foreach((f: Future[Option[Action]]) ⇒ {
+        f.foreach(m ⇒ {
+          m.foreach(a => actions.onNext(a))
+        })
+      })
     }
 
-    Obs(states) {
-      val state = states()
-      val action = actions()
-
-      // Perform effects
-      Effects.perform(state, action).foreach(m ⇒ {
-        m.foreach(triggerAction(_).unsafePerformIO())
-      })
-      // Update UI
-      UI.update(state, action).unsafePerformIO()
+    def startInteraction: IO[Unit] = {
+      for {
+        _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
+          triggerAction(UpdateExercise(method, arguments))
+        }, (method: String) ⇒ {
+          triggerAction(CompileExercise(method))
+        })
+        _ ← onButtonClick((method: String) ⇒ {
+          triggerAction(CompileExercise(method))
+        })
+        _ ← onInputBlur((method: String) ⇒ {
+          triggerAction(CompileExercise(method))
+        })
+      } yield ()
     }
-
-    def startInteraction: IO[Unit] = for {
-      _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
-        triggerAction(UpdateExercise(method, arguments))
-      }, (method: String) ⇒ {
-        triggerAction(CompileExercise(method))
-      })
-      _ ← onButtonClick((method: String) ⇒ {
-        triggerAction(CompileExercise(method))
-      })
-      _ ← onInputBlur((method: String) ⇒ {
-        triggerAction(CompileExercise(method))
-      })
-    } yield ()
 
     val program = for {
+      _ ← wireObservables
       _ ← highlightCodeBlocks
       _ ← startInteraction
     } yield ()
