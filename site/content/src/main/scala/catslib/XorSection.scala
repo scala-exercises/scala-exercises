@@ -79,8 +79,8 @@ object XorStyleWithAdts {
   * sealed abstract class Xor[+A, +B]
   *
   * object Xor {
-  *  final case class Left[+A](a: A) extends Xor[A, Nothing]
-  *  final case class Right[+B](b: B) extends Xor[Nothing, B]
+  * final case class Left[+A](a: A) extends Xor[A, Nothing]
+  * final case class Right[+B](b: B) extends Xor[Nothing, B]
   * }
   * }}}
   *
@@ -139,12 +139,12 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.Monad
     *
     * implicit def xorMonad[Err]: Monad[Xor[Err, ?]] =
-    *  new Monad[Xor[Err, ?]] {
-    *    def flatMap[A, B](fa: Xor[Err, A])(f: A => Xor[Err, B]): Xor[Err, B] =
-    *      fa.flatMap(f)
+    * new Monad[Xor[Err, ?]] {
+    *  def flatMap[A, B](fa: Xor[Err, A])(f: A => Xor[Err, B]): Xor[Err, B] =
+    *    fa.flatMap(f)
     *
-    *    def pure[A](x: A): Xor[Err, A] = Xor.right(x)
-    *  }
+    *  def pure[A](x: A): Xor[Err, A] = Xor.right(x)
+    * }
     * }}}
     *
     * So the `flatMap` method is right-biased:
@@ -169,15 +169,15 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * object ExceptionStyle {
-    *  def parse(s: String): Int =
-    *    if (s.matches("-?[0-9]+")) s.toInt
-    *    else throw new NumberFormatException(s"${s} is not a valid integer.")
+    * def parse(s: String): Int =
+    *  if (s.matches("-?[0-9]+")) s.toInt
+    *  else throw new NumberFormatException(s"${s} is not a valid integer.")
     *
-    *  def reciprocal(i: Int): Double =
-    *    if (i == 0) throw new IllegalArgumentException("Cannot take reciprocal of 0.")
-    *    else 1.0 / i
+    * def reciprocal(i: Int): Double =
+    *  if (i == 0) throw new IllegalArgumentException("Cannot take reciprocal of 0.")
+    *  else 1.0 / i
     *
-    *  def stringify(d: Double): String = d.toString
+    * def stringify(d: Double): String = d.toString
     *
     * }
     * }}}
@@ -186,18 +186,18 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * object XorStyle {
-    *  def parse(s: String): Xor[NumberFormatException, Int] =
-    *    if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
-    *    else Xor.left(new NumberFormatException(s"${s} is not a valid integer."))
+    * def parse(s: String): Xor[NumberFormatException, Int] =
+    *  if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    *  else Xor.left(new NumberFormatException(s"${s} is not a valid integer."))
     *
-    *  def reciprocal(i: Int): Xor[IllegalArgumentException, Double] =
-    *    if (i == 0) Xor.left(new IllegalArgumentException("Cannot take reciprocal of 0."))
-    *    else Xor.right(1.0 / i)
+    * def reciprocal(i: Int): Xor[IllegalArgumentException, Double] =
+    *  if (i == 0) Xor.left(new IllegalArgumentException("Cannot take reciprocal of 0."))
+    *  else Xor.right(1.0 / i)
     *
-    *  def stringify(d: Double): String = d.toString
+    * def stringify(d: Double): String = d.toString
     *
-    *  def magic(s: String): Xor[Exception, String] =
-    *    parse(s).flatMap(reciprocal).map(stringify)
+    * def magic(s: String): Xor[Exception, String] =
+    *  parse(s).flatMap(reciprocal).map(stringify)
     * }
     * }}}
     *
@@ -250,22 +250,22 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * object XorStyleWithAdts {
-    *  sealed abstract class Error
-    *  final case class NotANumber(string: String) extends Error
-    *  final case object NoZeroReciprocal extends Error
+    * sealed abstract class Error
+    * final case class NotANumber(string: String) extends Error
+    * final case object NoZeroReciprocal extends Error
     *
-    *  def parse(s: String): Xor[Error, Int] =
-    *    if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
-    *    else Xor.left(NotANumber(s))
+    * def parse(s: String): Xor[Error, Int] =
+    *  if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    *  else Xor.left(NotANumber(s))
     *
-    *  def reciprocal(i: Int): Xor[Error, Double] =
-    *    if (i == 0) Xor.left(NoZeroReciprocal)
-    *    else Xor.right(1.0 / i)
+    * def reciprocal(i: Int): Xor[Error, Double] =
+    *  if (i == 0) Xor.left(NoZeroReciprocal)
+    *  else Xor.right(1.0 / i)
     *
-    *  def stringify(d: Double): String = d.toString
+    * def stringify(d: Double): String = d.toString
     *
-    *  def magic(s: String): Xor[Error, String] =
-    *    parse(s).flatMap(reciprocal).map(stringify)
+    * def magic(s: String): Xor[Error, String] =
+    *  parse(s).flatMap(reciprocal).map(stringify)
     * }
     * }}}
     *
@@ -296,14 +296,14 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * trait DatabaseValue
     *
     * object Database {
-    *  def databaseThings(): Xor[DatabaseError, DatabaseValue] = ???
+    * def databaseThings(): Xor[DatabaseError, DatabaseValue] = ???
     * }
     *
     * sealed abstract class ServiceError
     * trait ServiceValue
     *
     * object Service {
-    *  def serviceThings(v: DatabaseValue): Xor[ServiceError, ServiceValue] = ???
+    * def serviceThings(v: DatabaseValue): Xor[ServiceError, ServiceValue] = ???
     * }
     * }}}
     *
@@ -338,11 +338,11 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * trait DatabaseValue
     *
     * object Database {
-    *  def databaseThings(): Xor[AppError, DatabaseValue] = ???
+    * def databaseThings(): Xor[AppError, DatabaseValue] = ???
     * }
     *
     * object Service {
-    *  def serviceThings(v: DatabaseValue): Xor[AppError, ServiceValue] = ???
+    * def serviceThings(v: DatabaseValue): Xor[AppError, ServiceValue] = ???
     * }
     *
     * def doApp = Database.databaseThings().flatMap(Service.serviceThings)
@@ -363,20 +363,20 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * trait DatabaseValue
     *
     * object Database {
-    *  def databaseThings(): Xor[DatabaseError, DatabaseValue] = ???
+    * def databaseThings(): Xor[DatabaseError, DatabaseValue] = ???
     * }
     *
     * sealed abstract class ServiceError
     * trait ServiceValue
     *
     * object Service {
-    *  def serviceThings(v: DatabaseValue): Xor[ServiceError, ServiceValue] = ???
+    * def serviceThings(v: DatabaseValue): Xor[ServiceError, ServiceValue] = ???
     * }
     *
     * sealed abstract class AppError
     * object AppError {
-    *  final case class Database(error: DatabaseError) extends AppError
-    *  final case class Service(error: ServiceError) extends AppError
+    * final case class Database(error: DatabaseError) extends AppError
+    * final case class Service(error: ServiceError) extends AppError
     * }
     * }}}
     *
@@ -386,8 +386,8 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * def doApp: Xor[AppError, ServiceValue] =
-    *  Database.databaseThings().leftMap(AppError.Database).
-    *  flatMap(dv => Service.serviceThings(dv).leftMap(AppError.Service))
+    * Database.databaseThings().leftMap(AppError.Database).
+    * flatMap(dv => Service.serviceThings(dv).leftMap(AppError.Service))
     * }}}
     *
     * Hurrah! Each module only cares about its own errors as it should be, and more composite modules have their
@@ -396,11 +396,11 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * def awesome =
-    *  doApp match {
-    *    case Xor.Left(AppError.Database(_)) => "something in the database went wrong"
-    *    case Xor.Left(AppError.Service(_))  => "something in the service went wrong"
-    *    case Xor.Right(_)                   => "everything is alright!"
-    *  }
+    * doApp match {
+    *  case Xor.Left(AppError.Database(_)) => "something in the database went wrong"
+    *  case Xor.Left(AppError.Service(_))  => "something in the service went wrong"
+    *  case Xor.Right(_)                   => "everything is alright!"
+    * }
     * }}}
     *
     * Let's review the `leftMap` and `map` methods:
@@ -420,11 +420,11 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * val xor: Xor[NumberFormatException, Int] =
-    *  try {
-    *    Xor.right("abc".toInt)
-    *  } catch {
-    *    case nfe: NumberFormatException => Xor.left(nfe)
-    *  }
+    * try {
+    *  Xor.right("abc".toInt)
+    * } catch {
+    *  case nfe: NumberFormatException => Xor.left(nfe)
+    * }
     * }}}
     *
     * However, this can get tedious quickly. `Xor` provides a `catchOnly` method on its companion object
@@ -433,7 +433,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * val xor: Xor[NumberFormatException, Int] =
-    *  Xor.catchOnly[NumberFormatException]("abc".toInt)
+    * Xor.catchOnly[NumberFormatException]("abc".toInt)
     * }}}
     *
     * If you want to catch all (non-fatal) throwables, you can use `catchNonFatal`.

@@ -63,7 +63,7 @@ import TraverseHelpers._
   *
   * {{{
   * trait Traverse[F[_]] {
-  *  def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
+  * def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
   * }
   * }}}
   *
@@ -102,10 +102,10 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     * import cats.syntax.traverse._
     *
     * def parseIntXor(s: String): Xor[NumberFormatException, Int] =
-    *  Xor.catchOnly[NumberFormatException](s.toInt)
+    * Xor.catchOnly[NumberFormatException](s.toInt)
     *
     * def parseIntValidated(s: String): ValidatedNel[NumberFormatException, Int] =
-    *  Validated.catchOnly[NumberFormatException](s.toInt).toValidatedNel
+    * Validated.catchOnly[NumberFormatException](s.toInt).toValidatedNel
     * }}}
     *
     * We can now traverse structures that contain strings parsing them into integers
@@ -173,7 +173,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     *
     * {{{
     * def processTopics(topics: List[Topic]) =
-    *  topics.traverse(processTopic)
+    * topics.traverse(processTopic)
     * }}}
     *
     * Note the nice return type - `Job[List[Result]]`. We now have one aggregate `Job` that when run,
@@ -236,7 +236,7 @@ object TraverseSection extends FlatSpec with Matchers with exercise.Section {
     * import scala.concurrent.ExecutionContext.Implicits.global
     *
     * def writeManyToStore(data: List[Data]) =
-    *  data.traverse(writeToStore)
+    * data.traverse(writeToStore)
     * }}}
     *
     * We end up with a `Future[List[Unit]]`! A `List[Unit]` is not of any use to us, and communicates the

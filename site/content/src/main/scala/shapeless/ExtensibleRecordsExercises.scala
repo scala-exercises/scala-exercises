@@ -12,11 +12,11 @@ import ops.hlist._
   * import shapeless._ ; import syntax.singleton._ ; import record._
   *
   * val book =
-  *  ("author" ->> "Benjamin Pierce") ::
-  *  ("title"  ->> "Types and Programming Languages") ::
-  *  ("id"     ->>  262162091) ::
-  *  ("price"  ->>  44.11) ::
-  *  HNil
+  * ("author" ->> "Benjamin Pierce") ::
+  * ("title"  ->> "Types and Programming Languages") ::
+  * ("id"     ->>  262162091) ::
+  * ("price"  ->>  44.11) ::
+  * HNil
   * }}}
   *
   * @param name extensible_records
