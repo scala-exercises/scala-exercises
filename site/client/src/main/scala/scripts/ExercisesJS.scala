@@ -51,7 +51,7 @@ object ExercisesJS extends js.JSApp {
       })
       effects.foreach((f: Future[Option[Action]]) ⇒ {
         f.foreach(m ⇒ {
-          m.foreach(a => actions.onNext(a))
+          m.foreach(a ⇒ actions.onNext(a))
         })
       })
     }

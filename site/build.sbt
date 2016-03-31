@@ -53,7 +53,6 @@ lazy val server = (project in file("server"))
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
       "com.lihaoyi" %% "upickle" % "0.2.8",
-
       "org.webjars" %% "webjars-play" % "2.3.0",
       "org.webjars" % "bootstrap-sass" % "3.2.0",
       "org.webjars" % "highlightjs" % "8.7",
