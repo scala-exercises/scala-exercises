@@ -58,9 +58,9 @@ import ValidatedHelpers._
   *
   * implicit val intRead: Read[Int] =
   * new Read[Int] {
-  *  def read(s: String): Option[Int] =
-  *    if (s.matches("-?[0-9]+")) Some(s.toInt)
-  *    else None
+  * def read(s: String): Option[Int] =
+  * if (s.matches("-?[0-9]+")) Some(s.toInt)
+  * else None
   * }
   * }
   * }}}
@@ -96,12 +96,12 @@ import ValidatedHelpers._
   * case class Config(map: Map[String, String]) {
   * def parse[A : Read](key: String): Validated[ConfigError, A] =
   * map.get(key) match {
-  *  case None        => Invalid(MissingConfig(key))
-  *  case Some(value) =>
-  *    Read[A].read(value) match {
-  *      case None    => Invalid(ParseError(key))
-  *      case Some(a) => Valid(a)
-  *    }
+  * case None        => Invalid(MissingConfig(key))
+  * case Some(value) =>
+  * Read[A].read(value) match {
+  *   case None    => Invalid(ParseError(key))
+  *   case Some(a) => Valid(a)
+  * }
   * }
   * }
   * }}}
@@ -214,17 +214,17 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * implicit def validatedApplicative[E : Semigroup]: Applicative[Validated[E, ?]] =
     * new Applicative[Validated[E, ?]] {
     * def ap[A, B](f: Validated[E, A => B])(fa: Validated[E, A]): Validated[E, B] =
-    *  (fa, f) match {
-    *    case (Valid(a), Valid(fab)) => Valid(fab(a))
-    *    case (i@Invalid(_), Valid(_)) => i
-    *    case (Valid(_), i@Invalid(_)) => i
-    *    case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
-    *  }
+    * (fa, f) match {
+    * case (Valid(a), Valid(fab)) => Valid(fab(a))
+    * case (i@Invalid(_), Valid(_)) => i
+    * case (Valid(_), i@Invalid(_)) => i
+    * case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
+    * }
     *
     * def pure[A](x: A): Validated[E, A] = Validated.valid(x)
     * def map[A, B](fa: Validated[E, A])(f: A => B): Validated[E, B] = fa.map(f)
     * def product[A, B](fa: Validated[E, A], fb: Validated[E, B]): Validated[E, (A, B)] =
-    *  ap(fa.map(a => (b: B) => (a, b)))(fb)
+    * ap(fa.map(a => (b: B) => (a, b)))(fb)
     * }
     * }}}
     *
@@ -251,9 +251,9 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * val personFromConfig: ValidatedNel[ConfigError, Person] =
     * Apply[ValidatedNel[ConfigError, ?]].map4(config.parse[String]("name").toValidatedNel,
-    *                                       config.parse[Int]("age").toValidatedNel,
-    *                                       config.parse[Int]("house_number").toValidatedNel,
-    *                                       config.parse[String]("street").toValidatedNel) {
+    *                                    config.parse[Int]("age").toValidatedNel,
+    *                                    config.parse[Int]("house_number").toValidatedNel,
+    *                                    config.parse[String]("street").toValidatedNel) {
     * case (name, age, houseNumber, street) => Person(name, age, Address(houseNumber, street))
     * }
     *
@@ -270,10 +270,10 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * implicit def validatedMonad[E]: Monad[Validated[E, ?]] =
     * new Monad[Validated[E, ?]] {
     * def flatMap[A, B](fa: Validated[E, A])(f: A => Validated[E, B]): Validated[E, B] =
-    *  fa match {
-    *    case Valid(a)     => f(a)
-    *    case i@Invalid(_) => i
-    *  }
+    * fa match {
+    * case Valid(a)     => f(a)
+    * case i@Invalid(_) => i
+    * }
     *
     * def pure[A](x: A): Validated[E, A] = Valid(x)
     * }

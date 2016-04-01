@@ -122,13 +122,5 @@ class TuplesExercisesSpec extends Spec with Checkers {
     )
   }
 
-  def `toList op` = {
-    check(
-      Test.testSuccess(
-        TuplesExercises.toList _,
-        List(23, "foo", true) :: HNil
-      )
-    )
-  }
-
 }
+

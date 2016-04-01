@@ -1,7 +1,7 @@
 package stdlib
 
 /** This is my Library
-  * @param name My Library
+  * @param name sample
   */
 object SampleLibrary extends exercise.Library {
 

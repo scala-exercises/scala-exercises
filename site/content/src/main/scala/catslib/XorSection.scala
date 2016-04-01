@@ -141,7 +141,7 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * implicit def xorMonad[Err]: Monad[Xor[Err, ?]] =
     * new Monad[Xor[Err, ?]] {
     * def flatMap[A, B](fa: Xor[Err, A])(f: A => Xor[Err, B]): Xor[Err, B] =
-    *  fa.flatMap(f)
+    * fa.flatMap(f)
     *
     * def pure[A](x: A): Xor[Err, A] = Xor.right(x)
     * }
