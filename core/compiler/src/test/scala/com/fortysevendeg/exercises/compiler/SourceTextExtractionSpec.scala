@@ -5,7 +5,7 @@ import org.scalatest._
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc.Global
 
-class SourceTextExtractionSpec extends FunSpec with Matchers {
+class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
 
   describe("source text extraction") {
 
@@ -53,6 +53,47 @@ class SourceTextExtractionSpec extends FunSpec with Matchers {
       ))
     }
     */
+
+  }
+
+  describe("capturing imports") {
+
+    it("isolates imports to a given source file") {
+      val source1 = """
+        import a._
+        object Object1 {
+          /** Method */
+          def method() {}
+        }
+        """
+
+      val source2 = """
+        import a._
+        /** Object 2
+          * @param name Object 2
+          */
+        object Object2 {
+          import b2._
+          /** Method */
+          def method() {}
+        }
+        """
+
+      val res = new SourceTextExtraction().extractAll(source1 :: source2 :: Nil)
+
+      // Should capture exactly 1 import for Object1.method
+      inside(res.methods.get("Object1" :: "method" :: Nil)) {
+        case Some(method) ⇒
+          method.imports.length should equal(1)
+      }
+
+      // Should capture exactly 2 imports for Object2.method
+      inside(res.methods.get("Object2" :: "method" :: Nil)) {
+        case Some(method) ⇒
+          method.imports.length should equal(2)
+      }
+
+    }
 
   }
 
