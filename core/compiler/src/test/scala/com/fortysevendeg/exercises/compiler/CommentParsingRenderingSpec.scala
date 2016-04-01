@@ -42,17 +42,17 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
   import CommentZed._
   import Comments.Mode
 
-  val content1 = "This is comment content 1"
-  val content2 = "This is comment content 2"
-  val content3 = "Hello World!!!!!!!"
+  private[this] val content1 = "This is comment content 1"
+  private[this] val content2 = "This is comment content 2"
+  private[this] val content3 = "Hello World!!!!!!!"
 
-  val global = new DocExtractionGlobal() {
+  private[this] val global = new DocExtractionGlobal() {
     locally { new Run() }
   }
 
-  val commentFactory = CommentFactory(global)
+  private[this] val commentFactory = CommentFactory(global)
 
-  def parse(text: String) = commentFactory.parse(text.stripMargin)
+  private[this] def parse(text: String) = commentFactory.parse(text.stripMargin)
 
   object comments {
 
