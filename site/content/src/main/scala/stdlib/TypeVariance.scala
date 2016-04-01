@@ -104,7 +104,7 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
     * // val fruitBasket:MyContainer[Fruit] = new MyContainer[Orange](new Orange())
     * }}}
     *
-    * So, how do we get to set set a Fruit basket to an Orange basket? You make it covariant using `+`. This will allow you to set the container to either a variable with the same type or parent type. In other words, you can assign `MyContainer[Fruit]` or `MyContainer[Citrus]`.
+    * So, how do we get to set a Fruit basket to an Orange basket? You make it covariant using `+`. This will allow you to set the container to either a variable with the same type or parent type. In other words, you can assign `MyContainer[Fruit]` or `MyContainer[Citrus]`.
     */
   def polymorphismTypeVariance(res0: String) {
     class MyContainer[+A](a: A)(implicit manifest: scala.reflect.Manifest[A]) {
