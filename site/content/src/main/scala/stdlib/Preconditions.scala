@@ -32,7 +32,7 @@ object Preconditions extends FlatSpec with Matchers with exercise.Section {
     * require(myValue != 0)
     *
     * def this(someValue: String) {
-    * this(someValue.size)
+    *  this(someValue.size)
     * }
     * }
     * }}}

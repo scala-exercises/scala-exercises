@@ -54,14 +54,14 @@ import ValidatedHelpers._
   * def apply[A](implicit A: Read[A]): Read[A] = A
   *
   * implicit val stringRead: Read[String] =
-  * new Read[String] { def read(s: String): Option[String] = Some(s) }
+  *  new Read[String] { def read(s: String): Option[String] = Some(s) }
   *
   * implicit val intRead: Read[Int] =
-  * new Read[Int] {
-  * def read(s: String): Option[Int] =
-  * if (s.matches("-?[0-9]+")) Some(s.toInt)
-  * else None
-  * }
+  *  new Read[Int] {
+  *    def read(s: String): Option[Int] =
+  *      if (s.matches("-?[0-9]+")) Some(s.toInt)
+  *      else None
+  *  }
   * }
   * }}}
   *
@@ -95,14 +95,14 @@ import ValidatedHelpers._
   *
   * case class Config(map: Map[String, String]) {
   * def parse[A : Read](key: String): Validated[ConfigError, A] =
-  * map.get(key) match {
-  * case None        => Invalid(MissingConfig(key))
-  * case Some(value) =>
-  * Read[A].read(value) match {
-  *   case None    => Invalid(ParseError(key))
-  *   case Some(a) => Valid(a)
-  * }
-  * }
+  *  map.get(key) match {
+  *    case None        => Invalid(MissingConfig(key))
+  *    case Some(value) =>
+  *      Read[A].read(value) match {
+  *        case None    => Invalid(ParseError(key))
+  *        case Some(a) => Valid(a)
+  *      }
+  *  }
   * }
   * }}}
   *
@@ -113,10 +113,10 @@ import ValidatedHelpers._
   * {{{
   * def parallelValidate[E, A, B, C](v1: Validated[E, A], v2: Validated[E, B])(f: (A, B) => C): Validated[E, C] =
   * (v1, v2) match {
-  * case (Valid(a), Valid(b))       => Valid(f(a, b))
-  * case (Valid(_), i@Invalid(_))   => i
-  * case (i@Invalid(_), Valid(_))   => i
-  * case (Invalid(e1), Invalid(e2)) => ???
+  *  case (Valid(a), Valid(b))       => Valid(f(a, b))
+  *  case (Valid(_), i@Invalid(_))   => i
+  *  case (i@Invalid(_), Valid(_))   => i
+  *  case (Invalid(e1), Invalid(e2)) => ???
   * }
   * }}}
   *
@@ -131,10 +131,10 @@ import ValidatedHelpers._
   *
   * def parallelValidate[E : Semigroup, A, B, C](v1: Validated[E, A], v2: Validated[E, B])(f: (A, B) => C): Validated[E, C] =
   * (v1, v2) match {
-  * case (Valid(a), Valid(b))       => Valid(f(a, b))
-  * case (Valid(_), i@Invalid(_))   => i
-  * case (i@Invalid(_), Valid(_))   => i
-  * case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
+  *  case (Valid(a), Valid(b))       => Valid(f(a, b))
+  *  case (Valid(_), i@Invalid(_))   => i
+  *  case (i@Invalid(_), Valid(_))   => i
+  *  case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
   * }
   * }}}
   *
@@ -213,18 +213,18 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     *
     * implicit def validatedApplicative[E : Semigroup]: Applicative[Validated[E, ?]] =
     * new Applicative[Validated[E, ?]] {
-    * def ap[A, B](f: Validated[E, A => B])(fa: Validated[E, A]): Validated[E, B] =
-    * (fa, f) match {
-    * case (Valid(a), Valid(fab)) => Valid(fab(a))
-    * case (i@Invalid(_), Valid(_)) => i
-    * case (Valid(_), i@Invalid(_)) => i
-    * case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
-    * }
+    *  def ap[A, B](f: Validated[E, A => B])(fa: Validated[E, A]): Validated[E, B] =
+    *    (fa, f) match {
+    *      case (Valid(a), Valid(fab)) => Valid(fab(a))
+    *      case (i@Invalid(_), Valid(_)) => i
+    *      case (Valid(_), i@Invalid(_)) => i
+    *      case (Invalid(e1), Invalid(e2)) => Invalid(Semigroup[E].combine(e1, e2))
+    *    }
     *
-    * def pure[A](x: A): Validated[E, A] = Validated.valid(x)
-    * def map[A, B](fa: Validated[E, A])(f: A => B): Validated[E, B] = fa.map(f)
-    * def product[A, B](fa: Validated[E, A], fb: Validated[E, B]): Validated[E, (A, B)] =
-    * ap(fa.map(a => (b: B) => (a, b)))(fb)
+    *  def pure[A](x: A): Validated[E, A] = Validated.valid(x)
+    *  def map[A, B](fa: Validated[E, A])(f: A => B): Validated[E, B] = fa.map(f)
+    *  def product[A, B](fa: Validated[E, A], fb: Validated[E, B]): Validated[E, (A, B)] =
+    *    ap(fa.map(a => (b: B) => (a, b)))(fb)
     * }
     * }}}
     *
@@ -251,10 +251,10 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * val personFromConfig: ValidatedNel[ConfigError, Person] =
     * Apply[ValidatedNel[ConfigError, ?]].map4(config.parse[String]("name").toValidatedNel,
-    *                                    config.parse[Int]("age").toValidatedNel,
-    *                                    config.parse[Int]("house_number").toValidatedNel,
-    *                                    config.parse[String]("street").toValidatedNel) {
-    * case (name, age, houseNumber, street) => Person(name, age, Address(houseNumber, street))
+    *                                         config.parse[Int]("age").toValidatedNel,
+    *                                         config.parse[Int]("house_number").toValidatedNel,
+    *                                         config.parse[String]("street").toValidatedNel) {
+    *  case (name, age, houseNumber, street) => Person(name, age, Address(houseNumber, street))
     * }
     *
     * We can now rewrite validations in terms of `Apply`.
@@ -269,13 +269,13 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     *
     * implicit def validatedMonad[E]: Monad[Validated[E, ?]] =
     * new Monad[Validated[E, ?]] {
-    * def flatMap[A, B](fa: Validated[E, A])(f: A => Validated[E, B]): Validated[E, B] =
-    * fa match {
-    * case Valid(a)     => f(a)
-    * case i@Invalid(_) => i
-    * }
+    *  def flatMap[A, B](fa: Validated[E, A])(f: A => Validated[E, B]): Validated[E, B] =
+    *    fa match {
+    *      case Valid(a)     => f(a)
+    *      case i@Invalid(_) => i
+    *    }
     *
-    * def pure[A](x: A): Validated[E, A] = Valid(x)
+    *  def pure[A](x: A): Validated[E, A] = Valid(x)
     * }
     * }}}
     *
@@ -287,10 +287,10 @@ object ValidatedSection extends FlatSpec with Matchers with exercise.Section {
     * def pure[A](x: A): F[A]
     *
     * def map[A, B](fa: F[A])(f: A => B): F[B] =
-    * flatMap(fa)(f.andThen(pure))
+    *  flatMap(fa)(f.andThen(pure))
     *
     * def ap[A, B](fa: F[A])(f: F[A => B]): F[B] =
-    * flatMap(fa)(a => map(f)(fab => fab(a)))
+    *  flatMap(fa)(a => map(f)(fab => fab(a)))
     * }
     * }}}
     *

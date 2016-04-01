@@ -1,4 +1,4 @@
-package exercises
+opackage exercises
 
 import shapelessex._
 import shapeless.HNil

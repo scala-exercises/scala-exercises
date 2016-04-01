@@ -52,7 +52,7 @@ import cats.std.list._
   * {{{
   * implicit def function1Functor[In]: Functor[Function1[In, ?]] =
   * new Functor[Function1[In, ?]] {
-  * def map[A,B](fa: In => A)(f: A => B): Function1[In,B] = fa andThen f
+  *  def map[A,B](fa: In => A)(f: A => B): Function1[In,B] = fa andThen f
   * }
   * }}}
   *

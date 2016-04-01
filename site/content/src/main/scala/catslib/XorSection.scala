@@ -140,10 +140,10 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     *
     * implicit def xorMonad[Err]: Monad[Xor[Err, ?]] =
     * new Monad[Xor[Err, ?]] {
-    * def flatMap[A, B](fa: Xor[Err, A])(f: A => Xor[Err, B]): Xor[Err, B] =
-    * fa.flatMap(f)
+    *  def flatMap[A, B](fa: Xor[Err, A])(f: A => Xor[Err, B]): Xor[Err, B] =
+    *    fa.flatMap(f)
     *
-    * def pure[A](x: A): Xor[Err, A] = Xor.right(x)
+    *  def pure[A](x: A): Xor[Err, A] = Xor.right(x)
     * }
     * }}}
     *
@@ -170,12 +170,12 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * object ExceptionStyle {
     * def parse(s: String): Int =
-    * if (s.matches("-?[0-9]+")) s.toInt
-    * else throw new NumberFormatException(s"${s} is not a valid integer.")
+    *  if (s.matches("-?[0-9]+")) s.toInt
+    *  else throw new NumberFormatException(s"${s} is not a valid integer.")
     *
     * def reciprocal(i: Int): Double =
-    * if (i == 0) throw new IllegalArgumentException("Cannot take reciprocal of 0.")
-    * else 1.0 / i
+    *  if (i == 0) throw new IllegalArgumentException("Cannot take reciprocal of 0.")
+    *  else 1.0 / i
     *
     * def stringify(d: Double): String = d.toString
     *
@@ -187,17 +187,17 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * object XorStyle {
     * def parse(s: String): Xor[NumberFormatException, Int] =
-    * if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
-    * else Xor.left(new NumberFormatException(s"${s} is not a valid integer."))
+    *  if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    *  else Xor.left(new NumberFormatException(s"${s} is not a valid integer."))
     *
     * def reciprocal(i: Int): Xor[IllegalArgumentException, Double] =
-    * if (i == 0) Xor.left(new IllegalArgumentException("Cannot take reciprocal of 0."))
-    * else Xor.right(1.0 / i)
+    *  if (i == 0) Xor.left(new IllegalArgumentException("Cannot take reciprocal of 0."))
+    *  else Xor.right(1.0 / i)
     *
     * def stringify(d: Double): String = d.toString
     *
     * def magic(s: String): Xor[Exception, String] =
-    * parse(s).flatMap(reciprocal).map(stringify)
+    *  parse(s).flatMap(reciprocal).map(stringify)
     * }
     * }}}
     *
@@ -255,17 +255,17 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * final case object NoZeroReciprocal extends Error
     *
     * def parse(s: String): Xor[Error, Int] =
-    * if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
-    * else Xor.left(NotANumber(s))
+    *  if (s.matches("-?[0-9]+")) Xor.right(s.toInt)
+    *  else Xor.left(NotANumber(s))
     *
     * def reciprocal(i: Int): Xor[Error, Double] =
-    * if (i == 0) Xor.left(NoZeroReciprocal)
-    * else Xor.right(1.0 / i)
+    *  if (i == 0) Xor.left(NoZeroReciprocal)
+    *  else Xor.right(1.0 / i)
     *
     * def stringify(d: Double): String = d.toString
     *
     * def magic(s: String): Xor[Error, String] =
-    * parse(s).flatMap(reciprocal).map(stringify)
+    *  parse(s).flatMap(reciprocal).map(stringify)
     * }
     * }}}
     *
@@ -397,9 +397,9 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * def awesome =
     * doApp match {
-    * case Xor.Left(AppError.Database(_)) => "something in the database went wrong"
-    * case Xor.Left(AppError.Service(_))  => "something in the service went wrong"
-    * case Xor.Right(_)                   => "everything is alright!"
+    *  case Xor.Left(AppError.Database(_)) => "something in the database went wrong"
+    *  case Xor.Left(AppError.Service(_))  => "something in the service went wrong"
+    *  case Xor.Right(_)                   => "everything is alright!"
     * }
     * }}}
     *
@@ -421,9 +421,9 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * val xor: Xor[NumberFormatException, Int] =
     * try {
-    * Xor.right("abc".toInt)
+    *  Xor.right("abc".toInt)
     * } catch {
-    * case nfe: NumberFormatException => Xor.left(nfe)
+    *  case nfe: NumberFormatException => Xor.left(nfe)
     * }
     * }}}
     *
