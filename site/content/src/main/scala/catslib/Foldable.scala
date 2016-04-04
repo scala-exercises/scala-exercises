@@ -58,7 +58,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
 
   /** = fold =
     *
-    * `fold`, also called `combineAll`, combines every value in the foldable using the fiven `Monoid` instance.
+    * `fold`, also called `combineAll`, combines every value in the foldable using the given `Monoid` instance.
     *
     */
   def foldableFold(res0: String, res1: Int) = {
@@ -79,7 +79,7 @@ object FoldableSection extends FlatSpec with Matchers with exercise.Section {
 
   /** = foldK =
     *
-    * `foldK` is similar to `fold` but combines every value in the foldable using the fiven `MonoidK[G]` instance
+    * `foldK` is similar to `fold` but combines every value in the foldable using the given `MonoidK[G]` instance
     * instead of `Monoid[G]`.
     */
   def foldableFoldk(res0: List[Int], res1: Option[String]) = {
