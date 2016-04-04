@@ -3,11 +3,11 @@ package shapelessex
 import org.scalatest._
 import shapeless._
 
-/** Singleton-typed literals
+/** == Singleton-typed literals ==
   *
-  * Although Scala's typechecker has always represented singleton types for literal values internally,
-  * there has not previously been syntax available to express them, other than by modifying the compiler.
-  * shapeless adds support for singleton-typed literals via implicit macros.
+  * Although Scala's typechecker has always represented singleton types for literal values internally, there has not
+  * previously been syntax available to express them, other than by [modifying the compiler][literaltype]. shapeless adds
+  * support for singleton-typed literals via implicit macros.
   *
   * @param name singletons_literals
   *
@@ -36,14 +36,14 @@ object SingletonExercises extends FlatSpec with Matchers with exercise.Section {
     * import shapeless._, syntax.singleton._
     * }}}
     */
-  def narrow1(res0: Witness.`23`.T) = {
-    res0.isInstanceOf[Witness.`23`.T] should be(true)
+  def narrow1(res0: Witness) = {
+    res0.value == 23 should be(true)
   }
 
   /**
     */
-  def narrow2(res0: Witness.`"foo"`.T) = {
-    res0.isInstanceOf[Witness.`"foo"`.T] should be(true)
+  def narrow2(res0: Witness) = {
+    res0.value == "foo" should be(true)
   }
 
   /**

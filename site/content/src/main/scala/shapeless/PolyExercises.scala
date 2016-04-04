@@ -4,8 +4,10 @@ import org.scalatest._
 import shapeless._
 import poly.{ ~> }
 
-/** Ordinary Scala function values are monomorphic. shapeless, however, provides an encoding of polymorphic
-  * function values. It supports natural transformations, which are familiar from libraries like Cats or Scalaz,
+/** == Polymorphic function values ==
+  *
+  * Ordinary [[http://www.chuusai.com/2012/04/27/shapeless-polymorphic-function-values-1/ Scala function values are monomorphic]]. shapeless, however, provides an encoding of polymorphic
+  * function values. It supports [[http://en.wikipedia.org/wiki/Natural_transformation natural transformations]], which are familiar from libraries like Scalaz
   *
   * @param name polymorphic_function_values
   */
@@ -15,7 +17,7 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
     def apply[T](s: Set[T]) = s.headOption
   }
 
-  /** choose is a function from Sets to Options with no type specific cases
+  /** `choose` is a function from Sets to Options with no type specific cases
     * {{{
     * object choose extends (Set ~> Option) {
     * def apply[T](s : Set[T]) = s.headOption
@@ -47,16 +49,16 @@ object PolyExercises extends FlatSpec with Matchers with exercise.Section {
   }
 
   /** They are nevertheless interoperable with ordinary monomorphic function values.
-    * choose is convertible to an ordinary monomorphic function value and can be
+    * `choose` is convertible to an ordinary monomorphic function value and can be
     * mapped across an ordinary Scala List
     */
   def exerciseMonomorphicChoose(res0: Option[Int], res1: Option[Int]) = {
     (List(Set(1, 3, 5), Set(2, 4, 6)) map choose) should be(List(res1, res0))
   }
 
-  /** However, they are [more general than natural transformations][polyblog2] and are able to capture type-specific cases
+  /** However, they are [[http://www.chuusai.com/2012/05/10/shapeless-polymorphic-function-values-2/ more general than natural transformations]] and are able to capture type-specific cases
     * which, as we'll see below, makes them ideal for generic programming,
-    * size is a function from Ints or Strings or pairs to a 'size' defined
+    * `size` is a function from Ints or Strings or pairs to a `size` defined
     * by type specific cases
     */
   def exerciseSize(res0: Int, res1: Int, res2: Int, res3: Int) = {

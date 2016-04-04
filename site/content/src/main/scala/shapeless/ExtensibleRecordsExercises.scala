@@ -4,9 +4,11 @@ import org.scalatest._
 import shapeless._
 import ops.hlist._
 
-/** shapeless provides an implementation of extensible records modelled as `HList`s of values tagged with the singleton types of their keys.
-  * This means that there is no concrete representation needed at all for the keys.
-  * Amongst other things this will allow subsequent work on `Generic` to map case classes directly to records with their member names
+/** == Extensible records ==
+  *
+  * shapeless provides an implementation of extensible records modelled as `HLists` of values tagged with the singleton
+  * types of their keys. This means that there is no concrete representation needed at all for the keys. Amongst other
+  * things this will allow subsequent work on `Generic` to map case classes directly to records with their member names
   * encoded in their element types.
   * {{{
   * import shapeless._ ; import syntax.singleton._ ; import record._
@@ -57,7 +59,7 @@ object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.S
 
   /** Update, Add or remove a field
     */
-  def updated(res0: Double, res1: Boolean, res2: String :: String :: Double :: HNil) = {
+  def updated(res0: Double, res1: Boolean, res2: String :: String :: Double :: Boolean :: HNil) = {
     val newPrice = book("price") + 2.0
     val updated = book + ("price" ->> newPrice)
 
@@ -65,7 +67,7 @@ object ExtensibleRecordsExercises extends FlatSpec with Matchers with exercise.S
 
     val extended = updated + ("inPrint" ->> true)
 
-    extended("inPrint") should be(res0)
+    extended("inPrint") should be(res1)
 
     val noId = extended - "id"
 

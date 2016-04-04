@@ -3,11 +3,11 @@ package shapelessex
 import org.scalatest._
 import shapeless._
 
-/** shapeless has a Coproduct type, a generalization of Scala's Either to an arbitrary number of choices.
-  * Currently it exists primarily to support Generic (see the next section), but will be expanded analogously
-  * to HList in later releases.
+/** == Coproducts and discriminated unions ==
   *
-  * Currently Coproduct supports mapping, selection and unification,
+  * shapeless has a Coproduct type, a generalization of Scala's `Either` to an arbitrary number of choices. Currently it
+  * exists primarily to support `Generic` (see the next section), but will be expanded analogously to `HList` in later
+  * releases. Currently `Coproduct` supports mapping, selection and unification
   *
   * @param name coproducts
   */

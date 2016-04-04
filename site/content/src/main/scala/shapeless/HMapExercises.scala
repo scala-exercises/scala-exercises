@@ -4,7 +4,10 @@ import org.scalatest._
 import shapeless._
 import ops.hlist._
 
-/** Shapeless provides a heterogenous map which supports an arbitrary relation between the key type and the corresponding value type.
+/** == Heterogenous maps ==
+  *
+  * Shapeless provides a heterogenous map which supports an arbitrary relation between the key type and the corresponding
+  * value type,
   * {{{
   * class BiMapIS[K, V]
   * implicit val intToString = new BiMapIS[Int, String]

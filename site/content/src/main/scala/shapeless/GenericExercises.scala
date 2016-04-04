@@ -3,10 +3,13 @@ package shapelessex
 import org.scalatest._
 import shapeless._
 
-/** The Isos of earlier shapeless releases have been completely reworked as the new Generic type,
-  * which closely resembles the generic programming capabilities introduced to GHC 7.2.
-  * Generic[T], where T is a case class or an abstract type at the root of a case class hierarchy,
-  * maps between values of T and a generic sum of products representation (HLists and Coproducts),
+/** == Generic representation of (sealed families of) case classes ==
+  *
+  * The `Iso`s of earlier shapeless releases have been completely reworked as the new `Generic` type, which closely
+  * resembles the [generic programming capabilities introduced to GHC 7.2][ghcgeneric].
+  *
+  * `Generic[T]`, where `T` is a case class or an abstract type at the root of a case class hierarchy, maps between values
+  * of `T` and a generic sum of products representation (`HList`s and `Coproduct`s),
   *
   * @param name generic
   */
@@ -30,12 +33,13 @@ object GenericExercises extends FlatSpec with Matchers with exercise.Section {
     // Polymorphic function which adds 1 to any Int and is the identity
     // on all other values
     // format: OFF
-    object inc extends ->((i: Int) => i+1)
+    object inc extends -> ((i: Int) ⇒ i + 1)
     // format: ON
+    case class Book(author: String, title: String, id: Int, price: Double)
+    case class ExtendedBook(author: String, title: String, id: Int, price: Double, inPrint: Boolean)
   }
 
   import Helper._
-
   /** {{{
     * case class Foo(i: Int, s: String, b: Boolean)
     *
@@ -100,9 +104,35 @@ object GenericExercises extends FlatSpec with Matchers with exercise.Section {
     * This is provided by LabelledGeneric. Currently it provides the underpinnings for the use of shapeless lenses with
     * symbolic path selectors (see next section) and it is expected that it will support many scenarios which would otherwise
     * require the support of hard to maintain special case macros.
+    * {{{
+    * case class Book(author: String, title: String, id: Int, price: Double)
+    * }}}
     */
-  def labelled() = {
+  def labelled(res0: Double, res1: Double, res2: Boolean) = {
+    import record._
 
+    val bookGen = LabelledGeneric[Book]
+    val tapl = Book("Benjamin Pierce", "Types and Programming Languages", 262162091, 44.11)
+    val rec = bookGen.to(tapl)
+
+    rec('price) should be(res0)
+
+    val updatedBook = bookGen.from(rec.updateWith('price)(_ + 2.0))
+
+    updatedBook.price should be(res1)
+
+    /** {{{
+      * case class ExtendedBook(author: String, title: String, id: Int, price: Double, inPrint: Boolean)
+      * }}}
+      */
+
+    import syntax.singleton._
+
+    val bookExtGen = LabelledGeneric[ExtendedBook]
+
+    val extendedBook = bookExtGen.from(rec + ('inPrint ->> true))
+
+    extendedBook.inPrint should be(res2)
   }
 
 }
