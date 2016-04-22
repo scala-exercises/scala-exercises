@@ -46,7 +46,8 @@ case class Compiler() {
       symbol:    ClassSymbol,
       comment:   RenderedComment.Aux[Mode.Section],
       exercises: List[ExerciseInfo],
-      imports:   List[String]                      = Nil
+      imports:   List[String]                      = Nil,
+      path:      Option[String] = None
     )
 
     case class ExerciseInfo(
@@ -96,7 +97,8 @@ case class Compiler() {
         symbol = symbol,
         comment = comment,
         exercises = exercises,
-        imports = Nil
+        imports = Nil,
+        path = None
       )
     }
 
@@ -176,6 +178,7 @@ case class Compiler() {
             }.unzip
 
           val (sectionTerm, sectionTree) =
+            // xxx: path info here
             treeGen.makeSection(
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
