@@ -40,10 +40,12 @@ case class TreeGen[U <: Universe](
     exerciseTerms: List[TermName],
     imports:       List[String]
   ) = {
+    // xxx: Carry path here
     val term = makeTermName("Section", name)
     term → q"""
         object $term extends Section {
           override val name         = $name
+          override val path         = None
           override val description  = $description
           override val exercises    = $exerciseTerms
           override val imports      = $imports
