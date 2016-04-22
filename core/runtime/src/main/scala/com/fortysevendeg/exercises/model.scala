@@ -20,6 +20,7 @@ trait Library {
   */
 trait Section {
   def name: String
+  def path: Option[String] // xxx: not optional?
   def description: Option[String]
   def exercises: List[Exercise]
   def imports: List[String]
@@ -46,6 +47,7 @@ case class DefaultLibrary(
 
 case class DefaultSection(
   name:        String,
+  path:        Option[String],
   description: Option[String],
   exercises:   List[Exercise] = Nil,
   imports:     List[String]   = Nil
