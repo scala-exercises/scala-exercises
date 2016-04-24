@@ -1,0 +1,86 @@
+
+How to install and run the project Scala Exercises v.2 from scratch
+
+Prompt rules!
+$ => user
+# => root
+> => REPL, SBT console or PostgreSQL console
+% => postgres user (NOT PostgreSQL console)
+
+- Install Debian. A network install from minimal with ssh access is enough
+
+- Install Oracle JDK 8. I appreciate OpenJDK very much, but my computer is old and cheap and Oracle JDK 8 is faster here
+  # mkdir /opt/jdk/
+  # cd /opt/jdk/ 
+  # wget --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u91-b14/jdk-8u91-linux-i586.tar.gz
+  # tar -zxf jdk-8u91-linux-i586.tar.gz
+  # rm jdk-8u91-linux-i586.tar.gz 
+  # ln -s /opt/jdk/jdk1.8.0_91/bin/java /bin/java
+  # ln -s /opt/jdk/jdk1.8.0_91/bin/javac /bin/javac
+  # java -version
+
+- Install Scala
+  # mkdir /opt/scala/
+  # cd /opt/scala/ 
+  # wget http://downloads.lightbend.com/scala/2.11.8/scala-2.11.8.tgz
+  # tar -zxf scala-2.11.8.tgz
+  # rm scala-2.11.8.tgz
+  # ln -s /opt/scala/scala-2.11.8/bin/scala /bin/scala
+  # ln -s /opt/scala/scala-2.11.8/bin/scalac /bin/scalac
+  (now we can run REPL if we want) 
+  # scala
+  > print("chicharrones")
+  > ctrl + c (exit REPL)
+
+- Install SBT
+  # mkdir /opt/sbt/
+  # cd /opt/sbt/ 
+  # wget https://dl.bintray.com/sbt/native-packages/sbt/0.13.11/sbt-0.13.11.tgz
+  # tar -zxf sbt-0.13.11.tgz
+  # rm sbt-0.13.11.tgz
+  # ln -s /opt/sbt/sbt/bin/sbt /bin/sbt
+  # sbt
+  (it takes a long time at first, open a beer)
+  > help
+  > exit
+
+- Install Git and clonning the repository to local
+  # aptitude update
+  # aptitude install git-core
+  (take another beer)
+  $ cd ~ (go home as user)
+  $ git clone https://github.com/scala-exercises/scala-exercises
+  
+- Install PostgreSQL
+  # aptitude install postgresql-9.4 postgresql-client-9.4
+  # su - postgres
+  % createuser -P -e scalaexercises_dev_user (type and remember a PASSWORD for database user i.e."scex1234")
+  % createdb scalaexercises_dev
+  % psql
+  > GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;
+  > \q
+  % exit (exit su)
+  # (edit row "local  all  all  peer" to "local  all  all  md5" in /etc/postgresql/9.4/main/pg_hba.conf)  
+  # /etc/init.d/postgresql restart
+  (optional check access for user)
+  # su - postgres
+  % psql -W -d scalaexercises_dev -U scalaexercises_dev_user (type PASSWORD for database user)
+  > \q
+  
+- Config database vars for scala project
+  $ (edit val "db.default.password" in ~/scala-exercises/site/server/conf/application.dev.conf) 
+  (update other DB vals here if you need)
+  
+- Install Sass (I think this step won't be needed at some point in the future, but now it is)
+  # aptitude install ruby-sass
+  
+- Run and fun!
+  $ cd ~/scala-exercises/site/
+  $ sbt run
+  (don't worry about warnings, fancy another? )
+  (go to http://IP_SBT_MACHINE:9000/ on some computer in your network)
+  
+This instrucctions has been tested over ssh on a netbook with Debian 8.4, Intel Atom, 1Gb RAM and a broken screen which gave me a friend :)
+I suppose it'll be easy to follow the above instrucctions in virtual machine, cloud, or whatever.
+
+
