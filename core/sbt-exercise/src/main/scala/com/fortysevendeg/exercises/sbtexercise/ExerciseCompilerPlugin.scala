@@ -133,7 +133,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private type COMPILER = {
     def compile(
       library: AnyRef,
-      sources: Array[String], targetPackage: String
+      sources: Array[String],
+      paths:   Array[String], targetPackage: String
     ): Array[String]
   }
 
@@ -171,14 +172,16 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       Xor.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).toSet
           .flatMap(analysisIn.relations.definesClass)
-          .map(IO.read(_))
+          .map(file ⇒ (file.getPath(), IO.read(file)))
+
         captureStdStreams(
           fOut = log.info(_: String),
           fErr = log.error(_: String)
         ) {
             compiler.compile(
               library = library,
-              sources = sourceCodes.toArray,
+              sources = sourceCodes.map(_._2).toArray,
+              paths = sourceCodes.map(_._1).toArray,
               targetPackage = "defaultLib"
             ).toList
           }
