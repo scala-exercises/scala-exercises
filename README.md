@@ -19,9 +19,75 @@
 - EDIT: After completing a category, you'll be able to go back and edit it. Add new exercises or improve existing ones by sending a pull-request.
 
 
-## Getting Started Locally
+## Getting Started
 
-If you wish to contribute to this project you'd need to run it locally.
+### Prerequisites
+
+- Install JDK 8, either the [Oracle version](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or [OpenJDK](http://openjdk.java.net/projects/jdk8/)
+- Install [Scala](http://scala-lang.org/download/)
+- Install [SBT](http://www.scala-sbt.org/download.html)
+- Install [PostgreSQL 9.4](http://www.postgresql.org/download/)
+- Install the [Sass Ruby gem](http://sass-lang.com/install) and make sure the `sass` program can be run
+
+### Installing the app locally
+
+First of all, either clone the repository via git
+
+```sh
+$ git clone https://github.com/scala-exercises/scala-exercises
+```
+
+or download it
+
+```sh
+$ wget https://github.com/scala-exercises/scala-exercises/archive/master.zip
+```
+
+You'll need a working PostgreSQL 9.4 database and user for running the app. Once the database is running,
+create a user called `scalaexercises_dev_user`
+
+```sh
+$ createuser -P -e scalaexercises_dev_user "a_password"
+```
+
+Create a db called `scalaexercises_dev` and grant all privileges on it to `scalaexercises_dev_user`
+
+```sh
+$ createdb scalaexercises_dev
+$ psql -C "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
+```
+
+Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
+
+### Running the app
+
+Go into the `site` directory, run `sbt run`
+
+```sh
+$ cd site/
+$ sbt run
+```
+
+After compilation the application will be running, listening in the 9000 port. Point your browser
+to `localhost:9000` and start having fun!
+
+### Troubleshooting
+
+If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
+global settings, likely you might have this issue running the application locally:
+
+```java.lang.NoClassDefFoundError: scalariform/formatter/preferences/SpacesAroundMultiImports$```
+
+In that case, you could solve this issue setting up your `/.sbt/0.13/plugins/plugins.sbt` file
+as follow:
+
+```scala
+addSbtPlugin("org.ensime" % "ensime-sbt" % "0.4.0")
+
+dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
+```
+
+## Project structure
 
 The project has two main directories, `core` and `site`, each with a SBT project.
 
@@ -35,27 +101,6 @@ exercise content. These items depend on components in `core`.
 At the moment, `site` and `core` are coupled tightly. Once this project
 is a bit more stable the exercise compiler plugin will be published and it will
 be easy to create new exercises for existing Scala libraries.
-
-If you'd like to run the server, you will need to set up PostgreSQL locally.
-
-Once this is done, you can navigate to the `site` directory and launch
-SBT. From there, `run` should launch the Play app.
-
-### Troubleshooting
-
-If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
-global settings, likely you might have this issue running the application locally:
-
-```java.lang.NoClassDefFoundError: scalariform/formatter/preferences/SpacesAroundMultiImports$```
-
-In that case, you could solve this issue setting up your `/.sbt/0.13/plugins/plugins.sbt` file
-as follow:
-
-```
-addSbtPlugin("org.ensime" % "ensime-sbt" % "0.4.0")
-
-dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
-```
 
 ## Contributing
 
