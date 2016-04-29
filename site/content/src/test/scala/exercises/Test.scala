@@ -16,6 +16,7 @@ import org.scalatest.prop.Checkers
 import org.scalacheck.Shapeless._
 
 object Test {
+
   def testSuccess[F, R, L <: HList](method: F, answer: L)(
     implicit
     A:     Arbitrary[L],

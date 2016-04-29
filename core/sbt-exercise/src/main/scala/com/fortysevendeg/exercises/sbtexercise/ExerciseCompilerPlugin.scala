@@ -22,7 +22,7 @@ import sbt.Keys._
 import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
 
-import cats._
+import cats.{ `package` ⇒ _, _ }
 import cats.data.Ior
 import cats.data.Xor
 import cats.std.all._
@@ -37,68 +37,53 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   override def requires = plugins.JvmPlugin
   override def trigger = noTrigger
 
-  val CompileMain = config("compile-main")
-  val CompileExercisesSource = config("compile-exercises-source") extend CompileMain
-  val CompileExercises = config("compile")
+  //val CompileMain = config("compile-main")
+  lazy val CompileGeneratedExercises = config("compile-generated-exercises")
+  lazy val CustomCompile = config("compile") extend (CompileGeneratedExercises)
 
-  val generateExercises = TaskKey[List[(String, String)]]("pregen-exercises")
+  val generateExercises = TaskKey[List[(String, String)]]("generate-exercises")
 
   object autoImport {
-    def CompileMain = ExerciseCompilerPlugin.CompileMain
-    def CompileExercises = ExerciseCompilerPlugin.CompileExercises
-    def CompileExercisesSource = ExerciseCompilerPlugin.CompileExercisesSource
+    def CompileGeneratedExercises = ExerciseCompilerPlugin.CompileGeneratedExercises
   }
 
   // format: OFF
   override def projectSettings =
-    inConfig(CompileMain)(
+    inConfig(CompileGeneratedExercises)(
       Defaults.compileSettings ++
       Defaults.compileInputsSettings ++
       Defaults.configTasks ++
-      redirSettings
-    ) ++
-    inConfig(CompileExercisesSource)(
-      // this configuration compiles code in src/main/exercises
-      Defaults.compileSettings ++
-      Defaults.compileInputsSettings ++
-      redirSettings ++
-      Seq(
-        // adjusting source directory to be src/main/exercises
-        scalaSource := sourceDirectory.value / "exercises")
-    ) ++
-    inConfig(CompileExercises)(
-      // this configuration compiles source code we generate in CompileExercisesSource
-      Defaults.compileSettings ++
-      Defaults.compileInputsSettings ++
-      Defaults.configTasks ++ Seq(
-
-      fork := false,
+      redirSettings ++ Seq(
 
       products := {
         products.value ++
-        (products in CompileExercisesSource).value ++
-        (products in CompileMain).value
+        (products in Compile).value
       },
 
       // disable any user defined source files for this scope as
       // we only want to compile the generated files
       unmanagedSourceDirectories := Nil,
-      sourceGenerators <+= generateExerciseSourcesTask,
+      sourceGenerators   <+= generateExerciseSourcesTask,
       resourceGenerators <+= generateExerciseDescriptorTask,
 
-      generateExercises <<= generateExercisesTask
+      generateExercises  <<= generateExercisesTask
     )) ++
-    inConfig(Compile)(
-      // All your base are belong to us!! (take over standard compile)
-      classpathConfiguration := CompileExercises
-    ) ++
     Seq(
-      defaultConfiguration := Some(CompileMain),
+      compile        := (compile in CompileGeneratedExercises).value,
+      copyResources  := (copyResources in CompileGeneratedExercises).value,
+      `package`      := (`package` in CompileGeneratedExercises).value,
+      artifacts    <++= Classpaths.artifactDefs(
+        Seq(packageBin in CompileGeneratedExercises)),
 
-      // library dependences have to be declared at the root level
-      ivyConfigurations   := overrideConfigs(CompileMain, CompileExercisesSource, CompileExercises)(ivyConfigurations.value),
-      libraryDependencies += "com.47deg" %% "definitions" % Meta.version % CompileExercisesSource.name,
-      libraryDependencies += "com.47deg" %% "runtime" % Meta.version % CompileExercises.name
+      ivyConfigurations   :=
+        overrideConfigs(CompileGeneratedExercises, CustomCompile)(ivyConfigurations.value),
+      libraryDependencies +=
+        "com.47deg" %% "definitions" % Meta.version,
+      libraryDependencies +=
+        "com.47deg" %% "runtime" % Meta.version % CompileGeneratedExercises.name
+
+
+      //classpathConfiguration in Compile := CompileGeneratedExercises
     )
   // format: ON
 
@@ -115,7 +100,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     * back to `src/main/[scala|test|...]`.
     */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
-    (key in ThisScope.copy(config = Global), configuration) { (src, conf) ⇒ src / "main" }
+    (key in ThisScope.copy(config = Global), configuration) {
+      (src, conf) ⇒ src / "main"
+    }
 
   // for most of the work below, a captured error is an error message and/or a
   // throwable value
@@ -144,7 +131,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   // reflection is used to invoke a java-style interface to the exercise compiler
   private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
   private type COMPILER = {
-    def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String]
+    def compile(
+      library: AnyRef,
+      sources: Array[String], targetPackage: String
+    ): Array[String]
   }
 
   // worker task that invokes the exercise compiler
@@ -152,12 +142,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     val log = streams.value.log
     log.info("compiling scala exercises")
 
-    lazy val analysisIn = (compile in CompileExercisesSource).value
+    lazy val analysisIn = (compile in Compile).value
 
     lazy val libraryNames = discoverLibraries(analysisIn)
     lazy val sectionNames = discoverSections(analysisIn)
 
-    val libraryClasspath = Attributed.data((fullClasspath in CompileExercisesSource).value)
+    val libraryClasspath = Attributed.data((fullClasspath in Compile).value)
 
     val loader = ClasspathUtilities.toLoader(
       (Meta.compilerClasspath ++ libraryClasspath).distinct,
@@ -170,10 +160,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
     def loadLibraryModule(name: String) = for {
       loadedClass ← catching(loader.loadClass(name + "$"))(s"${name} not found")
-      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(s"${name} must be defined as an object")
+      loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(
+        s"${name} must be defined as an object"
+      )
     } yield loadedModule
 
-    def invokeCompiler(compiler: COMPILER, library: AnyRef): Xor[Err, (String, String)] =
+    def invokeCompiler(
+      compiler: COMPILER, library: AnyRef
+    ): Xor[Err, (String, String)] =
       Xor.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).toSet
           .flatMap(analysisIn.relations.definesClass)
@@ -190,14 +184,20 @@ object ExerciseCompilerPlugin extends AutoPlugin {
           }
       } leftMap (e ⇒ e: Err) >>= {
         _ match {
-          case moduleName :: moduleSource :: Nil ⇒ Xor.right(moduleName → moduleSource)
-          case _                                 ⇒ Xor.left("Unexpected return value from exercise compiler": Err)
+          case moduleName :: moduleSource :: Nil ⇒
+            Xor.right(moduleName → moduleSource)
+          case _ ⇒
+            Xor.left("Unexpected return value from exercise compiler": Err)
         }
       }
 
     val result = for {
-      compilerClass ← catching(loader.loadClass(COMPILER_CLASS))("Unable to find exercise compiler class")
-      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])("Unable to create instance of exercise compiler")
+      compilerClass ← catching(loader.loadClass(COMPILER_CLASS))(
+        "Unable to find exercise compiler class"
+      )
+      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
+        "Unable to create instance of exercise compiler"
+      )
       libraries ← libraryNames.map(loadLibraryModule).toList.sequenceU
       result ← libraries.map(invokeCompiler(compiler, _)).sequenceU
     } yield result
@@ -217,7 +217,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   def generateExerciseSourcesTask = Def.task {
     val log = streams.value.log
     val generated = generateExercises.value
-    val dir = (sourceManaged in CompileExercises).value
+    val dir = (sourceManaged in CompileGeneratedExercises).value
     generated.map {
       case (name, code) ⇒
         val file = dir / (name.replace(".", "/") + ".scala")
@@ -232,13 +232,15 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     val log = streams.value.log
     val generated = generateExercises.value
     val qualifiedLibraryInstancies = generated.map(_._1 + "$")
-    val dir = (resourceManaged in CompileExercises).value
+    val dir = (resourceManaged in CompileGeneratedExercises).value
     val resourceFile = dir / "scala-exercises" / "library.47"
     IO.write(resourceFile, qualifiedLibraryInstancies.mkString("\n"))
     Seq(resourceFile)
   }
 
-  private[this] def captureStdStreams[T](fOut: (String) ⇒ Unit, fErr: (String) ⇒ Unit)(thunk: ⇒ T): T = {
+  private[this] def captureStdStreams[T](
+    fOut: (String) ⇒ Unit, fErr: (String) ⇒ Unit
+  )(thunk: ⇒ T): T = {
     val originalOut = System.out
     val originalErr = System.err
     System.setOut(new PrintStream(new LineByLineOutputStream(fOut), true))
@@ -249,12 +251,15 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     res
   }
 
-  private[this] class LineByLineOutputStream(f: (String) ⇒ Unit) extends OutputStream {
+  /** Output stream that captures an output on a line by line basis.
+    * @param f the function to invoke with each line
+    */
+  private[this] class LineByLineOutputStream(
+      f: (String) ⇒ Unit
+  ) extends OutputStream {
     val ls = System.getProperty("line.separator")
     val buf = new ArrayBuffer[Byte](200)
-    override def write(b: Int) = if (b != 0) {
-      buf += b.toByte
-    }
+    override def write(b: Int) = if (b != 0) buf += b.toByte
     override def flush() {
       if (!buf.isEmpty) {
         val message = new String(buf.toArray)

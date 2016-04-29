@@ -19,9 +19,6 @@ import scala.tools.nsc.doc.base.LinkTo
 import scala.tools.nsc.doc.base.LinkToExternal
 import scala.tools.nsc.doc.base.comment.Comment
 
-import cats.std.all._
-import cats.syntax.flatMap._
-
 class SourceTextExtraction {
   lazy val global = new DocExtractionGlobal()
   private lazy val commentFactory = CommentFactory(global)
@@ -52,7 +49,9 @@ class SourceTextExtraction {
   )
 
   def extractAll(sources: List[String]): Extracted = {
-    new global.Run() compileSources sources.map(code ⇒ new BatchSourceFile("(internal)", code))
+    new global.Run() compileSources sources.map(
+      code ⇒ new BatchSourceFile("(internal)", code)
+    )
     val extractions = global.currentRun.units.map(_.body).map(boundExtractRaw)
       .toList // only iterable once without this call
 
@@ -61,32 +60,36 @@ class SourceTextExtraction {
       case TypeName(value) ⇒ value
     }
 
-    def expandPath[T](kv: (List[global.Name], T)): (List[String], T) = (kv._1.map(nameToString), kv._2)
+    def expandPath[T](kv: (List[global.Name], T)): (List[String], T) =
+      (kv._1.map(nameToString), kv._2)
 
-    val allComments = extractions >>= { _.comments.map(expandPath) } toMap
-    val allMethods = extractions >>= { _.methods.map(expandPath) } toMap
-    val allImports = (extractions >>= { _.imports.map(expandPath) }).groupBy(_._1).mapValues(_.map(_._2))
+    val (commentss, methodss) = extractions.map { extraction ⇒
 
-    val extractedComments = allComments.mapValues(
-      v ⇒ new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
-    )
-
-    val extractedMethods = allMethods.map {
-      case (k, v) ⇒ {
-        lazy val imports = k
-          .scanLeft(Nil: List[String])((a, c) ⇒ c :: a)
-          .map(_.reverse)
-          .flatMap(allImports.get).flatten
-          .collect {
-            case (order, imp) if order < v._1 ⇒ showCode(imp)
-          }
-        k → new ExtractedMethod(boundReadCode(v._2), imports)
+      val comments = extraction.comments.map(expandPath).map {
+        case (k, v) ⇒
+          k → new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
       }
-    }
+
+      val imports = extraction.imports.map(expandPath)
+        .groupBy(_._1).mapValues(_.map(_._2))
+
+      val methods = extraction.methods.map(expandPath).map {
+        case (k, v) ⇒
+          lazy val methodImports = k
+            .scanLeft(Nil: List[String])((a, c) ⇒ c :: a)
+            .map(_.reverse)
+            .flatMap(imports.get).flatten
+            .collect {
+              case (order, imp) if order < v._1 ⇒ showCode(imp)
+            }
+          k → new ExtractedMethod(boundReadCode(v._2), methodImports)
+      }
+      (comments, methods)
+    }.unzip
 
     Extracted(
-      extractedComments,
-      extractedMethods
+      commentss.flatten.toMap,
+      methodss.flatten.toMap
     )
 
   }

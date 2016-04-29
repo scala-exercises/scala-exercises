@@ -41,7 +41,7 @@ lazy val server = (project in file("server"))
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
     herokuAppName in Compile := "scala-exercises"
-)
+  )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
       filters,
@@ -68,7 +68,8 @@ lazy val server = (project in file("server"))
       "org.typelevel" %% "scalaz-specs2" % "0.3.0",
       "org.scalacheck" %% "scalacheck" % "1.12.5",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1",
-      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion)
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion) :+
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   ))
 
 
@@ -89,11 +90,11 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.8.1",
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
-      "com.lihaoyi" %%% "scalarx" % "0.2.8",
+      "io.monix" %%% "monix" % "2.0-M1",
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
-      "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
+      "org.typelevel" %%% "cats-core" % "0.4.1"
     )
   )
 
@@ -107,7 +108,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(libraryDependencies ++=
     compilelibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.spire-math" %%% "cats-core" % "0.4.0-SNAPSHOT" changing()
+      "org.typelevel" %%% "cats-core" % "0.4.1"
     )
   )
 
@@ -121,22 +122,19 @@ import de.heikoseeberger.sbtheader.HeaderPlugin
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "definitions") % CompileExercisesSource)
+  .dependsOn(ProjectRef(file("../core"), "runtime") % CompileGeneratedExercises)
   .dependsOn(ProjectRef(file("../core"), "definitions"))
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++=
-    Seq(
-      "org.scalatest" %% "scalatest" % "2.2.4" % CompileExercisesSource,
-      "com.chuusai" %% "shapeless" % "2.2.5" % CompileExercisesSource
-    ) ++
     compilelibs(
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "com.chuusai" %% "shapeless" % "2.2.5"
+    ) ++
+    testlibs(
       "org.scalatest" %% "scalatest" % "2.2.4",
       "org.scalaz" %% "scalaz-core" % scalazVersion,
       "org.scalacheck" %% "scalacheck" % "1.12.5",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1"
-    )
-  )
-  .settings(
-    HeaderPlugin.settingsFor(
-      CompileMain, CompileExercisesSource)
+    ) :+
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
   )
