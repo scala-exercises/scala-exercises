@@ -1,34 +1,14 @@
+@(contributions: shared.Contributions)(implicit request: RequestHeader)
 <ul>
-  <li><a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i>6 contributors</a>
+  <li><a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i>@contributions.contributors.size contributors</a>
   </li>
-  <li>
-    <a data-toggle="tooltip" data-placement="bottom" title="rafaparadela" href="https://github.com/rafaparadela" target="_blank">
-      <img src="http://avatars3.githubusercontent.com/u/315070" alt="rafaparadela">
-    </a>
-  </li>
-  <li>
-    <a data-toggle="tooltip" data-placement="bottom" title="raulraja" href="https://github.com/raulraja" target="_blank">
-      <img src="https://avatars0.githubusercontent.com/u/456796" alt="raulraja">
-    </a>
-  </li>
-  <li>
-    <a data-toggle="tooltip" data-placement="bottom" title="dialelo" href="https://github.com/dialelo" target="_blank">
-      <img src="https://avatars2.githubusercontent.com/u/409039" alt="dialelo">
-    </a>
-  </li>
-  <li>
-    <a data-toggle="tooltip" data-placement="bottom" title="andyscott" href="https://github.com/andyscott" target="_blank">
-      <img src="https://avatars1.githubusercontent.com/u/310363?v=3&s=460" alt="andyscott">
-    </a>
-  </li>
-  <li>
-    <a data-toggle="tooltip" data-placement="bottom" title="juanpedromoreno" href="https://github.com/juanpedromoreno" target="_blank">
-      <img src="https://avatars3.githubusercontent.com/u/4879373?v=3&s=460" alt="juanpedromoreno">
-    </a>
-  </li>
-  <li>
-    <a data-toggle="tooltip" data-placement="bottom" title="israelperezglez" href="https://github.com/israelperezglez" target="_blank">
-      <img src="https://avatars1.githubusercontent.com/u/646886?v=3&s=460" alt="israelperezglez">
-    </a>
-  </li>
+
+  @for(contributor <- contributions.contributors) {
+    <li>
+      <a data-toggle="tooltip" data-placement="bottom" title="@contributor.login" href="@contributor.author_url" target="_blank">
+        <img src="@contributor.avatar_url" alt="@contributor.login">
+      </a>
+    </li>
+  }
+
 </ul>

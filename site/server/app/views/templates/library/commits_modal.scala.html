@@ -1,3 +1,4 @@
+@(contributions: shared.Contributions)(implicit request: RequestHeader)
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -9,90 +10,26 @@
       </div>
       <div class="modal-body">
         <ul>
-          <li>Commits on Feb 22, 2016</li>
 
-          <li>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <img src="https://avatars0.githubusercontent.com/u/310363?v=3&s=72" alt="">
-                <p>Make site use output from SBT plugin</p>
-                <span>
-                  <a href="https://github.com/47deg/scala-exercises">andyscott</a>
-                  committed 17 hours ago</span>
+          @for(commit <- contributions.commits) {
+            <li>
+              <div class="row">
+                <div class="col-xs-9 col-md-9">
+                  <img src="@commit.avatar_url" alt="">
+                  <p>@commit.message</p>
+                  <span>
+                    <a href="@commit.author_url">@commit.login</a>
+                    committed @commit.date</span>
+                </div>
+                <div class="col-xs-3 col-md-3">
+                  <a href="@commit.url" target="_blank" type="button" class="btn btn-default btn-sm">Link to GitHub </a>
+                </div>
               </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <img src="https://avatars3.githubusercontent.com/u/409039?v=3&s=72" alt="">
-                <p>Use ScalaCheck for testing boolean conversion</p>
-                <span>
-                  <a href="https://github.com/47deg/scala-exercises">dialelo</a>
-                  committed 21 hours ago</span>
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <img src="https://avatars1.githubusercontent.com/u/456796?v=3&s=72" alt="">
-                <p>Progress toward free architecture</p>
-                <span>
-                  <a href="https://github.com/47deg/scala-exercises">raulraja</a>
-                  committed 22 hours ago</span>
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-              </div>
-            </div>
-          </li>
+            </li>
+          }
 
         </ul>
-        <ul>
-          <li>Commits on Feb 21, 2016</li>
 
-          <li>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <img src="https://avatars0.githubusercontent.com/u/4879373" alt="">
-                <p>SE-222 Adds the doobie contrib for postgresql</p>
-                <span>
-                  <a href="https://github.com/47deg/scala-exercises">juanpedromoreno</a>
-                  committed 23 hours ago</span>
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <img src="https://avatars0.githubusercontent.com/u/315070?v=3&s=72" alt="">
-                <p>Fix issue related to ambiguous reference to jquery</p>
-                <span>
-                  <a href="https://github.com/47deg/scala-exercises">rafaparadela</a>
-                  committed 3 days ago</span>
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-default btn-sm">Link to GitHub </button>
-              </div>
-            </div>
-          </li>
-
-
-
-        </ul>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributions: shared.Contributions)(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
@@ -101,7 +101,7 @@
 
               <div class="contributors clearfix">
 
-                @templates.library.contributors()
+                @templates.library.contributors(contributions)
 
                 <ul>
                   <li> <a href="#"><i class="fa fa-pencil"></i>Edit exercises</a>
@@ -117,7 +117,7 @@
       @templates.library.footer()
     </div>
 
-    @templates.library.commits_modal()
+    @templates.library.commits_modal(contributions)
     @templates.library.mustsignup_modal(redirectUrl)
 
       <!-- JS -->
