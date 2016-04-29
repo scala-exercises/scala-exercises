@@ -5,12 +5,13 @@
 code {
     color: $gray-dark;
     background-color: $pre-bg;
-    
+    font-family: monospace, monospace;
 }
 
 // Blocks of code
 pre {
     display: block;
+    font-family: monospace, monospace;
     padding: $line-height-computed;
     font-size: 14px;
     margin: {
@@ -28,6 +29,7 @@ pre {
         input {
             background-color: $pre-bg;
             font-size: 14px;
+            font-family: monospace, monospace;
             text-align: left;
             line-height: 11px;
             vertical-align: middle;
