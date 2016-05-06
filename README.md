@@ -54,7 +54,7 @@ Create a db called `scalaexercises_dev` and grant all privileges on it to `scala
 
 ```sh
 $ createdb scalaexercises_dev
-$ psql -C "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
+$ psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
 ```
 
 Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
