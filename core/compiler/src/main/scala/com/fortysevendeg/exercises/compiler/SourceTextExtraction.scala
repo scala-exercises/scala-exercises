@@ -44,16 +44,21 @@ class SourceTextExtraction {
   }
 
   case class Extracted(
-    comments: Map[List[String], ExtractedComment],
-    methods:  Map[List[String], ExtractedMethod]
+    symbolPaths: Map[String, String],
+    comments:    Map[List[String], ExtractedComment],
+    methods:     Map[List[String], ExtractedMethod]
   )
 
-  def extractAll(sources: List[String]): Extracted = {
-    new global.Run() compileSources sources.map(
-      code ⇒ new BatchSourceFile("(internal)", code)
-    )
-    val extractions = global.currentRun.units.map(_.body).map(boundExtractRaw)
-      .toList // only iterable once without this call
+  def extractAll(sources: List[String], paths: List[String]): Extracted = {
+    new global.Run() compileSources (paths zip sources).map({
+      case (path, code) ⇒ {
+        new BatchSourceFile(path, code)
+      }
+    })
+    val run = global.currentRun
+    val symbolPaths = Map(run.symSource.toList: _*).map({ case (k, v) ⇒ (k.toString, v.path) })
+    val compilationUnits = run.units.toList // only iterable once without converting to List
+    val extractions = compilationUnits.map(_.body).map(boundExtractRaw)
 
     def nameToString(name: Name) = name match {
       case TermName(value) ⇒ value
@@ -88,6 +93,7 @@ class SourceTextExtraction {
     }.unzip
 
     Extracted(
+      symbolPaths,
       commentss.flatten.toMap,
       methodss.flatten.toMap
     )

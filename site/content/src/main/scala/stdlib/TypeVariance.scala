@@ -94,7 +94,7 @@ object TypeVariance extends FlatSpec with Matchers with exercise.Section {
     * def get = item
     *
     * def set(a: A) {
-    *  item = a
+    * item = a
     * }
     *
     * def contents = manifest.runtimeClass.getSimpleName

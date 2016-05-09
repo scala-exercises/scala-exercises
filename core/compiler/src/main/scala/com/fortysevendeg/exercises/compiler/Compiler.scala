@@ -8,7 +8,6 @@ package compiler
 
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
-import scala.reflect.internal.util.BatchSourceFile
 
 import cats.data.Xor
 import cats.std.all._
@@ -19,8 +18,8 @@ import Comments.Mode
 import CommentRendering.RenderedComment
 
 class CompilerJava {
-  def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String] = {
-    Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, targetPackage)
+  def compile(library: AnyRef, sources: Array[String], paths: Array[String], targetPackage: String): Array[String] = {
+    Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, paths.toList, targetPackage)
       .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
   }
 }
@@ -28,12 +27,12 @@ class CompilerJava {
 case class Compiler() {
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  def compile(library: exercise.Library, sources: List[String], targetPackage: String) = {
-
+  def compile(library: exercise.Library, sources: List[String], paths: List[String], targetPackage: String) = {
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
-    val internal = CompilerInternal(mirror, sourceTextExtractor.extractAll(sources))
+    val extracted = sourceTextExtractor.extractAll(sources, paths)
+    val internal = CompilerInternal(mirror, extracted)
 
     case class LibraryInfo(
       symbol:   ClassSymbol,
@@ -46,7 +45,8 @@ case class Compiler() {
       symbol:    ClassSymbol,
       comment:   RenderedComment.Aux[Mode.Section],
       exercises: List[ExerciseInfo],
-      imports:   List[String]                      = Nil
+      imports:   List[String]                      = Nil,
+      path:      Option[String]                    = None
     )
 
     case class ExerciseInfo(
@@ -96,7 +96,8 @@ case class Compiler() {
         symbol = symbol,
         comment = comment,
         exercises = exercises,
-        imports = Nil
+        imports = Nil,
+        path = extracted.symbolPaths.get(symbol.toString)
       )
     }
 
@@ -130,6 +131,7 @@ case class Compiler() {
       println(s" description: ${oneline(libraryInfo.comment.description)}")
       libraryInfo.sections.foreach { sectionInfo ⇒
         println(s" with section ${sectionInfo.comment.name}")
+        println(s"  path: ${sectionInfo.path}")
         println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
         sectionInfo.exercises.foreach { exerciseInfo ⇒
           println(s"  with exercise ${exerciseInfo.symbol}")
@@ -180,7 +182,8 @@ case class Compiler() {
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms,
-              imports = sectionInfo.imports
+              imports = sectionInfo.imports,
+              path = sectionInfo.path
             )
 
           (sectionTerm, sectionTree :: exerciseTrees)

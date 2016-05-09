@@ -38,12 +38,14 @@ case class TreeGen[U <: Universe](
   def makeSection(
     name: String, description: Option[String],
     exerciseTerms: List[TermName],
-    imports:       List[String]
+    imports:       List[String],
+    path:          Option[String] = None
   ) = {
     val term = makeTermName("Section", name)
     term → q"""
         object $term extends Section {
           override val name         = $name
+          override val path         = $path
           override val description  = $description
           override val exercises    = $exerciseTerms
           override val imports      = $imports
