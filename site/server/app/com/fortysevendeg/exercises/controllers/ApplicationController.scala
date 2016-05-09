@@ -75,7 +75,7 @@ class ApplicationController(
         authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
         libraries ← exerciseOps.getLibraries
         section ← exerciseOps.getSection(libraryName, sectionName)
-        commits ← githubOps.getContributions(OAuth2.githubOwner, OAuth2.githubRepo, "site/build.sbt")
+        commits ← githubOps.getContributions(OAuth2.githubOwner, OAuth2.githubRepo, section.flatMap(_.path).getOrElse(""))
         contributions = commitsToContributions(commits)
         user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
         libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
@@ -88,7 +88,8 @@ class ApplicationController(
               section = s,
               user = user,
               progress = libProgress,
-              contributions = contributions
+              contributions = contributions,
+              githubBaseUrl = OAuth2.githubOwner + "/" + OAuth2.githubRepo
             )
           )
         }
@@ -100,7 +101,8 @@ class ApplicationController(
               user = user,
               progress = libProgress,
               redirectUrl = Option(authorize.url),
-              contributions = contributions
+              contributions = contributions,
+              githubBaseUrl = OAuth2.githubOwner + "/" + OAuth2.githubRepo
             )
           ).withSession("oauth-state" → authorize.state)
         }

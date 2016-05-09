@@ -1,4 +1,4 @@
-@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributions: shared.Contributions)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributions: shared.Contributions, githubBaseUrl: String)(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
@@ -40,7 +40,7 @@
             <svg viewBox="0 0 34 22" width="34" height="22">
               <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand")"/>
             </svg>
-            <span>Scala Exercises / <span class="section-name">@library.name.humanizeUnderscore</span> </span>
+            <span>Scala Exercises / <span class="section-name">@library.name.humanizeUnderscore</span></span>
           </a>
         </div>
 
@@ -84,7 +84,7 @@
               <div class="content-header clearfix">
                 <h2 class="pull-left">@section.name.humanizeUnderscore</h2>
                 <div class="add-exercises pull-right hidden-xs">
-                  <button type="button" class="btn btn-default btn-sm">Add exercises</button>
+                  <a href="https://github.com/@githubBaseUrl/edit/master/@section.path.getOrElse("")" target="_blank" type="button" class="btn btn-default btn-sm">Add exercises</a>
                 </div>
               </div>
 
@@ -104,7 +104,7 @@
                 @templates.library.contributors(contributions)
 
                 <ul>
-                  <li> <a href="#"><i class="fa fa-pencil"></i>Edit exercises</a>
+                  <li> <a href="https://github.com/@githubBaseUrl/edit/master/@section.path.getOrElse("")" target="_blank"><i class="fa fa-pencil"></i>Edit exercises</a>
                   </li>
                 </ul>
               </div>
@@ -114,7 +114,7 @@
         </div>
 
       </section>
-      @templates.library.footer()
+      @templates.library.footer(githubBaseUrl, section.path.getOrElse(""))
     </div>
 
     @templates.library.commits_modal(contributions)

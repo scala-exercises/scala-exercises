@@ -1,3 +1,4 @@
+@(githubBaseUrl: String, path: String)(implicit request: RequestHeader)
 <footer id="bottom" class="light">
   <div class="container-fluid">
     <div class="col-md-8">
@@ -9,7 +10,7 @@
       
      </div>
     <div class="col-md-4">
-      <p class="text-right"><a href="#">View on GitHub</a></p>
+      <p class="text-right"><a href="https://github.com/@githubBaseUrl/blob/master/@path" target="_blank">View on GitHub</a></p>
     </div>
   </div>
 </footer>

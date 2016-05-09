@@ -19,6 +19,7 @@ case class Library(
 case class Section(
   name:        String,
   description: Option[String] = None,
+  path:        Option[String] = None,
   exercises:   List[Exercise] = Nil
 )
 
