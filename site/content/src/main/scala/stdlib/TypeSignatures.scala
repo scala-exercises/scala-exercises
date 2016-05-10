@@ -102,8 +102,8 @@ object TypeSignatures extends FlatSpec with Matchers with exercise.Section {
     *
     * class IntRandomizer extends Randomizer[Int] {
     * def draw() = {
-    *  import util.Random
-    *  Random.nextInt()
+    * import util.Random
+    * Random.nextInt()
     * }
     * }
     *

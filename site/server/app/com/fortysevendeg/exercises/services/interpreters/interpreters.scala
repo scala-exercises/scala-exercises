@@ -122,7 +122,7 @@ trait Interpreters[M[_]] {
 trait ProdInterpreters extends Interpreters[Task] with TaskInstances
 
 /** Test based interpreters lifting ops to their result identity **/
-trait TestInterpreters extends Interpreters[cats.Id] with IdInstances
+trait TestInterpreters extends Interpreters[Id] with IdInstances
 
 object FreeExtensions {
 
@@ -164,9 +164,7 @@ trait TaskInstances {
 }
 
 trait IdInstances {
-  implicit val idMonad: Monad[cats.Id] with MonadError[cats.Id, Throwable] = new Monad[cats.Id] with MonadError[cats.Id, Throwable] {
-
-    import cats.Id
+  implicit val idMonad: Monad[Id] with MonadError[Id, Throwable] = new Monad[Id] with MonadError[Id, Throwable] {
 
     override def pure[A](x: A): Id[A] = idMonad.pure(x)
 

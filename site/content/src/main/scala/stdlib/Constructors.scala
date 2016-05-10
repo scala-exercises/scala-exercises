@@ -27,7 +27,7 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     * val lastName:String) {
     *
     * override def toString():String = {
-    *  "First Name: " + firstName + " Last Name: " + lastName
+    * "First Name: " + firstName + " Last Name: " + lastName
     * }
     * }
     * }}}
@@ -44,12 +44,12 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *
     * //Auxiliary Constructor
     * def this(firstName:String, lastName: String, age:Int) {
-    *  this(firstName,lastName)
-    *  this.age = age
+    * this(firstName,lastName)
+    * this.age = age
     * }
     *
     * override def toString():String = {
-    *  "First Name: " + firstName + " Last Name: " + lastName
+    * "First Name: " + firstName + " Last Name: " + lastName
     * }
     * }
     * }}}
@@ -64,17 +64,17 @@ object Constructors extends FlatSpec with Matchers with exercise.Section {
     *
     * def this(firstName:String, lastName: String,
     * city:String, age:Int) {
-    *  this(firstName, lastName, city)
-    *  this.age = age
+    * this(firstName, lastName, city)
+    * this.age = age
     * }
     *
     * def this(firstName:String, lastName: String, city:String) {
-    *  this(firstName,lastName)
-    *  this.city = city
+    * this(firstName,lastName)
+    * this.city = city
     * }
     *
     * override def toString():String = {
-    *  "First Name: " + firstName + " Last Name: " + lastName
+    * "First Name: " + firstName + " Last Name: " + lastName
     * }
     * }
     * }}}

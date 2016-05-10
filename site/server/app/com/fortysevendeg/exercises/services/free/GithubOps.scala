@@ -11,15 +11,15 @@ sealed trait GithubOp[A]
 final case class GetAuthorizeUrl(
   clientId:    String,
   redirectUri: String,
-  scopes:       List[String]
+  scopes:      List[String]
 ) extends GithubOp[Authorize]
 
 final case class GetAccessToken(
   clientId:     String,
   clientSecret: String,
-  code:          String,
+  code:         String,
   redirectUri:  String,
-  state:         String
+  state:        String
 ) extends GithubOp[OAuthToken]
 
 final case class GetAuthUser(accessToken: Option[String] = None) extends GithubOp[User]
@@ -34,15 +34,15 @@ class GithubOps[F[_]](implicit I: Inject[GithubOp, F]) {
   def getAuthorizeUrl(
     clientId:    String,
     redirectUri: String,
-    scopes:       List[String] = List.empty
+    scopes:      List[String] = List.empty
   ): Free[F, Authorize] =
     Free.inject[GithubOp, F](GetAuthorizeUrl(clientId, redirectUri, scopes))
 
   def getAccessToken(
-    clientId:     String,
+    clientId:      String,
     clienteSecret: String,
     code:          String,
-    redirectUri:  String,
+    redirectUri:   String,
     state:         String
   ): Free[F, OAuthToken] =
     Free.inject[GithubOp, F](GetAccessToken(clientId, clienteSecret, code, redirectUri, state))
