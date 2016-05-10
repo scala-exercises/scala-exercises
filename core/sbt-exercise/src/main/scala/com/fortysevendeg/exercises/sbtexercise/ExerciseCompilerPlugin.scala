@@ -194,7 +194,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
         }
       }
 
-    def relativePath(absolutePath: String, splitter: String) = splitter + absolutePath.split(splitter)(1)
+    private[this] def relativePath(absolutePath: String, splitter: String) = splitter + absolutePath.split(splitter).lift(1).getOrElse("")
 
     val result = for {
       compilerClass ← catching(loader.loadClass(COMPILER_CLASS))(
