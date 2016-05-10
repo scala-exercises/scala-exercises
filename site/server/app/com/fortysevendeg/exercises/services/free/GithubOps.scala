@@ -9,16 +9,16 @@ import com.fortysevendeg.github4s.free.domain.{ Commit, User, OAuthToken, Author
 sealed trait GithubOp[A]
 
 final case class GetAuthorizeUrl(
-  client_id:    String,
-  redirect_uri: String,
+  clientId:    String,
+  redirectUri: String,
   scopes:       List[String]
 ) extends GithubOp[Authorize]
 
 final case class GetAccessToken(
-  client_id:     String,
-  client_secret: String,
+  clientId:     String,
+  clientSecret: String,
   code:          String,
-  redirect_uri:  String,
+  redirectUri:  String,
   state:         String
 ) extends GithubOp[OAuthToken]
 
@@ -32,20 +32,20 @@ final case class GetContributions(owner: String, repo: String, path: String) ext
 class GithubOps[F[_]](implicit I: Inject[GithubOp, F]) {
 
   def getAuthorizeUrl(
-    client_id:    String,
-    redirect_uri: String,
+    clientId:    String,
+    redirectUri: String,
     scopes:       List[String] = List.empty
   ): Free[F, Authorize] =
-    Free.inject[GithubOp, F](GetAuthorizeUrl(client_id, redirect_uri, scopes))
+    Free.inject[GithubOp, F](GetAuthorizeUrl(clientId, redirectUri, scopes))
 
   def getAccessToken(
-    client_id:     String,
-    client_secret: String,
+    clientId:     String,
+    clienteSecret: String,
     code:          String,
-    redirect_uri:  String,
+    redirectUri:  String,
     state:         String
   ): Free[F, OAuthToken] =
-    Free.inject[GithubOp, F](GetAccessToken(client_id, client_secret, code, redirect_uri, state))
+    Free.inject[GithubOp, F](GetAccessToken(clientId, clienteSecret, code, redirectUri, state))
 
   def getAuthUser(accessToken: Option[String] = None): Free[F, User] = Free.inject[GithubOp, F](GetAuthUser(accessToken))
 
