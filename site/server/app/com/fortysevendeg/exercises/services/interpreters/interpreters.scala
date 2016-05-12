@@ -7,10 +7,10 @@ package com.fortysevendeg.exercises.services.interpreters
 
 import com.fortysevendeg.exercises.app.C01
 import com.fortysevendeg.exercises.app.C02
-import com.fortysevendeg.github4s.GithubResponses.{ GHItemResult, GHListResult, GHResponse }
+import com.fortysevendeg.github4s.GithubResponses.{ GHResult, GHResponse }
 import com.fortysevendeg.github4s.app._
-import com.fortysevendeg.github4s.free.domain.Authorize
-import com.fortysevendeg.github4s.{ Github, GithubConfig }
+import com.fortysevendeg.github4s.Github
+import com.fortysevendeg.github4s.Github._
 import com.fortysevendeg.github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters }
 import cats._
 import cats.data.Xor
@@ -95,7 +95,6 @@ trait Interpreters[M[_]] {
 
     def apply[A](fa: GithubOp[A]): M[A] = {
 
-      import Github._
       object ProdGHInterpreters extends GithubInterpreters[M]
       implicit val I: GitHub4s ~> M = ProdGHInterpreters.interpreters
 
@@ -109,9 +108,8 @@ trait Interpreters[M[_]] {
     }
 
     private def ghResponseToEntity[T](response: M[GHResponse[T]]): M[T] = A.flatMap(response) {
-      case Xor.Right(GHListResult(result, status, headers, d)) ⇒ A.pure(result)
-      case Xor.Right(GHItemResult(result, status, headers))    ⇒ A.pure(result)
-      case Xor.Left(e)                                         ⇒ A.raiseError[T](e)
+      case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(result)
+      case Xor.Left(e)                                  ⇒ A.raiseError[T](e)
     }
 
   }

@@ -58,7 +58,7 @@ lazy val server = (project in file("server"))
       "org.webjars" % "highlightjs" % "8.7",
       "org.webjars.npm" % "highlight.js" % "9.1.0",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
-      "com.fortysevendeg" %% "github4s" % "0.1",
+      "com.fortysevendeg" %% "github4s" % "0.2-SNAPSHOT",
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),

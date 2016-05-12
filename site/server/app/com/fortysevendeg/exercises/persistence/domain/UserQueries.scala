@@ -30,7 +30,7 @@ object UserCreation {
       User(id, login, name, githubId, pictureUrl, githubUrl, email)
   }
 
-  def toUser(ghu: GHUser) = Request(ghu.login, Option(ghu.name), ghu.id.toString, ghu.avatar_url, ghu.html_url, Option(ghu.email))
+  def toUser(ghu: GHUser) = Request(ghu.login, ghu.name, ghu.id.toString, ghu.avatar_url, ghu.html_url, ghu.email)
 
   type Response = CreationError Xor User
 }
