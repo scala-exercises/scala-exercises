@@ -6,7 +6,6 @@
 package com.fortysevendeg.exercises
 
 import com.fortysevendeg.exercises.controllers._
-import com.fortysevendeg.exercises.utils._
 import com.typesafe.config.ConfigFactory
 import doobie.contrib.hikari.hikaritransactor.HikariTransactor
 import doobie.util.transactor.{ DataSourceTransactor, Transactor }
@@ -69,7 +68,7 @@ class Components(context: Context)
   val applicationController = new ApplicationController
   val exercisesController = new ExercisesController
   val userController = new UserController
-  val oauthController = new OAuth2Controller
+  val oauthController = new OAuthController
   val userProgressController = new UserProgressController
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)

@@ -149,6 +149,7 @@ sealed trait RuntimeSharedConversions {
     shared.Section(
       name = section.name,
       description = section.description,
+      path = section.path,
       exercises = section.exercises.map(convertExercise)
     )
 

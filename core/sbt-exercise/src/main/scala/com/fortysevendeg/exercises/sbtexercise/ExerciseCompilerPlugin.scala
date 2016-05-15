@@ -170,9 +170,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       compiler: COMPILER, library: AnyRef
     ): Xor[Err, (String, String)] =
       Xor.catchNonFatal {
-        val sourceCodes = (libraryNames ++ sectionNames).toSet
+        val sourceCodes = (libraryNames ++ sectionNames).distinct
           .flatMap(analysisIn.relations.definesClass)
-          .map(file ⇒ (file.getPath(), IO.read(file)))
+          .map(file ⇒ (relativePath(file.getPath(), "site/"), IO.read(file)))
 
         captureStdStreams(
           fOut = log.info(_: String),
@@ -193,6 +193,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             Xor.left("Unexpected return value from exercise compiler": Err)
         }
       }
+
+    def relativePath(absolutePath: String, splitter: String) = splitter + absolutePath.split(splitter).lift(1).getOrElse("")
 
     val result = for {
       compilerClass ← catching(loader.loadClass(COMPILER_CLASS))(

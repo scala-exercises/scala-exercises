@@ -6,13 +6,17 @@
 package com.fortysevendeg.exercises.controllers
 
 import java.util.UUID
+import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
+import com.fortysevendeg.github4s.Github
+import com.fortysevendeg.github4s.free.domain.Commit
+import shared.{ Contribution, Contributor, Contributions }
+
 import scala.collection.JavaConverters._
 
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free._
 import com.fortysevendeg.exercises.services.ExercisesService
-import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
 import com.fortysevendeg.exercises.utils.OAuth2
 import com.fortysevendeg.shared.free.ExerciseOps
 import doobie.imports._
@@ -30,6 +34,7 @@ class ApplicationController(
     exerciseOps:     ExerciseOps[ExercisesApp],
     userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
+    githubOps:       GithubOps[ExercisesApp],
     T:               Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
   implicit def application: Application = Play.current
@@ -37,18 +42,21 @@ class ApplicationController(
   lazy val topLibraries: List[String] = application.configuration.getStringList("exercises.top_libraries") map (_.asScala.toList) getOrElse Nil
 
   def index = Action.async { implicit request ⇒
-    val (redirectUrl, state) = authStatus
+    Future {
+      val ops = for {
+        authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
+        libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
+        user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        progress ← userProgressOps.fetchMaybeUserProgress(user)
+      } yield (libraries, user, request.session.get("oauth-token"), progress, authorize)
 
-    val ops = for {
-      libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
-      user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-      progress ← userProgressOps.fetchMaybeUserProgress(user)
-    } yield (libraries, user, request.session.get("oauth-token"), progress)
-
-    ops.runTask match {
-      case Xor.Right((libraries, user, Some(token), progress)) ⇒ Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress)))
-      case Xor.Right((libraries, None, None, progress))        ⇒ Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl), progress = progress)).withSession("oauth-state" → state))
-      case Xor.Left(ex)                                        ⇒ Future.successful(InternalServerError(ex.getMessage))
+      ops.runTask match {
+        case Xor.Right((libraries, user, Some(token), progress, _)) ⇒
+          Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress))
+        case Xor.Right((libraries, None, None, progress, authorize)) ⇒
+          Ok(views.html.templates.home.index(None, libraries, progress, Option(authorize.url))).withSession("oauth-state" → authorize.state)
+        case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
+      }
     }
   }
 
@@ -63,37 +71,43 @@ class ApplicationController(
 
   def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
     Future {
-      val (redirectUrl, state) = authStatus
       val ops = for {
+        authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
         libraries ← exerciseOps.getLibraries
         section ← exerciseOps.getSection(libraryName, sectionName)
+        commits ← githubOps.getContributions(OAuth2.githubOwner, OAuth2.githubRepo, section.flatMap(_.path).getOrElse(""))
+        contributions = commitsToContributions(commits)
         user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
         libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
-      } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"), libProgress)
+      } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"), libProgress, authorize, contributions)
       ops.runTask match {
-        case Xor.Right((Some(l), Some(s), user, Some(token), libProgress)) ⇒ {
-          Ok(
-            views.html.templates.library.index(
-              library = l,
-              section = s,
-              user = user,
-              progress = libProgress
-            )
-          )
-        }
-        case Xor.Right((Some(l), Some(s), user, None, libProgress)) ⇒ {
+        case Xor.Right((Some(l), Some(s), user, Some(token), libProgress, _, contributions)) ⇒ {
           Ok(
             views.html.templates.library.index(
               library = l,
               section = s,
               user = user,
               progress = libProgress,
-              redirectUrl = Option(redirectUrl)
+              contributions = contributions,
+              githubBaseUrl = OAuth2.githubOwner + "/" + OAuth2.githubRepo
             )
-          ).withSession("oauth-state" → state)
+          )
         }
-        case Xor.Right((Some(l), None, _, _, _)) ⇒ Redirect(l.sectionNames.head)
-        case _                                   ⇒ Ok("Section not found")
+        case Xor.Right((Some(l), Some(s), user, None, libProgress, authorize, contributions)) ⇒ {
+          Ok(
+            views.html.templates.library.index(
+              library = l,
+              section = s,
+              user = user,
+              progress = libProgress,
+              redirectUrl = Option(authorize.url),
+              contributions = contributions,
+              githubBaseUrl = OAuth2.githubOwner + "/" + OAuth2.githubRepo
+            )
+          ).withSession("oauth-state" → authorize.state)
+        }
+        case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ Redirect(l.sectionNames.head)
+        case _                                         ⇒ Ok("Section not found")
       }
     }
   }
@@ -108,13 +122,16 @@ class ApplicationController(
     ).as("text/javascript")
   }
 
-  def authStatus(implicit req: Request[AnyContent]): (String, String) = {
-    // NOTE: An empty OAuth scope indicates access to public info only
-    val scope = ""
-    val state = UUID.randomUUID().toString
-    val callbackUrl = com.fortysevendeg.exercises.utils.routes.OAuth2Controller.callback(None, None).absoluteURL()
-    val redirectUrl = OAuth2.getAuthorizationUrl(callbackUrl, scope, state)
-    (redirectUrl, state)
-  }
+  private def commitsToContributions(commits: List[Commit]): Contributions =
+    Contributions(toContribution(commits), commitsToContributors(commits))
+
+  private def toContribution(commits: List[Commit]): List[Contribution] =
+    commits.map(c ⇒ Contribution(c.sha, c.message, c.date, c.url, c.login, c.avatar_url, c.author_url))
+
+  private def commitsToContributors(commits: List[Commit]): List[Contributor] = commits
+    .groupBy(c ⇒ (c.login, c.avatar_url, c.author_url))
+    .keys
+    .map { case (login, avatar, url) ⇒ Contributor(login, avatar, url) }
+    .toList
 
 }
