@@ -38,11 +38,18 @@ lazy val compiler = (project in file("compiler"))
   .dependsOn(runtime % "test")
 
 // ~ Exercise Runtime
-lazy val runtime = (project in file("runtime"))
+lazy val `runtime-example` = project
   .settings(
-    name            := "runtime"
+    name := "runtime-example"
   )
+  .settings(libraryDependencies += Dep.cats.core)
+
+lazy val runtime = (project in file("runtime"))
   .settings(commonSettings: _*)
+  .settings(
+    name := "runtime"
+  )
+  .dependsOn(`runtime-example` % "test")
   .settings(libraryDependencies <++= scalaVersion(scalaVersion =>
     compilelibs(
       Dep.scala.compiler(scalaVersion),

@@ -1,5 +1,6 @@
-import com.fortysevendeg.exercises.Exercises
-import com.fortysevendeg.exercises.MethodEval
+import com.fortysevendeg.exercises._
+
+import java.nio.file.Paths
 
 object Check extends App {
 
@@ -16,11 +17,10 @@ object Check extends App {
   val res = libraries.find(_.name == "sample")
     .flatMap(_.sections.find(_.name == "foo"))
     .flatMap(_.exercises.find(_.name == "foo1"))
-    .flatMap(exercise =>
-      methodEval
-        .eval(exercise.qualifiedMethod,
-          "\"arg!\"" :: Nil, Nil)
-        .toSuccessXor.toOption.map(_.res.asInstanceOf[String]))
+    .flatMap(exercise => {
+      methodEval.eval(exercise.qualifiedMethod, "\"arg!\"" :: Nil, Nil)
+        .toSuccessXor.toOption.map(x => x.res.asInstanceOf[String])
+    })
 
   assert(res.isDefined, "evaluation of exercise method failed")
 }

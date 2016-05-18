@@ -6,12 +6,9 @@
 package com.fortysevendeg.exercises
 
 import org.scalatest._
-
-import cats.data.Xor
+import MethodEval._
 
 class MethodEvalSpec extends FunSpec with Matchers {
-
-  import MethodEval._
 
   describe("runtime evaluation") {
 
@@ -74,18 +71,4 @@ class MethodEvalSpec extends FunSpec with Matchers {
     }
 
   }
-}
-
-object ExampleTarget {
-  def intStringMethod(a: Int, b: String): String = {
-    s"$a$b"
-  }
-
-  class ExampleException extends Exception("this is an example exception")
-
-  def throwsExceptionMethod() {
-    throw new ExampleException
-  }
-
-  def takesXorMethod(xor: Xor[_, _]): Boolean = true
 }

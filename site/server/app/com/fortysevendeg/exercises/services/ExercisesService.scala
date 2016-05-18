@@ -3,16 +3,15 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package com.fortysevendeg.exercises.services
+package com.fortysevendeg.exercises
+package services
 
 import com.fortysevendeg.exercises.Exercises
 import com.fortysevendeg.exercises.MethodEval
 
 import play.api.Logger
 
-import scala.reflect.runtime.{ universe ⇒ ru }
-import scala.reflect.runtime.{ currentMirror ⇒ cm }
-import scala.tools.reflect.ToolBox
+import java.nio.file.Paths
 
 import cats.data.Xor
 import cats.data.Ior
@@ -25,7 +24,7 @@ import org.scalatest.exceptions.TestFailedException
 object ExercisesService extends RuntimeSharedConversions {
   import MethodEval._
 
-  lazy val methodEval = new MethodEval()
+  val methodEval = new MethodEval()
 
   val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {
