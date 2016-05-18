@@ -27,20 +27,25 @@ lazy val commonSettings = Seq(
 lazy val clients = Seq(client)
 lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
+
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(
     sharedJvm,
     content)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .enablePlugins(PlayScala)
+  .enablePlugins(PlayScala, BuildInfoPlugin)
   .settings(commonSettings: _*)
   .settings(
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
-    herokuAppName in Compile := "scala-exercises"
+    herokuAppName in Compile := "scala-exercises",
+    buildInfoPackage := "com.fortysevendeg.exercises.buildinfo",
+    buildInfoKeys := Seq[BuildInfoKey](
+      BuildInfoKey.map(dependencyClasspath in Compile){ case (_, v) ⇒ "dependencyClasspath" -> v.map(_.data) }
+    )
   )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(

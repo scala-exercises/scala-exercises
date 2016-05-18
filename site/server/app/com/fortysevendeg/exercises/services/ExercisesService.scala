@@ -3,16 +3,15 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package com.fortysevendeg.exercises.services
+package com.fortysevendeg.exercises
+package services
 
 import com.fortysevendeg.exercises.Exercises
 import com.fortysevendeg.exercises.MethodEval
 
 import play.api.Logger
 
-import scala.reflect.runtime.{ universe ⇒ ru }
-import scala.reflect.runtime.{ currentMirror ⇒ cm }
-import scala.tools.reflect.ToolBox
+import java.nio.file.Paths
 
 import cats.data.Xor
 import cats.data.Ior
@@ -25,7 +24,14 @@ import org.scalatest.exceptions.TestFailedException
 object ExercisesService extends RuntimeSharedConversions {
   import MethodEval._
 
-  lazy val methodEval = new MethodEval()
+  // using BuildInfo as a shortcut this will point to the wrong path when deployed
+  val artifacts = buildinfo.BuildInfo.dependencyClasspath.distinct.map(v ⇒ Paths.get(v.toURI))
+  val methodEval = new MethodEval(
+    artifacts, 
+    // play does not fork the jvm
+    // this should also be revisited for deployment
+    security = false
+  )
 
   val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
   val (libraries, librarySections) = {

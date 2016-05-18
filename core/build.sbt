@@ -38,17 +38,26 @@ lazy val compiler = (project in file("compiler"))
   .dependsOn(runtime % "test")
 
 // ~ Exercise Runtime
+lazy val runtimeExample = project
+  .settings(libraryDependencies += Dep.cats.core)
+
 lazy val runtime = (project in file("runtime"))
-  .settings(
-    name            := "runtime"
-  )
   .settings(commonSettings: _*)
+  .settings(
+    name := "runtime",
+    buildInfoPackage := "com.fortysevendeg.exercises.runtime.test",
+    buildInfoKeys := Seq[BuildInfoKey](
+      BuildInfoKey.map(dependencyClasspath in Compile){ case (_, v) ⇒ "dependencyClasspath" -> v.map(_.data) }
+    )
+  )
+  .dependsOn(runtimeExample)
   .settings(libraryDependencies <++= scalaVersion(scalaVersion =>
     compilelibs(
       Dep.scala.compiler(scalaVersion),
       Dep.cats.core
     )
   ))
+  .enablePlugins(BuildInfoPlugin)
 
 // ~ Exercise SBT Plugin
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))

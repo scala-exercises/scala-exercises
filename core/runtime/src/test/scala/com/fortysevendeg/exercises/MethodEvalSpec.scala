@@ -6,16 +6,15 @@
 package com.fortysevendeg.exercises
 
 import org.scalatest._
-
-import cats.data.Xor
+import MethodEval._
+import java.nio.file.Paths
 
 class MethodEvalSpec extends FunSpec with Matchers {
 
-  import MethodEval._
-
   describe("runtime evaluation") {
 
-    val methodEval = new MethodEval()
+    val artifacts = runtime.test.BuildInfo.dependencyClasspath.distinct.map(v ⇒ Paths.get(v.toURI))
+    val methodEval = new MethodEval(artifacts, security = false)
 
     it("fails when incorrect parameter types are provided") {
       val res = methodEval.eval(
@@ -74,18 +73,4 @@ class MethodEvalSpec extends FunSpec with Matchers {
     }
 
   }
-}
-
-object ExampleTarget {
-  def intStringMethod(a: Int, b: String): String = {
-    s"$a$b"
-  }
-
-  class ExampleException extends Exception("this is an example exception")
-
-  def throwsExceptionMethod() {
-    throw new ExampleException
-  }
-
-  def takesXorMethod(xor: Xor[_, _]): Boolean = true
 }
