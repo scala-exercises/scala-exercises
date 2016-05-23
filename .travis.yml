@@ -21,7 +21,7 @@ env:
 install:
   - gem install sass
 script:
-  - pushd core && sbt 'test' 'scripted' && popd
+  - pushd core && sbt 'test' && popd
   - pushd site && sbt 'project server' 'test' && popd
   - pushd site && sbt 'project client' 'test' && popd
   - pushd site && sbt 'project content' 'test' && popd
