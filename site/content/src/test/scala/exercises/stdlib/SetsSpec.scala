@@ -90,15 +90,6 @@ class SetsSpec extends Spec with Checkers {
     )
   }
 
-  def `we can iterate over set values` = {
-    check(
-      Test.testSuccess(
-        Sets.easilyIteratedSets _,
-        17 :: HNil
-      )
-    )
-  }
-
   def `set intersection` = {
     check(
       Test.testSuccess(

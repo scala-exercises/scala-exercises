@@ -7,30 +7,6 @@ import org.scalatest._
   */
 object ForExpressions extends FlatSpec with Matchers with exercise.Section {
 
-  /** For loops can be simple:
-    */
-  def forLoopsForExpressions(res0: Int) {
-    val someNumbers = Range(0, 10)
-    var sum = 0
-    for (i ← someNumbers)
-      sum += i
-
-    sum should equal(res0)
-  }
-
-  /** For loops can contain additional logic:
-    */
-  def additionalLogicForExpressions(res0: Int) {
-    val someNumbers = Range(0, 10)
-    var sum = 0
-
-    for (i ← someNumbers)
-      if (i % 2 == 0) sum += i
-
-    sum should equal(res0)
-
-  }
-
   /** For expressions can nest, with later generators varying more rapidly than earlier ones:
     */
   def canBeNestedForExpressions(res0: Int, res1: Int) {

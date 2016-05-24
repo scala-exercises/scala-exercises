@@ -15,16 +15,7 @@ class OptionsSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         Options.conceptOptions _,
-        "I am wrapped in something" :: theNone :: HNil
-      )
-    )
-  }
-
-  def `get method is dangerous` = {
-    check(
-      Test.testSuccess(
-        Options.maybeItWillReturnSomethingOptions _,
-        "Found value" :: HNil
+        Option("I am wrapped in something") :: theNone :: HNil
       )
     )
   }

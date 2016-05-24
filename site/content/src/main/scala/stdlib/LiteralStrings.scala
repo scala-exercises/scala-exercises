@@ -48,38 +48,31 @@ object LiteralStrings extends FlatSpec with Matchers with exercise.Section {
     val a = "To be or not to be"
     a should be(res0)
   }
+  /* TODO rework exercise compiler issue where multiline string literals are not 
+  /** multilineLiteralStrings
+    *
+    * Multiline String literals are surrounded by three quotation marks.
+    */
+  def multilineLiteralStrings(res0: Int) {
+    val a =
+      """An apple a day
+  keeps the doctor away"""
+    a.split('\n').size should be(res0) //a.split('\n').size determines the number of lines
+  }
 
-  //TODO Support multiline comments
-  //  /** multilineLiteralStrings
-  //    *
-  //    * Multiline String literals are surrounded by three quotation marks.
-  //    */
-  //  def multilineLiteralStrings(res0: Int) {
-  //    val a =
-  //      """An apple a day
-  //keeps the doctor away"""
-  //    a.split('\n').size should be(res0) //a.split('\n').size determines the number of lines
-  //  }
-  //
-  //  /** stripMarginLiteralStrings
-  //    *
-  //    * Use stripMargin to prettify multi-line strings:
-  //    */
-  //  def stripMarginLiteralStrings(res0: String) {
-  //    /*
-  //* Multiline String literals can use | to specify the starting position
-  //* of subsequent lines, then use stripMargin to remove the surplus indentation.
-  //*/
-  //
-  //    val a =
-  //      """An apple a day
-  //        |keeps the doctor away"""
-  //    a.stripMargin.split('\n')(1).charAt(0) should be(res0)
-  //
-  //    /*
-  //    * a.stripMargin.split('\n')(1).charAt(0)
-  //    * gets the first character of the second line
-  //    */
-  //  }
+  /** stripMarginLiteralStrings
+    *
+    * Use stripMargin to prettify multi-line strings:
+    * Multiline String literals can use | to specify the starting position
+    * of subsequent lines, then use stripMargin to remove the surplus indentation.
+    */
+  def stripMarginLiteralStrings(res0: String) {
+
+    val a = """An apple a day keeps 
+| the doctor away"""
+    a.stripMargin.split('\n')(1).charAt(0) should be(res0)
+
+  }
+ */
 
 }

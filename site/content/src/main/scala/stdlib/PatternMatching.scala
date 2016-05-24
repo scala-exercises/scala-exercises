@@ -13,9 +13,9 @@ object PatternMatching extends FlatSpec with Matchers with exercise.Section {
     * {{{
     * object MatchTest1 extends App {
     * def matchTest(x: Int): String = x match {
-    *  case 1 => "one"
-    *  case 2 => "two"
-    *  case _ => "many"
+    * case 1 => "one"
+    * case 2 => "two"
+    * case _ => "many"
     * }
     * println(matchTest(3))
     * }

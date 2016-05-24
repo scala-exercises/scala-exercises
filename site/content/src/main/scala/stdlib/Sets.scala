@@ -97,17 +97,6 @@ object Sets extends FlatSpec with Matchers with exercise.Section {
     aNewSet.equals(mySet) should be(res0)
   }
 
-  /** Sets can be iterated easily:
-    */
-  def easilyIteratedSets(res0: Int) {
-    val mySet = Set(1, 3, 4, 9)
-    var sum = 0
-    for (i ← mySet)
-      sum = sum + i //Of course this is the same thing as mySet.reduce(_ + _) or mySet.sum
-
-    sum should be(res0)
-  }
-
   /** Two sets can be intersected easily:
     */
   def easilyIntersectedSets(res0: Boolean) {

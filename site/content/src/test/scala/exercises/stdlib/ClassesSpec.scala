@@ -18,12 +18,4 @@ class ClassesSpec extends Spec with Checkers {
     )
   }
 
-  def `classes with var parameters` = {
-    check(
-      Test.testSuccess(
-        Classes.classWithVarParameterClasses _,
-        "Flying character" :: "Flying white character" :: HNil
-      )
-    )
-  }
 }

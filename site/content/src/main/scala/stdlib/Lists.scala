@@ -48,11 +48,12 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     a should equal(List(res0, res1, res2))
   }
 
-  /** Lists can be accessed via head and tail
+  /** Lists can be accessed via head, headOption and tail.
+    * Accessing List via `head` is unsafe and may result in a IndexOutOfBoundsException
     */
   def headAndTailLists(res0: Int, res1: Int, res2: Int) {
     val a = List(1, 2, 3)
-    a.head should equal(res0)
+    a.headOption should equal(Some(res0))
     a.tail should equal(List(res1, res2))
   }
 

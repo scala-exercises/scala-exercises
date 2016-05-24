@@ -45,12 +45,4 @@ class TypeSignaturesSpec extends Spec with Checkers {
     )
   }
 
-  def `asinstanceof class` = {
-    check(
-      Test.testSuccess(
-        TypeSignatures.asInstanceOfFunctionTypeSignatures _,
-        true :: HNil
-      )
-    )
-  }
 }

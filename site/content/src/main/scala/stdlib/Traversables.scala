@@ -33,10 +33,10 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
 
   /** `map` will apply the given function on all elements of a *Traversable* and return a new collection of the result.
     */
-  def mapFunctionTraversables(res0: Int) {
+  def mapFunctionTraversables(res0: Option[Int]) {
     val set = Set(1, 3, 4, 6)
     val result = set.map(_ * 4)
-    result.last should be(res0)
+    result.lastOption should be(res0)
   }
 
   /** `flatten` will smash all child *Traversables* within a *Traversable*
@@ -558,52 +558,6 @@ object Traversables extends FlatSpec with Matchers with exercise.Section {
     stringBuilder.append("I want all numbers 6-12: ")
     list.filter(it ⇒ it > 5 && it < 13).addString(stringBuilder, ",")
     stringBuilder.mkString should be(res0)
-  }
-
-  /** *Traversables* can have views which allow you to efficiently do compound work.
-    */
-  def viewsTraversables(res0: String, res1: String, res2: String, res3: String, res4: String, res5: String, res6: String, res7: String, res8: String, res9: String, res10: String, res11: String) {
-    val lst = List(1, 2, 3)
-    var history = List[String]()
-
-    def addHistory(s: String) {
-      history = history :+ s
-    }
-
-    val l1 = lst.map {
-      x ⇒
-        addHistory("Doubling %s".format(x))
-        x * 2
-    }
-
-    val l2 = l1.map { x ⇒ addHistory("Adding 1 to %s".format(x)); x + 1 }
-
-    history(0) should be(res0)
-    history(1) should be(res1)
-    history(2) should be(res2)
-    history(3) should be(res3)
-    history(4) should be(res4)
-    history(5) should be(res5)
-
-    history = List[String]()
-
-    lst.view.map { x ⇒ addHistory("Doubling %s".format(x)); x * 2 }.map {
-      x ⇒ addHistory("Adding 1 to %s".format(x)); x + 1
-    }.force
-
-    history(0) should be(res6)
-    history(1) should be(res7)
-    history(2) should be(res8)
-    history(3) should be(res9)
-    history(4) should be(res10)
-    history(5) should be(res11)
-  }
-
-  /** `Views` can also accept a `to` and `from` value which takes a subset and performs your view functions on the subset.
-    */
-  def viewForceTraversables(res0: List[Int]) {
-    val list = List(1, 2, 3, 4, 5, 6, 7, 8)
-    list.view(3, 6).map(_ + 2).map(_ * 10).force should be(res0)
   }
 
 }

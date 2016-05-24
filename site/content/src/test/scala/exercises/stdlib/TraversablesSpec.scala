@@ -22,7 +22,7 @@ class TraversablesSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         Traversables.mapFunctionTraversables _,
-        24 :: HNil
+        Option(24) :: HNil
       )
     )
   }
@@ -484,22 +484,4 @@ class TraversablesSpec extends Spec with Checkers {
     )
   }
 
-  def `views over traversables` = {
-    check(
-      Test.testSuccess(
-        Traversables.viewsTraversables _,
-        "Doubling 1" :: "Doubling 2" :: "Doubling 3" :: "Adding 1 to 2" :: "Adding 1 to 4" :: "Adding 1 to 6" ::
-          "Doubling 1" :: "Adding 1 to 2" :: "Doubling 2" :: "Adding 1 to 4" :: "Doubling 3" :: "Adding 1 to 6" :: HNil
-      )
-    )
-  }
-
-  def `views over traversables can be forced` = {
-    check(
-      Test.testSuccess(
-        Traversables.viewForceTraversables _,
-        List(60, 70, 80) :: HNil
-      )
-    )
-  }
 }
