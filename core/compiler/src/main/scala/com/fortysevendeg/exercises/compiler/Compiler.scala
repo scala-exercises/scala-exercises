@@ -54,6 +54,7 @@ case class Compiler() {
       comment:         RenderedComment.Aux[Mode.Exercise],
       code:            String,
       qualifiedMethod: String,
+      packageName:     String,
       imports:         List[String]                       = Nil
     )
 
@@ -104,6 +105,7 @@ case class Compiler() {
       symbol: MethodSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)
+      val pkgName = symbolPath.headOption.fold("defaultPkg")(pkg ⇒ pkg)
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Exercise])
           .leftMap(enhanceDocError(symbolPath))
@@ -112,6 +114,7 @@ case class Compiler() {
         symbol = symbol,
         comment = comment,
         code = method.code,
+        packageName = pkgName,
         imports = method.imports,
         qualifiedMethod = symbolPath.mkString(".")
       )
@@ -170,6 +173,7 @@ case class Compiler() {
                 description = exerciseInfo.comment.description,
                 code = exerciseInfo.code,
                 qualifiedMethod = exerciseInfo.qualifiedMethod,
+                packageName = exerciseInfo.packageName,
                 imports = exerciseInfo.imports,
                 explanation = exerciseInfo.comment.explanation
               )
@@ -201,10 +205,6 @@ case class Compiler() {
     }
 
     maybeMakeLibraryInfo(library)
-      .map { info ⇒
-        dump(info)
-        info
-      }
       .map(generateTree)
       .map { case (TermName(kname), v) ⇒ s"$targetPackage.$kname" → showCode(v) }
 
