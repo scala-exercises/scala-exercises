@@ -43,7 +43,7 @@ class ImplicitsSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         Implicits.asDefaultImplicits _,
-        fstAnswer :: sndAnswer :: HNil
+        fstAnswer :: HNil
       )
     )
   }
@@ -52,7 +52,7 @@ class ImplicitsSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         Implicits.listOfImplicitsImplicits _,
-        "1020.0 Dollars" :: "9025.0 Dollars" :: HNil
+        "1020.0 Dollars" :: HNil
       )
     )
   }

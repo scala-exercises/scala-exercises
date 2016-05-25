@@ -9,23 +9,6 @@ import org.scalatest.prop.Checkers
 import org.scalacheck.Shapeless._
 
 class ForExpressionsSpec extends Spec with Checkers {
-  def `simple for loops` = {
-    check(
-      Test.testSuccess(
-        ForExpressions.forLoopsForExpressions _,
-        45 :: HNil
-      )
-    )
-  }
-
-  def `for loop with conditional` = {
-    check(
-      Test.testSuccess(
-        ForExpressions.additionalLogicForExpressions _,
-        20 :: HNil
-      )
-    )
-  }
 
   def `nested for expressions` = {
     check(

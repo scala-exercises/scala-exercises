@@ -14,32 +14,12 @@ object Options extends FlatSpec with Matchers with exercise.Section {
     *
     * `Option[A]` is a container for an optional value of type `A`. If the value of type `A` is present, the `Option[A]` is an instance of `Some[A]`, containing the present value of type `A.` If the value is absent, the `Option[A]` is the object `None`.
     */
-  def conceptOptions(res0: String, res1: Option[String]) {
+  def conceptOptions(res0: Option[String], res1: Option[String]) {
     val someValue: Option[String] = Some("I am wrapped in something")
-    someValue.get should be(res0)
+    someValue should be(res0)
 
-    val nullValue: Option[String] = None
-    nullValue should be(res1)
-  }
-
-  /** Having:
-    *
-    * {{{
-    * def maybeItWillReturnSomething(flag: Boolean): Option[String] = {
-    * if (flag) Some("Found value") else None
-    * }
-    * }}}
-    * Represent `null` with `None` because `null` is a bad idea:
-    */
-  def maybeItWillReturnSomethingOptions(res0: String) {
-    val value1 = maybeItWillReturnSomething(true)
-    val value2 = maybeItWillReturnSomething(false)
-
-    value1.get should be(res0)
-    intercept[java.util.NoSuchElementException] {
-      value2.get
-    }
-
+    val emptyValue: Option[String] = None
+    emptyValue should be(res1)
   }
 
   /** Using `getOrElse` we can provide a default value ("No value") when the optional argument (`None`) does not exist:

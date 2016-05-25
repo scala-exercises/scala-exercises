@@ -15,7 +15,6 @@ object StdLib extends exercise.Library {
 
   override def sections = List(
     Asserts,
-    ValandVar,
     Classes,
     Options,
     Objects,
@@ -35,13 +34,10 @@ object StdLib extends exercise.Library {
     ForExpressions,
     InfixPrefixandPostfixOperators,
     InfixTypes,
-    MutableMaps,
-    MutableSets,
     SequencesandArrays,
     Iterables,
     Traversables,
     NamedandDefaultArguments,
-    Preconditions,
     Extractors,
     ByNameParameter,
     RepeatedParameters,
@@ -53,7 +49,6 @@ object StdLib extends exercise.Library {
     LiteralNumbers,
     LiteralStrings,
     TypeVariance,
-    Enumerations,
-    Constructors
+    Enumerations
   )
 }

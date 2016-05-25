@@ -70,17 +70,6 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     myMap(49931) should be(res1)
   }
 
-  /** Mixed type values can be added to a map:
-    */
-  def mixedTypeValuesMaps(res0: Int, res1: Int, res2: Int, res3: Int) {
-    val myMap = scala.collection.mutable.Map.empty[String, Any]
-    myMap("Ann Arbor") = (48103, 48104, 48108)
-    myMap("Houghton") = 49931
-
-    myMap("Houghton") should be(res0)
-    myMap("Ann Arbor") should be((res1, res2, res3))
-  }
-
   /** Maps may be accessed:
     */
   def mayBeAccessedMaps(res0: String, res1: String) {
@@ -96,18 +85,6 @@ object Maps extends FlatSpec with Matchers with exercise.Section {
     val aNewMap = myMap - "MI"
     aNewMap.contains("MI") should be(res0)
     myMap.contains("MI") should be(res1)
-  }
-
-  /** Accessing a map by key results in an exception if key is not found:
-    */
-  def keyNotFoundMaps(res0: Boolean) {
-    val myMap = Map("OH" → "Ohio", "WI" → "Wisconsin", "IA" → "Iowa")
-    var blewWithException = true
-    intercept[NoSuchElementException] {
-      myMap("MI")
-      blewWithException = false
-    }
-    blewWithException should be(res0)
   }
 
   /** Map elements can be removed in multiple:

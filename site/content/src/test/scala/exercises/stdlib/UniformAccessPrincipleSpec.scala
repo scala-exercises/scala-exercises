@@ -13,35 +13,9 @@ class UniformAccessPrincipleSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         UniformAccessPrinciple.uniformAccessPrincipleUniformAccessPrinciple _,
-        7 :: HNil
+        10 :: 11 :: HNil
       )
     )
   }
 
-  def `access as a property` = {
-    check(
-      Test.testSuccess(
-        UniformAccessPrinciple.asPropertyUniformAccessPrinciple _,
-        7 :: HNil
-      )
-    )
-  }
-
-  def `updating a property` = {
-    check(
-      Test.testSuccess(
-        UniformAccessPrinciple.updatingPropertyUniformAccessPrinciple _,
-        7 :: HNil
-      )
-    )
-  }
-
-  def `updating using a method` = {
-    check(
-      Test.testSuccess(
-        UniformAccessPrinciple.updateUsingMethodUniformAccessPrinciple _,
-        8 :: HNil
-      )
-    )
-  }
 }

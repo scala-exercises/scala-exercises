@@ -63,15 +63,6 @@ class MapsSpec extends Spec with Checkers {
     )
   }
 
-  def `mixed value types` = {
-    check(
-      Test.testSuccess(
-        Maps.mixedTypeValuesMaps _,
-        49931 :: 48103 :: 48104 :: 48108 :: HNil
-      )
-    )
-  }
-
   def `map key access` = {
     check(
       Test.testSuccess(
@@ -86,15 +77,6 @@ class MapsSpec extends Spec with Checkers {
       Test.testSuccess(
         Maps.easilyRemovedMaps _,
         false :: true :: HNil
-      )
-    )
-  }
-
-  def `not found keys` = {
-    check(
-      Test.testSuccess(
-        Maps.keyNotFoundMaps _,
-        true :: HNil
       )
     )
   }

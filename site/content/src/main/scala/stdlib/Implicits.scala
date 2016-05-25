@@ -21,16 +21,16 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
     * }
     * object ImplicitTest extends App {
     * implicit object StringMonoid extends Monoid[String] {
-    *  def add(x: String, y: String): String = x concat y
-    *  def unit: String = ""
+    * def add(x: String, y: String): String = x concat y
+    * def unit: String = ""
     * }
     * implicit object IntMonoid extends Monoid[Int] {
-    *  def add(x: Int, y: Int): Int = x + y
-    *  def unit: Int = 0
+    * def add(x: Int, y: Int): Int = x + y
+    * def unit: Int = 0
     * }
     * def sum[A](xs: List[A])(implicit m: Monoid[A]): A =
-    *  if (xs.isEmpty) m.unit
-    *  else m.add(xs.head, sum(xs.tail))
+    * if (xs.isEmpty) m.unit
+    * else m.add(xs.head, sum(xs.tail))
     * println(sum(List(1, 2, 3)))
     * println(sum(List("a", "b", "c")))
     * }
@@ -99,30 +99,24 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
   /** Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:
     */
-  def asDefaultImplicits(res0: Float, res1: Float) {
+  def asDefaultImplicits(res0: Float) {
     def howMuchCanIMake_?(hours: Int)(implicit dollarsPerHour: BigDecimal) = dollarsPerHour * hours
 
-    implicit var hourlyRate = BigDecimal(34.00)
+    implicit val hourlyRate = BigDecimal(34.00)
 
     howMuchCanIMake_?(30) should be(res0)
-
-    hourlyRate = BigDecimal(95.00)
-    howMuchCanIMake_?(95) should be(res1)
   }
 
   /** Implicit Function Parameters can contain a list of implicits:
     */
-  def listOfImplicitsImplicits(res0: String, res1: String) {
+  def listOfImplicitsImplicits(res0: String) {
     def howMuchCanIMake_?(hours: Int)(implicit amount: BigDecimal, currencyName: String) =
       (amount * hours).toString() + " " + currencyName
 
-    implicit var hourlyRate = BigDecimal(34.00)
+    implicit val hourlyRate = BigDecimal(34.00)
     implicit val currencyName = "Dollars"
 
     howMuchCanIMake_?(30) should be(res0)
-
-    hourlyRate = BigDecimal(95.00)
-    howMuchCanIMake_?(95) should be(res1)
   }
 
   /** Default arguments though are preferred to Implicit Function Parameters

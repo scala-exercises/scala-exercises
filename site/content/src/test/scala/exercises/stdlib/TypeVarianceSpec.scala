@@ -54,38 +54,11 @@ class TypeVarianceSpec extends Spec with Checkers {
     )
   }
 
-  def `contravariance` = {
-    check(
-      Test.testSuccess(
-        TypeVariance.contravarianceVarianceTypeVariance _,
-        "Citrus" :: "Orange" :: "Tangelo" :: "Orange" :: HNil
-      )
-    )
-  }
-
-  def `contravariance restrictions` = {
-    check(
-      Test.testSuccess(
-        TypeVariance.contravarianceWithoutGetterTypeVariance _,
-        "Citrus" :: "Citrus" :: "Citrus" :: HNil
-      )
-    )
-  }
-
   def `invariance` = {
     check(
       Test.testSuccess(
         TypeVariance.invarianceVarianceTypeVariance _,
         "Citrus" :: HNil
-      )
-    )
-  }
-
-  def `invariance restrictions` = {
-    check(
-      Test.testSuccess(
-        TypeVariance.invariantTypeVariance _,
-        "Citrus" :: "Citrus" :: HNil
       )
     )
   }
