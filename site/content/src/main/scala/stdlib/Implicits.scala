@@ -99,7 +99,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
   /** Implicits can be used to declare a value to be provided as a default as long as an implicit value is set with in the scope.  These are called implicit function parameters:
     */
-  def asDefaultImplicits(res0: Float, res1: Float) {
+  def asDefaultImplicits(res0: Float) {
     def howMuchCanIMake_?(hours: Int)(implicit dollarsPerHour: BigDecimal) = dollarsPerHour * hours
 
     implicit val hourlyRate = BigDecimal(34.00)
@@ -109,7 +109,7 @@ object Implicits extends FlatSpec with Matchers with exercise.Section {
 
   /** Implicit Function Parameters can contain a list of implicits:
     */
-  def listOfImplicitsImplicits(res0: String, res1: String) {
+  def listOfImplicitsImplicits(res0: String) {
     def howMuchCanIMake_?(hours: Int)(implicit amount: BigDecimal, currencyName: String) =
       (amount * hours).toString() + " " + currencyName
 

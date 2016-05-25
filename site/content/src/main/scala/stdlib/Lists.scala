@@ -53,7 +53,7 @@ object Lists extends FlatSpec with Matchers with exercise.Section {
     */
   def headAndTailLists(res0: Int, res1: Int, res2: Int) {
     val a = List(1, 2, 3)
-    a.headOption should equal(Some(res0))
+    a.headOption should equal(Option(res0))
     a.tail should equal(List(res1, res2))
   }
 

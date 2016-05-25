@@ -56,16 +56,16 @@ object CaseClasses extends FlatSpec with Matchers with exercise.Section {
     * def printTerm(term: Term) {
     * term match {
     * case Var(n) =>
-    *  print(n)
+    * print(n)
     * case Fun(x, b) =>
-    *  print("^" + x + ".")
-    *  printTerm(b)
+    * print("^" + x + ".")
+    * printTerm(b)
     * case App(f, v) =>
-    *  Console.print("(")
-    *  printTerm(f)
-    *  print(" ")
-    *  printTerm(v)
-    *  print(")")
+    * Console.print("(")
+    * printTerm(f)
+    * print(" ")
+    * printTerm(v)
+    * print(")")
     * }
     * }
     * def isIdentityFun(term: Term): Boolean = term match {
