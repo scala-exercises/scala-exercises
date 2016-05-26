@@ -21,6 +21,7 @@ class TreeGenSpec extends FunSpec with Matchers {
           name = "Example1",
           description = None,
           code = "code",
+          packageName = "foo",
           qualifiedMethod = "foo.bar",
           imports = Nil,
           explanation = None
@@ -29,6 +30,7 @@ class TreeGenSpec extends FunSpec with Matchers {
           name = "Example2",
           description = None,
           code = "code",
+          packageName = "foo",
           qualifiedMethod = "foo.bar",
           imports = Nil,
           explanation = None

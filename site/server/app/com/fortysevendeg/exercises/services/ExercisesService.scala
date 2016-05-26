@@ -49,8 +49,9 @@ object ExercisesService extends RuntimeSharedConversions {
       case e                      ⇒ s"Runtime error: ${e.getMessage}"
     }
 
-    def eval(imports: List[String]) = {
+    def eval(pkg: String, imports: List[String]) = {
       val res = methodEval.eval(
+        pkg,
         evaluation.method,
         evaluation.args,
         imports
@@ -74,9 +75,9 @@ object ExercisesService extends RuntimeSharedConversions {
       runtimeExercise ← runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method)
         .toRightXor(s"Unable to find exercise for method ${evaluation.method}")
 
-    } yield runtimeExercise.imports
+    } yield (runtimeExercise.packageName, runtimeExercise.imports)
 
-    val res = imports >>= eval
+    val res = imports >>= (eval _).tupled
     Logger.info(s"evaluation for $evaluation: $res")
     res
 

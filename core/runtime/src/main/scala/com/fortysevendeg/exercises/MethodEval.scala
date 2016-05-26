@@ -65,8 +65,8 @@ class MethodEval() {
   val timeout = 20.seconds
   private val evaluator = new Evaluator(timeout)
 
-  def eval[T](qualifiedMethod: String, rawArgs: List[String], imports: List[String] = Nil): EvaluationResult[_] = {
-    val pre = imports.mkString(System.lineSeparator)
+  def eval[T](pkg: String, qualifiedMethod: String, rawArgs: List[String], imports: List[String] = Nil): EvaluationResult[_] = {
+    val pre = (s"import $pkg._" :: imports).mkString(System.lineSeparator)
     val code = s"""$qualifiedMethod(${rawArgs.mkString(", ")})"""
 
     def convert(runtimeError: Option[RuntimeError]): Throwable = {

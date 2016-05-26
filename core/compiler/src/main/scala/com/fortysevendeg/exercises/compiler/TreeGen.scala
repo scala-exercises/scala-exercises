@@ -21,7 +21,8 @@ case class TreeGen[U <: Universe](
     name: String, description: Option[String],
     code: String, qualifiedMethod: String,
     imports:     List[String],
-    explanation: Option[String]
+    explanation: Option[String],
+    packageName: String
   ) = {
     val term = makeTermName("Exercise", name)
     term → q"""
@@ -29,6 +30,7 @@ case class TreeGen[U <: Universe](
           override val name             = $name
           override val description      = $description
           override val code             = $code
+          override val packageName      = $packageName
           override val qualifiedMethod  = $qualifiedMethod
           override val imports          = $imports
           override val explanation      = $explanation
