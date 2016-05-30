@@ -4,18 +4,9 @@
  */
 
 package com.fortysevendeg.exercises
-
-import scala.language.experimental.macros
-
-import java.lang.reflect.InvocationTargetException
-import scala.reflect.runtime.{ universe ⇒ ru }
-import scala.reflect.runtime.{ currentMirror ⇒ cm }
-import scala.tools.reflect.ToolBox
-
 import cats.data.{ Ior, Xor }
-import cats.std.list._
-import cats.syntax.flatMap._
-import cats.syntax.traverse._
+import java.nio.file.Path
+import scala.concurrent.duration._
 
 object MethodEval {
 
@@ -67,92 +58,42 @@ object MethodEval {
   case class EvaluationSuccess[A](res: A) extends EvaluationResult[A](true)
 }
 
-class MethodEval {
+class MethodEval() {
   import MethodEval._
+  import EvalResult._
 
-  private[this] val toolbox = cm.mkToolBox()
-  private[this] val mirror = ru.runtimeMirror(classOf[MethodEval].getClassLoader)
-  import mirror.universe._
+  val timeout = 20.seconds
+  private val evaluator = new Evaluator(timeout)
 
-  private[this]type Res[A] = Xor[Ior[String, Throwable], A]
+  def eval[T](pkg: String, qualifiedMethod: String, rawArgs: List[String], imports: List[String] = Nil): EvaluationResult[_] = {
+    val pre = (s"import $pkg._" :: imports).mkString(System.lineSeparator)
+    val code = s"""$qualifiedMethod(${rawArgs.mkString(", ")})"""
 
-  private[this] def error[A](message: String): Res[A] = Xor.left(Ior.left(message))
-  private[this] def error[A](e: Throwable): Res[A] = Xor.left(Ior.right(e))
-  private[this] def error[A](message: String, e: Throwable): Res[A] = Xor.left(Ior.both(message, e))
-  private[this] def success[A](value: A): Res[A] = Xor.right(value)
-
-  private[this] def catching[A](f: ⇒ A): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.right(e))
-  private[this] def catching[A](f: ⇒ A, message: ⇒ String): Res[A] = Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(message, e))
-
-
-  // format: OFF
-  def eval(qualifiedMethod: String, rawArgs: List[String], imports: List[String] = Nil): EvaluationResult[_] = {
-    val result = for {
-
-    lastIndex ← {
-      val lastIndex = qualifiedMethod.lastIndexOf('.')
-      if (lastIndex > 0) success(lastIndex)
-      else error(s"Invalid qualified method $qualifiedMethod")
-    }
-    moduleName = qualifiedMethod.substring(0, lastIndex)
-    methodName = qualifiedMethod.substring(lastIndex + 1)
-
-    staticModule ← catching(mirror.staticModule(moduleName),
-      s"Unable to load module $moduleName")
-
-    moduleMirror ← catching(mirror.reflectModule(staticModule),
-      s"Unable to reflect module mirror for $moduleName")
-
-    instanceMirror ← catching(mirror.reflect(moduleMirror.instance),
-      s"Unable to reflect instance mirror for $moduleName")
-
-    methodSymbol ← catching(instanceMirror.symbol.typeSignature.decl(TermName(methodName)).asMethod,
-      s"Unable to get type for module $moduleName")
-
-    argTypes ← methodSymbol.paramLists match {
-      case singleGroup :: Nil ⇒ success(singleGroup.map(_.typeSignature))
-      case _                  ⇒ error(s"Expected just one argument group on method $qualifiedMethod")
+    def convert(runtimeError: Option[RuntimeError]): Throwable = {
+      val unknown = new Exception("unknown error")
+      runtimeError.map(_.error).getOrElse(unknown)
     }
 
+    // * propagate as much information as possible to the ui
+    // * the user provide rawArgs and is wraped inside a class, you want to shift error position
+    evaluator[T](pre, code) match {
 
-    importer0 = ru.mkImporter(mirror.universe)
-    importer = importer0.asInstanceOf[ru.Importer { val from: mirror.universe.type }]
+      case Success(complilationInfos, result, consoleOutput) ⇒
+        EvaluationSuccess(result)
 
-    args ← (rawArgs zip argTypes).map { case (arg, tpe) ⇒
-        for {
-          parsedArg ← catching(toolbox.parse(arg),
-            s"Unable to parse arg $arg")
+      case EvalRuntimeError(complilationInfos, runtimeError) ⇒
+        EvaluationException(convert(runtimeError))
 
-          parsedImports ← imports.map(imp ⇒ catching(toolbox.parse(imp),
-            s"Unable to parse import '$imp'")).sequenceU
-
-          tree = q"""
-            ..$parsedImports
-            $parsedArg: $tpe
-          """
-
-          evaledArg ← catching(toolbox.eval(tree),
-              s"Unable to evaluate arg $arg as $tpe")
-
-        } yield evaledArg
-
-      }.sequenceU
-
-    result ←
-      try {
-        success(EvaluationSuccess(instanceMirror.reflectMethod(methodSymbol)(args: _*)))
-      } catch {
-        // capture exceptions thrown by the method, since they are considered success
-        case e: InvocationTargetException ⇒ success(EvaluationException(e.getCause))
-        case scala.util.control.NonFatal(t) ⇒ error(t)
+      case CompilationError(complilationInfos) ⇒ {
+        val messages = complilationInfos.values.flatMap(_.map(_.message)).mkString(", ")
+        EvaluationFailure(Ior.left(s"compilation error $messages"))
       }
-  } yield result
 
-  result.fold(
-    EvaluationFailure(_),
-    identity
-  )
-}
+      case GeneralError(stack) ⇒
+        EvaluationFailure(Ior.both("global error", stack))
 
-  // format: ON
+      case Timeout ⇒
+        EvaluationFailure(Ior.left(s"compilation timed out after $timeout"))
+    }
+  }
 }

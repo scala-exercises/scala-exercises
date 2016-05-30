@@ -27,11 +27,10 @@ lazy val commonSettings = Seq(
 lazy val clients = Seq(client)
 lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
+
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(
-    sharedJvm,
-    content)
+  .dependsOn(sharedJvm, content)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)

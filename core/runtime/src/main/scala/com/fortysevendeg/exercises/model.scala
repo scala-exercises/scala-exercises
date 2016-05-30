@@ -32,6 +32,7 @@ trait Exercise {
   def description: Option[String]
   def code: String
   def qualifiedMethod: String
+  def packageName: String
   def imports: List[String]
   def explanation: Option[String]
 }
@@ -57,5 +58,6 @@ case class DefaultExercise(
   code:            String,
   qualifiedMethod: String,
   imports:         List[String],
-  explanation:     Option[String] = None
+  explanation:     Option[String] = None,
+  packageName:     String
 ) extends Exercise
