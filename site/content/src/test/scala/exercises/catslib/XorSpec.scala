@@ -2,7 +2,7 @@ package exercises
 
 import catslib._
 import shapeless.HNil
-
+import cats.data.Xor
 import org.scalatest.Spec
 import org.scalatest.prop.Checkers
 
@@ -13,7 +13,7 @@ class XorSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         XorSection.xorMapRightBias _,
-        6 :: "Something went wrong" :: HNil
+        Xor.right[String, Int](6) :: Xor.left[String, Int]("Something went wrong") :: HNil
       )
     )
   }
@@ -22,7 +22,7 @@ class XorSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         XorSection.xorMonad _,
-        6 :: "Something went wrong" :: HNil
+        Xor.right[String, Int](6) :: Xor.left[String, Int]("Something went wrong") :: HNil
       )
     )
   }
@@ -67,7 +67,7 @@ class XorSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         XorSection.xorInTheLarge _,
-        42 :: "Hello" :: "olleH" :: HNil
+        Xor.right[String, Int](42) :: Xor.left[String, Int]("Hello") :: Xor.left[String, Int]("olleH") :: HNil
       )
     )
   }
@@ -85,7 +85,7 @@ class XorSpec extends Spec with Checkers {
     check(
       Test.testSuccess(
         XorSection.xorSyntax _,
-        true :: HNil
+        Xor.right[String, Int](42) :: HNil
       )
     )
   }

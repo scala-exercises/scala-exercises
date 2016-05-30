@@ -115,14 +115,14 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * crucial one is the right-biased being built-in.
     *
     */
-  def xorMapRightBias(res0: Int, res1: String) = {
+  def xorMapRightBias(res0: String Xor Int, res1: String Xor Int) = {
     import cats.data.Xor
 
     val right: String Xor Int = Xor.right(5)
-    right.map(_ + 1) should be(Xor.right(res0))
+    right.map(_ + 1) should be(res0)
 
     val left: String Xor Int = Xor.left("Something went wrong")
-    left.map(_ + 1) should be(Xor.left(res1))
+    left.map(_ + 1) should be(res1)
   }
 
   /** Because `Xor` is right-biased, it is possible to define a `Monad` instance for it. You
@@ -150,14 +150,14 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * So the `flatMap` method is right-biased:
     *
     */
-  def xorMonad(res0: Int, res1: String) = {
+  def xorMonad(res0: String Xor Int, res1: String Xor Int) = {
     import cats.data.Xor
 
     val right: String Xor Int = Xor.right(5)
-    right.flatMap(x ⇒ Xor.right(x + 1)) should be(Xor.right(res0))
+    right.flatMap(x ⇒ Xor.right(x + 1)) should be(res0)
 
     val left: String Xor Int = Xor.left("Something went wrong")
-    left.flatMap(x ⇒ Xor.right(x + 1)) should be(Xor.left(res1))
+    left.flatMap(x ⇒ Xor.right(x + 1)) should be(res1)
   }
 
   /** = Using `Xor` instead of exceptions =
@@ -406,13 +406,13 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * Let's review the `leftMap` and `map` methods:
     *
     */
-  def xorInTheLarge(res0: Int, res1: String, res2: String) = {
+  def xorInTheLarge(res0: String Xor Int, res1: String Xor Int, res2: String Xor Int) = {
     val right: String Xor Int = Xor.Right(41)
-    right.map(_ + 1) should be(Xor.Right(res0))
+    right.map(_ + 1) should be(res0)
 
     val left: String Xor Int = Xor.Left("Hello")
-    left.map(_ + 1) should be(Xor.Left(res1))
-    left.leftMap(_.reverse) should be(Xor.Left(res2))
+    left.map(_ + 1) should be(res1)
+    left.leftMap(_.reverse) should be(res2)
   }
 
   /** There will inevitably come a time when your nice `Xor` code will have to interact with exception-throwing
@@ -462,10 +462,10 @@ object XorSection extends FlatSpec with Matchers with exercise.Section {
     * These method promote values to the `Xor` data type:
     *
     */
-  def xorSyntax(res0: Boolean) = {
+  def xorSyntax(res0: String Xor Int) = {
     import cats.syntax.xor._
 
     val right: Xor[String, Int] = 42.right[String]
-    right.isRight should be(res0)
+    right should be(res0)
   }
 }
