@@ -28,8 +28,3 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.5.0")
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.5.1")
 addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.14")
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
-unmanagedSourceDirectories in Compile += baseDirectory.value.getParentFile.getParentFile / "common"
-
-// Exercise compiler plugin
-lazy val build = (project in file("."))
-  .dependsOn(ProjectRef(file("../../core"), "sbt-exercise"))

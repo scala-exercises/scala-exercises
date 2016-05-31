@@ -17,6 +17,7 @@ fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
 lazy val commonSettings = Seq(
   resolvers ++= Seq(
+    Resolver.mavenLocal,
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
   )
@@ -30,24 +31,24 @@ lazy val scalazVersion = "7.1.4"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(sharedJvm, content)
-  .dependsOn(ProjectRef(file("../core"), "runtime"))
+  .dependsOn(sharedJvm)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
+    scalaVersion := "2.11.7",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
-    herokuAppName in Compile := "scala-exercises"
-  )
-  .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
-    compilelibs(
+    herokuAppName in Compile := "scala-exercises",
+  libraryDependencies ++= Seq(
       filters,
       jdbc,
       evolutions,
       cache,
-      ws,
+    ws,
+      "org.scalaexercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
+      "org.scalaexercises" %% "content" % "0.0.0-SNAPSHOT",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -57,19 +58,17 @@ lazy val server = (project in file("server"))
       "org.webjars" % "highlightjs" % "8.7",
       "org.webjars.npm" % "highlight.js" % "9.1.0",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
-      "org.scala-lang" % "scala-compiler" % scalaVersion,
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
-      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent")) ++
-    testlibs(
+      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       specs2,
-      "org.typelevel" %% "scalaz-specs2" % "0.3.0",
-      "org.scalacheck" %% "scalacheck" % "1.12.5",
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1",
-      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion) :+
-    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
-  ))
+      "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test",
+      "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1" % "test",
+      "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion % "test",
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")))
 
 
 lazy val client = (project in file("client"))
@@ -77,6 +76,7 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .settings(commonSettings: _*)
   .settings(
+    scalaVersion := "2.11.7",
     persistLauncher := true,
     persistLauncher in Test := false,
     sourceMapsDirectories += sharedJs.base / "..",
@@ -102,38 +102,19 @@ lazy val client = (project in file("client"))
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .jsConfigure(_ enablePlugins ScalaJSPlay)
-  .jsSettings(sourceMapsBase := baseDirectory.value / "..")
+  .jsSettings(sourceMapsBase := baseDirectory.value / "..",  scalaVersion := "2.11.7")
   .settings(commonSettings: _*)
-  .settings(libraryDependencies ++=
-    compilelibs(
-      "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.typelevel" %%% "cats-core" % "0.4.1"
-    )
+  .settings(
+  scalaVersion := "2.11.7",
+  libraryDependencies ++= Seq(
+
+      "org.scalatest" %% "scalatest" % "2.2.4" % "compile",
+      "org.typelevel" %%% "cats-core" % "0.4.1" % "compile"
+
+  )
+
   )
 
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
-// Locally bundled exercise content projects
-
-import de.heikoseeberger.sbtheader.HeaderPlugin
-
-lazy val content = (project in file("content"))
-  .enablePlugins(ExerciseCompilerPlugin)
-  .dependsOn(ProjectRef(file("../core"), "runtime"))
-  .dependsOn(ProjectRef(file("../core"), "runtime") % CompileGeneratedExercises)
-  .dependsOn(ProjectRef(file("../core"), "definitions"))
-  .settings(commonSettings: _*)
-  .settings(libraryDependencies ++=
-    compilelibs(
-      "org.scalatest" %% "scalatest" % "2.2.4",
-      "com.chuusai" %% "shapeless" % "2.2.5"
-    ) ++
-    testlibs(
-      "org.scalatest" %% "scalatest" % "2.2.4",
-      "org.scalaz" %% "scalaz-core" % scalazVersion,
-      "org.scalacheck" %% "scalacheck" % "1.12.5",
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1"
-    ) :+
-    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
-  )
