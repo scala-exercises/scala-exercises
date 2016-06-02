@@ -6,13 +6,12 @@
 package com.fortysevendeg.exercises.support
 
 import doobie.imports._
-import org.scalatest.Assertions
 import play.api.db.evolutions._
 import play.api.db.{ Database, Databases }
 
 import scalaz.concurrent.Task
 
-trait DatabaseInstance extends Assertions {
+trait DatabaseInstance {
   val testDriver = "org.postgresql.Driver"
   def testUrl = "jdbc:postgresql://localhost:5432/scalaexercises_test"
   val testUsername = "scalaexercises_user"
