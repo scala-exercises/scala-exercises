@@ -9,6 +9,7 @@ package services
 import com.fortysevendeg.exercises.Exercises
 import com.fortysevendeg.exercises.MethodEval
 
+import play.api.Play
 import play.api.Logger
 
 import java.nio.file.Paths
@@ -26,8 +27,10 @@ object ExercisesService extends RuntimeSharedConversions {
 
   val methodEval = new MethodEval()
 
-  val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = ExercisesService.getClass.getClassLoader)
-  val (libraries, librarySections) = {
+  def classLoader = Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
+  lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
+
+  lazy val (libraries, librarySections) = {
     val libraries1 = colorize(runtimeLibraries)
     errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
     (
@@ -46,7 +49,7 @@ object ExercisesService extends RuntimeSharedConversions {
 
     def userError(ee: EvaluationException[_]): String = ee.e match {
       case _: TestFailedException ⇒ "Assertion error!"
-      case e                      ⇒ s"Runtime error: ${e.getMessage}"
+      case e ⇒ s"Runtime error: ${e.getMessage}"
     }
 
     def eval(pkg: String, imports: List[String]) = {
@@ -123,7 +126,7 @@ sealed trait RuntimeSharedConversions {
       if (library.color.isEmpty) {
         val (color, colors0) = colors match {
           case head :: tail ⇒ Some(head) → tail
-          case Nil          ⇒ None → Nil
+          case Nil ⇒ None → Nil
         }
         colors0 → (DefaultLibrary(
           name = library.name,
