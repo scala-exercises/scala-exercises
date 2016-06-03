@@ -20,7 +20,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
-addSbtPlugin("com.heroku" % "sbt-heroku" % "0.5.4")
+addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.0")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.5.0")
 

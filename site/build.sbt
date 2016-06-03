@@ -17,6 +17,8 @@ fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
 lazy val commonSettings = Seq(
   resolvers ++= Seq(
+    Resolver.mavenLocal,
+    Resolver.defaultLocal,
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
   )
@@ -30,7 +32,6 @@ lazy val scalazVersion = "7.1.4"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(sharedJvm, content)
   .dependsOn(ProjectRef(file("../core"), "runtime"))
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
@@ -39,7 +40,12 @@ lazy val server = (project in file("server"))
     routesImport += "config.Routes._",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
-    herokuAppName in Compile := "scala-exercises"
+    herokuAppName in Compile := "scala-exercises",
+    herokuJdkVersion in Compile := "1.8",
+    herokuProcessTypes in Compile := Map(
+      "web" -> "target/universal/stage/bin/server -Dhttp.port=$PORT"
+    ),
+    herokuSkipSubProjects in Compile := false
   )
   .settings(libraryDependencies <++= (scalaVersion)(scalaVersion =>
     compilelibs(
@@ -57,6 +63,7 @@ lazy val server = (project in file("server"))
       "org.webjars" % "highlightjs" % "8.7",
       "org.webjars.npm" % "highlight.js" % "9.1.0",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
+      "com.47deg.scalaexercises" %% "content" % "0.0.1-SNAPSHOT" changing(),
       "org.scala-lang" % "scala-compiler" % scalaVersion,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
