@@ -1,3 +1,0 @@
-$ copy src/main/scala/sample.scala sample.scala.original
-> package
-$ newer src/main/scala/sample.scala sample.scala.original
