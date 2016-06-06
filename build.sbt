@@ -46,10 +46,10 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
     ws,
-      "org.scala-exercises" %% "runtime" % "0.0.1" changing(),
-      "org.scala-exercises" %% "content-stdlib" % "0.0.1",
-      "org.scala-exercises" %% "content-cats" % "0.0.1",
-      "org.scala-exercises" %% "content-shapeless" % "0.0.1",
+      "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
+      "org.scala-exercises" %% "content-stdlib" % "0.0.0-SNAPSHOT",
+      "org.scala-exercises" %% "content-cats" % "0.0.0-SNAPSHOT",
+      "org.scala-exercises" %% "content-shapeless" % "0.0.0-SNAPSHOT",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -125,7 +125,7 @@ lazy val definitions = (project in file("definitions"))
   .settings(publishSettings:_*)
   .settings(
     organization := "org.scala-exercises",
-    version := "0.0.1",
+    version := "0.0.0-SNAPSHOT",
     name := "definitions",
     scalaVersion := "2.11.7",
     libraryDependencies ++= Seq(
@@ -139,7 +139,7 @@ lazy val runtime = (project in file("runtime"))
   .settings(publishSettings:_*)
   .settings(
     organization := "org.scala-exercises",
-    version := "0.0.1",
+    version := "0.0.0-SNAPSHOT",
     name := "runtime",
     scalaVersion := "2.11.7",
     resolvers ++= Seq(
@@ -162,7 +162,7 @@ lazy val compiler = (project in file("compiler"))
   .settings(
     organization := "org.scala-exercises",
     name := "exercise-compiler",
-    version := "0.0.1",
+    version := "0.0.0-SNAPSHOT",
     scalaVersion := "2.11.7",
     exportJars      := true,
     resolvers ++= Seq(
@@ -172,8 +172,8 @@ lazy val compiler = (project in file("compiler"))
     ),
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
-      "org.scala-exercises" %% "runtime" % "0.0.1" changing(),
-      "org.scala-exercises" %% "definitions" % "0.0.1" changing(),
+      "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
+      "org.scala-exercises" %% "definitions" % "0.0.0-SNAPSHOT" changing(),
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % "0.4.1" % "test"
@@ -185,7 +185,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(
     organization := "org.scala-exercises",
     name            := "sbt-exercise",
-    version := "0.0.1",
+    version := "0.0.0-SNAPSHOT",
     scalaVersion := "2.10.6",
     sbtPlugin       := true,
     resolvers ++= Seq(

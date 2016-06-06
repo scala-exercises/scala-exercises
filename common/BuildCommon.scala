@@ -24,7 +24,7 @@ object BuildCommon extends AutoPlugin {
   override def trigger = allRequirements
 
   def baseSettings = Seq(
-    organization    := "org.scalaexercises",
+    organization    := "org.scala-exercises",
     version         := "0.0.0-SNAPSHOT",
     scalaVersion    := { if (!sbtPlugin.value) "2.11.7" else scalaVersion.value },
     scalacOptions   ++= Seq("-deprecation", "-feature", "-unchecked", "-encoding", "utf8"),
