@@ -48,7 +48,7 @@ lazy val server = (project in file("server"))
       cache,
     ws,
       "org.scalaexercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
-      "org.scalaexercises" %% "content" % "0.0.0-SNAPSHOT",
+      "org.scalaexercises" %% "content" % "0.0.0-SNAPSHOT" % "runtime",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -217,5 +217,6 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
 
 lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 
+// Aliases
 
 addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
