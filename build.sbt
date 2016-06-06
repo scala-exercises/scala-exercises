@@ -220,3 +220,4 @@ lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 // Aliases
 
 addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
+
