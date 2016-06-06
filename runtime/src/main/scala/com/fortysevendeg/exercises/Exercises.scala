@@ -28,11 +28,19 @@ object Exercises {
     ClassFinder.classInfoMap(classes)
   }
 
-  private[this] def subclassesOf[A: ClassTag](cl: ClassLoader) =
-    ClassFinder.concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cl))
-      .filter(_.name.startsWith(LIBRARIES_PACKAGE))
-      .map(_.name)
-      .toList
+  private[this] def subclassesOf[A: ClassTag](cl: ClassLoader) : List[String] = {
+    def loop(currentClassLoader : ClassLoader, acc : List[String]) : List[String] = Option(currentClassLoader) match {
+      case None => acc
+      case Some(cll : URLClassLoader) =>
+        val cn = ClassFinder.concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
+            .filter(_.name.startsWith(LIBRARIES_PACKAGE))
+            .map(_.name)
+            .toList
+        loop(currentClassLoader.getParent, acc ++ cn)
+      case Some(o) => loop(o.getParent, acc)
+    }
+    loop(cl, Nil)
+  }
 
   def discoverLibraries(cl: ClassLoader = classOf[Exercise].getClassLoader) = {
     val classNames: List[String] = subclassesOf[Library](cl)
