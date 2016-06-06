@@ -21,6 +21,7 @@ env:
 install:
   - gem install sass
 script:
+  - sbt 'publishAll'
   - sbt 'server/test'
   - sbt 'client/test'
   - sbt 'definitions/test'

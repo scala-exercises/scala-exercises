@@ -216,3 +216,6 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .enablePlugins(BuildInfoPlugin)
 
 lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
+
+
+addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
