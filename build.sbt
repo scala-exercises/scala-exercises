@@ -118,3 +118,101 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
+// Definitions
+
+lazy val definitions = (project in file("definitions"))
+  .settings(
+    organization := "org.scalaexercises",
+    version := "0.0.0-SNAPSHOT",
+    name := "definitions",
+    scalaVersion := "2.11.7",
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.0-M15"
+    )
+)
+
+// Runtime evaluation
+
+lazy val runtime = (project in file("runtime"))
+  .settings(
+    organization := "org.scalaexercises",
+    version := "0.0.0-SNAPSHOT",
+    name := "runtime",
+    scalaVersion := "2.11.7",
+    resolvers ++= Seq(
+      Resolver.mavenLocal,
+      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+      Resolver.sonatypeRepo("snapshots")
+    ),
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
+      "org.clapper" %% "classutil" % "1.0.11",
+      "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
+      "org.scalatest" %% "scalatest" % "3.0.0-M15" % "test"
+    )
+)
+
+// Compiler & Compiler plugin
+
+lazy val compiler = (project in file("compiler"))
+  .settings(
+    organization := "org.scalaexercises",
+    name := "exercise-compiler",
+    version := "0.0.0-SNAPSHOT",
+    scalaVersion := "2.11.7",
+    exportJars      := true,
+    resolvers ++= Seq(
+      Resolver.mavenLocal,
+      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+      Resolver.sonatypeRepo("snapshots")
+    ),
+    libraryDependencies ++= Seq(
+      "org.scalariform" %% "scalariform" % "0.1.8",
+      "org.scalaexercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
+      "org.scalaexercises" %% "definitions" % "0.0.0-SNAPSHOT" changing(),
+      "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
+      "org.typelevel" %% "cats-laws" % "0.4.1" % "test"
+    )
+ )
+
+lazy val `sbt-exercise` = (project in file("sbt-exercise"))
+  .settings(
+    organization := "org.scalaexercises",
+    name            := "sbt-exercise",
+    version := "0.0.0-SNAPSHOT",
+    scalaVersion := "2.10.6",
+    sbtPlugin       := true,
+    resolvers ++= Seq(
+      Resolver.mavenLocal,
+      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+      Resolver.sonatypeRepo("snapshots")
+    ),
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % "0.4.1" % "compile"
+    ),
+
+    // Leverage build info to populate compiler classpath--
+    // This allows SBT, which currently requires Scala 2.10.x, to load and run
+    // the compiler, which requires Scala 2.11.x.
+    compilerClasspath <<= fullClasspath in (compiler, Compile),
+      buildInfoObject   := "Meta",
+      buildInfoPackage  := "com.fortysevendeg.exercises.sbtexercise",
+      buildInfoKeys     := Seq(
+        version,
+        BuildInfoKey.map(compilerClasspath) {
+          case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
+        }
+      )
+  )
+  // scripted plugin
+  .settings(ScriptedPlugin.scriptedSettings: _*)
+  .settings(
+    scriptedLaunchOpts := { scriptedLaunchOpts.value ++
+      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+    },
+    scriptedBufferLog := false
+  )
+  .enablePlugins(BuildInfoPlugin)
+
+lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")

@@ -1,0 +1,32 @@
+project/project
+project/target
+target
+.idea
+.tmp
+
+*.iml
+/out
+.idea_modules
+.classpath
+.project
+/RUNNING_PID
+.settings
+.sass-cache
+scalajvm/upload/*
+
+# temp files
+.~*
+*~
+*.orig
+
+# eclipse
+.scala_dependencies
+.buildpath
+.cache
+.target
+bin/
+.ensime
+.ensime_cache
+
+# OSX
+.DS_Store
