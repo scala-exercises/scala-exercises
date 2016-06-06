@@ -249,10 +249,22 @@ lazy val publishSettings = Seq(
   pomExtra :=
       <developers>
         <developer>
-          <name>47 Degrees (twitter: @47deg)</name>
-          <email>hello@47deg.com</email>
+          <id>raulraja</id>
+          <name>Raul Raja</name>
+          <email>raul@47deg.com</email>
         </developer>
         <developer>
+          <id>dialelo</id>
+          <name>Alejandro Gómez</name>
+          <email>al.g.g@47deg.com</email>
+        </developer>
+        <developer>
+          <id>rafaparadela</id>
+          <name>Rafa Paradela</name>
+          <email>rafa.p@47deg.com</email>
+        </developer>
+        <developer>
+          <id>MasseGuillaume</id>
           <name>Guillaume Massé</name>
           <email>masgui@gmail.com</email>
         </developer>
