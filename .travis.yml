@@ -22,8 +22,9 @@ install:
   - gem install sass
 script:
   - sbt 'publishAll'
-  - git clone https://github.com/scala-exercises/content.git
-  - pushd content; sbt publishLocal; popd
+  - git clone https://github.com/scala-exercises/exercises-stdlib.git stdlib; pushd stdlib; sbt publishLocal; popd
+  - git clone https://github.com/scala-exercises/exercises-cats.git cats; pushd cats; sbt publishLocal; popd
+  - git clone https://github.com/scala-exercises/exercises-shapeless.git shapeless; pushd shapeless; sbt publishLocal; popd
   - sbt 'server/test'
   - sbt 'client/test'
   - sbt 'definitions/test'
