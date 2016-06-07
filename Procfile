@@ -1,1 +1,1 @@
-web: server/target/universal/stage/bin/server -Dhttp.port=${PORT}
+web: server/target/universal/stage/bin/server -Dhttp.port=${PORT} ${JAVA_OPTS}
