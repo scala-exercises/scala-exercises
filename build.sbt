@@ -40,17 +40,16 @@ lazy val server = (project in file("server"))
     scalaVersion := "2.11.7",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
-    herokuAppName in Compile := "scala-exercises",
   libraryDependencies ++= Seq(
       filters,
       jdbc,
       evolutions,
       cache,
     ws,
-      "org.scalaexercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
-      "org.scalaexercises" %% "content-stdlib" % "0.0.0-SNAPSHOT",
-      "org.scalaexercises" %% "content-cats" % "0.0.0-SNAPSHOT",
-      "org.scalaexercises" %% "content-shapeless" % "0.0.0-SNAPSHOT",
+      "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
+      "org.scala-exercises" %% "content-stdlib" % "0.0.0-SNAPSHOT",
+      "org.scala-exercises" %% "content-cats" % "0.0.0-SNAPSHOT",
+      "org.scala-exercises" %% "content-shapeless" % "0.0.0-SNAPSHOT",
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -123,8 +122,9 @@ lazy val sharedJs = shared.js
 // Definitions
 
 lazy val definitions = (project in file("definitions"))
+  .settings(publishSettings:_*)
   .settings(
-    organization := "org.scalaexercises",
+    organization := "org.scala-exercises",
     version := "0.0.0-SNAPSHOT",
     name := "definitions",
     scalaVersion := "2.11.7",
@@ -136,8 +136,9 @@ lazy val definitions = (project in file("definitions"))
 // Runtime evaluation
 
 lazy val runtime = (project in file("runtime"))
+  .settings(publishSettings:_*)
   .settings(
-    organization := "org.scalaexercises",
+    organization := "org.scala-exercises",
     version := "0.0.0-SNAPSHOT",
     name := "runtime",
     scalaVersion := "2.11.7",
@@ -157,8 +158,9 @@ lazy val runtime = (project in file("runtime"))
 // Compiler & Compiler plugin
 
 lazy val compiler = (project in file("compiler"))
+  .settings(publishSettings:_*)
   .settings(
-    organization := "org.scalaexercises",
+    organization := "org.scala-exercises",
     name := "exercise-compiler",
     version := "0.0.0-SNAPSHOT",
     scalaVersion := "2.11.7",
@@ -170,8 +172,8 @@ lazy val compiler = (project in file("compiler"))
     ),
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
-      "org.scalaexercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
-      "org.scalaexercises" %% "definitions" % "0.0.0-SNAPSHOT" changing(),
+      "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
+      "org.scala-exercises" %% "definitions" % "0.0.0-SNAPSHOT" changing(),
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % "0.4.1" % "test"
@@ -179,8 +181,9 @@ lazy val compiler = (project in file("compiler"))
  )
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
+  .settings(publishSettings:_*)
   .settings(
-    organization := "org.scalaexercises",
+    organization := "org.scala-exercises",
     name            := "sbt-exercise",
     version := "0.0.0-SNAPSHOT",
     scalaVersion := "2.10.6",
@@ -216,6 +219,57 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedBufferLog := false
   )
   .enablePlugins(BuildInfoPlugin)
+
+// Distribution
+
+lazy val gpgFolder = sys.env.getOrElse("SE_GPG_FOLDER", ".")
+
+lazy val publishSettings = Seq(
+  organizationName := "Scala Exercises",
+  organizationHomepage := Some(new URL("http://scala-exercises.org")),
+  startYear := Some(2016),
+  description := "Scala Exercises: The path to enlightenment",
+  homepage := Some(url("http://scala-exercises.org")),
+  pgpPassphrase := Some(sys.env.getOrElse("SE_GPG_PASSPHRASE", "").toCharArray),
+  pgpPublicRing := file(s"$gpgFolder/pubring.gpg"),
+  pgpSecretRing := file(s"$gpgFolder/secring.gpg"),
+  credentials += Credentials("Sonatype Nexus Repository Manager",  "oss.sonatype.org",  sys.env.getOrElse("PUBLISH_USERNAME", ""),  sys.env.getOrElse("PUBLISH_PASSWORD", "")),
+  scmInfo := Some(ScmInfo(url("https://github.com/scala-exercises/site"), "https://github.com/scala-exercises/site.git")),
+  licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+  publishMavenStyle := true,
+  publishArtifact in Test := false,
+  pomIncludeRepository := Function.const(false),
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("Snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("Releases" at nexus + "service/local/staging/deploy/maven2")
+  },
+  pomExtra :=
+      <developers>
+        <developer>
+          <id>raulraja</id>
+          <name>Raul Raja</name>
+          <email>raul@47deg.com</email>
+        </developer>
+        <developer>
+          <id>dialelo</id>
+          <name>Alejandro Gómez</name>
+          <email>al.g.g@47deg.com</email>
+        </developer>
+        <developer>
+          <id>rafaparadela</id>
+          <name>Rafa Paradela</name>
+          <email>rafa.p@47deg.com</email>
+        </developer>
+        <developer>
+          <id>MasseGuillaume</id>
+          <name>Guillaume Massé</name>
+          <email>masgui@gmail.com</email>
+        </developer>
+      </developers>
+)
 
 lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 

@@ -3,7 +3,7 @@
   if (pluginVersion == null)
     throw new RuntimeException("""|The system property 'plugin.version' is not defined.
                                   |Specify this property using the scriptedLaunchOpts -D.""".stripMargin)
-  else addSbtPlugin("org.scalaexercises" % "sbt-exercise" % pluginVersion)
+  else addSbtPlugin("org.scala-exercises" % "sbt-exercise" % pluginVersion)
 }
 
 resolvers += Resolver.typesafeRepo("releases")
