@@ -40,7 +40,7 @@ class UserProgressRepositorySpec
   } yield maybeUser.toOption.get
 
   ignore("new user progress records can be created") {
-    forAll(maxDiscardedFactor(10)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         progress = prg.copy(user = user)
@@ -53,7 +53,7 @@ class UserProgressRepositorySpec
   }
 
   ignore("existing user progress records can be updated") {
-    forAll(maxDiscardedFactor(10)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request, someArgs: List[String]) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request, someArgs: List[String]) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         progress = prg.copy(user = user)
@@ -67,7 +67,7 @@ class UserProgressRepositorySpec
   }
 
   ignore("user progress can be fetched by section") {
-    forAll(maxDiscardedFactor(10)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         progress = prg.copy(user = user)
@@ -80,7 +80,7 @@ class UserProgressRepositorySpec
   }
 
   ignore("user progress can be fetched by exercise") {
-    forAll(maxDiscardedFactor(10)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         progress = prg.copy(user = user)
@@ -100,7 +100,7 @@ class UserProgressRepositorySpec
   }
 
   ignore("users progress can be queried by their ID") {
-    forAll(maxDiscardedFactor(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         progress = prg.copy(user = user)
@@ -116,7 +116,7 @@ class UserProgressRepositorySpec
   }
 
   ignore("user progress can be deleted") {
-    forAll(maxDiscardedFactor(10)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         userProgress ← repository.create(prg.copy(user = user))
@@ -129,7 +129,7 @@ class UserProgressRepositorySpec
   }
 
   ignore("all user progress records can be deleted") {
-    forAll(maxDiscardedFactor(10)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+    forAll(maxDiscarded(10000)) { (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
       val tx: ConnectionIO[Boolean] = for {
         user ← newUser(usr)
         userProgress ← repository.create(prg.copy(user = user))
