@@ -41,8 +41,8 @@ object OAuth2 {
 class OAuth2Controller(
     implicit
     userOps: UserOps[ExercisesApp],
-    T:       Transactor[Task],
-    ws:      WSClient
+    T: Transactor[Task],
+    ws: WSClient
 ) extends Controller with ProdInterpreters {
 
   import OAuth2._
@@ -64,12 +64,12 @@ class OAuth2Controller(
   } yield theToken
 
   case class GitHubUser(
-    login:     String,
-    name:      Option[String],
-    githubId:  Long,
+    login: String,
+    name: Option[String],
+    githubId: Long,
     avatarUrl: String,
-    htmlUrl:   String,
-    email:     Option[String]
+    htmlUrl: String,
+    email: Option[String]
   )
 
   implicit val readGithubUser: Reads[GitHubUser] = (
@@ -87,7 +87,7 @@ class OAuth2Controller(
   def fetchGitHubUser(authToken: String): Future[Option[GitHubUser]] = {
     githubUserRequest(authToken).map(_.json.validate[GitHubUser] match {
       case ok: JsSuccess[GitHubUser] ⇒ Some(ok.get)
-      case _                         ⇒ None
+      case _ ⇒ None
     })
   }
 
@@ -122,7 +122,7 @@ class OAuth2Controller(
     request.session.get("oauth-token").fold(unauthorized) { authToken ⇒
       for {
         maybeGhUser ← fetchGitHubUser(authToken)
-        response = maybeGhUser.fold(InternalServerError("Failed to fetch GitHub profile"))(ghUser ⇒
+        response <- maybeGhUser.fold(Future.successful(InternalServerError("Failed to fetch GitHub profile")))(ghUser ⇒
           userOps.getOrCreate(
             UserCreation.Request(
               ghUser.login,
@@ -132,11 +132,11 @@ class OAuth2Controller(
               ghUser.htmlUrl,
               ghUser.email
             )
-          ).runTask match {
+          ).runFuture map {
               case Xor.Right(_) ⇒ Redirect(
                 request.headers.get("referer") match {
                   case Some(url) if !url.contains("github") ⇒ url
-                  case _                                    ⇒ "/"
+                  case _ ⇒ "/"
                 }
               ).withSession("oauth-token" → authToken, "user" → ghUser.login)
               case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")

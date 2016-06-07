@@ -42,22 +42,22 @@ object UI {
   def noop: IO[Unit] = io {}
 
   def update(s: State, a: Action): IO[Unit] = a match {
-    case Start                        ⇒ insertInputs
-    case SetState(state)              ⇒ reflectState(state)
+    case Start ⇒ insertInputs
+    case SetState(state) ⇒ reflectState(state)
     case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
-    case CompileExercise(method)      ⇒ startCompilation(s, method)
-    case CompilationOk(method)        ⇒ setAsSolved(s, method)
+    case CompileExercise(method) ⇒ startCompilation(s, method)
+    case CompilationOk(method) ⇒ setAsSolved(s, method)
     case CompilationFail(method, msg) ⇒ setAsErrored(s, method, msg)
-    case _                            ⇒ noop
+    case _ ⇒ noop
   }
 
   def exerciseStyle(e: ClientExercise): ExerciseStyle = {
     e.state match {
       case Unsolved if (e.isFilled) ⇒ FilledStyle
-      case Unsolved                 ⇒ UnsolvedStyle
-      case Evaluating               ⇒ EvaluatingStyle
-      case Errored                  ⇒ ErroredStyle
-      case Solved                   ⇒ SolvedStyle
+      case Unsolved ⇒ UnsolvedStyle
+      case Evaluating ⇒ EvaluatingStyle
+      case Errored ⇒ ErroredStyle
+      case Solved ⇒ SolvedStyle
     }
   }
 

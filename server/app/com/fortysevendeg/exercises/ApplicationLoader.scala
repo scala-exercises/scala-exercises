@@ -47,7 +47,7 @@ class Components(context: Context)
       url ← configuration.getString("db.default.url")
       parsed = url match {
         case jdbcUrl(user, pass, newUrl) ⇒ Some((user, pass, "jdbc:postgresql://" + newUrl))
-        case _                           ⇒ None
+        case _ ⇒ None
       }
       (user, pass, newUrl) ← parsed
       transactor = HikariTransactor[Task](driver, newUrl, user, pass).attemptRun match {

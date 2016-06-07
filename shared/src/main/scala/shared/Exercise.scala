@@ -3,44 +3,48 @@ package shared
 import cats.data.Ior
 import cats.data.Xor
 
-/** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
-  */
+/**
+ * A library representing a lib or lang. Ej. stdlib, cats, scalaz...
+ */
 case class Library(
-    name:        String,
+    name: String,
     description: String,
-    color:       String,
-    sections:    List[Section] = Nil
+    color: String,
+    sections: List[Section] = Nil
 ) {
   val sectionNames: List[String] = sections map (_.name)
 }
 
-/** A section in a library. For example `Extractors`
-  */
+/**
+ * A section in a library. For example `Extractors`
+ */
 case class Section(
-  name:        String,
+  name: String,
   description: Option[String] = None,
-  exercises:   List[Exercise] = Nil
+  exercises: List[Exercise] = Nil
 )
 
-/** Exercises within a Category
-  */
+/**
+ * Exercises within a Category
+ */
 case class Exercise(
-  method:      String,
-  name:        Option[String] = None,
+  method: String,
+  name: Option[String] = None,
   description: Option[String] = None,
-  code:        Option[String] = None,
+  code: Option[String] = None,
   explanation: Option[String] = None
 )
 
-/** Input params necessary to evaluate an exercise
-  */
+/**
+ * Input params necessary to evaluate an exercise
+ */
 case class ExerciseEvaluation(
-  libraryName:  String,
-  sectionName:  String,
-  method:       String,
-  version:      Int,
+  libraryName: String,
+  sectionName: String,
+  method: String,
+  version: Int,
   exerciseType: ExerciseType,
-  args:         List[String]
+  args: List[String]
 )
 
 object ExerciseEvaluation {

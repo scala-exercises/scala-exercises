@@ -18,9 +18,9 @@ object Effects {
   def noop: Future[Option[Action]] = Future(None)
 
   def perform(s: State, a: Action): Future[Option[Action]] = a match {
-    case Start                   ⇒ loadInitialData
+    case Start ⇒ loadInitialData
     case CompileExercise(method) ⇒ compileExercise(s, method)
-    case _                       ⇒ noop
+    case _ ⇒ noop
   }
 
   def loadInitialData: Future[Option[Action]] = {
