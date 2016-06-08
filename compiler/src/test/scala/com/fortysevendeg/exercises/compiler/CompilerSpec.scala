@@ -20,6 +20,8 @@ class CompilerSpec extends FunSpec with Matchers {
         * @param name Sample Library
         */
       object SampleLibrary extends exercise.Library {
+        override def owner = "scala-exercises"
+        override def repository = "site"
         override def sections = List(
           Section1
         )
@@ -49,7 +51,8 @@ class CompilerSpec extends FunSpec with Matchers {
         .getField("MODULE$").get(null)
         .asInstanceOf[exercise.Library]
 
-      val res = Compiler().compile(library, code :: Nil, "sample")
+      val path = "(internal)"
+      val res = Compiler().compile(library, code :: Nil, path :: Nil, "/", "sample")
       assert(res.isRight, s"""; ${res.fold(identity, _ ⇒ "")}""")
     }
   }

@@ -5,7 +5,14 @@
 
 package com.fortysevendeg.exercises.services.interpreters
 
-import cats.{ Monad, Eval, ~>, ApplicativeError, Applicative }
+import com.fortysevendeg.exercises.app.C01
+import com.fortysevendeg.exercises.app.C02
+import com.fortysevendeg.github4s.GithubResponses.{ GHResult, GHResponse }
+import com.fortysevendeg.github4s.app._
+import com.fortysevendeg.github4s.Github
+import com.fortysevendeg.github4s.Github._
+import com.fortysevendeg.github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters }
+import cats._
 import cats.data.Xor
 import cats.free.Free
 import com.fortysevendeg.exercises.app._
@@ -28,19 +35,20 @@ trait Interpreters[M[_]] {
 
   implicit def interpreters(
     implicit
-    A: ApplicativeError[M, Throwable],
+    A: MonadError[M, Throwable],
     T: Transactor[M]
   ): ExercisesApp ~> M = {
     val exerciseAndUserInterpreter: C01 ~> M = exerciseOpsInterpreter or userOpsInterpreter
     val userAndUserProgressInterpreter: C02 ~> M = userProgressOpsInterpreter or exerciseAndUserInterpreter
-    val all: ExercisesApp ~> M = dbOpsInterpreter or userAndUserProgressInterpreter
+    val c03Interpreter: C03 ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
+    val all: ExercisesApp ~> M = dbOpsInterpreter or c03Interpreter
     all
   }
 
   /**
    * Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
    */
-  implicit def exerciseOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
+  implicit def exerciseOpsInterpreter(implicit A: MonadError[M, Throwable]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
 
     import com.fortysevendeg.exercises.services.ExercisesService._
 
@@ -51,7 +59,7 @@ trait Interpreters[M[_]] {
     }
   }
 
-  implicit def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOp ~> M = new (UserOp ~> M) {
+  implicit def userOpsInterpreter(implicit A: MonadError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOp ~> M = new (UserOp ~> M) {
 
     import UR._
 
@@ -79,20 +87,44 @@ trait Interpreters[M[_]] {
     }
   }
 
-  implicit def dbOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): DBResult ~> M = new (DBResult ~> M) {
+  implicit def dbOpsInterpreter(implicit A: MonadError[M, Throwable]): DBResult ~> M = new (DBResult ~> M) {
 
     def apply[A](fa: DBResult[A]): M[A] = fa match {
       case DBSuccess(value) ⇒ A.pure(value)
       case DBFailure(error) ⇒ A.raiseError(error)
     }
   }
+
+  implicit def githubOpsInterpreter(implicit A: MonadError[M, Throwable]): GithubOp ~> M = new (GithubOp ~> M) {
+
+    def apply[A](fa: GithubOp[A]): M[A] = {
+
+      object ProdGHInterpreters extends GithubInterpreters[M]
+      implicit val I: GitHub4s ~> M = ProdGHInterpreters.interpreters
+
+      fa match {
+        case GetAuthorizeUrl(client_id, redirect_uri, scopes) ⇒ ghResponseToEntity(Github().auth.authorizeUrl(client_id, redirect_uri, scopes).exec[M])
+        case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ ghResponseToEntity(Github().auth.getAccessToken(client_id, client_secret, code, redirect_uri, state).exec[M])
+        case GetAuthUser(accessToken) ⇒ ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])
+        case GetContributions(owner, repo, path) ⇒ ghResponseToEntity(Github().repos.listCommits(owner, repo, None, Option(path)).exec[M])
+
+      }
+    }
+
+    private def ghResponseToEntity[T](response: M[GHResponse[T]]): M[T] = A.flatMap(response) {
+      case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(result)
+      case Xor.Left(e) ⇒ A.raiseError[T](e)
+    }
+
+  }
+
 }
 
 /** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
 trait ProdInterpreters extends Interpreters[Task] with TaskInstances
 
 /** Test based interpreters lifting ops to their result identity **/
-trait TestInterpreters extends Interpreters[cats.Id] with IdInstances
+trait TestInterpreters extends Interpreters[Id] with IdInstances
 
 object FreeExtensions {
 
@@ -115,7 +147,7 @@ object FreeExtensions {
 }
 
 trait TaskInstances {
-  implicit val taskMonad: Monad[Task] with ApplicativeError[Task, Throwable] = new Monad[Task] with ApplicativeError[Task, Throwable] {
+  implicit val taskMonad: MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
 
     def pure[A](x: A): Task[A] = Task.now(x)
 
@@ -137,20 +169,17 @@ trait TaskInstances {
 }
 
 trait IdInstances {
-  implicit def idApplicativeError(
-    implicit
-    I: Applicative[cats.Id]
-  ): ApplicativeError[cats.Id, Throwable] = new ApplicativeError[cats.Id, Throwable] {
+  implicit val idMonad: MonadError[Id, Throwable] = new MonadError[Id, Throwable] {
 
-    import cats.Id
+    override def pure[A](x: A): Id[A] = idMonad.pure(x)
 
-    override def pure[A](x: A): Id[A] = I.pure(x)
+    override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = idMonad.ap(ff)(fa)
 
-    override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = I.ap(ff)(fa)
+    override def map[A, B](fa: Id[A])(f: A ⇒ B): Id[B] = idMonad.map(fa)(f)
 
-    override def map[A, B](fa: Id[A])(f: Id[A ⇒ B]): Id[B] = I.map(fa)(f)
+    override def flatMap[A, B](fa: Id[A])(f: A ⇒ Id[B]): Id[B] = idMonad.flatMap(fa)(f)
 
-    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = I.product(fa, fb)
+    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = idMonad.product(fa, fb)
 
     override def raiseError[A](e: Throwable): Id[A] =
       throw e

@@ -1,4 +1,4 @@
-@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributions: shared.Contributions)(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
@@ -84,7 +84,7 @@
               <div class="content-header clearfix">
                 <h2 class="pull-left">@section.name.humanizeUnderscore</h2>
                 <div class="add-exercises pull-right hidden-xs">
-                  <button type="button" class="btn btn-default btn-sm">Add exercises</button>
+                  <a href="https://github.com/@library.owner/@library.repository/blob/master@section.path.getOrElse("")" target="_blank" type="button" class="btn btn-default btn-sm">View on GitHub</a>
                 </div>
               </div>
 
@@ -101,10 +101,10 @@
 
               <div class="contributors clearfix">
 
-                @templates.library.contributors()
+                @templates.library.contributors(contributions)
 
                 <ul>
-                  <li> <a href="#"><i class="fa fa-pencil"></i>Edit exercises</a>
+                  <li> <a href="https://github.com/@library.owner/@library.repository/edit/master@section.path.getOrElse("")" target="_blank"><i class="fa fa-pencil"></i>Edit exercises</a>
                   </li>
                 </ul>
               </div>
@@ -119,7 +119,7 @@
       @templates.library.footer()
     </div>
 
-    @templates.library.commits_modal()
+    @templates.library.commits_modal(contributions)
     @templates.library.mustsignup_modal(redirectUrl)
 
       <!-- JS -->

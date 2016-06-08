@@ -1,6 +1,7 @@
+@()(implicit request: RequestHeader)
 <footer id="bottom" class="light">
   <div class="container-fluid">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <svg viewBox="0 24 30 19" width="30" height="19">
         <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand-dark")"/>
       </svg>
@@ -8,9 +9,6 @@
       @templates.base.footerLinks()
       
      </div>
-    <div class="col-md-4">
-      <p class="text-right"><a href="#">View on GitHub</a></p>
-    </div>
   </div>
 </footer>
 

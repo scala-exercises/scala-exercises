@@ -11,6 +11,8 @@ package com.fortysevendeg.exercises
  * An exercise library.
  */
 trait Library {
+  def owner: String
+  def repository: String
   def name: String
   def description: String
   def color: Option[String]
@@ -25,6 +27,7 @@ trait Section {
   def description: Option[String]
   def exercises: List[Exercise]
   def imports: List[String]
+  def path: Option[String]
 }
 
 /**
@@ -42,6 +45,8 @@ trait Exercise {
 
 // default case class implementations
 case class DefaultLibrary(
+  owner: String,
+  repository: String,
   name: String,
   description: String,
   color: Option[String],
@@ -52,7 +57,8 @@ case class DefaultSection(
   name: String,
   description: Option[String],
   exercises: List[Exercise] = Nil,
-  imports: List[String] = Nil
+  imports: List[String] = Nil,
+  path: Option[String] = None
 ) extends Section
 
 case class DefaultExercise(

@@ -56,7 +56,9 @@ class TreeGenSpec extends FunSpec with Matchers {
         name = "MyLibrary",
         description = "This is my library",
         color = Some("#FFFFFF"),
-        sectionTerms = sections.map(_._1)
+        sectionTerms = sections.map(_._1),
+        owner = "scala-exercises",
+        repository = "site"
       )
 
       val tree = treeGen.makePackage(

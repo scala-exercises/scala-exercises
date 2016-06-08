@@ -7,6 +7,8 @@ import cats.data.Xor
  * A library representing a lib or lang. Ej. stdlib, cats, scalaz...
  */
 case class Library(
+    owner: String,
+    repository: String,
     name: String,
     description: String,
     color: String,
@@ -21,6 +23,7 @@ case class Library(
 case class Section(
   name: String,
   description: Option[String] = None,
+  path: Option[String] = None,
   exercises: List[Exercise] = Nil
 )
 

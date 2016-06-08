@@ -3,6 +3,8 @@ package defaultLib
 import com.fortysevendeg.exercises.Library
 
 object LibraryA extends Library {
+  override def owner = ???
+  override def repository = ???
   override def color = ???
   override def description = ???
   override def name = ???
@@ -10,6 +12,8 @@ object LibraryA extends Library {
 }
 
 object LibraryB extends Library {
+  override def owner = ???
+  override def repository = ???
   override def color = ???
   override def description = ???
   override def name = ???
@@ -17,6 +21,8 @@ object LibraryB extends Library {
 }
 
 object LibraryC extends Library {
+  override def owner = ???
+  override def repository = ???
   override def color = ???
   override def description = ???
   override def name = ???
@@ -24,6 +30,8 @@ object LibraryC extends Library {
 }
 
 class ErrorLibrary extends Library {
+  override def owner = ???
+  override def repository = ???
   override def color = ???
   override def description = ???
   override def name = ???

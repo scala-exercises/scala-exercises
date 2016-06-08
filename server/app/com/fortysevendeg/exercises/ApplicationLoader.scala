@@ -63,7 +63,7 @@ class Components(context: Context)
   val applicationController = new ApplicationController
   val exercisesController = new ExercisesController
   val userController = new UserController
-  val oauthController = new OAuth2Controller
+  val oauthController = new OAuthController
   val userProgressController = new UserProgressController
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)
