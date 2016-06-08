@@ -13,8 +13,10 @@
 	  "required" : true
       }
   },
-  "web": {
-      "quantity": 2,
-      "size": "standard-2x"
-  }
+    "formation" : { 
+	"web": {
+	    "quantity": 2,
+	    "size": "standard-2x"
+	}
+    }
 }
