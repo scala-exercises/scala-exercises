@@ -46,24 +46,8 @@ class Components(context: Context)
 
   override def dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
 
-  implicit val transactor: Transactor[Task] = {
-    val maybeTransactor = for {
-      driver ← configuration.getString("db.default.driver")
-      url ← configuration.getString("db.default.url")
-      parsed = url match {
-        case jdbcUrl(user, pass, newUrl) ⇒ Some((user, pass, "jdbc:postgresql://" + newUrl))
-        case _ ⇒ None
-      }
-      (user, pass, newUrl) ← parsed
-      transactor = HikariTransactor[Task](driver, newUrl, user, pass).attemptRun match {
-        case \/-(t) ⇒ Some(t)
-        case -\/(e) ⇒ None
-      }
-    } yield transactor
-    maybeTransactor.flatten getOrElse {
-      DataSourceTransactor[Task](dbApi.database("default").dataSource)
-    }
-  }
+  implicit val transactor: Transactor[Task] =
+    DataSourceTransactor[Task](dbApi.database("default").dataSource)
 
   implicit val wsClient: WSClient = NingWSClient()
 
