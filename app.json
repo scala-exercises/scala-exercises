@@ -14,8 +14,8 @@
         "JAVA_TOOL_OPTIONS": {
             "required": true
         },
-	"EVOLUTIONS_AUTO_APPLY" : true,
-	"EVOLUTIONS_AUTO_APPLY_DOWNS" : true
+	"EVOLUTIONS_AUTO_APPLY" : "true",
+	"EVOLUTIONS_AUTO_APPLY_DOWNS" : "true"
     },
     "formation": {
         "web": {
