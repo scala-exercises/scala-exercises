@@ -1,16 +1,16 @@
-@(path: String)
+@import play.api.Play.current
 <div class="comments">
 
   <div id="disqus_thread"></div>
   <script>
        var disqus_config = function () {
-          this.page.url = 'https://scala-exercises.herokuapp.com@path';
-          this.page.identifier = '@path';
+          this.page.url = 'https://' + window.location.host + window.location.pathname;
+          this.page.identifier = window.location.pathname;
        };
 
-      (function() { // DON'T EDIT BELOW THIS LINE
+      (function() {
         var d = document, s = d.createElement('script');
-        s.src = '//scala-exercises.disqus.com/embed.js';
+        s.src = '//@current.configuration.getString("disqus.domain").getOrElse("")/embed.js';
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
       })();
