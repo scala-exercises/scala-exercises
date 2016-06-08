@@ -23,43 +23,42 @@ import scalaz.concurrent.Task
 
 class OAuthController(
     implicit
-    userOps:   UserOps[ExercisesApp],
+    userOps: UserOps[ExercisesApp],
     githubOps: GithubOps[ExercisesApp],
-    T:         Transactor[Task]
+    T: Transactor[Task]
 ) extends Controller with ProdInterpreters {
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
-    Future {
-      (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
-          .fold(BadRequest("Missing `code` or `state`")) {
-            case (code, state, oauthState) ⇒
-              if (state == oauthState) {
-                githubOps.getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state).runTask match {
-                  case Xor.Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.access_token)
-                  case Xor.Left(ex) ⇒ Unauthorized(ex.getMessage)
-                }
-              } else BadRequest("Invalid github login")
-          }
-    }
+
+    (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
+      .fold(Future.successful(BadRequest("Missing `code` or `state`"))) {
+        case (code, state, oauthState) ⇒
+          if (state == oauthState) {
+            githubOps.getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state).runFuture.map {
+              case Xor.Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.access_token)
+              case Xor.Left(ex) ⇒ Unauthorized(ex.getMessage)
+            }
+          } else Future.successful(BadRequest("Invalid github login"))
+      }
+
   }
 
   def success() = Action.async { implicit request ⇒
-    Future {
-      request.session.get("oauth-token").fold(Unauthorized("Missing OAuth token")) { accessToken ⇒
-        val ops = for {
-          ghuser ← githubOps.getAuthUser(Some(accessToken))
-          user ← userOps.getOrCreate(UserCreation.toUser(ghuser))
-        } yield (ghuser, user)
+    request.session.get("oauth-token").fold(Future.successful(Unauthorized("Missing OAuth token"))) { accessToken ⇒
+      val ops = for {
+        ghuser ← githubOps.getAuthUser(Some(accessToken))
+        user ← userOps.getOrCreate(UserCreation.toUser(ghuser))
+      } yield (ghuser, user)
 
-        ops.runTask match {
-          case Xor.Right((ghu, u)) ⇒ Redirect(request.headers.get("referer") match {
-            case Some(url) if !url.contains("github") ⇒ url
-            case _                                    ⇒ "/"
-          }).withSession("oauth-token" → accessToken, "user" → ghu.login)
-          case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
-        }
+      ops.runFuture.map {
+        case Xor.Right((ghu, u)) ⇒ Redirect(request.headers.get("referer") match {
+          case Some(url) if !url.contains("github") ⇒ url
+          case _ ⇒ "/"
+        }).withSession("oauth-token" → accessToken, "user" → ghu.login)
+        case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
       }
     }
+
   }
 
   def logout() = Action(Redirect("/").withNewSession)

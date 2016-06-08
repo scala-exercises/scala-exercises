@@ -7,6 +7,8 @@ import cats.data.Xor
  * A library representing a lib or lang. Ej. stdlib, cats, scalaz...
  */
 case class Library(
+    owner: String,
+    repository: String,
     name: String,
     description: String,
     color: String,

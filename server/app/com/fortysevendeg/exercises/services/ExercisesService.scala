@@ -129,6 +129,8 @@ sealed trait RuntimeSharedConversions {
           case Nil ⇒ None → Nil
         }
         colors0 → (DefaultLibrary(
+          owner = library.owner,
+          repository = library.repository,
           name = library.name,
           description = library.description,
           color = color,
@@ -142,6 +144,8 @@ sealed trait RuntimeSharedConversions {
 
   def convertLibrary(library: Library) =
     shared.Library(
+      owner = library.owner,
+      repository = library.repository,
       name = library.name,
       description = library.description,
       color = library.color getOrElse "black",

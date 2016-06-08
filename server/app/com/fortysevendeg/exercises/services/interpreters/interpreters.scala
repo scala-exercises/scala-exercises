@@ -113,7 +113,7 @@ trait Interpreters[M[_]] {
 
     private def ghResponseToEntity[T](response: M[GHResponse[T]]): M[T] = A.flatMap(response) {
       case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(result)
-      case Xor.Left(e)                                  ⇒ A.raiseError[T](e)
+      case Xor.Left(e) ⇒ A.raiseError[T](e)
     }
 
   }
@@ -147,7 +147,7 @@ object FreeExtensions {
 }
 
 trait TaskInstances {
-  implicit val taskMonad: Monad[Task] with ApplicativeError[Task, Throwable] = new Monad[Task] with ApplicativeError[Task, Throwable] {
+  implicit val taskMonad: MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
 
     def pure[A](x: A): Task[A] = Task.now(x)
 
@@ -169,13 +169,15 @@ trait TaskInstances {
 }
 
 trait IdInstances {
-  implicit val idMonad: Monad[Id] with MonadError[Id, Throwable] = new Monad[Id] with MonadError[Id, Throwable] {
+  implicit val idMonad: MonadError[Id, Throwable] = new MonadError[Id, Throwable] {
 
     override def pure[A](x: A): Id[A] = idMonad.pure(x)
 
     override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = idMonad.ap(ff)(fa)
 
-    override def map[A, B](fa: Id[A])(f: Id[A ⇒ B]): Id[B] = idMonad.map(fa)(f)
+    override def map[A, B](fa: Id[A])(f: A ⇒ B): Id[B] = idMonad.map(fa)(f)
+
+    override def flatMap[A, B](fa: Id[A])(f: A ⇒ Id[B]): Id[B] = idMonad.flatMap(fa)(f)
 
     override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = idMonad.product(fa, fb)
 
