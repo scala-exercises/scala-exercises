@@ -1,22 +1,26 @@
 {
-  "name": "Scala Exercises",
-  "description": "Introducing Scala Exercises: Quick lessons that will get you on your way to learning Scala in no time.",
-  "website": "http://scala-exercises.47deg.com",
-  "addons": ["heroku-postgresql:hobby-dev"],
-  "success_url": "/",
-  "env": {
-      "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-multi",
-      "JAVA_OPTS" : {
-	  "required" : true
-      },
-      "JAVA_TOOL_OPTIONS" : {
-	  "required" : true
-      }
-  },
-    "formation" : { 
-	"web": {
-	    "quantity": 2,
-	    "size": "standard-2x"
-	}
+    "name": "Scala Exercises",
+    "description": "Introducing Scala Exercises: Quick lessons that will get you on your way to learning Scala in no time.",
+    "website": "http:\/\/scala-exercises.47deg.com",
+    "addons": [
+        "heroku-postgresql:hobby-dev"
+    ],
+    "success_url": "\/",
+    "env": {
+        "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
+        "JAVA_OPTS": {
+            "required": true
+        },
+        "JAVA_TOOL_OPTIONS": {
+            "required": true
+        },
+	"EVOLUTIONS_AUTO_APPLY" : true,
+	"EVOLUTIONS_AUTO_APPLY_DOWNS" : true
+    },
+    "formation": {
+        "web": {
+            "quantity": 2,
+            "size": "standard-2x"
+        }
     }
 }
