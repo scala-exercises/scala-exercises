@@ -43,7 +43,7 @@ class Components(context: Context)
   val jdbcUrl = "postgres:\\/\\/(.*):(.*)@(.*)".r
 
   applicationEvolutions.start()
-  
+
   override def dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
 
   implicit val transactor: Transactor[Task] = {
