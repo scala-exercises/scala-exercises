@@ -126,14 +126,17 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private type COMPILER = {
     def compile(
       library: AnyRef,
-      sources: Array[String], targetPackage: String
+      sources: Array[String],
+      paths: Array[String],
+      baseDir: String,
+      targetPackage: String
     ): Array[String]
   }
 
   // worker task that invokes the exercise compiler
   def generateExercisesTask = Def.task {
     val log = streams.value.log
-
+    val baseDir = (baseDirectory in Compile).value
     lazy val analysisIn = (compile in Compile).value
 
     lazy val libraryNames = discoverLibraries(analysisIn)
@@ -157,20 +160,25 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       )
     } yield loadedModule
 
+    def relativePath(absolutePath: String, root: String) = absolutePath.split(root).lift(1).getOrElse("")
+
     def invokeCompiler(
       compiler: COMPILER, library: AnyRef
     ): Xor[Err, (String, String)] =
       Xor.catchNonFatal {
-        val sourceCodes = (libraryNames ++ sectionNames).toSet
+        val sourceCodes = (libraryNames ++ sectionNames).distinct
           .flatMap(analysisIn.relations.definesClass)
-          .map(IO.read(_))
+          .map(file => (file.getPath, IO.read(file)))
+
         captureStdStreams(
           fOut = log.info(_: String),
           fErr = log.error(_: String)
         ) {
             compiler.compile(
               library = library,
-              sources = sourceCodes.toArray,
+              sources = sourceCodes.map(_._2).toArray,
+              paths = sourceCodes.map(_._1).toArray,
+              baseDir = baseDir.getPath,
               targetPackage = "defaultLib"
             ).toList
           }

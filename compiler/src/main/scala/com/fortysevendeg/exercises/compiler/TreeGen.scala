@@ -41,7 +41,8 @@ case class TreeGen[U <: Universe](
   def makeSection(
     name: String, description: Option[String],
     exerciseTerms: List[TermName],
-    imports: List[String]
+    imports: List[String],
+    path: Option[String] = None
   ) = {
     val term = makeTermName("Section", name)
     term → q"""
@@ -50,12 +51,13 @@ case class TreeGen[U <: Universe](
           override val description  = $description
           override val exercises    = $exerciseTerms
           override val imports      = $imports
+          override val path         = $path
         }"""
   }
 
   def makeLibrary(
     name: String, description: String, color: Option[String],
-    sectionTerms: List[TermName]
+    sectionTerms: List[TermName], owner: String, repository: String
   ) = {
     val term = makeTermName("Library", name)
     term → q"""
@@ -64,6 +66,8 @@ case class TreeGen[U <: Universe](
           override val description  = $description
           override val color        = $color
           override val sections     = $sectionTerms
+          override val owner        = $owner
+          override val repository   = $repository
         }"""
   }
 

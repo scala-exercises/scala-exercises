@@ -8,7 +8,6 @@ package compiler
 
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
-import scala.reflect.internal.util.BatchSourceFile
 
 import cats.data.Xor
 import cats.std.all._
@@ -19,8 +18,8 @@ import Comments.Mode
 import CommentRendering.RenderedComment
 
 class CompilerJava {
-  def compile(library: AnyRef, sources: Array[String], targetPackage: String): Array[String] = {
-    Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, targetPackage)
+  def compile(library: AnyRef, sources: Array[String], paths: Array[String], baseDir: String, targetPackage: String): Array[String] = {
+    Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, paths.toList, baseDir, targetPackage)
       .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
   }
 }
@@ -28,25 +27,29 @@ class CompilerJava {
 case class Compiler() {
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  def compile(library: exercise.Library, sources: List[String], targetPackage: String) = {
+  def compile(library: exercise.Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String) = {
 
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
-    val internal = CompilerInternal(mirror, sourceTextExtractor.extractAll(sources))
+    val extracted = sourceTextExtractor.extractAll(sources, paths, baseDir)
+    val internal = CompilerInternal(mirror, extracted)
 
     case class LibraryInfo(
       symbol: ClassSymbol,
       comment: RenderedComment.Aux[Mode.Library],
       sections: List[SectionInfo],
-      color: Option[String]
+      color: Option[String],
+      owner: String,
+      repository: String
     )
 
     case class SectionInfo(
       symbol: ClassSymbol,
       comment: RenderedComment.Aux[Mode.Section],
       exercises: List[ExerciseInfo],
-      imports: List[String] = Nil
+      imports: List[String] = Nil,
+      path: Option[String] = None
     )
 
     case class ExerciseInfo(
@@ -75,7 +78,9 @@ case class Compiler() {
       symbol = symbol,
       comment = comment,
       sections = sections,
-      color = library.color
+      color = library.color,
+      owner = library.owner,
+      repository = library.repository
     )
 
     def maybeMakeSectionInfo(
@@ -97,7 +102,8 @@ case class Compiler() {
         symbol = symbol,
         comment = comment,
         exercises = exercises,
-        imports = Nil
+        imports = Nil,
+        path = extracted.symbolPaths.get(symbol.toString)
       )
     }
 
@@ -133,6 +139,7 @@ case class Compiler() {
       println(s" description: ${oneline(libraryInfo.comment.description)}")
       libraryInfo.sections.foreach { sectionInfo ⇒
         println(s" with section ${sectionInfo.comment.name}")
+        println(s"  path: ${sectionInfo.path}")
         println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
         sectionInfo.exercises.foreach { exerciseInfo ⇒
           println(s"  with exercise ${exerciseInfo.symbol}")
@@ -163,7 +170,6 @@ case class Compiler() {
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)
 
     def generateTree(libraryInfo: LibraryInfo): (TermName, Tree) = {
-
       val (sectionTerms, sectionAndExerciseTrees) =
         libraryInfo.sections.map { sectionInfo ⇒
           val (exerciseTerms, exerciseTrees) =
@@ -184,7 +190,8 @@ case class Compiler() {
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms,
-              imports = sectionInfo.imports
+              imports = sectionInfo.imports,
+              path = sectionInfo.path
             )
 
           (sectionTerm, sectionTree :: exerciseTrees)
@@ -194,7 +201,9 @@ case class Compiler() {
         name = libraryInfo.comment.name,
         description = libraryInfo.comment.description,
         color = libraryInfo.color,
-        sectionTerms = sectionTerms
+        sectionTerms = sectionTerms,
+        owner = libraryInfo.owner,
+        repository = libraryInfo.repository
       )
 
       libraryTerm → treeGen.makePackage(
