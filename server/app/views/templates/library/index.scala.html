@@ -1,9 +1,4 @@
-@(library: shared.Library,
-    section: shared.Section,
-    progress: shared.LibraryProgress,
-    user: Option[shared.User] = None,
-    redirectUrl: Option[String] = Some("#"),
-    disqusDomain: Option[String] = None)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"))(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
