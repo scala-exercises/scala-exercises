@@ -40,8 +40,6 @@ class Components(context: Context)
     with EvolutionsComponents
     with HikariCPComponents {
 
-  val jdbcUrl = "postgres:\\/\\/(.*):(.*)@(.*)".r
-
   applicationEvolutions.start()
 
   override def dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
