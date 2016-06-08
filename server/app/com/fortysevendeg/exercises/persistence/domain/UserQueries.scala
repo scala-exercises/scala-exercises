@@ -17,12 +17,12 @@ object UserCreation {
   case object DuplicateName extends CreationError
 
   case class Request(
-      login:      String,
-      name:       Option[String],
-      githubId:   String,
+      login: String,
+      name: Option[String],
+      githubId: String,
       pictureUrl: String,
-      githubUrl:  String,
-      email:      Option[String]
+      githubUrl: String,
+      email: Option[String]
   ) {
 
     def asUser(id: Long): User =

@@ -27,10 +27,10 @@ import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 class ApplicationController(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp],
-    userOps:         UserOps[ExercisesApp],
+    exerciseOps: ExerciseOps[ExercisesApp],
+    userOps: UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    T:               Transactor[Task]
+    T: Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
   implicit def application: Application = Play.current
 
@@ -45,56 +45,52 @@ class ApplicationController(
       progress ← userProgressOps.fetchMaybeUserProgress(user)
     } yield (libraries, user, request.session.get("oauth-token"), progress)
 
-    ops.runTask match {
-      case Xor.Right((libraries, user, Some(token), progress)) ⇒ Future.successful(Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress)))
-      case Xor.Right((libraries, None, None, progress))        ⇒ Future.successful(Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl), progress = progress)).withSession("oauth-state" → state))
-      case Xor.Left(ex)                                        ⇒ Future.successful(InternalServerError(ex.getMessage))
+    ops.runFuture map {
+      case Xor.Right((libraries, user, Some(token), progress)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress))
+      case Xor.Right((libraries, None, None, progress)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, redirectUrl = Option(redirectUrl), progress = progress)).withSession("oauth-state" → state)
+      case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
     }
   }
 
   def library(libraryName: String) = Action.async { implicit request ⇒
-    Future {
-      exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runTask match {
-        case Xor.Right(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
-        case _                        ⇒ Ok("Library not found")
-      }
+    exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runFuture map {
+      case Xor.Right(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
+      case _ ⇒ Ok("Library not found")
     }
   }
 
   def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
-    Future {
-      val (redirectUrl, state) = authStatus
-      val ops = for {
-        libraries ← exerciseOps.getLibraries
-        section ← exerciseOps.getSection(libraryName, sectionName)
-        user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
-      } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"), libProgress)
-      ops.runTask match {
-        case Xor.Right((Some(l), Some(s), user, Some(token), libProgress)) ⇒ {
-          Ok(
-            views.html.templates.library.index(
-              library = l,
-              section = s,
-              user = user,
-              progress = libProgress
-            )
+    val (redirectUrl, state) = authStatus
+    val ops = for {
+      libraries ← exerciseOps.getLibraries
+      section ← exerciseOps.getSection(libraryName, sectionName)
+      user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+      libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
+    } yield (libraries.find(_.name == libraryName), section, user, request.session.get("oauth-token"), libProgress)
+    ops.runFuture map {
+      case Xor.Right((Some(l), Some(s), user, Some(token), libProgress)) ⇒ {
+        Ok(
+          views.html.templates.library.index(
+            library = l,
+            section = s,
+            user = user,
+            progress = libProgress
           )
-        }
-        case Xor.Right((Some(l), Some(s), user, None, libProgress)) ⇒ {
-          Ok(
-            views.html.templates.library.index(
-              library = l,
-              section = s,
-              user = user,
-              progress = libProgress,
-              redirectUrl = Option(redirectUrl)
-            )
-          ).withSession("oauth-state" → state)
-        }
-        case Xor.Right((Some(l), None, _, _, _)) ⇒ Redirect(l.sectionNames.head)
-        case _                                   ⇒ Ok("Section not found")
+        )
       }
+      case Xor.Right((Some(l), Some(s), user, None, libProgress)) ⇒ {
+        Ok(
+          views.html.templates.library.index(
+            library = l,
+            section = s,
+            user = user,
+            progress = libProgress,
+            redirectUrl = Option(redirectUrl)
+          )
+        ).withSession("oauth-state" → state)
+      }
+      case Xor.Right((Some(l), None, _, _, _)) ⇒ Redirect(l.sectionNames.head)
+      case _ ⇒ Ok("Section not found")
     }
   }
 

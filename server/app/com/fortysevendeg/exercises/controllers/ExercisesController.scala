@@ -5,6 +5,7 @@
 
 package com.fortysevendeg.exercises.controllers
 
+import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.SaveUserProgress
 import com.fortysevendeg.exercises.services.free.{ UserOps, UserProgressOps }
@@ -15,16 +16,18 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
 import shared.{ ExerciseEvaluation, User }
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 import scalaz.concurrent.Task
 
 class ExercisesController(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp],
-    userOps:         UserOps[ExercisesApp],
+    exerciseOps: ExerciseOps[ExercisesApp],
+    userOps: UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    T:               Transactor[Task]
+    T: Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
@@ -37,14 +40,13 @@ class ExercisesController(
           )
         } yield exerciseEvaluation
 
-        eval.runTask.fold(
-          e ⇒ BadRequest(s"Evaluation failed : $e"),
-          _.fold(
+        eval.runFuture.map {
+          case Xor.Left(e) ⇒ BadRequest(s"Evaluation failed : $e")
+          case Xor.Right(r) => r.fold(
             msg ⇒ BadRequest(msg),
             v ⇒ Ok(s"Evaluation succeeded : $v")
           )
-        )
-
+        }
     }
 
   private[this] def mkSaveProgressRequest(user: User, evaluation: ExerciseEvaluation, success: Boolean) =

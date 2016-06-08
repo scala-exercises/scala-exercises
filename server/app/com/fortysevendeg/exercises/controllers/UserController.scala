@@ -17,28 +17,30 @@ import upickle._
 
 import scalaz.concurrent.Task
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 class UserController(
     implicit
     userOps: UserOps[ExercisesApp],
-    T:       Transactor[Task]
+    T: Transactor[Task]
 ) extends Controller with ProdInterpreters {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
-  def all = Action { implicit request ⇒
-    userOps.getUsers runTask match {
+  def all = Action.async { implicit request ⇒
+    userOps.getUsers.runFuture map {
       case Xor.Right(users) ⇒ Ok(write(users))
-      case Xor.Left(error)  ⇒ InternalServerError(error.getMessage)
+      case Xor.Left(error) ⇒ InternalServerError(error.getMessage)
     }
   }
 
-  def byLogin(login: String) = Action { implicit request ⇒
-    userOps.getUserByLogin(login) runTask match {
+  def byLogin(login: String) = Action.async { implicit request ⇒
+    userOps.getUserByLogin(login).runFuture map {
       case Xor.Right(user) ⇒ user match {
         case Some(u) ⇒ Ok(write(u))
-        case None    ⇒ NotFound("The user doesn't exist")
+        case None ⇒ NotFound("The user doesn't exist")
       }
       case Xor.Left(error) ⇒ InternalServerError(error.getMessage)
     }
