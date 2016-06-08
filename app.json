@@ -5,6 +5,12 @@
   "addons": ["heroku-postgresql:hobby-dev"],
   "success_url": "/",
   "env": {
-    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-multi"
+      "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-multi",
+      "JAVA_OPTS" : {
+	  "required" : true
+      },
+      "JAVA_TOOL_OPTIONS" : {
+	  "required" : true
+      }
   }
 }
