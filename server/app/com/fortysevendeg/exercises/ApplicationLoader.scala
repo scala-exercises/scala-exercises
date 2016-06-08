@@ -22,6 +22,8 @@ import scala.concurrent.Future
 import scalaz.concurrent.Task
 import scalaz.{ -\/, \/- }
 
+import play.api.db.evolutions.{ DynamicEvolutions, EvolutionsComponents }
+
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
     val mode = context.environment.mode.toString.toLowerCase
@@ -35,9 +37,13 @@ class ExercisesApplicationLoader extends ApplicationLoader {
 class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
+    with EvolutionsComponents
     with HikariCPComponents {
 
   val jdbcUrl = "postgres:\\/\\/(.*):(.*)@(.*)".r
+
+  applicationEvolutions
+  override def dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
 
   implicit val transactor: Transactor[Task] = {
     val maybeTransactor = for {
