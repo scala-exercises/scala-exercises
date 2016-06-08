@@ -6,6 +6,7 @@
 package com.fortysevendeg.exercises.persistence.domain
 
 import cats.data.Xor
+import com.fortysevendeg.github4s.free.domain.{ User ⇒ GHUser }
 import shared.User
 import shapeless._
 import ops.record._
@@ -28,6 +29,8 @@ object UserCreation {
     def asUser(id: Long): User =
       User(id, login, name, githubId, pictureUrl, githubUrl, email)
   }
+
+  def toUser(ghu: GHUser) = Request(ghu.login, ghu.name, ghu.id.toString, ghu.avatar_url, ghu.html_url, ghu.email)
 
   type Response = CreationError Xor User
 }
