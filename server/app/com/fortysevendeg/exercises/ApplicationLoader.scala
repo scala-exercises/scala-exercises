@@ -54,6 +54,7 @@ class Components(context: Context)
   val userController = new UserController
   val oauthController = new OAuthController
   val userProgressController = new UserProgressController
+  val loaderIOController = new LoaderIOController
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
@@ -64,7 +65,8 @@ class Components(context: Context)
     exercisesController,
     assets,
     oauthController,
-    userProgressController
+    userProgressController,
+    loaderIOController
   )
 
   applicationLifecycle.addStopHook({ () ⇒
