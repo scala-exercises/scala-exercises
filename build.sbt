@@ -17,7 +17,6 @@ fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
 lazy val commonSettings = Seq(
   resolvers ++= Seq(
-    Resolver.mavenLocal,
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
   )
@@ -62,6 +61,7 @@ lazy val server = (project in file("server"))
       "com.fortysevendeg" %% "github4s" % "0.2-SNAPSHOT",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
+      "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "runtime",
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
@@ -109,13 +109,9 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(
   scalaVersion := "2.11.7",
   libraryDependencies ++= Seq(
-
-      "org.scalatest" %% "scalatest" % "2.2.4" % "compile",
       "org.typelevel" %%% "cats-core" % "0.4.1" % "compile"
-
   )
-
-  )
+)
 
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
@@ -128,10 +124,7 @@ lazy val definitions = (project in file("definitions"))
     organization := "org.scala-exercises",
     version := "0.0.0-SNAPSHOT",
     name := "definitions",
-    scalaVersion := "2.11.7",
-    libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.0-M15"
-    )
+    scalaVersion := "2.11.7"
 )
 
 // Runtime evaluation
@@ -144,15 +137,14 @@ lazy val runtime = (project in file("runtime"))
     name := "runtime",
     scalaVersion := "2.11.7",
     resolvers ++= Seq(
-      Resolver.mavenLocal,
       "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
       Resolver.sonatypeRepo("snapshots")
     ),
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.clapper" %% "classutil" % "1.0.11",
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
-      "org.scalatest" %% "scalatest" % "3.0.0-M15" % "test"
+      "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "test"
     )
 )
 
@@ -167,7 +159,6 @@ lazy val compiler = (project in file("compiler"))
     scalaVersion := "2.11.7",
     exportJars      := true,
     resolvers ++= Seq(
-      Resolver.mavenLocal,
       "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
       Resolver.sonatypeRepo("snapshots")
     ),
@@ -192,7 +183,6 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scalaVersion := "2.10.6",
     sbtPlugin       := true,
     resolvers ++= Seq(
-      Resolver.mavenLocal,
       "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
       Resolver.sonatypeRepo("snapshots")
     ),

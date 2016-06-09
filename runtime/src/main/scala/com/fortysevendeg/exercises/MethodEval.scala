@@ -92,8 +92,9 @@ class MethodEval() {
         EvaluationFailure(Ior.left(s"compilation error $messages"))
       }
 
-      case GeneralError(stack) ⇒
-        EvaluationFailure(Ior.both("global error", stack))
+      case GeneralError(stack) ⇒ {
+        EvaluationFailure(Ior.both(stack.getMessage, stack))
+      }
 
       case Timeout ⇒
         EvaluationFailure(Ior.left(s"compilation timed out after $timeout"))

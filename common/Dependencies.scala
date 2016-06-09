@@ -8,8 +8,6 @@ import sbt._
 
 trait Dependencies {
 
-  val scalatest = "org.scalatest" %% "scalatest" % "3.0.0-M15"
-
   object cats {
     val Version  = "0.4.1"
     val core     = "org.typelevel" %% "cats-core" % Version
