@@ -60,13 +60,13 @@ class Components(context: Context)
 
   val router = new Routes(
     httpErrorHandler,
+    loaderIOController,
     applicationController,
     userController,
     exercisesController,
     assets,
     oauthController,
-    userProgressController,
-    loaderIOController
+    userProgressController
   )
 
   applicationLifecycle.addStopHook({ () ⇒
