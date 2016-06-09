@@ -99,8 +99,9 @@ class ApplicationController(
           )
         ).withSession("oauth-state" → authorize.state)
       }
-      case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ Redirect(l.sectionNames.head)
-      case _ ⇒ NotFound("Section not found")
+      case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
+      case Xor.Right((None, _, _, _, _, _, _)) ⇒ NotFound("Library not found")
+      case Xor.Left(ex) => InternalServerError(ex.getMessage)
     }
   }
 
