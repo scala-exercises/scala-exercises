@@ -44,12 +44,22 @@ case class Compiler() {
       repository: String
     )
 
+    case class ContributionInfo(
+      sha: String,
+      message: String,
+      timestamp: String,
+      author: String,
+      authorUrl: String,
+      avatarUrl: String
+    )
+
     case class SectionInfo(
       symbol: ClassSymbol,
       comment: RenderedComment.Aux[Mode.Section],
       exercises: List[ExerciseInfo],
       imports: List[String] = Nil,
-      path: Option[String] = None
+      path: Option[String] = None,
+      contributions: List[ContributionInfo] = Nil
     )
 
     case class ExerciseInfo(
@@ -72,7 +82,7 @@ case class Compiler() {
       comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
         .leftMap(enhanceDocError(symbolPath))
       sections ← library.sections.toList
-        .map(internal.instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
+        .map(internal.instanceToClassSymbol(_) >>= (symbol => maybeMakeSectionInfo(library, symbol)))
         .sequenceU
     } yield LibraryInfo(
       symbol = symbol,
@@ -83,13 +93,20 @@ case class Compiler() {
       repository = library.repository
     )
 
+    def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
+      Nil
+    }
+
     def maybeMakeSectionInfo(
+      library: exercise.Library,
       symbol: ClassSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)
+      val filePath = extracted.symbolPaths.get(symbol.toString)
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
           .leftMap(enhanceDocError(symbolPath))
+        contributions = filePath.fold(List.empty[ContributionInfo])(path => fetchContributions(library.owner, library.repository, path))
         exercises ← symbol.toType.decls.toList
           .filter(symbol ⇒
             symbol.isPublic && !symbol.isSynthetic &&
@@ -103,7 +120,8 @@ case class Compiler() {
         comment = comment,
         exercises = exercises,
         imports = Nil,
-        path = extracted.symbolPaths.get(symbol.toString)
+        path = extracted.symbolPaths.get(symbol.toString),
+        contributions = Nil // todo: contribs
       )
     }
 
