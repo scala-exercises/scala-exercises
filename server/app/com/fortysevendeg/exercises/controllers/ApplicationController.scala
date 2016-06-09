@@ -8,8 +8,7 @@ package com.fortysevendeg.exercises.controllers
 import java.util.UUID
 import cats.free.Free
 import com.fortysevendeg.github4s.Github
-import com.fortysevendeg.github4s.free.domain.Commit
-import shared.{ Contribution, Contributor, Contributions }
+import shared.{Contribution, Contributor}
 import scala.collection.JavaConverters._
 
 import cats.data.Xor
@@ -69,25 +68,24 @@ class ApplicationController(
       authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
       library ← exerciseOps.getLibrary(libraryName)
       section ← exerciseOps.getSection(libraryName, sectionName)
-      commits ← library.fold(Free.pure(List.empty[Commit]): Free[ExercisesApp, List[Commit]])(lib => githubOps.getContributions(lib.owner, lib.repository, section.flatMap(_.path).getOrElse("")))
-      contributions = commitsToContributions(commits)
+      contributors = toContributors(section.fold(List.empty[Contribution])(s => s.contributions))
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
-    } yield (library, section, user, request.session.get("oauth-token"), libProgress, authorize, contributions)
+    } yield (library, section, user, request.session.get("oauth-token"), libProgress, authorize, contributors)
 
     ops.runFuture map {
-      case Xor.Right((Some(l), Some(s), user, Some(token), libProgress, _, contributions)) ⇒ {
+      case Xor.Right((Some(l), Some(s), user, Some(token), libProgress, _, contributors)) ⇒ {
         Ok(
           views.html.templates.library.index(
             library = l,
             section = s,
             user = user,
             progress = libProgress,
-            contributions = contributions
+            contributors = contributors
           )
         )
       }
-      case Xor.Right((Some(l), Some(s), user, None, libProgress, authorize, contributions)) ⇒ {
+      case Xor.Right((Some(l), Some(s), user, None, libProgress, authorize, contributors)) ⇒ {
         Ok(
           views.html.templates.library.index(
             library = l,
@@ -95,7 +93,7 @@ class ApplicationController(
             user = user,
             progress = libProgress,
             redirectUrl = Option(authorize.url),
-            contributions = contributions
+            contributors = contributors
           )
         ).withSession("oauth-state" → authorize.state)
       }
@@ -115,16 +113,10 @@ class ApplicationController(
     ).as("text/javascript")
   }
 
-  private def commitsToContributions(commits: List[Commit]): Contributions =
-    Contributions(toContribution(commits), commitsToContributors(commits))
-
-  private def toContribution(commits: List[Commit]): List[Contribution] =
-    commits.map(c ⇒ Contribution(c.sha, c.message, c.date, c.url, c.login, c.avatar_url, c.author_url))
-
-  private def commitsToContributors(commits: List[Commit]): List[Contributor] = commits
-    .groupBy(c ⇒ (c.login, c.avatar_url, c.author_url))
+  private def toContributors(contributions: List[Contribution]): List[Contributor] = contributions
+    .groupBy(c ⇒ (c.author, c.authorUrl, c.avatarUrl))
     .keys
-    .map { case (login, avatar, url) ⇒ Contributor(login, avatar, url) }
+    .map { case (author, authorUrl, avatarUrl) ⇒ Contributor(author, authorUrl, avatarUrl) }
     .toList
 
 }

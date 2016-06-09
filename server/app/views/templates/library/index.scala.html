@@ -1,4 +1,4 @@
-@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributions: shared.Contributions)(implicit request: RequestHeader)
+@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributors: List[shared.Contributor])(implicit request: RequestHeader)
 
 @import com.fortysevendeg.exercises.utils.StringUtils._
 
@@ -101,7 +101,7 @@
 
               <div class="contributors clearfix">
 
-                @templates.library.contributors(contributions)
+                @templates.library.contributors(contributors)
 
                 <ul>
                   <li> <a href="https://github.com/@library.owner/@library.repository/edit/master@section.path.getOrElse("")" target="_blank"><i class="fa fa-pencil"></i>Edit exercises</a>
@@ -119,7 +119,7 @@
       @templates.library.footer()
     </div>
 
-    @templates.library.commits_modal(contributions)
+    @templates.library.commits_modal(section.contributions)
     @templates.library.mustsignup_modal(redirectUrl)
 
       <!-- JS -->

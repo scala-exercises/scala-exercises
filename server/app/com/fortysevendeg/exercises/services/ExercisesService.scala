@@ -156,7 +156,8 @@ sealed trait RuntimeSharedConversions {
       name = section.name,
       description = section.description,
       path = section.path,
-      exercises = section.exercises.map(convertExercise)
+      exercises = section.exercises.map(convertExercise),
+      contributions = section.contributions.map(convertContribution)
     )
 
   def convertExercise(exercise: Exercise) =
@@ -167,5 +168,15 @@ sealed trait RuntimeSharedConversions {
       code = Option(exercise.code),
       explanation = exercise.explanation
     )
+
+  def convertContribution(contribution: Contribution) =
+    shared.Contribution(
+      sha = contribution.sha,
+      message = contribution.message,
+      timestamp = contribution.timestamp,
+      url = contribution.url,
+      author = contribution.author,
+      authorUrl = contribution.authorUrl,
+      avatarUrl = contribution.avatarUrl)
 
 }

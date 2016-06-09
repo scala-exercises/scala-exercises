@@ -38,6 +38,7 @@ trait Contribution {
   def sha: String
   def message: String
   def timestamp: String
+  def url: String
   def author: String
   def authorUrl: String
   def avatarUrl: String
@@ -70,6 +71,7 @@ case class DefaultContribution(
   sha: String,
   message: String,
   timestamp: String,
+  url: String,
   author: String,
   authorUrl: String,
   avatarUrl: String

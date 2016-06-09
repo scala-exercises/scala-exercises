@@ -25,8 +25,6 @@ final case class GetAccessToken(
 
 final case class GetAuthUser(accessToken: Option[String] = None) extends GithubOp[User]
 
-final case class GetContributions(owner: String, repo: String, path: String) extends GithubOp[List[Commit]]
-
 /**
  * Exposes GitHub operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
@@ -50,9 +48,6 @@ class GithubOps[F[_]](implicit I: Inject[GithubOp, F]) {
     Free.inject[GithubOp, F](GetAccessToken(clientId, clienteSecret, code, redirectUri, state))
 
   def getAuthUser(accessToken: Option[String] = None): Free[F, User] = Free.inject[GithubOp, F](GetAuthUser(accessToken))
-
-  def getContributions(owner: String, repo: String, path: String): Free[F, List[Commit]] =
-    Free.inject[GithubOp, F](GetContributions(owner, repo, path))
 
 }
 

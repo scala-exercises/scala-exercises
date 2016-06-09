@@ -1,12 +1,12 @@
-@(contributions: shared.Contributions)(implicit request: RequestHeader)
+@(contributors: List[shared.Contributor])(implicit request: RequestHeader)
 <ul>
-  <li><a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i>@contributions.contributors.size contributors</a>
+  <li><a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i>@contributors.size contributors</a>
   </li>
 
-  @for(contributor <- contributions.contributors) {
+  @for(contributor <- contributors) {
     <li>
-      <a data-toggle="tooltip" data-placement="bottom" title="@contributor.login" href="@contributor.authorUrl" target="_blank">
-        <img src="@contributor.avatarUrl" alt="@contributor.login">
+      <a data-toggle="tooltip" data-placement="bottom" title="@contributor.author" href="@contributor.authorUrl" target="_blank">
+        <img src="@contributor.avatarUrl" alt="@contributor.author">
       </a>
     </li>
   }
