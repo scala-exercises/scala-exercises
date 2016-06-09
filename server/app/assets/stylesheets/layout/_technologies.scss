@@ -31,10 +31,21 @@
 
             }
             .panel-heading {
+                padding-left: 15px;
+                padding-right: 15px;
                 border: none;
                 color: #fff;
                 background-color: $gray-base;
                 text-transform: capitalize;
+                
+                h3 {
+                    display: inline-block;
+                    margin-left: 10px;
+                }
+                
+                img {
+                    display: inline-block;
+                }
             }
             .btn-primary {
                 color: #ffffff;

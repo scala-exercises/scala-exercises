@@ -24,6 +24,24 @@
     @media (min-width: $screen-sm-min) {
         margin-left: -260px;
     }
+    
+    .content-logo-technologie {
+        width: 70px;
+        height: 70px;
+        margin: auto;
+        margin-top: 33px;
+        text-align: center;
+        @include border-radius(1px);
+        
+        img {
+            margin-top: 20px;
+        }
+    }
+    
+     h1 {
+            font-size: floor(($font-size-base * 1.3));
+        }
+    
     ul {
         padding: 0 25px;
         padding-bottom: 50px;
