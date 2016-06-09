@@ -104,7 +104,6 @@ sealed trait RuntimeSharedConversions {
   // to libraries that don't have a default color provided
   // TODO: make this nicer
   def colorize(libraries: List[Library]): List[Library] = {
-    libraries
     val autoPalette = List(
       "#00587A",
       "#44BBFF",
