@@ -22,6 +22,8 @@ import scala.concurrent.Future
 import scalaz.concurrent.Task
 import scalaz.{ -\/, \/- }
 
+import play.api.db.evolutions.{ DynamicEvolutions, EvolutionsComponents }
+
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
     val mode = context.environment.mode.toString.toLowerCase
@@ -35,28 +37,15 @@ class ExercisesApplicationLoader extends ApplicationLoader {
 class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
+    with EvolutionsComponents
     with HikariCPComponents {
 
-  val jdbcUrl = "postgres:\\/\\/(.*):(.*)@(.*)".r
+  applicationEvolutions.start()
 
-  implicit val transactor: Transactor[Task] = {
-    val maybeTransactor = for {
-      driver ← configuration.getString("db.default.driver")
-      url ← configuration.getString("db.default.url")
-      parsed = url match {
-        case jdbcUrl(user, pass, newUrl) ⇒ Some((user, pass, "jdbc:postgresql://" + newUrl))
-        case _ ⇒ None
-      }
-      (user, pass, newUrl) ← parsed
-      transactor = HikariTransactor[Task](driver, newUrl, user, pass).attemptRun match {
-        case \/-(t) ⇒ Some(t)
-        case -\/(e) ⇒ None
-      }
-    } yield transactor
-    maybeTransactor.flatten getOrElse {
-      DataSourceTransactor[Task](dbApi.database("default").dataSource)
-    }
-  }
+  override def dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
+
+  implicit val transactor: Transactor[Task] =
+    DataSourceTransactor[Task](dbApi.database("default").dataSource)
 
   implicit val wsClient: WSClient = NingWSClient()
 
@@ -65,11 +54,13 @@ class Components(context: Context)
   val userController = new UserController
   val oauthController = new OAuthController
   val userProgressController = new UserProgressController
+  val loaderIOController = new LoaderIOController
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
   val router = new Routes(
     httpErrorHandler,
+    loaderIOController,
     applicationController,
     userController,
     exercisesController,

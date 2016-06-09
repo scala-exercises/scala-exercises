@@ -121,7 +121,7 @@ case class Compiler() {
         exercises = exercises,
         imports = Nil,
         path = extracted.symbolPaths.get(symbol.toString),
-        contributions = Nil // todo: contribs
+        contributions = contributions
       )
     }
 
