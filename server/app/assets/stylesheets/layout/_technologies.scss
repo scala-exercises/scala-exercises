@@ -20,15 +20,37 @@
             }
             .panel-body {
                 //height: $panel-body-height;
+                color: #FFFFFF;
+                h3 {
+                   text-align: center;
+                   margin-top: 0;
+                   color: #ffffff;
+                    font-weight: bold;
+                }
+                .logo-wrapper {
+                    text-align: center;
+                    margin: 25px auto;
+                    height: 100px;
+                    img {
+                        height: 100px;
+                        -webkit-filter: grayscale(100%) brightness(500%);
+                        filter: grayscale(100%) brightness(500%);
+                        opacity: 0.5;
+                    }
+                }
                 p {
                     margin-bottom: $line-height-computed;
                     line-height: 1.6;
-		    @media (min-width: $screen-sm-min) {
- 		        height: 70px;
-			overflow: hidden;
-		    }
+                    text-align: center;
+                    color: rgba(255, 255, 255, 0.8);
+                    @media (min-width: $screen-sm-min) {
+                        height: 70px;
+                        overflow: hidden;
+                    }
                 }
-
+                button {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
             }
             .panel-heading {
                 border: none;

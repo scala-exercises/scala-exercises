@@ -5,21 +5,26 @@
   <a href="@library.name">
     <div class="tech scala">
       <div class="panel panel-default">
-        <div class="panel-heading" style="background-color: @library.color;">
-          <h3 class="panel-title">@library.name.humanizeUnderscore</h3>
-        </div>
-        <div class="panel-body">
+        <div class="panel-body" style="background-color: @library.color;">
+
+          <h3>@library.name.humanizeUnderscore</h3>
+
+          <div class="logo-wrapper">
+            <img src="@routes.Assets.at("images/" + library.name + ".png")"/>
+          </div>
+
+
           @Html(library.description)
 
-	  @progress match {
-   	    case None => {
-	      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
-	    }
-	    case Some(p) if p.completedSections == 0 => {
-	      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
-	    }
- 	    case Some(p) => { @templates.widgets.progress(p.completedSections, p.totalSections, library.color) }
-	  }
+          @progress match {
+              case None => {
+              <div><button class="btn btn-primary btn-sm">Start</button></div>
+            }
+            case Some(p) if p.completedSections == 0 => {
+              <div><button class="btn btn-primary btn-sm">Start</button></div>
+            }
+            case Some(p) => { @templates.widgets.progress(p.completedSections, p.totalSections, library.color) }
+          }
         </div>
       </div>
     </div>
