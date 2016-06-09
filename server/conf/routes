@@ -4,7 +4,7 @@
 
 
 #Loader IO load testing verification
-GET /loaderio-397122d360fee8afca6b77f62c4853ed com.fortysevendeg.exercises.controllers.LoaderIOController.verificationToken
+GET /loaderio-397122d360fee8afca6b77f62c4853ed/ com.fortysevendeg.exercises.controllers.LoaderIOController.verificationToken
 
 # Home page
 GET / com.fortysevendeg.exercises.controllers.ApplicationController.index
