@@ -42,13 +42,15 @@ class TreeGenSpec extends FunSpec with Matchers {
           name = "Section 1",
           description = Some("This is section 1"),
           exerciseTerms = exercises.map(_._1),
-          imports = Nil
+          imports = Nil,
+          contributions = Nil
         ),
         treeGen.makeSection(
           name = "Section 2",
           description = Some("This is section 2"),
           exerciseTerms = Nil,
-          imports = Nil
+          imports = Nil,
+          contributions = Nil
         )
       )
 
