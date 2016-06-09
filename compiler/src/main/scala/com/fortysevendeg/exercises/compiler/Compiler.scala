@@ -203,16 +203,29 @@ case class Compiler() {
               )
             }.unzip
 
+          val (contributionTerms, contributionTrees) =
+            sectionInfo.contributions.map { contributionInfo ⇒
+              treeGen.makeContribution(
+                sha = contributionInfo.sha,
+                message = contributionInfo.message,
+                timestamp = contributionInfo.timestamp,
+                author = contributionInfo.author,
+                authorUrl = contributionInfo.authorUrl,
+                avatarUrl = contributionInfo.avatarUrl
+              )
+            }.unzip
+
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms,
               imports = sectionInfo.imports,
-              path = sectionInfo.path
+              path = sectionInfo.path,
+              contributionTerms = contributionTerms
             )
 
-          (sectionTerm, sectionTree :: exerciseTrees)
+          (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
         }.unzip
 
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
