@@ -40,7 +40,7 @@
             <svg viewBox="0 0 34 22" width="34" height="22">
               <use xlink:href="@routes.Assets.at("images/sprite-images.svg#brand")"/>
             </svg>
-            <span>Scala Exercises / <span class="section-name">@library.name.humanizeUnderscore</span> </span>
+            <span>Scala Exercises</span>
           </a>
         </div>
 
@@ -58,6 +58,13 @@
     <div id="wrapper">
 
       <section id="sidebar">
+          <div class="header-technologie">
+              <div class="content-logo-technologie" style="background-color: @library.color;">
+                   <img src="@routes.Assets.at("images/" + library.name + ".svg")"/>
+              </div>
+              <h1 class="text-center">@library.name.humanizeUnderscore</h1>
+          </div>
+       
         @templates.widgets.progress(progress.completedSections, progress.totalSections, library.color)
         <ul>
           <li>
@@ -125,6 +132,7 @@
       <!-- JS -->
     <script src="@routes.Assets.at("lib/highlightjs/highlight.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/languages/scala.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/emojify-cdn.js")"></script>
     <script src="@com.fortysevendeg.exercises.controllers.routes.ApplicationController.javascriptRoutes" type="text/javascript"></script>
     @playscalajs.html.scripts("client", "/assets")
   </body>

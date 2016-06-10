@@ -26,7 +26,7 @@
             padding: 15px 0;
             list-style: none;
             border-bottom: 1px solid $line-divider;
-            img {
+            img.avatar {
                 width: 34px;
                 height: auto;
                 float: left;
@@ -68,5 +68,9 @@
                 font-size: 40px;
             }
         }
+    }
+    .emojify {
+        width: 1.8em;
+        height: 1.4em;
     }
 }

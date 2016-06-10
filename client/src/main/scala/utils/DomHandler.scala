@@ -39,6 +39,13 @@ object DomHandler {
   }
 
   /**
+   * Converts emoji markup into inline emoji images.
+   */
+  def emojify: IO[Unit] = io {
+    js.Dynamic.global.emojify.run()
+  }
+
+  /**
    * Set the class attribute to an exercise node
    */
   def setClass(e: HTMLElement, style: String): IO[Unit] = io {
