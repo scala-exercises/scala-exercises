@@ -221,6 +221,7 @@ case class Compiler() {
                 sha = contributionInfo.sha,
                 message = contributionInfo.message,
                 timestamp = contributionInfo.timestamp,
+                url = contributionInfo.url,
                 author = contributionInfo.author,
                 authorUrl = contributionInfo.authorUrl,
                 avatarUrl = contributionInfo.avatarUrl

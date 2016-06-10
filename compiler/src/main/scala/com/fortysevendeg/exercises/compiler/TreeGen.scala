@@ -42,6 +42,7 @@ case class TreeGen[U <: Universe](
     sha: String,
     message: String,
     timestamp: String,
+    url: String,
     author: String,
     authorUrl: String,
     avatarUrl: String
@@ -52,6 +53,7 @@ case class TreeGen[U <: Universe](
       override def sha = $sha
       override def message = $message
       override def timestamp = $timestamp
+      override def url = $url
       override def author = $author
       override def authorUrl = $authorUrl
       override def avatarUrl = $avatarUrl
@@ -102,6 +104,7 @@ case class TreeGen[U <: Universe](
           import com.fortysevendeg.exercises.Exercise
           import com.fortysevendeg.exercises.Library
           import com.fortysevendeg.exercises.Section
+          import com.fortysevendeg.exercises.Contribution
           ..$trees
         }"""
 
