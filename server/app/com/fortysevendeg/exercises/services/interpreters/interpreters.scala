@@ -106,8 +106,6 @@ trait Interpreters[M[_]] {
         case GetAuthorizeUrl(client_id, redirect_uri, scopes) ⇒ ghResponseToEntity(Github().auth.authorizeUrl(client_id, redirect_uri, scopes).exec[M])
         case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ ghResponseToEntity(Github().auth.getAccessToken(client_id, client_secret, code, redirect_uri, state).exec[M])
         case GetAuthUser(accessToken) ⇒ ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])
-        case GetContributions(owner, repo, path) ⇒ ghResponseToEntity(Github().repos.listCommits(owner, repo, None, Option(path)).exec[M])
-
       }
     }
 

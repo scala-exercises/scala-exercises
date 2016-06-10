@@ -12,6 +12,8 @@ trait JsonFormats {
 
   implicit val exerciseWrites: Writes[Exercise] = Json.writes[Exercise]
 
+  implicit val contributionWrites: Writes[Contribution] = Json.writes[Contribution]
+
   implicit val sectionWrites: Writes[Section] = Json.writes[Section]
 
   implicit val libraryWrites: Writes[Library] = Json.writes[Library]

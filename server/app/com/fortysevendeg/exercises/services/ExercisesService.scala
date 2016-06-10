@@ -177,6 +177,7 @@ sealed trait RuntimeSharedConversions {
       url = contribution.url,
       author = contribution.author,
       authorUrl = contribution.authorUrl,
-      avatarUrl = contribution.avatarUrl)
+      avatarUrl = contribution.avatarUrl
+    )
 
 }

@@ -8,7 +8,7 @@ package com.fortysevendeg.exercises.controllers
 import java.util.UUID
 import cats.free.Free
 import com.fortysevendeg.github4s.Github
-import shared.{Contribution, Contributor}
+import shared.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
 
 import cats.data.Xor
