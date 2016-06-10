@@ -61,7 +61,7 @@ lazy val server = (project in file("server"))
       "com.fortysevendeg" %% "github4s" % "0.2-SNAPSHOT",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
-      "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "runtime",
+      "org.scalatest" %% "scalatest" % "2.2.4" % "runtime",
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
@@ -144,7 +144,7 @@ lazy val runtime = (project in file("runtime"))
       "org.clapper" %% "classutil" % "1.0.11",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
-      "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "test"
+      "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
 )
 
@@ -170,7 +170,7 @@ lazy val compiler = (project in file("compiler"))
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % "0.4.1" % "test",
-      "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "test"
+      "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
  )
 
