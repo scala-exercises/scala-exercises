@@ -101,6 +101,7 @@ case class Compiler() {
     )
 
     def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
+      println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github().repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
         case Xor.Right(GHResult(result, _, _)) => result.map(commit => ContributionInfo(commit.sha, commit.message, commit.date, commit.url, commit.login, commit.avatar_url, commit.author_url))
