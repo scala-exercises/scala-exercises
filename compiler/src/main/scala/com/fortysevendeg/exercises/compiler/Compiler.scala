@@ -9,10 +9,16 @@ package compiler
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
 
+import cats.{ Eval, MonadError }
 import cats.data.Xor
 import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
+
+import github4s.Github
+import Github._
+import github4s.implicits._
+import github4s.GithubResponses.GHResult
 
 import Comments.Mode
 import CommentRendering.RenderedComment
@@ -48,6 +54,7 @@ case class Compiler() {
       sha: String,
       message: String,
       timestamp: String,
+      url: String,
       author: String,
       authorUrl: String,
       avatarUrl: String
@@ -94,7 +101,11 @@ case class Compiler() {
     )
 
     def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
-      Nil
+      val contribs = Github().repos.listCommits(owner, repository, None, Option(path))
+      contribs.exec[Eval].value match {
+        case Xor.Right(GHResult(result, _, _)) => result.map(commit => ContributionInfo(commit.sha, commit.message, commit.date, commit.url, commit.login, commit.avatar_url, commit.author_url))
+        case Xor.Left(ex) => throw ex
+      }
     }
 
     def maybeMakeSectionInfo(
