@@ -104,7 +104,16 @@ case class Compiler() {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github().repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
-        case Xor.Right(GHResult(result, _, _)) => result.map(commit => ContributionInfo(commit.sha, commit.message, commit.date, commit.url, commit.login, commit.avatar_url, commit.author_url))
+        case Xor.Right(GHResult(result, _, _)) => result.map(commit =>
+          ContributionInfo(
+            sha = commit.sha,
+            message = commit.message,
+            timestamp = commit.date,
+            url = commit.url,
+            author = commit.login,
+            avatarUrl = commit.avatar_url,
+            authorUrl = commit.author_url
+          ))
         case Xor.Left(ex) => throw ex
       }
     }
