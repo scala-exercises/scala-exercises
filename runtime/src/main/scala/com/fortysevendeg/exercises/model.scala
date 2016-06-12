@@ -28,6 +28,20 @@ trait Section {
   def exercises: List[Exercise]
   def imports: List[String]
   def path: Option[String]
+  def contributions: List[Contribution]
+}
+
+/**
+ * A contribution to a section.
+ */
+trait Contribution {
+  def sha: String
+  def message: String
+  def timestamp: String
+  def url: String
+  def author: String
+  def authorUrl: String
+  def avatarUrl: String
 }
 
 /**
@@ -53,12 +67,23 @@ case class DefaultLibrary(
   sections: List[Section] = Nil
 ) extends Library
 
+case class DefaultContribution(
+  sha: String,
+  message: String,
+  timestamp: String,
+  url: String,
+  author: String,
+  authorUrl: String,
+  avatarUrl: String
+) extends Contribution
+
 case class DefaultSection(
   name: String,
   description: Option[String],
   exercises: List[Exercise] = Nil,
   imports: List[String] = Nil,
-  path: Option[String] = None
+  path: Option[String] = None,
+  contributions: List[DefaultContribution] = Nil
 ) extends Section
 
 case class DefaultExercise(

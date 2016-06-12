@@ -173,11 +173,13 @@ lazy val compiler = (project in file("compiler"))
     ),
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
+      "com.fortysevendeg" %% "github4s" % "0.4-SNAPSHOT",
       "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
       "org.scala-exercises" %% "definitions" % "0.0.0-SNAPSHOT" changing(),
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
-      "org.typelevel" %% "cats-laws" % "0.4.1" % "test"
+      "org.typelevel" %% "cats-laws" % "0.4.1" % "test",
+      "org.scalatest" %% "scalatest" % "3.0.0-RC1" % "test"
     )
  )
 

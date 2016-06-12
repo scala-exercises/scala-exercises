@@ -38,11 +38,35 @@ case class TreeGen[U <: Universe](
         }"""
   }
 
+  def makeContribution(
+    sha: String,
+    message: String,
+    timestamp: String,
+    url: String,
+    author: String,
+    authorUrl: String,
+    avatarUrl: String
+  ) = {
+    val term = makeTermName("Contribution", sha)
+    term -> q"""
+    object $term extends Contribution {
+      override def sha = $sha
+      override def message = $message
+      override def timestamp = $timestamp
+      override def url = $url
+      override def author = $author
+      override def authorUrl = $authorUrl
+      override def avatarUrl = $avatarUrl
+    }
+    """
+  }
+
   def makeSection(
     name: String, description: Option[String],
     exerciseTerms: List[TermName],
     imports: List[String],
-    path: Option[String] = None
+    path: Option[String] = None,
+    contributionTerms: List[TermName]
   ) = {
     val term = makeTermName("Section", name)
     term → q"""
@@ -52,6 +76,7 @@ case class TreeGen[U <: Universe](
           override val exercises    = $exerciseTerms
           override val imports      = $imports
           override val path         = $path
+          override val contributions = $contributionTerms
         }"""
   }
 
@@ -79,6 +104,7 @@ case class TreeGen[U <: Universe](
           import com.fortysevendeg.exercises.Exercise
           import com.fortysevendeg.exercises.Library
           import com.fortysevendeg.exercises.Section
+          import com.fortysevendeg.exercises.Contribution
           ..$trees
         }"""
 

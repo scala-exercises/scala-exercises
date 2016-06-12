@@ -9,10 +9,16 @@ package compiler
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
 
+import cats.{ Eval, MonadError }
 import cats.data.Xor
 import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
+
+import github4s.Github
+import Github._
+import github4s.implicits._
+import github4s.GithubResponses.GHResult
 
 import Comments.Mode
 import CommentRendering.RenderedComment
@@ -44,12 +50,23 @@ case class Compiler() {
       repository: String
     )
 
+    case class ContributionInfo(
+      sha: String,
+      message: String,
+      timestamp: String,
+      url: String,
+      author: String,
+      authorUrl: String,
+      avatarUrl: String
+    )
+
     case class SectionInfo(
       symbol: ClassSymbol,
       comment: RenderedComment.Aux[Mode.Section],
       exercises: List[ExerciseInfo],
       imports: List[String] = Nil,
-      path: Option[String] = None
+      path: Option[String] = None,
+      contributions: List[ContributionInfo] = Nil
     )
 
     case class ExerciseInfo(
@@ -72,7 +89,7 @@ case class Compiler() {
       comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
         .leftMap(enhanceDocError(symbolPath))
       sections ← library.sections.toList
-        .map(internal.instanceToClassSymbol(_) >>= maybeMakeSectionInfo)
+        .map(internal.instanceToClassSymbol(_) >>= (symbol => maybeMakeSectionInfo(library, symbol)))
         .sequenceU
     } yield LibraryInfo(
       symbol = symbol,
@@ -83,13 +100,34 @@ case class Compiler() {
       repository = library.repository
     )
 
+    def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
+      println(s"Fetching contributions for repository $owner/$repository file $path")
+      val contribs = Github().repos.listCommits(owner, repository, None, Option(path))
+      contribs.exec[Eval].value match {
+        case Xor.Right(GHResult(result, _, _)) => result.map(commit =>
+          ContributionInfo(
+            sha = commit.sha,
+            message = commit.message,
+            timestamp = commit.date,
+            url = commit.url,
+            author = commit.login,
+            avatarUrl = commit.avatar_url,
+            authorUrl = commit.author_url
+          ))
+        case Xor.Left(ex) => throw ex
+      }
+    }
+
     def maybeMakeSectionInfo(
+      library: exercise.Library,
       symbol: ClassSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)
+      val filePath = extracted.symbolPaths.get(symbol.toString)
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
           .leftMap(enhanceDocError(symbolPath))
+        contributions = filePath.fold(List.empty[ContributionInfo])(path => fetchContributions(library.owner, library.repository, path))
         exercises ← symbol.toType.decls.toList
           .filter(symbol ⇒
             symbol.isPublic && !symbol.isSynthetic &&
@@ -103,7 +141,8 @@ case class Compiler() {
         comment = comment,
         exercises = exercises,
         imports = Nil,
-        path = extracted.symbolPaths.get(symbol.toString)
+        path = extracted.symbolPaths.get(symbol.toString),
+        contributions = contributions
       )
     }
 
@@ -185,16 +224,30 @@ case class Compiler() {
               )
             }.unzip
 
+          val (contributionTerms, contributionTrees) =
+            sectionInfo.contributions.map { contributionInfo ⇒
+              treeGen.makeContribution(
+                sha = contributionInfo.sha,
+                message = contributionInfo.message,
+                timestamp = contributionInfo.timestamp,
+                url = contributionInfo.url,
+                author = contributionInfo.author,
+                authorUrl = contributionInfo.authorUrl,
+                avatarUrl = contributionInfo.avatarUrl
+              )
+            }.unzip
+
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms,
               imports = sectionInfo.imports,
-              path = sectionInfo.path
+              path = sectionInfo.path,
+              contributionTerms = contributionTerms
             )
 
-          (sectionTerm, sectionTree :: exerciseTrees)
+          (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
         }.unzip
 
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(

@@ -1,4 +1,4 @@
-@(contributions: shared.Contributions)(implicit request: RequestHeader)
+@(section: shared.Section)(implicit request: RequestHeader)
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -11,18 +11,18 @@
       <div class="modal-body">
         <ul>
 
-          @for(commit <- contributions.commits) {
+          @for(contrib <- section.contributions) {
             <li>
               <div class="row">
                 <div class="col-xs-9 col-md-9">
-                  <a href="@commit.authorUrl"><img class="avatar" src="@commit.avatarUrl" alt=""></a>
-                  <p>@commit.message</p>
+                  <a href="@contrib.authorUrl"><img class="avatar" src="@contrib.avatarUrl" alt=""></a>
+                  <p>@contrib.message</p>
                   <span>
-                    <a href="@commit.authorUrl">@commit.login</a>
-                    committed @commit.date</span>
+                    <a href="@contrib.authorUrl">@contrib.author</a>
+                    contributed @contrib.timestamp</span>
                 </div>
                 <div class="col-xs-3 col-md-3">
-                  <a href="@commit.url" target="_blank" type="button" class="btn btn-default btn-sm">View on GitHub </a>
+                  <a href="@contrib.url" target="_blank" type="button" class="btn btn-default btn-sm">View on GitHub </a>
                 </div>
               </div>
             </li>

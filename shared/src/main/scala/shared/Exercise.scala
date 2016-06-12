@@ -24,7 +24,8 @@ case class Section(
   name: String,
   description: Option[String] = None,
   path: Option[String] = None,
-  exercises: List[Exercise] = Nil
+  exercises: List[Exercise] = Nil,
+  contributions: List[Contribution] = Nil
 )
 
 /**
