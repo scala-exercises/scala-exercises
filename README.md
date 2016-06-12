@@ -119,12 +119,7 @@ venues.
 We hope that our community will be respectful, helpful, and kind. If
 you find yourself embroiled in a situation that becomes heated, or
 that fails to live up to our expectations, you should disengage and
-contact one of the [project maintainers](@scala-exercises/core-mergers) in private. We
-hope to avoid letting minor aggressions and misunderstandings escalate
-into larger problems.
-
-If you are being harassed, please contact one of [us](@scala-exercises/core-mergers)
-immediately so that we can support you.
+contact one of the project maintainers in private. 
 
 ##License
 
