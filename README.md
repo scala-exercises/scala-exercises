@@ -82,7 +82,7 @@ In that case, you could solve this issue setting up your `/.sbt/0.13/plugins/plu
 as follow:
 
 ```scala
-addSbtPlugin("org.ensime" % "ensime-sbt" % "0.4.0")
+addSbtPlugin("org.ensime" % "ensime-sbt" % "0.5.1")
 
 dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
 ```
@@ -104,9 +104,27 @@ be easy to create new exercises for existing Scala libraries.
 
 ## Contributing
 
-Contributions welcome! At this time, we don't have an official contribution
-guide, so please join our [Gitter channel](https://gitter.im/47deg/scala-exercises)
+Contributions welcome! Please join our [Gitter channel](https://gitter.im/scala-exercises/scala-exercises)
 to get involved.
+
+Feel free to open an issue if you notice a bug, have an idea for a
+feature, or have a question about the code. Pull requests are also
+gladly accepted. 
+
+People are expected to follow the
+[Typelevel Code of Conduct](http://typelevel.org/conduct.html) when
+discussing Scala Exercises on the Github page, Gitter channel, or other
+venues.
+
+We hope that our community will be respectful, helpful, and kind. If
+you find yourself embroiled in a situation that becomes heated, or
+that fails to live up to our expectations, you should disengage and
+contact one of the [project maintainers](@scala-exercises/core-mergers) in private. We
+hope to avoid letting minor aggressions and misunderstandings escalate
+into larger problems.
+
+If you are being harassed, please contact one of [us](@scala-exercises/core-mergers)
+immediately so that we can support you.
 
 ##License
 
