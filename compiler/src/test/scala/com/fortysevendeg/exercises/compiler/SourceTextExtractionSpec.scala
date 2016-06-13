@@ -61,21 +61,26 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
     it("isolates imports to a given source file") {
       val source1 = """
         import a._
+        import b._
         object Object1 {
           /** Method */
-          def method() {}
+          def method() {
+          }
         }
         """
 
       val source2 = """
-        import a._
+        import c._
+        import d._
+
         /** Object 2
           * @param name Object 2
           */
         object Object2 {
-          import b2._
+          import obj2._
           /** Method */
-          def method() {}
+          def method() {
+          }
         }
         """
 
@@ -85,13 +90,13 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
       // Should capture exactly 1 import for Object1.method
       inside(res.methods.get("Object1" :: "method" :: Nil)) {
         case Some(method) ⇒
-          method.imports.length should equal(1)
+          method.imports shouldEqual List("import a._", "import b._")
       }
 
       // Should capture exactly 2 imports for Object2.method
       inside(res.methods.get("Object2" :: "method" :: Nil)) {
         case Some(method) ⇒
-          method.imports.length should equal(2)
+          method.imports shouldEqual List("import c._", "import d._", "import obj2._")
       }
 
     }
