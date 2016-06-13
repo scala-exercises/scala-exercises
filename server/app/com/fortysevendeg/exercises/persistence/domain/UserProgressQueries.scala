@@ -11,37 +11,37 @@ import ops.record._
 import doobie.imports._
 
 case class UserProgress(
-  id: Long,
-  userId: Long,
-  libraryName: String,
-  sectionName: String,
-  method: String,
-  version: Int,
+  id:           Long,
+  userId:       Long,
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
   exerciseType: ExerciseType = Other,
-  args: List[String],
-  succeeded: Boolean
+  args:         List[String],
+  succeeded:    Boolean
 )
 case class ExerciseEvaluation(
-  libraryName: String,
-  sectionName: String,
-  method: String,
-  version: Int,
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
   exerciseType: ExerciseType = Other,
-  args: List[String],
-  succeeded: Boolean
+  args:         List[String],
+  succeeded:    Boolean
 )
 
 object SaveUserProgress {
 
   case class Request(
-      user: User,
-      libraryName: String,
-      sectionName: String,
-      method: String,
-      version: Int,
+      user:         User,
+      libraryName:  String,
+      sectionName:  String,
+      method:       String,
+      version:      Int,
       exerciseType: ExerciseType,
-      args: List[String],
-      succeeded: Boolean
+      args:         List[String],
+      succeeded:    Boolean
   ) {
 
     def asUserProgress(id: Long): UserProgress =

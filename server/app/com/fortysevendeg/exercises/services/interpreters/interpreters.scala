@@ -28,9 +28,8 @@ import scalaz.\/
 import scalaz.concurrent.Task
 import FreeExtensions._
 
-/**
- * Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
- */
+/** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
+  */
 trait Interpreters[M[_]] {
 
   implicit def interpreters(
@@ -45,17 +44,16 @@ trait Interpreters[M[_]] {
     all
   }
 
-  /**
-   * Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
-   */
+  /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
+    */
   implicit def exerciseOpsInterpreter(implicit A: MonadError[M, Throwable]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
 
     import com.fortysevendeg.exercises.services.ExercisesService._
 
     def apply[A](fa: ExerciseOp[A]): M[A] = fa match {
-      case GetLibraries() ⇒ A.pureEval(Eval.later(libraries))
+      case GetLibraries()                       ⇒ A.pureEval(Eval.later(libraries))
       case GetSection(libraryName, sectionName) ⇒ A.pureEval(Eval.later(section(libraryName, sectionName)))
-      case Evaluate(evalInfo) ⇒ A.pureEval(Eval.later(evaluate(evalInfo)))
+      case Evaluate(evalInfo)                   ⇒ A.pureEval(Eval.later(evaluate(evalInfo)))
     }
   }
 
@@ -64,11 +62,11 @@ trait Interpreters[M[_]] {
     import UR._
 
     def apply[A](fa: UserOp[A]): M[A] = fa match {
-      case GetUsers() ⇒ all.transact(T)
+      case GetUsers()            ⇒ all.transact(T)
       case GetUserByLogin(login) ⇒ getByLogin(login).transact(T)
-      case CreateUser(newUser) ⇒ create(newUser).transact(T)
-      case UpdateUser(user) ⇒ update(user).map(_.isDefined).transact(T)
-      case DeleteUser(user) ⇒ delete(user.id).transact(T)
+      case CreateUser(newUser)   ⇒ create(newUser).transact(T)
+      case UpdateUser(user)      ⇒ update(user).map(_.isDefined).transact(T)
+      case DeleteUser(user)      ⇒ delete(user.id).transact(T)
     }
   }
 
@@ -111,7 +109,7 @@ trait Interpreters[M[_]] {
 
     private def ghResponseToEntity[T](response: M[GHResponse[T]]): M[T] = A.flatMap(response) {
       case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(result)
-      case Xor.Left(e) ⇒ A.raiseError[T](e)
+      case Xor.Left(e)                                  ⇒ A.raiseError[T](e)
     }
 
   }
@@ -135,7 +133,7 @@ object FreeExtensions {
 
     def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Throwable Xor A] = {
       val p = Promise[Throwable Xor A]
-      f.foldMap(interpreter).runAsync { result: Throwable \/ A =>
+      f.foldMap(interpreter).runAsync { result: Throwable \/ A ⇒
         p.success(scalazToCatsDisjunction(result))
       }
       p.future

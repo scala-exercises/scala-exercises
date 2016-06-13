@@ -64,17 +64,17 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
   override def upsert(request: SaveUserProgress.Request): ConnectionIO[UserProgress] = {
     val SaveUserProgress.Request(user, libraryName, sectionName, method, version, _, _, _) = request
     getExerciseEvaluation(user, libraryName, sectionName, method, version) flatMap {
-      case None ⇒ create(request)
+      case None        ⇒ create(request)
       case Some(userP) ⇒ update(request)
     }
   }
 
   override def getExerciseEvaluation(
-    user: User,
+    user:        User,
     libraryName: String,
     sectionName: String,
-    method: String,
-    version: Int
+    method:      String,
+    version:     Int
   ): ConnectionIO[Option[UserProgress]] =
     persistence.fetchOption[FindEvaluationByVersionParams, UserProgress](
       Q.findEvaluationByVersion, (user.id, libraryName, sectionName, method, version)

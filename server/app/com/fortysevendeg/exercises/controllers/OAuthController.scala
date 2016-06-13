@@ -23,9 +23,9 @@ import scalaz.concurrent.Task
 
 class OAuthController(
     implicit
-    userOps: UserOps[ExercisesApp],
+    userOps:   UserOps[ExercisesApp],
     githubOps: GithubOps[ExercisesApp],
-    T: Transactor[Task]
+    T:         Transactor[Task]
 ) extends Controller with ProdInterpreters {
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
@@ -53,7 +53,7 @@ class OAuthController(
       ops.runFuture.map {
         case Xor.Right((ghu, u)) ⇒ Redirect(request.headers.get("referer") match {
           case Some(url) if !url.contains("github") ⇒ url
-          case _ ⇒ "/"
+          case _                                    ⇒ "/"
         }).withSession("oauth-token" → accessToken, "user" → ghu.login)
         case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
       }

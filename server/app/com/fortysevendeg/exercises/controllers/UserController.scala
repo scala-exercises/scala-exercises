@@ -24,7 +24,7 @@ import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 class UserController(
     implicit
     userOps: UserOps[ExercisesApp],
-    T: Transactor[Task]
+    T:       Transactor[Task]
 ) extends Controller with ProdInterpreters {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
@@ -32,7 +32,7 @@ class UserController(
   def all = Action.async { implicit request ⇒
     userOps.getUsers.runFuture map {
       case Xor.Right(users) ⇒ Ok(write(users))
-      case Xor.Left(error) ⇒ InternalServerError(error.getMessage)
+      case Xor.Left(error)  ⇒ InternalServerError(error.getMessage)
     }
   }
 
@@ -40,7 +40,7 @@ class UserController(
     userOps.getUserByLogin(login).runFuture map {
       case Xor.Right(user) ⇒ user match {
         case Some(u) ⇒ Ok(write(u))
-        case None ⇒ NotFound("The user doesn't exist")
+        case None    ⇒ NotFound("The user doesn't exist")
       }
       case Xor.Left(error) ⇒ InternalServerError(error.getMessage)
     }

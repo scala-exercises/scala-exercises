@@ -1,17 +1,17 @@
 package shared
 
 case class Contribution(
-  sha: String,
-  message: String,
+  sha:       String,
+  message:   String,
   timestamp: String,
-  url: String,
-  author: String,
+  url:       String,
+  author:    String,
   authorUrl: String,
   avatarUrl: String
 )
 
 case class Contributor(
-  author: String,
+  author:    String,
   authorUrl: String,
   avatarUrl: String
 )

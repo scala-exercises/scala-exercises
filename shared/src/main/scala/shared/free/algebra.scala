@@ -7,18 +7,16 @@ import shared.ExerciseEvaluation
 import shared.Library
 import shared.Section
 
-/**
- * Exercise Ops GADT
- */
+/** Exercise Ops GADT
+  */
 sealed trait ExerciseOp[A]
 final case class GetLibraries() extends ExerciseOp[List[Library]]
 final case class GetSection(libraryName: String, sectionName: String) extends ExerciseOp[Option[Section]]
 final case class Evaluate(exerciseEvaluation: ExerciseEvaluation) extends ExerciseOp[ExerciseEvaluation.Result]
 
-/**
- * Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
- * Coproduct
- */
+/** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
+  * Coproduct
+  */
 class ExerciseOps[F[_]](implicit I: Inject[ExerciseOp, F]) {
 
   def getLibraries: Free[F, List[Library]] =
@@ -35,9 +33,8 @@ class ExerciseOps[F[_]](implicit I: Inject[ExerciseOp, F]) {
 
 }
 
-/**
- * Default implicit based DI factory from which instances of the ExerciseOps may be obtained
- */
+/** Default implicit based DI factory from which instances of the ExerciseOps may be obtained
+  */
 object ExerciseOps {
 
   implicit def instance[F[_]](implicit I: Inject[ExerciseOp, F]): ExerciseOps[F] = new ExerciseOps[F]

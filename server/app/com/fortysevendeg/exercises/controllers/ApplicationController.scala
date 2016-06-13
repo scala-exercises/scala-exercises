@@ -30,11 +30,11 @@ import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
 class ApplicationController(
     implicit
-    exerciseOps: ExerciseOps[ExercisesApp],
-    userOps: UserOps[ExercisesApp],
+    exerciseOps:     ExerciseOps[ExercisesApp],
+    userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    githubOps: GithubOps[ExercisesApp],
-    T: Transactor[Task]
+    githubOps:       GithubOps[ExercisesApp],
+    T:               Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
   implicit def application: Application = Play.current
 
@@ -59,7 +59,7 @@ class ApplicationController(
   def library(libraryName: String) = Action.async { implicit request ⇒
     exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runFuture map {
       case Xor.Right(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
-      case _ ⇒ Ok("Library not found")
+      case _                        ⇒ Ok("Library not found")
     }
   }
 
@@ -68,7 +68,7 @@ class ApplicationController(
       authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
       library ← exerciseOps.getLibrary(libraryName)
       section ← exerciseOps.getSection(libraryName, sectionName)
-      contributors = toContributors(section.fold(List.empty[Contribution])(s => s.contributions))
+      contributors = toContributors(section.fold(List.empty[Contribution])(s ⇒ s.contributions))
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
     } yield (library, section, user, request.session.get("oauth-token"), libProgress, authorize, contributors)
@@ -98,8 +98,8 @@ class ApplicationController(
         ).withSession("oauth-state" → authorize.state)
       }
       case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
-      case Xor.Right((None, _, _, _, _, _, _)) ⇒ NotFound("Library not found")
-      case Xor.Left(ex) => InternalServerError(ex.getMessage)
+      case Xor.Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
+      case Xor.Left(ex)                              ⇒ InternalServerError(ex.getMessage)
     }
   }
 

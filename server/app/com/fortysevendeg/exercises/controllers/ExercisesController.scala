@@ -24,10 +24,10 @@ import scalaz.concurrent.Task
 
 class ExercisesController(
     implicit
-    exerciseOps: ExerciseOps[ExercisesApp],
-    userOps: UserOps[ExercisesApp],
+    exerciseOps:     ExerciseOps[ExercisesApp],
+    userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    T: Transactor[Task]
+    T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
@@ -42,7 +42,7 @@ class ExercisesController(
 
         eval.runFuture.map {
           case Xor.Left(e) ⇒ BadRequest(s"Evaluation failed : $e")
-          case Xor.Right(r) => r.fold(
+          case Xor.Right(r) ⇒ r.fold(
             msg ⇒ BadRequest(msg),
             v ⇒ Ok(s"Evaluation succeeded : $v")
           )

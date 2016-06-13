@@ -75,7 +75,7 @@ object ExercisesJS extends js.JSApp {
     val program = for {
       _ ← wireObservables
       _ ← highlightCodeBlocks
-      _ <- emojify
+      _ ← emojify
       _ ← startInteraction
     } yield ()
 

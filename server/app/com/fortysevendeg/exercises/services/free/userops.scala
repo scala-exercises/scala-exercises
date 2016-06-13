@@ -10,9 +10,8 @@ import cats.free.{ Free, Inject }
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import shared.User
 
-/**
- * Users Ops GADT
- */
+/** Users Ops GADT
+  */
 sealed trait UserOp[A]
 final case class GetUsers() extends UserOp[List[User]]
 final case class GetUserByLogin(login: String) extends UserOp[Option[User]]
@@ -20,10 +19,9 @@ final case class CreateUser(user: UserCreation.Request) extends UserOp[UserCreat
 final case class UpdateUser(user: User) extends UserOp[Boolean]
 final case class DeleteUser(user: User) extends UserOp[Boolean]
 
-/**
- * Exposes User operations as a Free monadic algebra that may be combined with other Algebras via
- * Coproduct
- */
+/** Exposes User operations as a Free monadic algebra that may be combined with other Algebras via
+  * Coproduct
+  */
 class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
   def getUsers: Free[F, List[User]] =
     Free.inject[UserOp, F](GetUsers())
@@ -46,9 +44,8 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
   } yield theUser
 }
 
-/**
- * Default implicit based DI factory from which instances of the UserOps may be obtained
- */
+/** Default implicit based DI factory from which instances of the UserOps may be obtained
+  */
 object UserOps {
 
   implicit def instance[F[_]](implicit I: Inject[UserOp, F]): UserOps[F] = new UserOps[F]

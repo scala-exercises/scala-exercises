@@ -1,26 +1,62 @@
 import play.PlayImport._
+
 import sbt.Keys._
 import sbt.Project.projectToRef
 import NativePackagerHelper._
 
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+
+import de.heikoseeberger.sbtheader.HeaderPattern
+import de.heikoseeberger.sbtheader.HeaderPlugin
+import de.heikoseeberger.sbtheader.HeaderKey.headers
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
-
-// Compiler options
-scalacOptions ++= Seq("-feature", "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps")
 
 // Disable forking in CI
 fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
 // Common settings
+lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
+    ScalariformKeys.preferences := ScalariformKeys.preferences.value
+      .setPreference(RewriteArrowSymbols, true)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignSingleLineCaseStatements, true)
+      .setPreference(DoubleIndentClassDeclaration, true)
+      .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+      .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+)
 
 lazy val commonSettings = Seq(
+  organization := "org.scala-exercises",
+  version := "0.0.0-SNAPSHOT",
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-encoding",
+    "utf8",
+    "-feature",
+    "-unchecked",
+    "-language:implicitConversions",
+    "-language:higherKinds",
+    "-language:postfixOps"
+  ),
   resolvers ++= Seq(
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
-  )
-)
+  ),
+  headers <<= (name, version) { (name, version) => Map(
+    "scala" -> (
+      HeaderPattern.cStyleBlockComment,
+      s"""|/*
+          | * scala-exercises-$name
+          | * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+          | */
+          |
+          |""".stripMargin)
+  )}
+) ++ formattingSettings ++ publishSettings
 
 // Client and Server projects
 
@@ -109,7 +145,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(
   scalaVersion := "2.11.7",
   libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "0.4.1" % "compile"
+    "org.typelevel" %%% "cats-core" % "0.4.1" % "compile"
   )
 )
 
@@ -119,10 +155,8 @@ lazy val sharedJs = shared.js
 // Definitions
 
 lazy val definitions = (project in file("definitions"))
-  .settings(publishSettings:_*)
+  .settings(commonSettings: _*)
   .settings(
-    organization := "org.scala-exercises",
-    version := "0.0.0-SNAPSHOT",
     name := "definitions",
     scalaVersion := "2.11.7"
 )
@@ -130,16 +164,10 @@ lazy val definitions = (project in file("definitions"))
 // Runtime evaluation
 
 lazy val runtime = (project in file("runtime"))
-  .settings(publishSettings:_*)
+  .settings(commonSettings:_*)
   .settings(
-    organization := "org.scala-exercises",
-    version := "0.0.0-SNAPSHOT",
     name := "runtime",
     scalaVersion := "2.11.7",
-    resolvers ++= Seq(
-      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-      Resolver.sonatypeRepo("snapshots")
-    ),
     libraryDependencies ++= Seq(
       "org.clapper" %% "classutil" % "1.0.11",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
@@ -151,17 +179,11 @@ lazy val runtime = (project in file("runtime"))
 // Compiler & Compiler plugin
 
 lazy val compiler = (project in file("compiler"))
-  .settings(publishSettings:_*)
+  .settings(commonSettings:_*)
   .settings(
-    organization := "org.scala-exercises",
     name := "exercise-compiler",
-    version := "0.0.0-SNAPSHOT",
     scalaVersion := "2.11.7",
     exportJars      := true,
-    resolvers ++= Seq(
-      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-      Resolver.sonatypeRepo("snapshots")
-    ),
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
       "com.fortysevendeg" %% "github4s" % "0.4-SNAPSHOT",
@@ -175,17 +197,11 @@ lazy val compiler = (project in file("compiler"))
  )
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
-  .settings(publishSettings:_*)
+  .settings(commonSettings:_*)
   .settings(
-    organization := "org.scala-exercises",
     name            := "sbt-exercise",
-    version := "0.0.0-SNAPSHOT",
     scalaVersion := "2.10.6",
     sbtPlugin       := true,
-    resolvers ++= Seq(
-      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-      Resolver.sonatypeRepo("snapshots")
-    ),
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile"
     ),
