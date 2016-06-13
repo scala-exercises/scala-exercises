@@ -102,7 +102,7 @@ case class Compiler() {
 
     def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
-      val contribs = Github().repos.listCommits(owner, repository, None, Option(path))
+      val contribs = Github(sys.env.lift("SE_COMPILER_TOKEN")).repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
         case Xor.Right(GHResult(result, _, _)) => result.map(commit =>
           ContributionInfo(
