@@ -3,12 +3,8 @@ import sbt.Keys._
 import sbt.Project.projectToRef
 import NativePackagerHelper._
 
-
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
-
-// Compiler options
-scalacOptions ++= Seq("-feature", "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps")
 
 // Disable forking in CI
 fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
@@ -16,6 +12,16 @@ fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 // Common settings
 
 lazy val commonSettings = Seq(
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-encoding",
+    "utf8",
+    "-feature",
+    "-unchecked",
+    "-language:implicitConversions",
+    "-language:higherKinds",
+    "-language:postfixOps"
+  ),
   resolvers ++= Seq(
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     Resolver.sonatypeRepo("snapshots")
