@@ -6,7 +6,7 @@ import org.scalatest._
 import cats.data.Xor
 import cats.std.option._
 
-class CommentRenderingRegressions extends refspec.RefSpec with Matchers
+class CommentRenderingRegressions extends FunSpec with Matchers
     with Inside {
   import Comments.Mode
 
@@ -18,8 +18,8 @@ class CommentRenderingRegressions extends refspec.RefSpec with Matchers
 
   private[this] def parse(text: String) = commentFactory.parse(text.stripMargin)
 
-  object `issues ` {
-    def `github #309` {
+  describe("issues") {
+    it("github #309") {
 
       // Summary:
       // Certain code blocks in comments fail to render.

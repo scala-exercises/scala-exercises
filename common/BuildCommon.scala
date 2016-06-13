@@ -73,12 +73,6 @@ object BuildCommon extends AutoPlugin {
     shellPrompt := { s => s"${C.BLUE}${Project.extract(s).currentProject.id}>${C.RESET} " }
   )
 
-  def dependencySettings = Seq(
-    libraryDependencies ++= Seq(
-      //"org.scalatest" %% "scalatest" % "3.0.0-M15" % "test"
-    )
-  )
-
   override def projectSettings =
     baseSettings ++ dependencySettings ++
     formatSettings ++ wartSettings ++
