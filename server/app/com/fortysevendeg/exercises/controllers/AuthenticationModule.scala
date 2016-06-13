@@ -29,11 +29,11 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
 
     override def invokeBlock[A](
       request: Request[A],
-      block: (UserRequest[A]) ⇒ Future[Result]
+      block:   (UserRequest[A]) ⇒ Future[Result]
     ): Future[Result] =
       request.session.get("user") match {
         case Some(userId) ⇒ block(UserRequest(userId, request))
-        case None ⇒ Future.successful(Forbidden)
+        case None         ⇒ Future.successful(Forbidden)
       }
   }
 
@@ -41,7 +41,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
     AuthenticationAction.async { request ⇒
       userOps.getUserByLogin(request.userId).runFuture flatMap {
         case Xor.Right(Some(user)) ⇒ block(user)
-        case _ ⇒ Future.successful(BadRequest("User login not found"))
+        case _                     ⇒ Future.successful(BadRequest("User login not found"))
       }
     }
 
@@ -51,7 +51,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
         case JsSuccess(validatedBody, _) ⇒
           userOps.getUserByLogin(request.userId).runFuture flatMap {
             case Xor.Right(Some(user)) ⇒ block(validatedBody, user)
-            case _ ⇒ Future.successful(BadRequest("User login not found"))
+            case _                     ⇒ Future.successful(BadRequest("User login not found"))
           }
         case JsError(errors) ⇒
           Future.successful(BadRequest(JsError.toJson(errors)))

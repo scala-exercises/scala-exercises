@@ -17,7 +17,7 @@ object ConnectionIOOps {
     def liftF[F[_]](implicit dbOps: DBOps[F], transactor: Transactor[Task]): Free[F, A] =
       c.transact(transactor).attemptRun match {
         case \/-(value) ⇒ dbOps.success(value)
-        case -\/(e) ⇒ dbOps.failure(e)
+        case -\/(e)     ⇒ dbOps.failure(e)
       }
   }
 

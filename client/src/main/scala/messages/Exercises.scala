@@ -6,17 +6,17 @@
 package messages
 
 case class EvaluationRequest(
-  libraryName: String,
-  sectionName: String,
-  method: String,
-  version: Int,
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
   exerciseType: String,
-  args: Seq[String]
+  args:         Seq[String]
 )
 
 // TODO: moar info
 case class EvaluationResult(
-  ok: Boolean,
+  ok:     Boolean,
   method: String,
-  msg: String = ""
+  msg:    String  = ""
 )

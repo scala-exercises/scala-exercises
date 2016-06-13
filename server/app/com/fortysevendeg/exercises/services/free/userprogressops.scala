@@ -18,13 +18,12 @@ import cats.syntax.all._
 
 import scalaz.concurrent.Task
 
-/**
- * Users Progress Ops GADT
- */
+/** Users Progress Ops GADT
+  */
 sealed trait UserProgressOp[A]
 
 final case class GetExerciseEvaluations(
-  user: User,
+  user:    User,
   library: String,
   section: String
 ) extends UserProgressOp[List[UserProgress]]
@@ -33,17 +32,16 @@ final case class UpdateUserProgress(
   userProgress: SaveUserProgress.Request
 ) extends UserProgressOp[UserProgress]
 
-/**
- * Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
- * Coproduct
- */
+/** Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
+  * Coproduct
+  */
 class UserProgressOps[F[_]](
     implicit
-    I: Inject[UserProgressOp, F],
-    EO: ExerciseOps[F],
+    I:   Inject[UserProgressOp, F],
+    EO:  ExerciseOps[F],
     DBO: DBOps[F],
-    T: Transactor[Task],
-    FM: Monad[Free[F, ?]]
+    T:   Transactor[Task],
+    FM:  Monad[Free[F, ?]]
 ) {
 
   def saveUserProgress(userProgress: SaveUserProgress.Request): Free[F, UserProgress] =
@@ -141,7 +139,7 @@ class UserProgressOps[F[_]](
   }
 
   def fetchUserProgressByLibrarySection(
-    user: User,
+    user:        User,
     libraryName: String,
     sectionName: String
   ): Free[F, SectionExercises] = {
@@ -166,9 +164,8 @@ class UserProgressOps[F[_]](
   }
 }
 
-/**
- * Default implicit based DI factory from which instances of the UserOps may be obtained
- */
+/** Default implicit based DI factory from which instances of the UserOps may be obtained
+  */
 object UserProgressOps {
 
   implicit def instance[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseOps[F], DBO: DBOps[F], T: Transactor[Task]): UserProgressOps[F] = new UserProgressOps[F]

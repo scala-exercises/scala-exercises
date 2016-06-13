@@ -12,11 +12,11 @@ case object Errored extends ExerciseState
 case object Solved extends ExerciseState
 
 case class ClientExercise(
-    library: String,
-    section: String,
-    method: String,
-    arguments: Seq[String] = Nil,
-    state: ExerciseState = Unsolved
+    library:   String,
+    section:   String,
+    method:    String,
+    arguments: Seq[String]   = Nil,
+    state:     ExerciseState = Unsolved
 ) {
 
   def isFilled: Boolean = !arguments.exists(_.trim.isEmpty) && arguments.nonEmpty
@@ -47,7 +47,7 @@ object Exercises {
 
   def evaluate(s: State, method: String): State = findByMethod(s, method) match {
     case Some(exercise) if exercise.canBeCompiled ⇒ applyByMethod(s, method, _.copy(state = Evaluating))
-    case _ ⇒ s
+    case _                                        ⇒ s
   }
 
   def setAsSolved(s: State, method: String): State =

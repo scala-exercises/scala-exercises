@@ -22,62 +22,55 @@ object DomHandler {
 
   import IO._
 
-  /**
-   * Replaces text matched into html inputs
-   */
+  /** Replaces text matched into html inputs
+    */
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
   }
 
-  /**
-   * Highlights every preformatted code block.
-   */
+  /** Highlights every preformatted code block.
+    */
   def highlightCodeBlocks: IO[Unit] = io {
     $("pre").each((_: Any, code: dom.Element) ⇒ {
       js.Dynamic.global.hljs.highlightBlock(code)
     })
   }
 
-  /**
-   * Converts emoji markup into inline emoji images.
-   */
+  /** Converts emoji markup into inline emoji images.
+    */
   def emojify: IO[Unit] = io {
     js.Dynamic.global.emojify.run()
   }
 
-  /**
-   * Set the class attribute to an exercise node
-   */
+  /** Set the class attribute to an exercise node
+    */
   def setClass(e: HTMLElement, style: String): IO[Unit] = io {
     $(e).attr("class", s"exercise $style")
   }
 
-  /**
-   * Write a message in the log of an exercise
-   */
+  /** Write a message in the log of an exercise
+    */
   def writeLog(e: HTMLElement, msg: String): IO[Unit] = io {
     $(e).find(".log").text(msg)
   }
 
-  /**
-   * Assigns behaviors to the keyup event for inputs elements.
-   */
+  /** Assigns behaviors to the keyup event for inputs elements.
+    */
   def onInputKeyUp(
-    onkeyup: (String, Seq[String]) ⇒ IO[Unit],
+    onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
     onEnterPressed: String ⇒ IO[Unit]
   ): IO[Unit] = for {
     inputs ← allInputs
     _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
   } yield ()
 
-  /**
-   * Shows modal for signing up
-   */
+  /** Shows modal for signing up
+    */
   def showSignUpModal: IO[Unit] = io($("#mustSignUp").modal("show"))
 
   def attachKeyUpHandler(
-    input: HTMLInputElement,
-    onkeyup: (String, Seq[String]) ⇒ IO[Unit],
+    input:          HTMLInputElement,
+    onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
     onEnterPressed: String ⇒ IO[Unit]
   ): IO[Unit] = io {
     $(input).keyup((e: dom.KeyboardEvent) ⇒ {
@@ -87,16 +80,15 @@ object DomHandler {
         exercise ← OptionT(io(findExerciseByMethod(methodName)))
         inputsValues = getInputsValues(exercise)
         _ ← OptionT((e.keyCode match {
-          case KeyCode.enter ⇒ onEnterPressed(methodName)
-          case _ ⇒ onkeyup(methodName, inputsValues)
+          case KeyCode.Enter ⇒ onEnterPressed(methodName)
+          case _             ⇒ onkeyup(methodName, inputsValues)
         }).map(_.some))
       } yield ()).value.unsafePerformIO()
     })
   }
 
-  /**
-   * Assigns behaviors to the blur event for inputs elements.
-   */
+  /** Assigns behaviors to the blur event for inputs elements.
+    */
   def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = for {
     inputs ← allInputs
     _ ← inputs.map(attachBlurHandler(_, onBlur)).sequence

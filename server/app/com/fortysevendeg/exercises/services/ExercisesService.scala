@@ -49,7 +49,7 @@ object ExercisesService extends RuntimeSharedConversions {
 
     def userError(ee: EvaluationException[_]): String = ee.e match {
       case _: TestFailedException ⇒ "Assertion error!"
-      case e ⇒ s"Runtime error: ${e.getMessage}"
+      case e                      ⇒ s"Runtime error: ${e.getMessage}"
     }
 
     def eval(pkg: String, imports: List[String]) = {
@@ -125,7 +125,7 @@ sealed trait RuntimeSharedConversions {
       if (library.color.isEmpty) {
         val (color, colors0) = colors match {
           case head :: tail ⇒ Some(head) → tail
-          case Nil ⇒ None → Nil
+          case Nil          ⇒ None → Nil
         }
         colors0 → (DefaultLibrary(
           owner = library.owner,
