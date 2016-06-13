@@ -77,8 +77,12 @@ class SourceTextExtraction {
           k → new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
       }
 
-      val imports = extraction.imports.map(expandPath)
-        .groupBy(_._1).mapValues(_.map(_._2))
+      val rawImports = extraction.imports
+      val paths = rawImports.map(expandPath)
+
+      val imports = paths
+        .groupBy(_._1)
+        .mapValues(_.map(_._2))
 
       val methods = extraction.methods.map(expandPath).map {
         case (k, v) ⇒
@@ -234,7 +238,7 @@ object SourceTextExtraction {
         //println("looking at import " + imp + " at position " + acc.position)
         //println("previous import processed " + acc.imports)
         acc.copy(
-          imports = (path, (acc.position, imp)) :: acc.imports,
+          imports = acc.imports :+ (path, (acc.position, imp)),
           position = acc.position + 1
         )
       }
