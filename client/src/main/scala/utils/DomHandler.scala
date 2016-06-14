@@ -87,19 +87,6 @@ object DomHandler {
     })
   }
 
-  /** Assigns behaviors to the blur event for inputs elements.
-    */
-  def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = for {
-    inputs ← allInputs
-    _ ← inputs.map(attachBlurHandler(_, onBlur)).sequence
-  } yield ()
-
-  def attachBlurHandler(input: HTMLInputElement, onBlur: String ⇒ IO[Unit]): IO[Unit] = io {
-    $(input).blur((e: dom.Event) ⇒ {
-      methodParent(input) foreach (onBlur(_).unsafePerformIO())
-    })
-  }
-
   def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] =
     allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ ⇒ ())
 

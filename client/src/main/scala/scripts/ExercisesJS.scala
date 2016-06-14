@@ -66,9 +66,6 @@ object ExercisesJS extends js.JSApp {
         _ ← onButtonClick((method: String) ⇒ {
           triggerAction(CompileExercise(method))
         })
-        _ ← onInputBlur((method: String) ⇒ {
-          triggerAction(CompileExercise(method))
-        })
       } yield ()
     }
 
