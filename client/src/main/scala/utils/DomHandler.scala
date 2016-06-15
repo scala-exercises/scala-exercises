@@ -39,7 +39,9 @@ object DomHandler {
   /** Converts emoji markup into inline emoji images.
     */
   def emojify: IO[Unit] = io {
-    js.Dynamic.global.emojify.run()
+    $(".modal-body").each((_: Any, el: dom.Element) ⇒ {
+      js.Dynamic.global.emojify.run(el)
+    })
   }
 
   /** Set the class attribute to an exercise node
