@@ -33,7 +33,7 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
       }
       """
 
-    val res = new SourceTextExtraction().extractAll(code :: Nil, List("(internal)"), "/")
+    val res = new SourceTextExtraction().extractAll(code :: Nil, List(""), "/")
 
     it("should find all doc comments on classes and objects") {
       res.comments.map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(Map(
@@ -84,7 +84,7 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
         }
         """
 
-      val paths = List("(internal)", "(internal)")
+      val paths = List("", "")
       val res = new SourceTextExtraction().extractAll(source1 :: source2 :: Nil, paths, "/")
 
       // Should capture exactly 1 import for Object1.method
@@ -106,7 +106,7 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
   def renderImportSelector(sel: Global#ImportSelector): String =
     (sel.name, sel.rename) match {
       case (a, b) if a == b ⇒ a.toString
-      case (a, b) ⇒ s"$a => $b"
+      case (a, b)           ⇒ s"$a => $b"
     }
 
   def renderImport(imp: Global#Import): String = {
