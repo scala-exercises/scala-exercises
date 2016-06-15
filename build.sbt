@@ -98,6 +98,7 @@ lazy val server = (project in file("server"))
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.scalatest" %% "scalatest" % "2.2.4" % "runtime",
+      "com.newrelic.agent.java" % "newrelic-agent" % "3.29.0",
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
