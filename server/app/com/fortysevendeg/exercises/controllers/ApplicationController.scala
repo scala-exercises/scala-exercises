@@ -67,13 +67,12 @@ class ApplicationController(
       } yield (library, user, section)
 
       ops.runFuture map {
-        case Xor.Right((Some(library), None, _)) ⇒
-          Redirect(s"$libraryName/${library.sectionNames.head}")
-        case Xor.Right((Some(library), Some(user), None)) ⇒
-          Redirect(s"$libraryName/${library.sectionNames.head}")
-        case Xor.Right((Some(library), Some(user), Some(sectionName))) ⇒
+        case Xor.Right((Some(library), _, Some(sectionName))) ⇒
           Redirect(s"$libraryName/$sectionName")
-        case _ ⇒ NotFound("Library not found")
+        case Xor.Right((Some(library), _, _)) ⇒
+          Redirect(s"$libraryName/${library.sectionNames.head}")
+        case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
+        case Xor.Left(ex)            ⇒ InternalServerError(ex.getMessage)
       }
     }
   }
