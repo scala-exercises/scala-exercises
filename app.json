@@ -8,7 +8,7 @@
     "success_url": "\/",
     "env": {
         "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
-        "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops -javaagent:/app/server/target/universal/stage/lib/com.newrelic.agent.java.newrelic-agent-3.29.0.jar",
+        "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
         "JAVA_TOOL_OPTIONS": {
             "required": true
         },
