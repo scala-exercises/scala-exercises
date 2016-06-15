@@ -131,7 +131,7 @@ SELECT sectionName
 FROM "userProgress"
 WHERE userId = ?
   AND libraryName LIKE ?
-ORDER BY id DESC
+ORDER BY "updatedAt" DESC
 LIMIT 1;
   """
 }
