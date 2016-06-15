@@ -57,9 +57,24 @@ class ApplicationController(
   }
 
   def library(libraryName: String) = Action.async { implicit request ⇒
-    exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runFuture map {
-      case Xor.Right(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
-      case _                        ⇒ Ok("Library not found")
+    {
+      val ops = for {
+        library ← exerciseOps.getLibrary(libraryName)
+        user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        section ← user.fold(
+          Free.pure(None): Free[ExercisesApp, Option[String]]
+        )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
+      } yield (library, user, section)
+
+      ops.runFuture map {
+        case Xor.Right((Some(library), None, _)) ⇒
+          Redirect(s"$libraryName/${library.sectionNames.head}")
+        case Xor.Right((Some(library), Some(user), None)) ⇒
+          Redirect(s"$libraryName/${library.sectionNames.head}")
+        case Xor.Right((Some(library), Some(user), Some(sectionName))) ⇒
+          Redirect(s"$libraryName/$sectionName")
+        case _ ⇒ NotFound("Library not found")
+      }
     }
   }
 

@@ -125,4 +125,13 @@ object UserProgressQueries {
   val deleteById = s"""DELETE FROM "userProgress" WHERE id = ?"""
 
   val deleteAll = s"""DELETE FROM "userProgress""""
+
+  val findLastSeenSection = s"""
+SELECT sectionName
+FROM "userProgress"
+WHERE userId = ?
+  AND libraryName LIKE ?
+ORDER BY id DESC
+LIMIT 1;
+  """
 }

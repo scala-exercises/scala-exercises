@@ -77,6 +77,8 @@ trait Interpreters[M[_]] {
 
     def apply[A](fa: UserProgressOp[A]): M[A] = {
       fa match {
+        case GetLastSeenSection(user, library) ⇒
+          UPR.getLastSeenSection(user, library).transact(T)
         case GetExerciseEvaluations(user, library, section) ⇒
           UPR.getExerciseEvaluations(user, library, section).transact(T)
         case UpdateUserProgress(userProgress) ⇒

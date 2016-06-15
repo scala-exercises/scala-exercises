@@ -29,6 +29,8 @@ trait UserProgressRepository {
 
   def getExerciseEvaluations(user: User, libraryName: String, sectionName: String): ConnectionIO[List[UserProgress]]
 
+  def getLastSeenSection(user: User, libraryName: String): ConnectionIO[Option[String]]
+
   def deleteAll(): ConnectionIO[Int]
 }
 
@@ -85,6 +87,12 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule) exte
       Q.findEvaluationsBySection, (user.id, libraryName, sectionName)
     )
 
+  override def getLastSeenSection(user: User, libraryName: String): ConnectionIO[Option[String]] = {
+    persistence.fetchOption[FindLastSeenSectionParams, String](
+      Q.findLastSeenSection, (user.id, libraryName)
+    )
+  }
+
   override def deleteAll(): ConnectionIO[Int] = {
     persistence.update(Q.deleteAll)
   }
@@ -95,6 +103,7 @@ object UserProgressRepository {
   type InsertParams = (Long, String, String, String, Int, ExerciseType, List[String], Boolean)
   type FindEvaluationByVersionParams = (Long, String, String, String, Int)
   type FindEvaluationsBySectionParams = (Long, String, String)
+  type FindLastSeenSectionParams = (Long, String)
   type CompletedCountParams = (Long, String, String)
 
   implicit def instance(implicit persistence: PersistenceModule): UserProgressRepository = new UserProgressDoobieRepository
