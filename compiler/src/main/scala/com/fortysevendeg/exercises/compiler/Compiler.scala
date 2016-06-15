@@ -114,20 +114,24 @@ case class Compiler() {
             avatarUrl = commit.avatar_url,
             authorUrl = commit.author_url
           ))
-        case Xor.Left(ex) => throw ex
+        case Xor.Left(ex) ⇒ throw ex
       }
     }
 
     def maybeMakeSectionInfo(
       library: exercise.Library,
-      symbol: ClassSymbol
+      symbol:  ClassSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)
-      val filePath = extracted.symbolPaths.get(symbol.toString)
+      val filePath = extracted.symbolPaths.get(symbol.toString).filterNot(_.isEmpty)
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
           .leftMap(enhanceDocError(symbolPath))
-        contributions = filePath.fold(List.empty[ContributionInfo])(path => fetchContributions(library.owner, library.repository, path))
+
+        contributions = filePath.fold(
+          List.empty[ContributionInfo]
+        )(path ⇒ fetchContributions(library.owner, library.repository, path))
+
         exercises ← symbol.toType.decls.toList
           .filter(symbol ⇒
             symbol.isPublic && !symbol.isSynthetic &&
