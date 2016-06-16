@@ -5,6 +5,7 @@
 
 package com.fortysevendeg.exercises.controllers
 
+import com.fortysevendeg.exercises.Secure
 import cats.data.Xor
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free.UserOps
@@ -38,15 +39,15 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
   }
 
   def AuthenticatedUser(block: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task]) =
-    AuthenticationAction.async { request ⇒
+    Secure(AuthenticationAction.async { request ⇒
       userOps.getUserByLogin(request.userId).runFuture flatMap {
         case Xor.Right(Some(user)) ⇒ block(user)
         case _                     ⇒ Future.successful(BadRequest("User login not found"))
       }
-    }
+    })
 
   def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(block: (T, User) ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task], format: Reads[T]) =
-    AuthenticationAction.async(bodyParser) { request ⇒
+    Secure(AuthenticationAction.async(bodyParser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
           userOps.getUserByLogin(request.userId).runFuture flatMap {
@@ -56,5 +57,5 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
         case JsError(errors) ⇒
           Future.successful(BadRequest(JsError.toJson(errors)))
       }
-    }
+    })
 }
