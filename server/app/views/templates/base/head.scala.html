@@ -1,4 +1,5 @@
 @import play.api.Play.current
+@import com.fortysevendeg.exercises.utils.StringUtils._
 @(title: String, description: String )(implicit request: RequestHeader)
 
 
@@ -7,17 +8,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")" />
 
-<title>@title</title>
-<meta name="description" content="@description">
+<title>@title.humanizeUnderscore</title>
+<meta name="description" content="@description.humanizeUnderscore">
 <meta name="author" content="47 Degrees">
-<meta property="og:image" content="@routes.Assets.at("images/poster.png")"/>
-<meta property="og:title" content="@title"/>
+<meta property="og:image" content="@current.configuration.getString("application.url").getOrElse("https://www.scala-exercises.org")@routes.Assets.at("images/poster.png")"/>
+<meta property="og:title" content="@title.humanizeUnderscore"/>
 <meta property="og:site_name" content="@current.configuration.getString("application.name").getOrElse("Scala Exercises")"/>
-<meta property="og:url" content="@current.configuration.getString("application.url").getOrElse("https://www.scala-exercises.org")"/>
+<meta property="og:url" content="@current.configuration.getString("application.url").getOrElse("https://www.scala-exercises.org")@request.path"/>
 <meta property="og:type" content="website" />
-<meta property="og:description" content="@description"/>
+<meta property="og:description" content="@description.humanizeUnderscore"/>
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="@routes.Assets.at("images/poster.png")" />
+<meta name="twitter:image" content="@current.configuration.getString("application.url").getOrElse("https://www.scala-exercises.org")@routes.Assets.at("images/poster.png")" />
 <meta name="twitter:site" content="@current.configuration.getString("application.twitter").getOrElse("@scala-exercises")">
 
   <!-- CSS -->
