@@ -14,8 +14,12 @@ import play.api.Logger
 case class Secure[A](action: Action[A]) extends Action[A] {
   def apply(request: Request[A]): Future[Result] = {
     if (Play.isProd && !request.secure) {
-      val secureUrl = s"https://${request.domain}:443${request.uri}"
-      Future.successful(Results.MovedPermanently(secureUrl))
+      val secureUrl = s"https://${request.domain}${request.uri}"
+      Future.successful(
+        Results.MovedPermanently(secureUrl).withHeaders(
+          "Strict-Transport-Security" → "max-age=31536000" // tells browsers to request the site URLs through HTTPS
+        )
+      )
     } else {
       action(request)
     }
