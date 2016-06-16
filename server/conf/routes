@@ -9,7 +9,6 @@ GET /loaderio-397122d360fee8afca6b77f62c4853ed/ com.fortysevendeg.exercises.cont
 # Home page
 GET / com.fortysevendeg.exercises.controllers.ApplicationController.index
 
-GET /users/       com.fortysevendeg.exercises.controllers.UserController.all
 GET /users/:login com.fortysevendeg.exercises.controllers.UserController.byLogin(login: String)
 
 POST /exercises/sections/:libraryName/:sectionName/evaluate com.fortysevendeg.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)

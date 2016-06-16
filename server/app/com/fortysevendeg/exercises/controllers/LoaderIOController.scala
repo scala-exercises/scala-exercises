@@ -5,6 +5,7 @@
 
 package com.fortysevendeg.exercises.controllers
 
+import com.fortysevendeg.exercises.Secure
 import play.api.{ Play, Application }
 import play.api.mvc._
 
@@ -12,10 +13,10 @@ class LoaderIOController extends Controller {
 
   implicit def application: Application = Play.current
 
-  def verificationToken = Action {
+  def verificationToken = Secure(Action {
     application
       .configuration
       .getString("loaderio.verificationToken", None) map (Ok(_)) getOrElse NotFound
-  }
+  })
 
 }
