@@ -89,13 +89,13 @@ dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
 ## Project structure
 
 The project is split between a few directories, namely:
-`server`, which contains the server code written using Play,
-`client`, which contains ScalaJS code for a frontend part of the application,
-`shared`, where code shared between the server and the client exists,
-`definitions`, containing definitions used by other parts of the application and libraries containing exercises,
-`sbt-exercise` is a sbt plugin which locates exercise libraries and processes their source code,
-`compiler` for compiling exercises,
-`runtime` for runtime evaluation of exercises.
+- `server`, which contains the server code written using Play,
+- `client`, which contains ScalaJS code for a frontend part of the application,
+- `shared`, where code shared between the server and the client exists,
+- `definitions`, containing definitions used by other parts of the application and libraries containing exercises,
+- `sbt-exercise` is a sbt plugin which locates exercise libraries and processes their source code,
+- `compiler` for compiling exercises,
+- `runtime` for runtime evaluation of exercises.
 
 The `compiler` and `runtime` directories allow exercises to be defined using 
 regular Scala which is compiled into an exercise library.
