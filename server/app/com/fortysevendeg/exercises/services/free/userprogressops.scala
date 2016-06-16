@@ -22,6 +22,11 @@ import scalaz.concurrent.Task
   */
 sealed trait UserProgressOp[A]
 
+final case class GetLastSeenSection(
+  user:    User,
+  library: String
+) extends UserProgressOp[Option[String]]
+
 final case class GetExerciseEvaluations(
   user:    User,
   library: String,
@@ -49,6 +54,9 @@ class UserProgressOps[F[_]](
 
   def getExerciseEvaluations(user: User, library: String, section: String): Free[F, List[UserProgress]] =
     Free.inject[UserProgressOp, F](GetExerciseEvaluations(user, library, section))
+
+  def getLastSeenSection(user: User, library: String): Free[F, Option[String]] =
+    Free.inject[UserProgressOp, F](GetLastSeenSection(user, library))
 
   def getSolvedExerciseCount(user: User, library: String, section: String): Free[F, Int] = for {
     tried ← getExerciseEvaluations(user, library, section)
@@ -162,6 +170,7 @@ class UserProgressOps[F[_]](
       totalExercises = totalExercises
     )
   }
+
 }
 
 /** Default implicit based DI factory from which instances of the UserOps may be obtained

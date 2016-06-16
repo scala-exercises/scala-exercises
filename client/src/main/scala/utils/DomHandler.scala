@@ -39,7 +39,9 @@ object DomHandler {
   /** Converts emoji markup into inline emoji images.
     */
   def emojify: IO[Unit] = io {
-    js.Dynamic.global.emojify.run()
+    $(".modal-body").each((_: Any, el: dom.Element) ⇒ {
+      js.Dynamic.global.emojify.run(el)
+    })
   }
 
   /** Set the class attribute to an exercise node
@@ -84,19 +86,6 @@ object DomHandler {
           case _             ⇒ onkeyup(methodName, inputsValues)
         }).map(_.some))
       } yield ()).value.unsafePerformIO()
-    })
-  }
-
-  /** Assigns behaviors to the blur event for inputs elements.
-    */
-  def onInputBlur(onBlur: String ⇒ IO[Unit]): IO[Unit] = for {
-    inputs ← allInputs
-    _ ← inputs.map(attachBlurHandler(_, onBlur)).sequence
-  } yield ()
-
-  def attachBlurHandler(input: HTMLInputElement, onBlur: String ⇒ IO[Unit]): IO[Unit] = io {
-    $(input).blur((e: dom.Event) ⇒ {
-      methodParent(input) foreach (onBlur(_).unsafePerformIO())
     })
   }
 

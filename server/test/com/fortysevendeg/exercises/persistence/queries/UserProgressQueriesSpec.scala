@@ -33,4 +33,5 @@ class UserProgressQueriesSpec
   check(Query[Long, UserProgress](Q.findById))
   check(Query[FindEvaluationByVersionParams, UserProgress](Q.findEvaluationByVersion))
   check(Query[FindEvaluationsBySectionParams, UserProgress](Q.findEvaluationsBySection))
+  check(Query[FindLastSeenSectionParams, Option[String]](Q.findLastSeenSection))
 }

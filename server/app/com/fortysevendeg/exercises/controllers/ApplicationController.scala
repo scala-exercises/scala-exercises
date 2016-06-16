@@ -52,14 +52,27 @@ class ApplicationController(
     ops.runFuture map {
       case Xor.Right((libraries, user, Some(token), progress, _)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress))
       case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url))).withSession("oauth-state" → authorize.state)
+      case Xor.Right((libraries, Some(user), None, _, _)) ⇒ InternalServerError("Session token not found")
       case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
     }
   }
 
   def library(libraryName: String) = Action.async { implicit request ⇒
-    exerciseOps.getLibraries.map(_.find(_.name == libraryName)).runFuture map {
-      case Xor.Right(Some(library)) ⇒ Redirect(s"$libraryName/${library.sectionNames.head}")
-      case _                        ⇒ Ok("Library not found")
+    val ops = for {
+      library ← exerciseOps.getLibrary(libraryName)
+      user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+      section ← user.fold(
+        Free.pure(None): Free[ExercisesApp, Option[String]]
+      )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
+    } yield (library, user, section)
+
+    ops.runFuture map {
+      case Xor.Right((Some(library), _, Some(sectionName))) ⇒
+        Redirect(s"$libraryName/$sectionName")
+      case Xor.Right((Some(library), _, _)) ⇒
+        Redirect(s"$libraryName/${library.sectionNames.head}")
+      case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
+      case Xor.Left(ex)            ⇒ InternalServerError(ex.getMessage)
     }
   }
 
@@ -99,6 +112,7 @@ class ApplicationController(
       }
       case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
       case Xor.Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
+      case Xor.Right((_, _, _, _, _, _, _))          ⇒ InternalServerError("Library and section not found")
       case Xor.Left(ex)                              ⇒ InternalServerError(ex.getMessage)
     }
   }
