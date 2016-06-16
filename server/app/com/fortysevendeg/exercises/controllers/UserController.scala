@@ -6,6 +6,7 @@
 package com.fortysevendeg.exercises.controllers
 
 import cats.data.Xor
+import com.fortysevendeg.exercises.Secure
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.services.free.UserOps
 import com.fortysevendeg.exercises.services.interpreters.ProdInterpreters
@@ -29,14 +30,7 @@ class UserController(
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
-  def all = Action.async { implicit request ⇒
-    userOps.getUsers.runFuture map {
-      case Xor.Right(users) ⇒ Ok(write(users))
-      case Xor.Left(error)  ⇒ InternalServerError(error.getMessage)
-    }
-  }
-
-  def byLogin(login: String) = Action.async { implicit request ⇒
+  def byLogin(login: String) = Secure(Action.async { implicit request ⇒
     userOps.getUserByLogin(login).runFuture map {
       case Xor.Right(user) ⇒ user match {
         case Some(u) ⇒ Ok(write(u))
@@ -44,5 +38,5 @@ class UserController(
       }
       case Xor.Left(error) ⇒ InternalServerError(error.getMessage)
     }
-  }
+  })
 }

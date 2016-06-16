@@ -8,6 +8,7 @@ package com.fortysevendeg.exercises.controllers
 import cats.data.Xor
 import cats.std.option._
 import cats.syntax.cartesian._
+import com.fortysevendeg.exercises.Secure
 import com.fortysevendeg.exercises.app._
 import com.fortysevendeg.exercises.persistence.domain.UserCreation
 import com.fortysevendeg.exercises.services.free.{ GithubOps, UserOps }
@@ -28,7 +29,7 @@ class OAuthController(
     T:         Transactor[Task]
 ) extends Controller with ProdInterpreters {
 
-  def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Action.async { implicit request ⇒
+  def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) = Secure(Action.async { implicit request ⇒
 
     (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
       .fold(Future.successful(BadRequest("Missing `code` or `state`"))) {
@@ -40,10 +41,9 @@ class OAuthController(
             }
           } else Future.successful(BadRequest("Invalid github login"))
       }
+  })
 
-  }
-
-  def success() = Action.async { implicit request ⇒
+  def success() = Secure(Action.async { implicit request ⇒
     request.session.get("oauth-token").fold(Future.successful(Unauthorized("Missing OAuth token"))) { accessToken ⇒
       val ops = for {
         ghuser ← githubOps.getAuthUser(Some(accessToken))
@@ -59,8 +59,8 @@ class OAuthController(
       }
     }
 
-  }
+  })
 
-  def logout() = Action(Redirect("/").withNewSession)
+  def logout() = Secure(Action(Redirect("/").withNewSession))
 
 }

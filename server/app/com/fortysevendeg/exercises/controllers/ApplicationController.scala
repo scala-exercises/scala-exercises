@@ -5,6 +5,8 @@
 
 package com.fortysevendeg.exercises.controllers
 
+import com.fortysevendeg.exercises.Secure
+
 import java.util.UUID
 import cats.free.Free
 import com.fortysevendeg.github4s.Github
@@ -40,7 +42,7 @@ class ApplicationController(
 
   lazy val topLibraries: List[String] = application.configuration.getStringList("exercises.top_libraries") map (_.asScala.toList) getOrElse Nil
 
-  def index = Action.async { implicit request ⇒
+  def index = Secure(Action.async { implicit request ⇒
 
     val ops = for {
       authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
@@ -55,9 +57,9 @@ class ApplicationController(
       case Xor.Right((libraries, Some(user), None, _, _)) ⇒ InternalServerError("Session token not found")
       case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
     }
-  }
+  })
 
-  def library(libraryName: String) = Action.async { implicit request ⇒
+  def library(libraryName: String) = Secure(Action.async { implicit request ⇒
     val ops = for {
       library ← exerciseOps.getLibrary(libraryName)
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
@@ -74,9 +76,9 @@ class ApplicationController(
       case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
       case Xor.Left(ex)            ⇒ InternalServerError(ex.getMessage)
     }
-  }
+  })
 
-  def section(libraryName: String, sectionName: String) = Action.async { implicit request ⇒
+  def section(libraryName: String, sectionName: String) = Secure(Action.async { implicit request ⇒
     val ops = for {
       authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
       library ← exerciseOps.getLibrary(libraryName)
@@ -115,9 +117,9 @@ class ApplicationController(
       case Xor.Right((_, _, _, _, _, _, _))          ⇒ InternalServerError("Library and section not found")
       case Xor.Left(ex)                              ⇒ InternalServerError(ex.getMessage)
     }
-  }
+  })
 
-  def javascriptRoutes = Action { implicit request ⇒
+  def javascriptRoutes = Secure(Action { implicit request ⇒
     import routes.javascript._
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
@@ -125,7 +127,7 @@ class ApplicationController(
         UserProgressController.fetchUserProgressBySection
       )
     ).as("text/javascript")
-  }
+  })
 
   private def toContributors(contributions: List[Contribution]): List[Contributor] = contributions
     .groupBy(c ⇒ (c.author, c.authorUrl, c.avatarUrl))
