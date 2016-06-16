@@ -132,5 +132,6 @@ object UserProgressQueries {
       |WHERE userId = ?
       |  AND libraryName LIKE ?
       |ORDER BY "updatedAt" DESC
+      |LIMIT 1;
   """.stripMargin
 }
