@@ -236,10 +236,10 @@ lazy val gpgFolder = sys.env.getOrElse("SE_GPG_FOLDER", ".")
 
 lazy val publishSettings = Seq(
   organizationName := "Scala Exercises",
-  organizationHomepage := Some(new URL("http://scala-exercises.org")),
+  organizationHomepage := Some(new URL("https://scala-exercises.org")),
   startYear := Some(2016),
   description := "Scala Exercises: The path to enlightenment",
-  homepage := Some(url("http://scala-exercises.org")),
+  homepage := Some(url("https://scala-exercises.org")),
   pgpPassphrase := Some(sys.env.getOrElse("SE_GPG_PASSPHRASE", "").toCharArray),
   pgpPublicRing := file(s"$gpgFolder/pubring.gpg"),
   pgpSecretRing := file(s"$gpgFolder/secring.gpg"),
