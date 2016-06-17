@@ -30,3 +30,4 @@ script:
   - sbt 'definitions/test'
   - sbt 'runtime/test'
   - sbt 'compiler/test'
+  - sbt 'sbt-exercise/scripted'

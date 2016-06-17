@@ -226,7 +226,9 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedLaunchOpts := { scriptedLaunchOpts.value ++
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
-    scriptedBufferLog := false
+    scriptedBufferLog := false,
+    // Publish definitions before running scripted
+    scriptedDependencies <<= (publishLocal in definitions, publishLocal in runtime, scriptedDependencies) map { (_, _, _) => Unit }
   )
   .enablePlugins(BuildInfoPlugin)
 
@@ -286,4 +288,3 @@ lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 // Aliases
 
 addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
-

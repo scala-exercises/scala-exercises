@@ -1,3 +1,5 @@
+# check that scalariform formatting is performed on on exercise code
+
 $ copy src/main/scala/sample.scala sample.scala.original
 > package
 $ newer src/main/scala/sample.scala sample.scala.original
