@@ -61,10 +61,9 @@ Edit the `site/server/conf/application.dev.conf` configuration file with your da
 
 ### Running the app
 
-Go into the `site` directory, run `sbt run`
+Go into the project's root directory, run `sbt run`
 
 ```sh
-$ cd site/
 $ sbt run
 ```
 
@@ -89,16 +88,21 @@ dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
 
 ## Project structure
 
-The project has two main directories, `core` and `site`, each with a SBT project.
+The project is split between a few directories, namely:
+- `server`, which contains the server code written using Play,
+- `client`, which contains ScalaJS code for a frontend part of the application,
+- `shared`, where code shared between the server and the client exists,
+- `definitions`, containing definitions used by other parts of the application and libraries containing exercises,
+- `sbt-exercise` is a sbt plugin which locates exercise libraries and processes their source code,
+- `compiler` for compiling exercises,
+- `runtime` for runtime evaluation of exercises.
 
-The `core` directory contains an exercise runtime and exercise compiler. These allow
-exercises to be defined using regular Scala which is compiled into an exercise
-library.
+The `compiler` and `runtime` directories allow exercises to be defined using 
+regular Scala which is compiled into an exercise library.
 
-The `site` directory contains the Play website as well as some pre-packaged
-exercise content. These items depend on components in `core`.
+The `site`, `client` and `shared` directories contain the website. These items depend on components in `compiler` and `runtime`.
 
-At the moment, `site` and `core` are coupled tightly. Once this project
+At the moment, those subprojects are coupled tightly. Once this project
 is a bit more stable the exercise compiler plugin will be published and it will
 be easy to create new exercises for existing Scala libraries.
 
