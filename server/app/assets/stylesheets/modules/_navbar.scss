@@ -23,7 +23,7 @@
 .navbar-nav {
     li {
         > a {
-            padding-left: 54px;
+            padding-left: 15px;
             @media (min-width: $screen-sm-min) {
                 padding-left: 15px;
             }
@@ -45,6 +45,9 @@
                     top: 17px;
                 }
             }
+        }
+        >.dropdown-toggle {
+            padding-left: 54px;
         }
     }
 }
