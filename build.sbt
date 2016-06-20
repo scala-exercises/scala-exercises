@@ -259,9 +259,9 @@ lazy val publishSettings = Seq(
   pomExtra :=
       <developers>
         <developer>
-          <id>raulraja</id>
-          <name>Raul Raja</name>
-          <email>raul@47deg.com</email>
+          <id>andyscott</id>
+          <name>Andy Scott</name>
+          <email>andy.s@47deg.com</email>
         </developer>
         <developer>
           <id>dialelo</id>
@@ -277,6 +277,11 @@ lazy val publishSettings = Seq(
           <id>MasseGuillaume</id>
           <name>Guillaume Massé</name>
           <email>masgui@gmail.com</email>
+        </developer>
+        <developer>
+          <id>raulraja</id>
+          <name>Raul Raja</name>
+          <email>raul@47deg.com</email>
         </developer>
       </developers>
 )
