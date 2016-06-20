@@ -269,14 +269,14 @@ lazy val publishSettings = Seq(
           <email>al.g.g@47deg.com</email>
         </developer>
         <developer>
-          <id>rafaparadela</id>
-          <name>Rafa Paradela</name>
-          <email>rafa.p@47deg.com</email>
-        </developer>
-        <developer>
           <id>MasseGuillaume</id>
           <name>Guillaume Massé</name>
           <email>masgui@gmail.com</email>
+        </developer>
+        <developer>
+          <id>rafaparadela</id>
+          <name>Rafa Paradela</name>
+          <email>rafa.p@47deg.com</email>
         </developer>
         <developer>
           <id>raulraja</id>
