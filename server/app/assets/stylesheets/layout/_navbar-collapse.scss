@@ -1,0 +1,50 @@
+// Sidebar
+// -----------------------------------------------------
+
+
+#navbar-sections {
+
+    .actives {
+        padding: 4px 0;
+
+        span {
+            position: absolute;
+            left: 15px;
+            top: 20px;
+            width: 8px;
+            height: 8px;
+            background: #E0E0E0;
+            @include border-radius (50px);
+            z-index: 30;
+        }
+
+        .bullet-active {
+            background: $gray;
+        }
+        a {
+            display: inline-block;
+            color: $gray-lighter;
+            padding-left: 30px;
+        }
+        &.active,
+        &:hover,
+        &:focus,
+        &:active {
+            a {
+                color: #333;
+            }
+        }
+        &:first-child {
+            padding: 0;
+        }
+
+        @media (min-width: $screen-sm-min) {
+            display: none;
+        }
+    }
+    .current {
+        background-color: #FFFFFF;
+    }
+
+    
+}
