@@ -7,11 +7,12 @@ package com.fortysevendeg.exercises.services.interpreters
 
 import com.fortysevendeg.exercises.app.C01
 import com.fortysevendeg.exercises.app.C02
-import com.fortysevendeg.github4s.GithubResponses.{ GHResult, GHResponse }
-import com.fortysevendeg.github4s.app._
-import com.fortysevendeg.github4s.Github
-import com.fortysevendeg.github4s.Github._
-import com.fortysevendeg.github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters }
+import github4s.app.GitHub4s
+import github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters }
+import github4s.Github
+import Github._
+import github4s.implicits._
+import github4s.GithubResponses.{ GHResult, GHResponse }
 import cats._
 import cats.data.Xor
 import cats.free.Free
@@ -99,13 +100,14 @@ trait Interpreters[M[_]] {
 
     def apply[A](fa: GithubOp[A]): M[A] = {
 
-      object ProdGHInterpreters extends GithubInterpreters[M]
-      implicit val I: GitHub4s ~> M = ProdGHInterpreters.interpreters
+      object ProdGHInterpreters extends GithubInterpreters
+      implicit val I: GitHub4s ~> M = ProdGHInterpreters.interpreters[M]
 
       fa match {
         case GetAuthorizeUrl(client_id, redirect_uri, scopes) ⇒ ghResponseToEntity(Github().auth.authorizeUrl(client_id, redirect_uri, scopes).exec[M])
         case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ ghResponseToEntity(Github().auth.getAccessToken(client_id, client_secret, code, redirect_uri, state).exec[M])
         case GetAuthUser(accessToken) ⇒ ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])
+        case GetRepository(owner, repo) ⇒ ghResponseToEntity(Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M])
       }
     }
 

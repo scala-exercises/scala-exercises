@@ -2,7 +2,7 @@ package com.fortysevendeg.exercises.services.free
 
 import cats.free.Free
 import cats.free.Inject
-import com.fortysevendeg.github4s.free.domain.{ Commit, User, OAuthToken, Authorize }
+import github4s.free.domain.{ Repository, User, OAuthToken, Authorize }
 
 /** GitHub Ops GADT
   */
@@ -23,6 +23,8 @@ final case class GetAccessToken(
 ) extends GithubOp[OAuthToken]
 
 final case class GetAuthUser(accessToken: Option[String] = None) extends GithubOp[User]
+
+final case class GetRepository(owner: String, repo: String) extends GithubOp[Repository]
 
 /** Exposes GitHub operations as a Free monadic algebra that may be combined with other Algebras via
   * Coproduct
@@ -46,6 +48,8 @@ class GithubOps[F[_]](implicit I: Inject[GithubOp, F]) {
     Free.inject[GithubOp, F](GetAccessToken(clientId, clienteSecret, code, redirectUri, state))
 
   def getAuthUser(accessToken: Option[String] = None): Free[F, User] = Free.inject[GithubOp, F](GetAuthUser(accessToken))
+
+  def getRepository(owner: String, repo: String): Free[F, Repository] = Free.inject[GithubOp, F](GetRepository(owner, repo))
 
 }
 
