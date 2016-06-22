@@ -5,6 +5,27 @@
     margin-bottom: 0;
     //background: linear-gradient(rgba($gray-darker, 1), rgba($gray-darker, 0.7)), url(../img/jumbotron_background.jpg) no-repeat top center;
     background: linear-gradient(rgba($gray-darker, 1), rgba($gray-base, 0.4));
+
+    .github-details {
+        width: 300px;
+        margin: 0 auto;
+
+        a {
+            &:hover,
+            &:focus,
+            &:active {
+                text-decoration: none;
+                color: $sidebar-link-color-hover;
+            }
+
+            h3 {
+                color: $gray;
+            }
+        }
+        
+
+    }
+
     @include image-size;
     @media screen and (min-width: $screen-sm-min) {
         padding-top: ($jumbotron-padding * 2);

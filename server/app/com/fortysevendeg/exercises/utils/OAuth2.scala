@@ -7,7 +7,6 @@ package com.fortysevendeg.exercises.utils
 
 import play.api.mvc.{ Request, AnyContent }
 import play.api.{ Application, Play }
-import com.fortysevendeg.exercises.controllers.OAuthController
 
 object OAuth2 {
 
@@ -15,6 +14,8 @@ object OAuth2 {
 
   lazy val githubAuthId = application.configuration.getString("github.client.id").getOrElse("")
   lazy val githubAuthSecret = application.configuration.getString("github.client.secret").getOrElse("")
+  lazy val githubSiteOwner = application.configuration.getString("github.site.owner").getOrElse("")
+  lazy val githubSiteRepo = application.configuration.getString("github.site.repo").getOrElse("")
   def callbackUrl(implicit req: Request[AnyContent]) = com.fortysevendeg.exercises.controllers.routes.OAuthController.callback(None, None).absoluteURL()
   val successUrl = com.fortysevendeg.exercises.controllers.routes.OAuthController.success()
 

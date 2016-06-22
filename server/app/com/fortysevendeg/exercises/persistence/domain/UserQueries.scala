@@ -6,7 +6,7 @@
 package com.fortysevendeg.exercises.persistence.domain
 
 import cats.data.Xor
-import com.fortysevendeg.github4s.free.domain.{ User ⇒ GHUser }
+import github4s.free.domain.{ User ⇒ GHUser }
 import shared.User
 import shapeless._
 import ops.record._

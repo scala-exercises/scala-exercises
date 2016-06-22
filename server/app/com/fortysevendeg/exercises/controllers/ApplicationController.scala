@@ -9,7 +9,6 @@ import com.fortysevendeg.exercises.Secure
 
 import java.util.UUID
 import cats.free.Free
-import com.fortysevendeg.github4s.Github
 import shared.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
 
@@ -49,12 +48,13 @@ class ApplicationController(
       libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       progress ← userProgressOps.fetchMaybeUserProgress(user)
-    } yield (libraries, user, request.session.get("oauth-token"), progress, authorize)
+      repo ← githubOps.getRepository(OAuth2.githubSiteOwner, OAuth2.githubSiteRepo)
+    } yield (libraries, user, request.session.get("oauth-token"), progress, authorize, repo)
 
     ops.runFuture map {
-      case Xor.Right((libraries, user, Some(token), progress, _)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress))
-      case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url))).withSession("oauth-state" → authorize.state)
-      case Xor.Right((libraries, Some(user), None, _, _)) ⇒ InternalServerError("Session token not found")
+      case Xor.Right((libraries, user, Some(token), progress, _, repo)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
+      case Xor.Right((libraries, None, None, progress, authorize, repo)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
+      case Xor.Right((libraries, Some(user), None, _, _, _)) ⇒ InternalServerError("Session token not found")
       case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
     }
   })
