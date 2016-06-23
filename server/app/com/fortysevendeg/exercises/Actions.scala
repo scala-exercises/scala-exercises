@@ -15,10 +15,10 @@ case class Secure[A](action: Action[A]) extends Action[A] {
   def apply(request: Request[A]): Future[Result] = {
 
     val inWWW = request.domain.startsWith("www.")
+    val previewApp = request.domain.startsWith("scala-exercises-pr")
 
     val redirect =
-      if (Play.isProd && (!request.secure || !inWWW)) true
-      else false
+      (!previewApp && Play.isProd && (!request.secure || !inWWW))
 
     if (redirect) {
       val secureUrl =
