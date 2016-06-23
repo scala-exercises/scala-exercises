@@ -18,20 +18,19 @@ import scala.tools.nsc.doc.base.comment._
 import scala.xml.NodeSeq
 import scala.xml.Xhtml
 
-import scalariform.formatter.{ ScalaFormatter }
-
 import cats.{ Id, Eq, Functor }
 import cats.data.Xor
+
+import com.fortysevendeg.exercises.formatting._
 
 /** Facade for the different layers of comment processing. */
 object Comments {
   import CommentZed._
   import CommentParsing.ParseK
 
-  /**
-   * Type capturing the types for the name, description,
-   * and explanation fields.
-   */
+  /** Type capturing the types for the name, description,
+    * and explanation fields.
+    */
   type Mode = {
     type Name[A]
     type Description[A]
@@ -306,26 +305,6 @@ private[compiler] object CommentRendering {
       <dl>{ items map { case (t, d) ⇒ <dt>{ renderInline(t) }</dt><dd>{ renderBlock(d) }</dd> } }</dl>
     case HorizontalRule() ⇒
       <hr/>
-  }
-
-  private[this] def formatCode(code: String): String = {
-    def wrap(code: String): String = s"""// format: OFF
-      |object Wrapper {
-      |  // format: ON
-      |  $code
-      |  // format: OFF
-      |}""".stripMargin
-
-    def unwrap(code: String): String =
-      code.split("\n")
-        .drop(3)
-        .dropRight(2)
-        .map(_.drop(2)).mkString("\n")
-
-    Xor.catchNonFatal(ScalaFormatter.format(wrap(code))) match {
-      case Xor.Right(result) ⇒ unwrap(result)
-      case _ ⇒ code
-    }
   }
 
   private[this] def renderListItems(items: Seq[Block]) =
