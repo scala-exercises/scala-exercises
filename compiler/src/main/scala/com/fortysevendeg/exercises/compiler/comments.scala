@@ -311,9 +311,9 @@ private[compiler] object CommentRendering {
   private[this] def formatCode(code: String): String = {
     def wrap(code: String): String = s"""// format: OFF
       |object Wrapper {
-      |// format: ON
-      |$code
-      |// format: OFF
+      |  // format: ON
+      |  $code
+      |  // format: OFF
       |}""".stripMargin
 
     def unwrap(code: String): String =
