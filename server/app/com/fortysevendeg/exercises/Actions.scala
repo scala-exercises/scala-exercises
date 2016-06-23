@@ -17,8 +17,7 @@ case class Secure[A](action: Action[A]) extends Action[A] {
     val inWWW = request.domain.startsWith("www.")
 
     val redirect =
-      if (Play.isProd && !request.secure) true
-      else if (Play.isProd && !inWWW) true
+      if (Play.isProd && (!request.secure || !inWWW)) true
       else false
 
     if (redirect) {
