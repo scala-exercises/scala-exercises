@@ -13,8 +13,18 @@ import play.api.Logger
 
 case class Secure[A](action: Action[A]) extends Action[A] {
   def apply(request: Request[A]): Future[Result] = {
-    if (Play.isProd && !request.secure) {
-      val secureUrl = s"https://${request.domain}${request.uri}"
+
+    val inWWW = request.domain.startsWith("www.")
+    val previewApp = request.domain.startsWith("scala-exercises-pr")
+
+    val redirect =
+      (!previewApp && Play.isProd && (!request.secure || !inWWW))
+
+    if (redirect) {
+      val secureUrl =
+        if (inWWW) s"https://${request.domain}${request.uri}"
+        else s"https://www.${request.domain}${request.uri}"
+
       Future.successful(
         Results.MovedPermanently(secureUrl).withHeaders(
           "Strict-Transport-Security" → "max-age=31536000" // tells browsers to request the site URLs through HTTPS
