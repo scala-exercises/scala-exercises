@@ -6,10 +6,10 @@
 <html lang="en">
   <head>
     @templates.base.head(s"${library.name} | ${section.name}", library.description)
+    <!-- CSS -->
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("lib/highlightjs/styles/atelier-savanna-dark.css")" />
   </head>
   <body data-library="@library.name" data-section="@section.name">
-
-
     <header class="navbar navbar-inverse navbar-fixed-top" style="background-color: @library.color ;" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
