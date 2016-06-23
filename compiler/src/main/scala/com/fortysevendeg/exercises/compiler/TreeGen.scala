@@ -8,11 +8,12 @@ package compiler
 
 import scala.reflect.api.Universe
 
-/**
- * This is responsible for generating exercise code. It generates
- * scala compiler trees, which can be evaluated or rendered to
- * source code.
- */
+import com.fortysevendeg.exercises.formatting._
+
+/** This is responsible for generating exercise code. It generates
+  * scala compiler trees, which can be evaluated or rendered to
+  * source code.
+  */
 case class TreeGen[U <: Universe](
     u: U = scala.reflect.runtime.universe
 ) {
@@ -30,7 +31,7 @@ case class TreeGen[U <: Universe](
         object $term extends Exercise {
           override val name             = $name
           override val description      = $description
-          override val code             = $code
+          override val code             = ${formatCode(code)}
           override val packageName      = $packageName
           override val qualifiedMethod  = $qualifiedMethod
           override val imports          = $imports
