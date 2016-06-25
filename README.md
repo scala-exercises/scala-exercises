@@ -86,6 +86,9 @@ addSbtPlugin("org.ensime" % "ensime-sbt" % "0.5.1")
 dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
 ```
 
+In order to avoid the error related to `Github API rate limit exceeded` during compilation of exercises, we recommend setting locally an environment variable called `GITHUB_TOKEN` with a personal token which you can create [here](https://github.com/settings/tokens/new).
+
+
 ## Project structure
 
 The project is split between a few directories, namely:
