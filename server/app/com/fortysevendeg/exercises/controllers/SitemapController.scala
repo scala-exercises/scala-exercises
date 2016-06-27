@@ -34,12 +34,7 @@ class SitemapController(
 ) extends Controller with ProdInterpreters {
 
   def sitemap = Secure(Action.async { implicit request ⇒
-
-    val ops = for {
-      libraries ← exerciseOps.getLibraries
-    } yield libraries
-
-    ops.runFuture map {
+    exerciseOps.getLibraries.runFuture map {
       case Xor.Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
       case Xor.Left(ex)         ⇒ InternalServerError(ex.getMessage)
     }
