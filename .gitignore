@@ -36,3 +36,6 @@ bin/
 
 # OSX
 .DS_Store
+
+# PGP keys
+*.gpg

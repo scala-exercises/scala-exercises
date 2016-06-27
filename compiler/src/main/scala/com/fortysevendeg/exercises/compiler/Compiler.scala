@@ -218,6 +218,7 @@ case class Compiler() {
           val (exerciseTerms, exerciseTrees) =
             sectionInfo.exercises.map { exerciseInfo ⇒
               treeGen.makeExercise(
+                libraryName = libraryInfo.comment.name,
                 name = internal.unapplyRawName(exerciseInfo.symbol.name),
                 description = exerciseInfo.comment.description,
                 code = exerciseInfo.code,
@@ -243,6 +244,7 @@ case class Compiler() {
 
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
+              libraryName = libraryInfo.comment.name,
               name = sectionInfo.comment.name,
               description = sectionInfo.comment.description,
               exerciseTerms = exerciseTerms,

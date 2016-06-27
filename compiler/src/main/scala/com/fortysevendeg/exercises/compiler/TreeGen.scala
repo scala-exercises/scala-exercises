@@ -20,13 +20,16 @@ case class TreeGen[U <: Universe](
   import u._
 
   def makeExercise(
-    name: String, description: Option[String],
-    code: String, qualifiedMethod: String,
-    imports: List[String],
-    explanation: Option[String],
-    packageName: String
+    libraryName:     String,
+    name:            String,
+    description:     Option[String],
+    code:            String,
+    qualifiedMethod: String,
+    imports:         List[String],
+    explanation:     Option[String],
+    packageName:     String
   ) = {
-    val term = makeTermName("Exercise", name)
+    val term = makeTermName(s"Exercise_${libraryName}_", name)
     term → q"""
         object $term extends Exercise {
           override val name             = $name
@@ -40,16 +43,16 @@ case class TreeGen[U <: Universe](
   }
 
   def makeContribution(
-    sha: String,
-    message: String,
+    sha:       String,
+    message:   String,
     timestamp: String,
-    url: String,
-    author: String,
+    url:       String,
+    author:    String,
     authorUrl: String,
     avatarUrl: String
   ) = {
     val term = makeTermName("Contribution", sha)
-    term -> q"""
+    term → q"""
     object $term extends Contribution {
       override def sha = $sha
       override def message = $message
@@ -63,13 +66,15 @@ case class TreeGen[U <: Universe](
   }
 
   def makeSection(
-    name: String, description: Option[String],
-    exerciseTerms: List[TermName],
-    imports: List[String],
-    path: Option[String] = None,
+    libraryName:       String,
+    name:              String,
+    description:       Option[String],
+    exerciseTerms:     List[TermName],
+    imports:           List[String],
+    path:              Option[String] = None,
     contributionTerms: List[TermName]
   ) = {
-    val term = makeTermName("Section", name)
+    val term = makeTermName(s"Section_${libraryName}_", name)
     term → q"""
         object $term extends Section {
           override val name         = $name
@@ -99,7 +104,7 @@ case class TreeGen[U <: Universe](
 
   def makePackage(
     packageName: String,
-    trees: List[Tree]
+    trees:       List[Tree]
   ) = q"""
         package ${makeRefTree(packageName)} {
           import com.fortysevendeg.exercises.Exercise
@@ -121,7 +126,7 @@ case class TreeGen[U <: Universe](
 
   private def makeRefTree(path: String): RefTree = {
     def go(rem: List[String]): RefTree = rem match {
-      case head :: Nil ⇒ Ident(TermName(head))
+      case head :: Nil  ⇒ Ident(TermName(head))
       case head :: tail ⇒ Select(go(tail), TermName(head))
       case Nil ⇒
         // This situation should never occur, and definitely not during

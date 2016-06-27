@@ -1,4 +1,4 @@
-package defaultLib
+package scalaExercisesContent
 
 import com.fortysevendeg.exercises.Library
 
