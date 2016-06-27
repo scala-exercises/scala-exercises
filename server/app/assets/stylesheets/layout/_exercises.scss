@@ -104,6 +104,16 @@
     }
 }
 
+.exercise.unsolved,
+.exercise.errored,
+.exercise.solved {
+    input {
+        background: #fff;
+    }
+}
+
+
+
 .exercise.unsolved {
     .compile {
         button {
