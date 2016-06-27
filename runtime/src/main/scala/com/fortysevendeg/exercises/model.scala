@@ -16,6 +16,7 @@ trait Library {
   def description: String
   def color: Option[String]
   def sections: List[Section]
+  def timestamp: String
 }
 
 /** A section in a library.
@@ -60,7 +61,8 @@ case class DefaultLibrary(
   name:        String,
   description: String,
   color:       Option[String],
-  sections:    List[Section]  = Nil
+  sections:    List[Section]  = Nil,
+  timestamp:   String
 ) extends Library
 
 case class DefaultContribution(
