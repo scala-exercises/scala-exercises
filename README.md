@@ -21,7 +21,13 @@
 
 ## Getting Started
 
-### Prerequisites
+### Online
+
+Scala Exercises is available at [scala-exercises.org](https://scala-exercises.org). 
+
+### Local development
+
+#### Prerequisites
 
 - Install JDK 8, either the [Oracle version](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or [OpenJDK](http://openjdk.java.net/projects/jdk8/)
 - Install [Scala](http://scala-lang.org/download/)
@@ -29,7 +35,7 @@
 - Install [PostgreSQL 9.4](http://www.postgresql.org/download/)
 - Install the [Sass Ruby gem](http://sass-lang.com/install) and make sure the `sass` program can be run
 
-### Installing the app locally
+#### Installing the app locally
 
 First of all, either clone the repository via git
 
@@ -59,7 +65,7 @@ $ psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises
 
 Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
 
-### Running the app
+#### Running the app
 
 Go into the project's root directory, run `sbt run`
 
@@ -70,7 +76,7 @@ $ sbt run
 After compilation the application will be running, listening in the 9000 port. Point your browser
 to `localhost:9000` and start having fun!
 
-### Troubleshooting
+#### Troubleshooting
 
 If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
 global settings, likely you might have this issue running the application locally:
