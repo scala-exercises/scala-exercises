@@ -40,3 +40,8 @@
         max-width: 78%;
     }
 }
+
+.progress-bar[aria-valuenow="1"],
+.progress-bar[aria-valuenow="2"] {
+    min-width: auto;
+}
