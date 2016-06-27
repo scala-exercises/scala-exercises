@@ -31,7 +31,7 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.0.0-SNAPSHOT",
+  version := "0.1.0",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -81,10 +81,9 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
     ws,
-      "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
-      "org.scala-exercises" %% "exercises-stdlib" % "0.0.0-SNAPSHOT",
-      "org.scala-exercises" %% "exercises-cats" % "0.0.0-SNAPSHOT",
-      "org.scala-exercises" %% "exercises-shapeless" % "0.0.0-SNAPSHOT",
+      "org.scala-exercises" %% "exercises-stdlib" % "0.1.+" changing(),
+      "org.scala-exercises" %% "exercises-cats" % "0.1.+" changing(),
+      "org.scala-exercises" %% "exercises-shapeless" % "0.1.+" changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -107,7 +106,7 @@ lazy val server = (project in file("server"))
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1" % "test",
       "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion % "test",
     compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")))
-
+  .dependsOn(runtime)
 
 lazy val client = (project in file("client"))
   .dependsOn(sharedJs)
@@ -187,14 +186,12 @@ lazy val compiler = (project in file("compiler"))
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
       "com.fortysevendeg" %% "github4s" % "0.4-SNAPSHOT",
-      "org.scala-exercises" %% "runtime" % "0.0.0-SNAPSHOT" changing(),
-      "org.scala-exercises" %% "definitions" % "0.0.0-SNAPSHOT" changing(),
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % "0.4.1" % "test",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
- )
+ ).dependsOn(definitions, runtime)
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(commonSettings:_*)

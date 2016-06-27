@@ -18,6 +18,7 @@ class TreeGenSpec extends FunSpec with Matchers {
 
       val exercises = List(
         treeGen.makeExercise(
+          libraryName = "MyLibrary",
           name = "Example1",
           description = None,
           code = "code",
@@ -27,6 +28,7 @@ class TreeGenSpec extends FunSpec with Matchers {
           explanation = None
         ),
         treeGen.makeExercise(
+          libraryName = "MyLibrary",
           name = "Example2",
           description = None,
           code = "code",
@@ -39,6 +41,7 @@ class TreeGenSpec extends FunSpec with Matchers {
 
       val sections = List(
         treeGen.makeSection(
+          libraryName = "MyLibrary",
           name = "Section 1",
           description = Some("This is section 1"),
           exerciseTerms = exercises.map(_._1),
@@ -46,6 +49,7 @@ class TreeGenSpec extends FunSpec with Matchers {
           contributionTerms = Nil
         ),
         treeGen.makeSection(
+          libraryName = "MyLibrary",
           name = "Section 2",
           description = Some("This is section 2"),
           exerciseTerms = Nil,

@@ -9,7 +9,7 @@ import org.scalatest._
 
 class LibraryDiscoverySpec extends FunSpec with Matchers {
 
-  import defaultLib._
+  import scalaExercisesContent._
 
   val cl = classOf[Exercise].getClassLoader
 

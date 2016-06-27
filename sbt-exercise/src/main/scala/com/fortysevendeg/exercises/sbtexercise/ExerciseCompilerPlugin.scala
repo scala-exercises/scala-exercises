@@ -179,7 +179,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               sources = sourceCodes.map(_._2).toArray,
               paths = sourceCodes.map(_._1).toArray,
               baseDir = baseDir.getPath,
-              targetPackage = "defaultLib"
+              targetPackage = "scalaExercisesContent"
             ).toList
           }
       } leftMap (e ⇒ e: Err) >>= {

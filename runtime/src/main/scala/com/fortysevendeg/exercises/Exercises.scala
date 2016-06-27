@@ -19,7 +19,7 @@ import cats.data.Xor
 import org.clapper.classutil.ClassFinder
 
 object Exercises {
-  val LIBRARIES_PACKAGE = "defaultLib"
+  val LIBRARIES_PACKAGE = "scalaExercisesContent"
 
   private[this] def classMap(cl: ClassLoader) = {
     val files = cl.asInstanceOf[URLClassLoader].getURLs map (_.getFile)
