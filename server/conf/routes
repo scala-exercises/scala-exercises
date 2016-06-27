@@ -2,6 +2,8 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+#Sitemap
+GET /sitemap.xml com.fortysevendeg.exercises.controllers.SitemapController.sitemap
 
 #Loader IO load testing verification
 GET /loaderio-397122d360fee8afca6b77f62c4853ed/ com.fortysevendeg.exercises.controllers.LoaderIOController.verificationToken
@@ -31,3 +33,4 @@ GET /:libraryName/:sectionName  com.fortysevendeg.exercises.controllers.Applicat
 
 #User Progress
 GET /progress/library/:libraryName/section/:sectionName com.fortysevendeg.exercises.controllers.UserProgressController.fetchUserProgressBySection(libraryName: String, sectionName: String)
+

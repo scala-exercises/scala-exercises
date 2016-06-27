@@ -55,11 +55,13 @@ class Components(context: Context)
   val oauthController = new OAuthController
   val userProgressController = new UserProgressController
   val loaderIOController = new LoaderIOController
+  val sitemapController = new SitemapController
 
   val assets = new _root_.controllers.Assets(httpErrorHandler)
 
   val router = new Routes(
     httpErrorHandler,
+    sitemapController,
     loaderIOController,
     applicationController,
     userController,
