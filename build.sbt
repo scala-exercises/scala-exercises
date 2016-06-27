@@ -227,6 +227,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedDependencies <<= (publishLocal in definitions, publishLocal in runtime, scriptedDependencies) map { (_, _, _) => Unit }
   )
   .enablePlugins(BuildInfoPlugin)
+  .dependsOn(compiler)
 
 // Distribution
 
