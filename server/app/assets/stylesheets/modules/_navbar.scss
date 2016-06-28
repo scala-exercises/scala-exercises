@@ -5,18 +5,19 @@
 }
 
 .navbar-brand {
-    font-size: $font-size-large;
+    font-size: ($font-size-base + 2);
     span {
         display: inline-block;
-        padding-left: 44px;
+        padding-left: 38px;
         font-family: $headings-font-family;
+        text-transform: uppercase;
     }
     .section-name {
         padding-left: 0;
     }
-    > svg {
+    > img {
         position: absolute;
-        top: 17px;
+        top: 20px;
     }
 }
 

@@ -7,9 +7,8 @@ package com.fortysevendeg.exercises
 
 // This is the exercise runtime metamodel
 
-/**
- * An exercise library.
- */
+/** An exercise library.
+  */
 trait Library {
   def owner: String
   def repository: String
@@ -19,9 +18,8 @@ trait Library {
   def sections: List[Section]
 }
 
-/**
- * A section in a library.
- */
+/** A section in a library.
+  */
 trait Section {
   def name: String
   def description: Option[String]
@@ -31,9 +29,8 @@ trait Section {
   def contributions: List[Contribution]
 }
 
-/**
- * A contribution to a section.
- */
+/** A contribution to a section.
+  */
 trait Contribution {
   def sha: String
   def message: String
@@ -44,9 +41,8 @@ trait Contribution {
   def avatarUrl: String
 }
 
-/**
- * Exercises within a section.
- */
+/** Exercises within a section.
+  */
 trait Exercise {
   def name: String
   def description: Option[String]
@@ -59,39 +55,39 @@ trait Exercise {
 
 // default case class implementations
 case class DefaultLibrary(
-  owner: String,
-  repository: String,
-  name: String,
+  owner:       String,
+  repository:  String,
+  name:        String,
   description: String,
-  color: Option[String],
-  sections: List[Section] = Nil
+  color:       Option[String],
+  sections:    List[Section]  = Nil
 ) extends Library
 
 case class DefaultContribution(
-  sha: String,
-  message: String,
+  sha:       String,
+  message:   String,
   timestamp: String,
-  url: String,
-  author: String,
+  url:       String,
+  author:    String,
   authorUrl: String,
   avatarUrl: String
 ) extends Contribution
 
 case class DefaultSection(
-  name: String,
-  description: Option[String],
-  exercises: List[Exercise] = Nil,
-  imports: List[String] = Nil,
-  path: Option[String] = None,
+  name:          String,
+  description:   Option[String],
+  exercises:     List[Exercise]            = Nil,
+  imports:       List[String]              = Nil,
+  path:          Option[String]            = None,
   contributions: List[DefaultContribution] = Nil
 ) extends Section
 
 case class DefaultExercise(
-  name: String,
-  description: Option[String] = None,
-  code: String,
+  name:            String,
+  description:     Option[String] = None,
+  code:            String,
   qualifiedMethod: String,
-  imports: List[String],
-  explanation: Option[String] = None,
-  packageName: String
+  imports:         List[String],
+  explanation:     Option[String] = None,
+  packageName:     String
 ) extends Exercise

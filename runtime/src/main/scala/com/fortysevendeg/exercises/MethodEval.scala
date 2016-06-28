@@ -13,34 +13,31 @@ object MethodEval {
   /** An evaluation result, which can have three possible results. */
   sealed abstract class EvaluationResult[A](val didRun: Boolean) extends Product with Serializable {
 
-    /**
-     * Converts the result to an Xor with all exceptions projected on the left.
-     * The result value is projected on the right.
-     */
+    /** Converts the result to an Xor with all exceptions projected on the left.
+      * The result value is projected on the right.
+      */
     def toSuccessXor: Xor[Xor[EvaluationFailure[A], EvaluationException[A]], EvaluationSuccess[A]] =
       this match {
-        case ef: EvaluationFailure[A] ⇒ Xor.left(Xor.left(ef))
+        case ef: EvaluationFailure[A]   ⇒ Xor.left(Xor.left(ef))
         case ee: EvaluationException[A] ⇒ Xor.left(Xor.right(ee))
-        case es: EvaluationSuccess[A] ⇒ Xor.right(es)
+        case es: EvaluationSuccess[A]   ⇒ Xor.right(es)
       }
 
-    /**
-     * Converts the result to an Xor where executions during evaluation are
-     * projected on the right. Reflection or compilation exceptions are
-     * projected left.
-     */
+    /** Converts the result to an Xor where executions during evaluation are
+      * projected on the right. Reflection or compilation exceptions are
+      * projected left.
+      */
     def toExecutionXor: Xor[EvaluationFailure[A], Xor[EvaluationException[A], EvaluationSuccess[A]]] =
       this match {
-        case ef: EvaluationFailure[A] ⇒ Xor.left(ef)
+        case ef: EvaluationFailure[A]   ⇒ Xor.left(ef)
         case ee: EvaluationException[A] ⇒ Xor.right(Xor.left(ee))
-        case es: EvaluationSuccess[A] ⇒ Xor.right(Xor.right(es))
+        case es: EvaluationSuccess[A]   ⇒ Xor.right(Xor.right(es))
       }
   }
 
-  /**
-   * An evaluation that failed (miersably) due to reflection or compilation errors
-   * (including parameter type errors).
-   */
+  /** An evaluation that failed (miersably) due to reflection or compilation errors
+    * (including parameter type errors).
+    */
   case class EvaluationFailure[A](reason: Ior[String, Throwable]) extends EvaluationResult[A](false) {
 
     /** Convenience; provides a single exception for the underlying reason. */
