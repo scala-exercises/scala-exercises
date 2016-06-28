@@ -14,6 +14,8 @@ import play.api.Logger
 case class Secure[A](action: Action[A]) extends Action[A] {
   def apply(request: Request[A]): Future[Result] = {
 
+    println("Request from domain: " + request.domain)
+
     val inWWW = request.domain.startsWith("www.")
     val previewApp = request.domain.startsWith("scala-exercises-pr")
 
