@@ -10,7 +10,7 @@ resolvers += Resolver.url("GitHub repository", url("http://shaggyyeti.github.io/
 
 
 // Sbt plugins
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.0")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.8")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.9")
 
