@@ -13,6 +13,7 @@
     @for(section <- library.sectionNames) {
      <url>
        <loc>https://www.scala-exercises.org/@{library.name}/@{section}</loc>
+       <lastmod>@{library.shortTimestamp}</lastmod>
        <changefreq>daily</changefreq>
        <priority>0.9</priority>
      </url>

@@ -31,7 +31,7 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.1.0",
+  version := "0.1.1",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",

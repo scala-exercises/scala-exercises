@@ -135,7 +135,7 @@ sealed trait RuntimeSharedConversions {
           description = library.description,
           color = color,
           sections = library.sections,
-          timestamp = Timestamp.fromDate(new Date())
+          timestamp = Timestamp.fromDate(new java.util.Date())
         ) :: librariesAcc)
       } else
         colors → (library :: librariesAcc)
@@ -150,7 +150,8 @@ sealed trait RuntimeSharedConversions {
       name = library.name,
       description = library.description,
       color = library.color getOrElse "black",
-      sections = library.sections map convertSection
+      sections = library.sections map convertSection,
+      timestamp = library.timestamp
     )
 
   def convertSection(section: Section) =
