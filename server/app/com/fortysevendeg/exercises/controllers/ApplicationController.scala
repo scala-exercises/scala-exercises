@@ -6,9 +6,11 @@
 package com.fortysevendeg.exercises.controllers
 
 import com.fortysevendeg.exercises.Secure
+import github4s.free.domain.Repository
 
 import java.util.UUID
 import cats.free.Free
+import play.api.cache.{ Cache, CacheApi }
 import shared.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
 
@@ -26,10 +28,11 @@ import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.Future
+import scala.concurrent.duration._
 import scalaz.concurrent.Task
 import com.fortysevendeg.exercises.services.interpreters.FreeExtensions._
 
-class ApplicationController(
+class ApplicationController(cache: CacheApi)(
     implicit
     exerciseOps:     ExerciseOps[ExercisesApp],
     userOps:         UserOps[ExercisesApp],
@@ -41,6 +44,23 @@ class ApplicationController(
 
   lazy val topLibraries: List[String] = application.configuration.getStringList("exercises.top_libraries") map (_.asScala.toList) getOrElse Nil
 
+  val MainRepoCacheKey = "scala-exercises.repo"
+
+  /** cache the main repo stars, forks and watchers info for 30 mins */
+  private[this] def scalaExercisesRepo: Future[Repository] = {
+    cache.get[Repository](MainRepoCacheKey) match {
+      case Some(repo) ⇒ Future.successful(repo)
+      case None ⇒
+        githubOps.getRepository(OAuth2.githubSiteOwner, OAuth2.githubSiteRepo).runFuture flatMap {
+          case Xor.Right(repo) ⇒
+            cache.set(MainRepoCacheKey, repo, 30 minutes)
+            Future.successful(repo)
+          case Xor.Left(err) ⇒
+            Future.failed[Repository](err)
+        }
+    }
+  }
+
   def index = Secure(Action.async { implicit request ⇒
 
     val ops = for {
@@ -48,15 +68,17 @@ class ApplicationController(
       libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       progress ← userProgressOps.fetchMaybeUserProgress(user)
-      repo ← githubOps.getRepository(OAuth2.githubSiteOwner, OAuth2.githubSiteRepo)
-    } yield (libraries, user, request.session.get("oauth-token"), progress, authorize, repo)
+    } yield (libraries, user, request.session.get("oauth-token"), progress, authorize)
 
-    ops.runFuture map {
-      case Xor.Right((libraries, user, Some(token), progress, _, repo)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
-      case Xor.Right((libraries, None, None, progress, authorize, repo)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
-      case Xor.Right((libraries, Some(user), None, _, _, _)) ⇒ InternalServerError("Session token not found")
-      case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
-    }
+    for {
+      repo ← scalaExercisesRepo
+      result ← ops.runFuture map {
+        case Xor.Right((libraries, user, Some(token), progress, _)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
+        case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
+        case Xor.Right((libraries, Some(user), None, _, _)) ⇒ InternalServerError("Session token not found")
+        case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
+      }
+    } yield result
   })
 
   def library(libraryName: String) = Secure(Action.async { implicit request ⇒
