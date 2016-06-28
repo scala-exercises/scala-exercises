@@ -185,7 +185,7 @@ lazy val compiler = (project in file("compiler"))
     exportJars      := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
-      "com.fortysevendeg" %% "github4s" % "0.4-SNAPSHOT",
+      "com.fortysevendeg" %% "github4s" % "0.5-SNAPSHOT",
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % "0.4.1" % "test",
@@ -227,7 +227,6 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedDependencies <<= (publishLocal in definitions, publishLocal in runtime, scriptedDependencies) map { (_, _, _) => Unit }
   )
   .enablePlugins(BuildInfoPlugin)
-  .dependsOn(compiler)
 
 // Distribution
 
