@@ -12,6 +12,7 @@ import doobie.contrib.hikari.hikaritransactor.HikariTransactor
 import doobie.util.transactor.{ DataSourceTransactor, Transactor }
 import play.api.ApplicationLoader.Context
 import play.api._
+import play.api.cache.EhCacheComponents
 import play.api.db.{ DBComponents, HikariCPComponents }
 import play.api.libs.ws._
 import play.api.libs.ws.ning.NingWSClient
@@ -37,6 +38,7 @@ class ExercisesApplicationLoader extends ApplicationLoader {
 class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
+    with EhCacheComponents
     with EvolutionsComponents
     with HikariCPComponents {
 
@@ -49,7 +51,7 @@ class Components(context: Context)
 
   implicit val wsClient: WSClient = NingWSClient()
 
-  val applicationController = new ApplicationController
+  val applicationController = new ApplicationController(defaultCacheApi)
   val exercisesController = new ExercisesController
   val userController = new UserController
   val oauthController = new OAuthController
