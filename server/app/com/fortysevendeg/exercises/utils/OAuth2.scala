@@ -16,7 +16,11 @@ object OAuth2 {
   lazy val githubAuthSecret = application.configuration.getString("github.client.secret").getOrElse("")
   lazy val githubSiteOwner = application.configuration.getString("github.site.owner").getOrElse("")
   lazy val githubSiteRepo = application.configuration.getString("github.site.repo").getOrElse("")
-  def callbackUrl(implicit req: Request[AnyContent]) = com.fortysevendeg.exercises.controllers.routes.OAuthController.callback(None, None).absoluteURL()
-  val successUrl = com.fortysevendeg.exercises.controllers.routes.OAuthController.success()
 
+  def callbackUrl = {
+    val rootUrl = application.configuration.getString("application.url").getOrElse({ throw new IllegalStateException("The `application.url` setting must be present for computing the Oauth callback URL") })
+    s"${rootUrl}/_oauth-callback"
+  }
+
+  val successUrl = com.fortysevendeg.exercises.controllers.routes.OAuthController.success()
 }
