@@ -18,9 +18,11 @@ case class Secure[A](action: Action[A]) extends Action[A] {
 
     val inWWW = request.domain.startsWith("www.")
     val previewApp = request.domain.startsWith("scala-exercises-pr")
+    /** Behing load balancers request.secure will be false **/
+    val isSecure = request.headers.get("x-forwarded-proto").getOrElse("").contains("https") || request.secure
 
     val redirect =
-      (!previewApp && Play.isProd && (!request.secure || !inWWW))
+      (!previewApp && Play.isProd && (!isSecure || !inWWW))
 
     println("Redirect : " + redirect)
     println(s"Values : previewApp:$previewApp, Play.isProd:${Play.isProd}, request.secure:${request.secure}, inWWW:$inWWW")
