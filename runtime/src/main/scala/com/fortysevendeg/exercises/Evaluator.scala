@@ -82,7 +82,7 @@ class Evaluator(timeout: Duration = 20.seconds) {
         case _ ⇒ Nil
       }
       cl.getParent match {
-        case null ⇒ (cp :: acc).reverse
+        case null   ⇒ (cp :: acc).reverse
         case parent ⇒ getClassPath(parent, cp :: acc)
       }
     }
@@ -181,7 +181,7 @@ class Evaluator(timeout: Duration = 20.seconds) {
       reporter.infos.map { info ⇒
         val pos = info.pos match {
           case NoPosition ⇒ None
-          case _ ⇒ Some(RangePosition(info.pos.start, info.pos.point, info.pos.end))
+          case _          ⇒ Some(RangePosition(info.pos.start, info.pos.point, info.pos.end))
         }
         (
           info.severity,
@@ -196,9 +196,9 @@ class Evaluator(timeout: Duration = 20.seconds) {
       infos.map {
         case (k, vs) ⇒
           val sev = k match {
-            case reporter.ERROR ⇒ Error
+            case reporter.ERROR   ⇒ Error
             case reporter.WARNING ⇒ Warning
-            case reporter.INFO ⇒ Info
+            case reporter.INFO    ⇒ Info
           }
           val info = vs map {
             case (msg, pos) ⇒

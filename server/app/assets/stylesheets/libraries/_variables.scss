@@ -1,5 +1,6 @@
 // Variables Bootstrap
 // -----------------------------------------------------
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
 $scala:                           #F05C59;
 $akka:                            #14A8BA;
@@ -43,10 +44,9 @@ $font-size-h5:            $font-size-base;
 $font-size-h6:            ceil(($font-size-base * 0.85));
 
 
-$headings-font-family:           "Raleway", sans-serif;
-$headings-font-weight:           500;
+$headings-font-family:           "Montserrat", sans-serif;
+$headings-font-weight:           400;
 $headings-color:                 $gray-base;
-
 
 // Components
 
@@ -75,7 +75,7 @@ $dropdown-border:                rgba(0,0,0,.05);
 
 // Navbar
 
-$navbar-height:                  60px;
+$navbar-height:                  70px;
 $navbar-inverse-bg:              $gray-base;
 $navbar-inverse-border:          transparent;
 
