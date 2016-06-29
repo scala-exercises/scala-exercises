@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_solved</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon_solved">
+            <polyline id="Background" fill="#E0ECD2" points="12.4397518 2.99375729 2.17159133 8.74815135 1.83181914 19.4148554 12.2043601 25.9791929 20.8918146 21.0283142 24.4196297 14.486475 23.367254 6.55401887 14.575419 3.32067324"></polyline>
+            <path d="M12.2483393,0.0967986159 L0.0964358621,7.07257716 L0.0964358621,21.0241343 L12.2483393,27.9999128 L24.4274703,21.0241343 L24.4274703,14.0381827 L20.8791945,16.0710408 L20.8791945,18.9898228 L12.2521048,23.9307087 L3.64471172,18.9898228 L3.64471172,9.1074699 L12.2523945,4.16600277 L19.8633738,8.52528304 L23.4130979,6.49155294 L12.2483393,0.0967986159 Z M12.2522497,14.9204152 L7.56910483,12.2318339 L5.79583586,15.285481 L12.2484841,18.9896194 L27.975891,9.97923875 L26.2005945,6.92907958 L12.2522497,14.9204152 Z" id="Icon" fill="#9CCC65"></path>
+        </g>
+    </g>
+</svg>
