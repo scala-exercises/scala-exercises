@@ -28,7 +28,7 @@ class SourceTextExtraction {
   import global._
 
   class ExtractedMethod private[SourceTextExtraction] (
-      lazyCode: ⇒ String,
+      lazyCode:    ⇒ String,
       lazyImports: ⇒ List[String]
   ) {
     lazy val code = lazyCode
@@ -36,7 +36,7 @@ class SourceTextExtraction {
   }
 
   class ExtractedComment private[SourceTextExtraction] (
-      lazyRaw: ⇒ String,
+      lazyRaw:     ⇒ String,
       lazyComment: ⇒ Comment
   ) {
     lazy val raw = lazyRaw
@@ -45,8 +45,8 @@ class SourceTextExtraction {
 
   case class Extracted(
     symbolPaths: Map[String, String],
-    comments: Map[List[String], ExtractedComment],
-    methods: Map[List[String], ExtractedMethod]
+    comments:    Map[List[String], ExtractedComment],
+    methods:     Map[List[String], ExtractedMethod]
   )
 
   def relativePath(absolutePath: String, base: String) = absolutePath.split(base).lift(1).getOrElse("")
@@ -57,7 +57,7 @@ class SourceTextExtraction {
     })
     val run = global.currentRun
     val symbolPaths = Map(run.symSource.toList: _*).map({
-      case (symbol, file) => (symbol.toString, relativePath(file.path, baseDir))
+      case (symbol, file) ⇒ (symbol.toString, relativePath(file.path, baseDir))
     })
     val compilationUnits = run.units.toList // `units` is only only iterable once!
     val extractions = compilationUnits.map(_.body).map(boundExtractRaw)
@@ -108,33 +108,31 @@ class SourceTextExtraction {
 
 }
 
-/**
- * Utility to find doc exercise-worthy comments and source code blobs
- * in a tree.
- */
+/** Utility to find doc exercise-worthy comments and source code blobs
+  * in a tree.
+  */
 object SourceTextExtraction {
 
   type Path[G <: Global] = List[G#Name]
   case class RawAcc[G <: Global](
     comments: List[(Path[G], (Int, G#DocComment))] = Nil,
-    methods: List[(Path[G], (Int, G#Tree))] = Nil,
-    imports: List[(Path[G], (Int, G#Import))] = Nil,
-    position: Int = 0
+    methods:  List[(Path[G], (Int, G#Tree))]       = Nil,
+    imports:  List[(Path[G], (Int, G#Import))]     = Nil,
+    position: Int                                  = 0
   )
 
   def extractRaw[G <: Global](g: G)(rootTree: g.Tree): RawAcc[g.type] = {
     import g._
 
-    /**
-     * Define generic accumulating traversal that visits all the nodes of
-     * interest.
-     */
+    /** Define generic accumulating traversal that visits all the nodes of
+      * interest.
+      */
     def traverse[A](
-      trees0: List[(Path[g.type], Tree)],
-      acc0: A,
+      trees0:          List[(Path[g.type], Tree)],
+      acc0:            A,
       visitDocComment: (Path[g.type], g.DocComment, A) ⇒ A,
       visitMethodExpr: (Path[g.type], g.Tree, A) ⇒ A,
-      visitImport: (Path[g.type], g.Import, A) ⇒ A
+      visitImport:     (Path[g.type], g.Import, A) ⇒ A
     ): A = {
 
       // a nested function so that we don't have to include visitDocComment and
@@ -247,14 +245,13 @@ object SourceTextExtraction {
 
 }
 
-/**
- * Scala compiler global needed for extracting doc comments. This uses the
- * ScaladocSyntaxAnalyzer, which keeps DocDefs in the parsed AST.
- *
- * It would be ideal to do this as a compiler plugin. Unfortunately there
- * doesn't seem to be a way to replace the syntax analyzer phase (named
- * "parser") with a plugin.
- */
+/** Scala compiler global needed for extracting doc comments. This uses the
+  * ScaladocSyntaxAnalyzer, which keeps DocDefs in the parsed AST.
+  *
+  * It would be ideal to do this as a compiler plugin. Unfortunately there
+  * doesn't seem to be a way to replace the syntax analyzer phase (named
+  * "parser") with a plugin.
+  */
 class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettings) extends Global(settings) {
 
   override lazy val syntaxAnalyzer = new ScaladocSyntaxAnalyzer[this.type](this) {

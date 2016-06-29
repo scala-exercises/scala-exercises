@@ -5,9 +5,8 @@
 
 package exercise
 
-/**
- * Marker trait for exercise libraries.
- */
+/** Marker trait for exercise libraries.
+  */
 trait Library {
   def owner: String
   def repository: String
