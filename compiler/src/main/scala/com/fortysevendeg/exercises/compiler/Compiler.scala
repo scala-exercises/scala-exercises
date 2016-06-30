@@ -19,6 +19,7 @@ import github4s.Github
 import Github._
 import github4s.implicits._
 import github4s.GithubResponses.GHResult
+import github4s.free.domain.Commit
 
 import Comments.Mode
 import CommentRendering.RenderedComment
@@ -104,16 +105,17 @@ case class Compiler() {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
-        case Xor.Right(GHResult(result, _, _)) ⇒ result.map(commit ⇒
-          ContributionInfo(
-            sha = commit.sha,
-            message = commit.message,
-            timestamp = commit.date,
-            url = commit.url,
-            author = commit.login,
-            avatarUrl = commit.avatar_url,
-            authorUrl = commit.author_url
-          ))
+        case Xor.Right(GHResult(result, _, _)) ⇒ result.collect({
+          case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) ⇒ ContributionInfo(
+            sha = sha,
+            message = message,
+            timestamp = date,
+            url = url,
+            author = login,
+            avatarUrl = avatar_url,
+            authorUrl = author_url
+          )
+        })
         case Xor.Left(ex) ⇒ throw ex
       }
     }
