@@ -138,6 +138,10 @@ object DomHandler {
     allExercises.find(methodName(_) == Option(method))
   }
 
+  def findExerciseCode(el: HTMLElement): Option[HTMLElement] = {
+    $(el).find(".exercise-pre").all.headOption
+  }
+
   def getInputsValues(exercise: HTMLElement): Seq[String] = inputsInExercise(exercise).map(_.value)
 
   def inputsInExercise(exercise: HTMLElement): Seq[HTMLInputElement] = $(exercise).find("input").inputs
