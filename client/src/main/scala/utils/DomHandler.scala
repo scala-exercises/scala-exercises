@@ -46,8 +46,14 @@ object DomHandler {
 
   /** Set the class attribute to an exercise node
     */
-  def setClass(e: HTMLElement, style: String): IO[Unit] = io {
+  def setExerciseClass(e: HTMLElement, style: String): IO[Unit] = io {
     $(e).attr("class", s"exercise $style")
+  }
+
+  /** Set the class attribute to an exercise code node
+    */
+  def setCodeClass(e: HTMLElement, style: String): IO[Unit] = io {
+    $(e).attr("class", s"exercise-pre $style")
   }
 
   /** Write a message in the log of an exercise
