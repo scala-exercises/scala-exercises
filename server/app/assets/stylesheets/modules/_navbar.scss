@@ -42,8 +42,7 @@
                 height: auto;
                 @include border-radius(200px);
                 @media (min-width: $screen-sm-min) {
-                    left: -22px;
-                    top: 17px;
+                    top: 22px;
                 }
             }
         }

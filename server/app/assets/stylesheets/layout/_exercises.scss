@@ -25,6 +25,11 @@
         padding: 30px;
         box-shadow: inset 3px 0 rgba(0,0,0, 0.1);
     }
+    
+    .solved-exercise {
+        border: 2px solid #9CCC65;
+        box-shadow: none;
+    }
     .exercise-pre {
         min-height: 60px;
     }
@@ -79,13 +84,12 @@
             margin-bottom: 0;
         }
         .bullet-state {
-            width: 10px;
-            height: 10px;
+            width: 28px;
+            height: 28px;
             position: absolute;
             right: 8px;
             top: 8px;
-            background: #ccc;
-            @include border-radius (100px);
+            background-color: none;
         }
     }
     .log {
@@ -137,7 +141,7 @@
         -webkit-animation: underliner_unsolved 2s linear infinite;
     }
     .bullet-state {
-        background: #E6E6E6;
+        background: none;
     }
     .log {
         max-height: 0;
@@ -151,7 +155,7 @@
         }
     }
     .bullet-state {
-        background: #E6E6E6;
+        background: none;
     }
     .log {
         max-height: 0;
@@ -191,8 +195,15 @@
         }
     }
     .bullet-state {
-        background: #FFA726;
+        background: url("../images/icon_evaluating.svg") no-repeat;
+        -webkit-animation: spin 1s infinite linear;
     }
+    
+    @-webkit-keyframes spin {
+        0%  {-webkit-transform: rotate(0deg);}
+        100% {-webkit-transform: rotate(360deg);}	
+    }
+    
     .log {
         max-height: 0;
     }
@@ -210,7 +221,7 @@
         -webkit-animation: underliner_errored 2s linear infinite;
     }
     .bullet-state {
-        background: #EF5350;
+        background: url("../images/icon_errored.svg") no-repeat;
     }
     .log {
         max-height: 40px;
@@ -229,8 +240,9 @@
         -webkit-animation: underliner_solved 8s linear infinite;
     }
     .bullet-state {
-        background: #9CCC65;
+        background: url("../images/icon_solved.svg") no-repeat;
     }
+    
     .log {
         max-height: 0;
     }

@@ -70,7 +70,7 @@ object UI {
 
   def reflectExercise(e: ClientExercise): IO[Unit] = (for {
     exercise ← OptionT(io(findExerciseByMethod(e.method)))
-    _ ← OptionT(setClass(exercise, exerciseStyle(e).className) map (_.some))
+    _ ← OptionT(setExerciseStyle(e.method, exerciseStyle(e), if (e.isSolved) "solved-exercise" else "") map (_.some))
     _ ← OptionT(copyArgumentsToInputs(e, exercise) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 
@@ -84,14 +84,15 @@ object UI {
   }
 
   def toggleExerciseClass(s: State, method: String): IO[Unit] = {
-    Exercises.findByMethod(s, method).fold(noop)(exercise ⇒ {
-      setExerciseStyle(method, exerciseStyle(exercise))
-    })
+    Exercises.findByMethod(s, method).fold(noop)(exercise ⇒
+      setExerciseStyle(method, exerciseStyle(exercise), if (exercise.isSolved) "solved-exercise" else ""))
   }
 
-  def setExerciseStyle(method: String, style: ExerciseStyle): IO[Unit] = (for {
+  def setExerciseStyle(method: String, style: ExerciseStyle, codeStyle: String = ""): IO[Unit] = (for {
     exercise ← OptionT(io(findExerciseByMethod(method)))
-    _ ← OptionT(setClass(exercise, style.className) map (_.some))
+    _ ← OptionT(setExerciseClass(exercise, style.className) map (_.some))
+    code ← OptionT(io(findExerciseCode(exercise)))
+    _ ← OptionT(setCodeClass(code, codeStyle) map (_.some))
   } yield ()).value.map(_.getOrElse(()))
 
   def addLogToExercise(method: String, msg: String): IO[Unit] = (for {
@@ -106,7 +107,7 @@ object UI {
   }
 
   def setAsSolved(s: State, method: String): IO[Unit] =
-    setExerciseStyle(method, SolvedStyle)
+    setExerciseStyle(method, SolvedStyle, "solved-exercise")
 
   def setAsErrored(s: State, method: String, msg: String): IO[Unit] = for {
     _ ← addLogToExercise(method, msg)
