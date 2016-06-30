@@ -111,8 +111,8 @@ trait MethodBodyReaderSpecUtilities {
 
   def unwrapBody(tree: Tree): Tree = tree match {
     case q"def $tname(...$paramss): $tpt = $expr" ⇒ expr
-    case DocDef(comment, defTree) ⇒ unwrapBody(defTree)
-    case _ ⇒ EmptyTree
+    case DocDef(comment, defTree)                 ⇒ unwrapBody(defTree)
+    case _                                        ⇒ EmptyTree
   }
 
   def compileMethod(code: String): Tree = {

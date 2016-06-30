@@ -87,8 +87,13 @@ case class TreeGen[U <: Universe](
   }
 
   def makeLibrary(
-    name: String, description: String, color: Option[String],
-    sectionTerms: List[TermName], owner: String, repository: String
+    name:         String,
+    description:  String,
+    color:        Option[String],
+    sectionTerms: List[TermName],
+    owner:        String,
+    repository:   String,
+    timestamp:    String
   ) = {
     val term = makeTermName("Library", name)
     term → q"""
@@ -99,6 +104,7 @@ case class TreeGen[U <: Universe](
           override val sections     = $sectionTerms
           override val owner        = $owner
           override val repository   = $repository
+          override val timestamp    = $timestamp
         }"""
   }
 

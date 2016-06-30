@@ -11,9 +11,11 @@ case class Library(
     name:        String,
     description: String,
     color:       String,
-    sections:    List[Section] = Nil
+    sections:    List[Section] = Nil,
+    timestamp:   String
 ) {
   val sectionNames: List[String] = sections map (_.name)
+  val shortTimestamp: String = timestamp.split("T").headOption.getOrElse(timestamp)
 }
 
 /** A section in a library. For example `Extractors`

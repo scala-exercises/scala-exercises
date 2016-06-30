@@ -44,22 +44,19 @@ object Comments {
       type Explanation[A] = E0[A]
     }
 
-    /**
-     * Library comments. Required name. Required description.
-     * Require no explanation.
-     */
+    /** Library comments. Required name. Required description.
+      * Require no explanation.
+      */
     type Library = Aux[Id, Id, Empty]
 
-    /**
-     * Section comments. Require name. Optional description.
-     * Require no explanation.
-     */
+    /** Section comments. Require name. Optional description.
+      * Require no explanation.
+      */
     type Section = Aux[Id, Option, Empty]
 
-    /**
-     * Exercise comments. Optional name. Optional description.
-     * Optional explanation.
-     */
+    /** Exercise comments. Optional name. Optional description.
+      * Optional explanation.
+      */
     type Exercise = Aux[Option, Option, Option]
 
     // Isolated parse modes for specific fields.
@@ -76,8 +73,8 @@ object Comments {
     evPKN: ParseK[A#Name],
     evPKD: ParseK[A#Description],
     evPKE: ParseK[A#Explanation],
-    evFD: Functor[A#Description],
-    evFE: Functor[A#Explanation]
+    evFD:  Functor[A#Description],
+    evFE:  Functor[A#Explanation]
   ) =
     CommentParsing.parse[A](comment).map(CommentRendering.render(_))
 
@@ -117,17 +114,15 @@ private[compiler] object CommentFactory {
 
 /** Special types used for parsing and rendering. */
 private[compiler] object CommentZed {
-  /**
-   * Empty type for values that should raise an error
-   * if they are present.
-   */
+  /** Empty type for values that should raise an error
+    * if they are present.
+    */
   sealed trait Empty[+A]
   object Empty extends SingletonFunctor[Empty] with Empty[Nothing]
 
-  /**
-   * Ignore type for values that we want to completely ignore during
-   * parsing.
-   */
+  /** Ignore type for values that we want to completely ignore during
+    * parsing.
+    */
   sealed trait Ignore[+A]
   object Ignore extends SingletonFunctor[Ignore] with Ignore[Nothing]
 
@@ -148,43 +143,39 @@ private[compiler] object CommentParsing {
 
   /** Parse value container typeclass */
   trait ParseK[A[_]] {
-    /**
-     * Take a potential value and map it into the desired
-     * type. If the value coming in is `Xor.Left`, then the value
-     * was not present during parsing. An incoming value of `Xor.Right`
-     * indicates that a value was parsed. An output of `Xor.Left` indicates
-     * that an error should be raised. And an output value of `Xor.Right`
-     * indicates that the value was parsed and mapped into the appropriate
-     * type.
-     */
+    /** Take a potential value and map it into the desired
+      * type. If the value coming in is `Xor.Left`, then the value
+      * was not present during parsing. An incoming value of `Xor.Right`
+      * indicates that a value was parsed. An output of `Xor.Left` indicates
+      * that an error should be raised. And an output value of `Xor.Right`
+      * indicates that the value was parsed and mapped into the appropriate
+      * type.
+      */
     def fromXor[T](value: Xor[String, T]): Xor[String, A[T]]
   }
 
   object ParseK {
     def apply[A[_]](implicit instance: ParseK[A]): ParseK[A] = instance
 
-    /**
-     * A required value, which is always passed directly through.
-     * A value that wasn't present during parsing will raise an error.
-     */
+    /** A required value, which is always passed directly through.
+      * A value that wasn't present during parsing will raise an error.
+      */
     implicit val idParseK = new ParseK[Id] {
       override def fromXor[T](value: Xor[String, T]) = value
     }
 
-    /**
-     * Parse an optional value. The result is always the right side `Xor`
-     * projection because the value is optional and shouldn't fail.
-     */
+    /** Parse an optional value. The result is always the right side `Xor`
+      * projection because the value is optional and shouldn't fail.
+      */
     implicit val optionParseK = new ParseK[Option] {
       override def fromXor[T](value: Xor[String, T]) =
         Xor.right(value.toOption)
     }
 
-    /**
-     * Parse a value that shouldn't exist. The input `Xor` is swapped
-     * so that a parsed input value yields an error and a nonexistant
-     * input value yields a success.
-     */
+    /** Parse a value that shouldn't exist. The input `Xor` is swapped
+      * so that a parsed input value yields an error and a nonexistant
+      * input value yields a success.
+      */
     implicit val emptyParseK = new ParseK[Empty] {
       override def fromXor[T](value: Xor[String, T]) =
         value.swap.bimap(
@@ -193,21 +184,19 @@ private[compiler] object CommentParsing {
         )
     }
 
-    /**
-     * Parse a value that we're indifferent about. The result is
-     * always success with a placeholder value.
-     */
+    /** Parse a value that we're indifferent about. The result is
+      * always success with a placeholder value.
+      */
     implicit val ignoreParseK = new ParseK[Ignore] {
       override def fromXor[T](xor: Xor[String, T]) =
         Xor.right(Ignore)
     }
   }
 
-  /**
-   * A parsed comment with the values stored in the appropriate types
-   */
+  /** A parsed comment with the values stored in the appropriate types
+    */
   case class ParsedComment[N[_], D[_], E[_]](
-    name: N[String],
+    name:        N[String],
     description: D[Body],
     explanation: E[Body]
   )
@@ -239,7 +228,7 @@ private[compiler] object CommentParsing {
 
     lazy val descriptionXor = comment.body match {
       case Body(Nil) ⇒ Xor.left("Unable to parse comment body")
-      case body ⇒ Xor.right(body)
+      case body      ⇒ Xor.right(body)
     }
 
     lazy val explanationXor = Xor.fromOption(
@@ -265,12 +254,11 @@ private[compiler] object CommentRendering {
   import Comments.Mode
   import CommentParsing.ParsedComment
 
-  /**
-   * A rendered comment. This leverages the same types
-   * used during parsing.
-   */
+  /** A rendered comment. This leverages the same types
+    * used during parsing.
+    */
   case class RenderedComment[N[_], D[_], E[_]](
-    name: N[String],
+    name:        N[String],
     description: D[String],
     explanation: E[String]
   )
@@ -290,10 +278,10 @@ private[compiler] object CommentRendering {
     Xhtml.toXhtml(body.blocks flatMap (renderBlock(_)))
 
   private[this] def renderBlock(block: Block): NodeSeq = block match {
-    case Title(in, 1) ⇒ <h3>{ renderInline(in) }</h3>
-    case Title(in, 2) ⇒ <h4>{ renderInline(in) }</h4>
-    case Title(in, 3) ⇒ <h5>{ renderInline(in) }</h5>
-    case Title(in, _) ⇒ <h6>{ renderInline(in) }</h6>
+    case Title(in, 1)  ⇒ <h3>{ renderInline(in) }</h3>
+    case Title(in, 2)  ⇒ <h4>{ renderInline(in) }</h4>
+    case Title(in, 3)  ⇒ <h5>{ renderInline(in) }</h5>
+    case Title(in, _)  ⇒ <h6>{ renderInline(in) }</h6>
     case Paragraph(in) ⇒ <p>{ renderInline(in) }</p>
     case Code(data) ⇒
       <pre class={ "scala" }><code class={ "scala" }>{ formatCode(data) }</code></pre>
@@ -320,17 +308,17 @@ private[compiler] object CommentRendering {
     }
 
   private[this] def renderInline(inl: Inline): NodeSeq = inl match {
-    case Chain(items) ⇒ items flatMap (renderInline(_))
-    case Italic(in) ⇒ <i>{ renderInline(in) }</i>
-    case Bold(in) ⇒ <b>{ renderInline(in) }</b>
-    case Underline(in) ⇒ <u>{ renderInline(in) }</u>
-    case Superscript(in) ⇒ <sup>{ renderInline(in) }</sup>
-    case Subscript(in) ⇒ <sub>{ renderInline(in) }</sub>
-    case Link(raw, title) ⇒ <a href={ raw } target="_blank">{ renderInline(title) }</a>
-    case Monospace(in) ⇒ <code>{ renderInline(in) }</code>
-    case Text(text) ⇒ scala.xml.Text(text)
-    case Summary(in) ⇒ renderInline(in)
-    case HtmlTag(tag) ⇒ scala.xml.Unparsed(tag)
+    case Chain(items)             ⇒ items flatMap (renderInline(_))
+    case Italic(in)               ⇒ <i>{ renderInline(in) }</i>
+    case Bold(in)                 ⇒ <b>{ renderInline(in) }</b>
+    case Underline(in)            ⇒ <u>{ renderInline(in) }</u>
+    case Superscript(in)          ⇒ <sup>{ renderInline(in) }</sup>
+    case Subscript(in)            ⇒ <sub>{ renderInline(in) }</sub>
+    case Link(raw, title)         ⇒ <a href={ raw } target="_blank">{ renderInline(title) }</a>
+    case Monospace(in)            ⇒ <code>{ renderInline(in) }</code>
+    case Text(text)               ⇒ scala.xml.Text(text)
+    case Summary(in)              ⇒ renderInline(in)
+    case HtmlTag(tag)             ⇒ scala.xml.Unparsed(tag)
     case EntityLink(target, link) ⇒ renderLink(target, link, hasLinks = true)
   }
 

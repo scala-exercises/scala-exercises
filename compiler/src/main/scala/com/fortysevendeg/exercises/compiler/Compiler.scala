@@ -19,6 +19,7 @@ import github4s.Github
 import Github._
 import github4s.implicits._
 import github4s.GithubResponses.GHResult
+import github4s.free.domain.Commit
 
 import Comments.Mode
 import CommentRendering.RenderedComment
@@ -34,48 +35,48 @@ case class Compiler() {
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
   def compile(library: exercise.Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String) = {
-
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
     val extracted = sourceTextExtractor.extractAll(sources, paths, baseDir)
     val internal = CompilerInternal(mirror, extracted)
+    val compilationTimestamp = Timestamp.fromDate(new java.util.Date())
 
     case class LibraryInfo(
-      symbol: ClassSymbol,
-      comment: RenderedComment.Aux[Mode.Library],
-      sections: List[SectionInfo],
-      color: Option[String],
-      owner: String,
+      symbol:     ClassSymbol,
+      comment:    RenderedComment.Aux[Mode.Library],
+      sections:   List[SectionInfo],
+      color:      Option[String],
+      owner:      String,
       repository: String
     )
 
     case class ContributionInfo(
-      sha: String,
-      message: String,
+      sha:       String,
+      message:   String,
       timestamp: String,
-      url: String,
-      author: String,
+      url:       String,
+      author:    String,
       authorUrl: String,
       avatarUrl: String
     )
 
     case class SectionInfo(
-      symbol: ClassSymbol,
-      comment: RenderedComment.Aux[Mode.Section],
-      exercises: List[ExerciseInfo],
-      imports: List[String] = Nil,
-      path: Option[String] = None,
-      contributions: List[ContributionInfo] = Nil
+      symbol:        ClassSymbol,
+      comment:       RenderedComment.Aux[Mode.Section],
+      exercises:     List[ExerciseInfo],
+      imports:       List[String]                      = Nil,
+      path:          Option[String]                    = None,
+      contributions: List[ContributionInfo]            = Nil
     )
 
     case class ExerciseInfo(
-      symbol: MethodSymbol,
-      comment: RenderedComment.Aux[Mode.Exercise],
-      code: String,
+      symbol:          MethodSymbol,
+      comment:         RenderedComment.Aux[Mode.Exercise],
+      code:            String,
       qualifiedMethod: String,
-      packageName: String,
-      imports: List[String] = Nil
+      packageName:     String,
+      imports:         List[String]                       = Nil
     )
 
     def enhanceDocError(path: List[String])(error: String) =
@@ -89,7 +90,7 @@ case class Compiler() {
       comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
         .leftMap(enhanceDocError(symbolPath))
       sections ← library.sections.toList
-        .map(internal.instanceToClassSymbol(_) >>= (symbol => maybeMakeSectionInfo(library, symbol)))
+        .map(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
         .sequenceU
     } yield LibraryInfo(
       symbol = symbol,
@@ -104,16 +105,17 @@ case class Compiler() {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
-        case Xor.Right(GHResult(result, _, _)) => result.map(commit =>
-          ContributionInfo(
-            sha = commit.sha,
-            message = commit.message,
-            timestamp = commit.date,
-            url = commit.url,
-            author = commit.login,
-            avatarUrl = commit.avatar_url,
-            authorUrl = commit.author_url
-          ))
+        case Xor.Right(GHResult(result, _, _)) ⇒ result.collect({
+          case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) ⇒ ContributionInfo(
+            sha = sha,
+            message = message,
+            timestamp = date,
+            url = url,
+            author = login,
+            avatarUrl = avatar_url,
+            authorUrl = author_url
+          )
+        })
         case Xor.Left(ex) ⇒ throw ex
       }
     }
@@ -262,7 +264,8 @@ case class Compiler() {
         color = libraryInfo.color,
         sectionTerms = sectionTerms,
         owner = libraryInfo.owner,
-        repository = libraryInfo.repository
+        repository = libraryInfo.repository,
+        timestamp = compilationTimestamp
       )
 
       libraryTerm → treeGen.makePackage(
@@ -279,7 +282,7 @@ case class Compiler() {
   }
 
   private case class CompilerInternal(
-      mirror: ru.Mirror,
+      mirror:          ru.Mirror,
       sourceExtracted: SourceTextExtraction#Extracted
   ) {
     import mirror.universe._
@@ -304,11 +307,11 @@ case class Compiler() {
       def process(symbol: Symbol): List[String] = {
         lazy val owner = symbol.owner
         unapplyRawName(symbol.name) match {
-          case `ROOT` ⇒ Nil
+          case `ROOT`                      ⇒ Nil
           case `EMPTY_PACKAGE_NAME_STRING` ⇒ Nil
-          case `ROOTPKG_STRING` ⇒ Nil
-          case value if symbol != owner ⇒ value :: process(owner)
-          case _ ⇒ Nil
+          case `ROOTPKG_STRING`            ⇒ Nil
+          case value if symbol != owner    ⇒ value :: process(owner)
+          case _                           ⇒ Nil
         }
       }
       process(symbol).reverse

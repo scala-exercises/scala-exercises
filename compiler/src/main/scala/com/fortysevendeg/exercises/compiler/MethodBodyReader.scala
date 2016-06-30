@@ -13,9 +13,8 @@ import scala.tools.nsc.Global
 
 object MethodBodyReader {
 
-  /**
-   * Attempts to read (and clean) a method body.
-   */
+  /** Attempts to read (and clean) a method body.
+    */
   def read[G <: Global](g: G)(tree: g.Tree): String = {
     val (bodyStart, bodyEnd) = bodyRange(g)(tree)
 
@@ -27,13 +26,12 @@ object MethodBodyReader {
       .mkString("\n")
   }
 
-  /**
-   * Finds the text range for the body of the method.
-   * This should:
-   * - ignore the wrapping block brackets
-   * - include any leading whitespace before the first expression
-   * in multi line statements
-   */
+  /** Finds the text range for the body of the method.
+    * This should:
+    * - ignore the wrapping block brackets
+    * - include any leading whitespace before the first expression
+    * in multi line statements
+    */
   def bodyRange[G <: Global](g: G)(tree: g.Tree): (Int, Int) = {
     import g._
     tree match {
@@ -57,10 +55,9 @@ object MethodBodyReader {
     else end
   }
 
-  /**
-   * This attempts to find all the individual lines in a method body
-   * while also counting the amount of common prefix whitespace on each line.
-   */
+  /** This attempts to find all the individual lines in a method body
+    * while also counting the amount of common prefix whitespace on each line.
+    */
   private def normalizedLineRanges(str: Array[Char], start: Int, end: Int): List[(Int, Int)] = {
 
     @tailrec def skipToEol(offset: Int): Int =

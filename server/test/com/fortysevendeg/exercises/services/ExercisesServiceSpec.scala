@@ -20,7 +20,7 @@ class ExercisesServiceSpec extends FlatSpec with Matchers {
   val expectedTestFailedArgs = List("a", "b", "1", "2")
 
   def library(name: String): Library =
-    Library("scala-exercises", "site", name, "", "")
+    Library(owner = "scala-exercises", repository = "site", name = name, description = "", color = "#BADA55", sections = Nil, timestamp = "19-12-1988")
 
   "reorderLibraries" should "not reorder libraries when there aren't any top libraries" in {
     val libraries = List(

@@ -85,12 +85,11 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     resourceManaged <<= reconfigureSub(resourceManaged)
   )
 
-  /**
-   * Helper to faciliate changing the directories. By default, a configuration
-   * inheriting from Compile will compile source in
-   * `src/<configuration_name>/[scala|test|...]`. This forces the directory
-   * back to `src/main/[scala|test|...]`.
-   */
+  /** Helper to faciliate changing the directories. By default, a configuration
+    * inheriting from Compile will compile source in
+    * `src/<configuration_name>/[scala|test|...]`. This forces the directory
+    * back to `src/main/[scala|test|...]`.
+    */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
     (key in ThisScope.copy(config = Global), configuration) {
       (src, conf) ⇒ src / "main"
@@ -105,10 +104,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private def catching[A](f: ⇒ A)(msg: ⇒ String) =
     Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(msg, e))
 
-  /**
-   * Given an Analysis output from a compile run, this will
-   * identify all modules implementing `exercise.Library`.
-   */
+  /** Given an Analysis output from a compile run, this will
+    * identify all modules implementing `exercise.Library`.
+    */
   private def discoverLibraries(analysis: inc.Analysis): Seq[String] =
     Discovery(Set("exercise.Library"), Set.empty)(Tests.allDefs(analysis))
       .collect({
@@ -125,10 +123,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private val COMPILER_CLASS = "com.fortysevendeg.exercises.compiler.CompilerJava"
   private type COMPILER = {
     def compile(
-      library: AnyRef,
-      sources: Array[String],
-      paths: Array[String],
-      baseDir: String,
+      library:       AnyRef,
+      sources:       Array[String],
+      paths:         Array[String],
+      baseDir:       String,
       targetPackage: String
     ): Array[String]
   }
@@ -168,7 +166,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       Xor.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).distinct
           .flatMap(analysisIn.relations.definesClass)
-          .map(file => (file.getPath, IO.read(file)))
+          .map(file ⇒ (file.getPath, IO.read(file)))
 
         captureStdStreams(
           fOut = log.info(_: String),
@@ -205,7 +203,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     result.fold({
       _ match {
         case Ior.Left(message) ⇒ throw new Exception(message)
-        case Ior.Right(error) ⇒ throw error
+        case Ior.Right(error)  ⇒ throw error
         case Ior.Both(message, error) ⇒
           log.error(message)
           throw error
@@ -242,10 +240,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     res
   }
 
-  /**
-   * Output stream that captures an output on a line by line basis.
-   * @param f the function to invoke with each line
-   */
+  /** Output stream that captures an output on a line by line basis.
+    * @param f the function to invoke with each line
+    */
   private[this] class LineByLineOutputStream(
       f: (String) ⇒ Unit
   ) extends OutputStream {

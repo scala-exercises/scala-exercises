@@ -1,6 +1,7 @@
 package com.fortysevendeg.exercises
 package compiler
 
+import com.fortysevendeg.exercises.Timestamp
 import scala.tools.reflect.ToolBox
 
 import org.scalatest._
@@ -64,7 +65,8 @@ class TreeGenSpec extends FunSpec with Matchers {
         color = Some("#FFFFFF"),
         sectionTerms = sections.map(_._1),
         owner = "scala-exercises",
-        repository = "site"
+        repository = "site",
+        timestamp = Timestamp.fromDate(new java.util.Date())
       )
 
       val tree = treeGen.makePackage(
