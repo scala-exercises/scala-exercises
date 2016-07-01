@@ -236,8 +236,8 @@
     }
     input {
         color: $input-solved;
-        border-bottom: 1px solid $input-solved;
-        -webkit-animation: underliner_solved 8s linear infinite;
+        border-bottom: none;
+        -webkit-animation: none;
     }
     .bullet-state {
         background: url("../images/icon_solved.svg") no-repeat;
