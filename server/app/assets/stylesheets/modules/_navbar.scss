@@ -2,6 +2,7 @@
 // -----------------------------------------------------
 .navbar {
     margin-bottom: 0;
+    border: none;
 }
 
 .navbar-brand {
@@ -54,4 +55,76 @@
 
 .navbar-collapse {
     border-top: none;
+}
+
+@media (max-width: $screen-sm-min) {
+    
+    .navbar-inverse {
+        .navbar-collapse {
+            background: $gray-light;
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar-nav {
+            li {
+                a {
+                    color: $gray-dark;
+                    &:hover,
+                    &:focus {
+                        color: $gray-dark;
+                    }
+                }
+            }
+        }
+    }
+    #navbar-sections {
+        .current {
+            background: none;
+        }
+        .actives {
+            a {
+                color: $gray-dark;
+            }
+        }
+    }
+}
+
+.navbar-inverse {
+    .navbar-nav {
+        > .open > a {
+            &,
+            &:hover,
+            &:focus {
+                color: $gray-dark;
+            }
+        }
+        @media (max-width: $grid-float-breakpoint-max) {
+            // Dropdowns get custom display
+            .open .dropdown-menu {
+                > li > a {
+                    color: $gray-dark;
+                    ;
+                    &:hover,
+                    &:focus {
+                        color: $gray-dark;
+                        ;
+                    }
+                }
+                > .active > a {
+                    &,
+                    &:hover,
+                    &:focus {
+                        color: $gray-dark;
+                    }
+                }
+                > .disabled > a {
+                    &,
+                    &:hover,
+                    &:focus {
+                        color: $gray-dark;
+                        ;
+                    }
+                }
+            }
+        }
+    }
 }
