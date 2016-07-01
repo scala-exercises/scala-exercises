@@ -1,6 +1,9 @@
-@import github4s.free.domain.Repository
+@import org.scalaexercises.types.user._
+@import org.scalaexercises.types.progress._
+@import org.scalaexercises.types.exercises._
+@import org.scalaexercises.types.github.Repository
 @import play.api.Play.current
-@(user: Option[shared.User] = None, libraries: List[shared.Library] = Nil, progress: shared.OverallUserProgress, redirectUrl: Option[String] = Some("#"), repo: Repository)(implicit request: RequestHeader)
+@(user: Option[User] = None, libraries: List[Library] = Nil, progress: OverallUserProgress, redirectUrl: Option[String] = Some("#"), repo: Repository)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -48,19 +51,19 @@
               <div class="row">
                 <div class="col-xs-4">
                   <a target="_blank" href="https://github.com/scala-exercises/scala-exercises/watchers">
-                    <h3><i class="fa fa-eye"></i> @repo.status.subscribers_count</h3>
+                    <h3><i class="fa fa-eye"></i> @repo.subscribers</h3>
                   </a>
                 </div>
 
                 <div class="col-xs-4">
                   <a target="_blank" href="https://github.com/scala-exercises/scala-exercises/stargazers">
-                    <h3><i class="fa fa-star"></i> @repo.status.stargazers_count</h3>
+                    <h3><i class="fa fa-star"></i> @repo.stargazers</h3>
                   </a>
                 </div>
 
                 <div class="col-xs-4">
                   <a target="_blank" href="https://github.com/scala-exercises/scala-exercises/fork">
-                    <h3><i class="fa fa-code-fork"></i> @repo.status.forks_count</h3>
+                    <h3><i class="fa fa-code-fork"></i> @repo.forks</h3>
                   </a>
                 </div>
 

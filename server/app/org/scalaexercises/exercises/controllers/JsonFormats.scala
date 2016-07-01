@@ -5,7 +5,8 @@
 
 package org.scalaexercises.exercises.controllers
 
-import shared._
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
 import play.api.libs.json._
 
 trait JsonFormats {

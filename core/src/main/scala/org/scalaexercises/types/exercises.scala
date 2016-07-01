@@ -1,6 +1,5 @@
-package shared
+package org.scalaexercises.types.exercises
 
-import cats.data.Ior
 import cats.data.Xor
 
 /** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
@@ -64,3 +63,18 @@ object ExerciseType {
   def toString(e: ExerciseType): String = e.toString
 }
 
+case class Contribution(
+  sha:       String,
+  message:   String,
+  timestamp: String,
+  url:       String,
+  author:    String,
+  authorUrl: String,
+  avatarUrl: String
+)
+
+case class Contributor(
+  author:    String,
+  authorUrl: String,
+  avatarUrl: String
+)

@@ -6,15 +6,16 @@
 package org.scalaexercises.exercises.support
 
 import cats.data.Xor
-import org.scalaexercises.exercises.persistence.domain.UserCreation.Request
-import org.scalaexercises.exercises.persistence.domain.{ SaveUserProgress, UserCreation }
+import org.scalaexercises.types.user.UserCreation._
+import org.scalaexercises.types.progress.SaveUserProgress
+
 import org.scalaexercises.exercises.persistence.repositories.UserRepository
 import doobie.imports._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Shapeless._
 import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest.Assertions
-import shared.User
+import org.scalaexercises.types.user.User
 
 import scalaz.concurrent.Task
 
@@ -43,7 +44,6 @@ trait ArbitraryInstances extends Assertions {
     ))
 
   def persistentUserArbitrary(implicit transactor: Transactor[Task], UR: UserRepository): Arbitrary[User] = {
-    import UserCreation._
     Arbitrary(arbitrary[Request] map { request ⇒
       UR.create(request).transact(transactor).run match {
         case Xor.Right(user) ⇒ user

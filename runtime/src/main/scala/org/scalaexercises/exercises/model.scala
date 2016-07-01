@@ -3,7 +3,8 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises
+package org.scalaexercises.runtime
+package model
 
 // This is the exercise runtime metamodel
 
@@ -93,3 +94,8 @@ case class DefaultExercise(
   explanation:     Option[String] = None,
   packageName:     String
 ) extends Exercise
+/*
+ * scala-exercises-runtime
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+

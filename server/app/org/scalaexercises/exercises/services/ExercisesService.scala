@@ -6,9 +6,10 @@
 package org.scalaexercises.exercises
 package services
 
-import org.scalaexercises.exercises.Exercises
-import org.scalaexercises.exercises.MethodEval
-import org.scalaexercises.exercises.Timestamp
+import org.scalaexercises.runtime.{ Exercises, MethodEval, Timestamp }
+import org.scalaexercises.runtime.model.{ Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection, Exercise ⇒ RuntimeExercise, Contribution ⇒ RuntimeContribution, DefaultLibrary }
+
+import org.scalaexercises.types.exercises.{ Library, Section, Exercise, Contribution, ExerciseEvaluation }
 
 import play.api.Play
 import play.api.Logger
@@ -31,7 +32,7 @@ object ExercisesService extends RuntimeSharedConversions {
   def classLoader = Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
 
-  lazy val (libraries, librarySections) = {
+  lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries)
     errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
     (
@@ -40,10 +41,10 @@ object ExercisesService extends RuntimeSharedConversions {
     )
   }
 
-  def section(libraryName: String, name: String): Option[shared.Section] =
+  def section(libraryName: String, name: String): Option[Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: shared.ExerciseEvaluation): shared.ExerciseEvaluation.Result = {
+  def evaluate(evaluation: ExerciseEvaluation): ExerciseEvaluation.Result = {
 
     def compileError(ef: EvaluationFailure[_]): String =
       s"Compilation error: ${ef.foldedException.getMessage}"
@@ -87,7 +88,7 @@ object ExercisesService extends RuntimeSharedConversions {
 
   }
 
-  def reorderLibraries(topLibNames: List[String], libraries: List[shared.Library]): List[shared.Library] = {
+  def reorderLibraries(topLibNames: List[String], libraries: List[Library]): List[Library] = {
     libraries.sortBy(lib ⇒ {
       val idx = topLibNames.indexOf(lib.name)
       if (idx == -1)
@@ -99,12 +100,10 @@ object ExercisesService extends RuntimeSharedConversions {
 }
 
 sealed trait RuntimeSharedConversions {
-  import org.scalaexercises.exercises._
-
   // not particularly clean, but this assigns colors
   // to libraries that don't have a default color provided
   // TODO: make this nicer
-  def colorize(libraries: List[Library]): List[Library] = {
+  def colorize(libraries: List[RuntimeLibrary]): List[RuntimeLibrary] = {
     val autoPalette = List(
       "#00587A",
       "#44BBFF",
@@ -121,7 +120,7 @@ sealed trait RuntimeSharedConversions {
       "#0F3057"
     )
 
-    val (_, res) = libraries.foldLeft((autoPalette, Nil: List[Library])) { (acc, library) ⇒
+    val (_, res) = libraries.foldLeft((autoPalette, Nil: List[RuntimeLibrary])) { (acc, library) ⇒
       val (colors, librariesAcc) = acc
       if (library.color.isEmpty) {
         val (color, colors0) = colors match {
@@ -143,8 +142,8 @@ sealed trait RuntimeSharedConversions {
     res.reverse
   }
 
-  def convertLibrary(library: Library) =
-    shared.Library(
+  def convertLibrary(library: RuntimeLibrary): Library =
+    Library(
       owner = library.owner,
       repository = library.repository,
       name = library.name,
@@ -154,8 +153,8 @@ sealed trait RuntimeSharedConversions {
       timestamp = library.timestamp
     )
 
-  def convertSection(section: Section) =
-    shared.Section(
+  def convertSection(section: RuntimeSection): Section =
+    Section(
       name = section.name,
       description = section.description,
       path = section.path,
@@ -163,8 +162,8 @@ sealed trait RuntimeSharedConversions {
       contributions = section.contributions.map(convertContribution)
     )
 
-  def convertExercise(exercise: Exercise) =
-    shared.Exercise(
+  def convertExercise(exercise: RuntimeExercise): Exercise =
+    Exercise(
       method = exercise.qualifiedMethod,
       name = Option(exercise.name),
       description = exercise.description,
@@ -172,8 +171,8 @@ sealed trait RuntimeSharedConversions {
       explanation = exercise.explanation
     )
 
-  def convertContribution(contribution: Contribution) =
-    shared.Contribution(
+  def convertContribution(contribution: RuntimeContribution): Contribution =
+    Contribution(
       sha = contribution.sha,
       message = contribution.message,
       timestamp = contribution.timestamp,

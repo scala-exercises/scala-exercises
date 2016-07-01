@@ -6,6 +6,8 @@
 package org.scalaexercises.exercises
 package compiler
 
+import org.scalaexercises.runtime.Timestamp
+
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
 

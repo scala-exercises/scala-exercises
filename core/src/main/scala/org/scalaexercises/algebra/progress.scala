@@ -3,20 +3,16 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises.services.free
+package org.scalaexercises.algebra.progress
 
-import org.scalaexercises.exercises.persistence.domain._
-import org.scalaexercises.shared.free.ExerciseOps
-import doobie.imports.Transactor
-import shared._
+import org.scalaexercises.algebra.exercises.ExerciseOps
+import org.scalaexercises.types.user._
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
 
 import cats.Monad
-import cats.free.Free
-import cats.free.Inject
 import cats.std.list._
-import cats.syntax.all._
-
-import scalaz.concurrent.Task
+import cats.free._
 
 /** Users Progress Ops GADT
   */
@@ -42,13 +38,10 @@ final case class UpdateUserProgress(
   */
 class UserProgressOps[F[_]](
     implicit
-    I:   Inject[UserProgressOp, F],
-    EO:  ExerciseOps[F],
-    DBO: DBOps[F],
-    T:   Transactor[Task],
-    FM:  Monad[Free[F, ?]]
+    I:  Inject[UserProgressOp, F],
+    EO: ExerciseOps[F],
+    FM: Monad[Free[F, ?]]
 ) {
-
   def saveUserProgress(userProgress: SaveUserProgress.Request): Free[F, UserProgress] =
     Free.inject[UserProgressOp, F](UpdateUserProgress(userProgress))
 
@@ -129,7 +122,7 @@ class UserProgressOps[F[_]](
   def fetchUserProgressByLibrary(user: User, libraryName: String): Free[F, LibraryProgress] = {
     for {
       maybeLib ← EO.getLibrary(libraryName)
-      libSections = maybeLib.fold(Nil: List[shared.Section])(_.sections)
+      libSections = maybeLib.fold(Nil: List[Section])(_.sections)
       sectionProgress ← FM.sequence(
         libSections.map(s ⇒ {
           for {
@@ -170,13 +163,17 @@ class UserProgressOps[F[_]](
       totalExercises = totalExercises
     )
   }
-
 }
 
 /** Default implicit based DI factory from which instances of the UserOps may be obtained
   */
 object UserProgressOps {
 
-  implicit def instance[F[_]](implicit I: Inject[UserProgressOp, F], EO: ExerciseOps[F], DBO: DBOps[F], T: Transactor[Task]): UserProgressOps[F] = new UserProgressOps[F]
+  implicit def instance[F[_]](
+    implicit
+    I:  Inject[UserProgressOp, F],
+    EO: ExerciseOps[F],
+    FM: Monad[Free[F, ?]]
+  ): UserProgressOps[F] = new UserProgressOps[F]
 
 }

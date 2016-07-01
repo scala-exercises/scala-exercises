@@ -1,4 +1,5 @@
-@(library: shared.Library, section: shared.Section, exercise: shared.Exercise)(implicit request: RequestHeader)
+@import org.scalaexercises.types.exercises._
+@(library: Library, section: Section, exercise: Exercise)(implicit request: RequestHeader)
 
   <div class="exercise unsolved" data-method="@exercise.method">
 

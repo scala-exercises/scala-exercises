@@ -5,11 +5,12 @@
 
 package org.scalaexercises.exercises.persistence.repositories
 
+import org.scalaexercises.types.user._
 import org.scalaexercises.exercises.persistence.PersistenceModule
-import org.scalaexercises.exercises.persistence.domain.{ UserQueries ⇒ Q, UserCreation }
+import org.scalaexercises.exercises.persistence.domain.{ UserQueries ⇒ Q }
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
+
 import doobie.imports._
-import shared.User
 
 import scalaz.syntax.applicative._
 

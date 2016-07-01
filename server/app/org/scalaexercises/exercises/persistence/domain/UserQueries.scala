@@ -7,7 +7,7 @@ package org.scalaexercises.exercises.persistence.domain
 
 import cats.data.Xor
 import github4s.free.domain.{ User ⇒ GHUser }
-import shared.User
+import org.scalaexercises.types.user.User
 import shapeless._
 import ops.record._
 
@@ -37,7 +37,7 @@ object UserCreation {
 
 object UserQueries {
 
-  val userGen = LabelledGeneric[shared.User]
+  val userGen = LabelledGeneric[org.scalaexercises.types.user.User]
   val userKeys = Keys[userGen.Repr]
   val allFields: List[String] =
     userKeys()

@@ -6,15 +6,22 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.data.Xor
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.persistence.domain.SaveUserProgress
-import org.scalaexercises.exercises.services.free.{ UserOps, UserProgressOps }
+
+import org.scalaexercises.types.user.User
+import org.scalaexercises.types.exercises.ExerciseEvaluation
+import org.scalaexercises.types.progress.SaveUserProgress
+
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.algebra.user.UserOps
+import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.exercises.ExerciseOps
+import org.scalaexercises.algebra.github.GithubOps
+
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import org.scalaexercises.shared.free.ExerciseOps
+
 import doobie.imports._
 import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
-import shared.{ ExerciseEvaluation, User }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

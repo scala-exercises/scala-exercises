@@ -7,7 +7,7 @@ package org.scalaexercises.exercises.services
 
 import org.scalatest._
 
-import shared._
+import org.scalaexercises.types.exercises._
 
 class ExercisesServiceSpec extends FlatSpec with Matchers {
 

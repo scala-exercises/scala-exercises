@@ -2,7 +2,7 @@
  * scala-exercises-runtime
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
-package org.scalaexercises.exercises
+package org.scalaexercises.runtime
 
 import java.io.File
 import java.nio.file.Path

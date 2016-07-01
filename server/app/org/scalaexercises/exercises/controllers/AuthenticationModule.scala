@@ -7,14 +7,18 @@ package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
 import cats.data.Xor
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.services.free.UserOps
+
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.types.user.User
+import org.scalaexercises.algebra.user.UserOps
+
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
+
 import doobie.imports._
 import play.api.libs.json._
 import play.api.mvc.Results._
 import play.api.mvc._
-import shared.User
+
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
 import scala.concurrent.ExecutionContext.Implicits.global

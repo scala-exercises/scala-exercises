@@ -6,21 +6,27 @@
 package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
-import github4s.free.domain.Repository
 
 import java.util.UUID
 import cats.free.Free
 import play.api.cache.{ Cache, CacheApi }
-import shared.{ Contribution, Contributor }
+import org.scalaexercises.types.exercises.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
 
 import cats.data.Xor
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.services.free._
+
+import org.scalaexercises.exercises.utils.OAuth2
+
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.algebra.user.UserOps
+import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.exercises.ExerciseOps
+import org.scalaexercises.types.github.Repository
+import org.scalaexercises.algebra.github.GithubOps
+
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import org.scalaexercises.exercises.utils.OAuth2
-import org.scalaexercises.shared.free.ExerciseOps
+
 import doobie.imports._
 import play.api.{ Play, Application }
 import play.api.libs.concurrent.Execution.Implicits.defaultContext

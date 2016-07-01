@@ -1,8 +1,7 @@
-package org.scalaexercises.exercises.services.free
+package org.scalaexercises.algebra.github
 
-import cats.free.Free
-import cats.free.Inject
-import github4s.free.domain.{ Repository, User, OAuthToken, Authorize }
+import cats.free._
+import org.scalaexercises.types.github._
 
 /** GitHub Ops GADT
   */
@@ -22,7 +21,7 @@ final case class GetAccessToken(
   state:        String
 ) extends GithubOp[OAuthToken]
 
-final case class GetAuthUser(accessToken: Option[String] = None) extends GithubOp[User]
+final case class GetAuthUser(accessToken: Option[String] = None) extends GithubOp[GithubUser]
 
 final case class GetRepository(owner: String, repo: String) extends GithubOp[Repository]
 
@@ -47,7 +46,7 @@ class GithubOps[F[_]](implicit I: Inject[GithubOp, F]) {
   ): Free[F, OAuthToken] =
     Free.inject[GithubOp, F](GetAccessToken(clientId, clienteSecret, code, redirectUri, state))
 
-  def getAuthUser(accessToken: Option[String] = None): Free[F, User] = Free.inject[GithubOp, F](GetAuthUser(accessToken))
+  def getAuthUser(accessToken: Option[String] = None): Free[F, GithubUser] = Free.inject[GithubOp, F](GetAuthUser(accessToken))
 
   def getRepository(owner: String, repo: String): Free[F, Repository] = Free.inject[GithubOp, F](GetRepository(owner, repo))
 

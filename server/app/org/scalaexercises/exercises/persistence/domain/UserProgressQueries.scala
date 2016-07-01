@@ -5,50 +5,11 @@
 
 package org.scalaexercises.exercises.persistence.domain
 
-import shared._
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
 import shapeless._
 import ops.record._
 import doobie.imports._
-
-case class UserProgress(
-  id:           Long,
-  userId:       Long,
-  libraryName:  String,
-  sectionName:  String,
-  method:       String,
-  version:      Int,
-  exerciseType: ExerciseType = Other,
-  args:         List[String],
-  succeeded:    Boolean
-)
-case class ExerciseEvaluation(
-  libraryName:  String,
-  sectionName:  String,
-  method:       String,
-  version:      Int,
-  exerciseType: ExerciseType = Other,
-  args:         List[String],
-  succeeded:    Boolean
-)
-
-object SaveUserProgress {
-
-  case class Request(
-      user:         User,
-      libraryName:  String,
-      sectionName:  String,
-      method:       String,
-      version:      Int,
-      exerciseType: ExerciseType,
-      args:         List[String],
-      succeeded:    Boolean
-  ) {
-
-    def asUserProgress(id: Long): UserProgress =
-      UserProgress(id, user.id, libraryName, sectionName, method, version, exerciseType, args, succeeded)
-  }
-
-}
 
 object UserProgressQueries {
 

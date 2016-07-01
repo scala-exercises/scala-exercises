@@ -5,8 +5,11 @@
 
 package org.scalaexercises.exercises.persistence.queries
 
-import org.scalaexercises.exercises.persistence.domain.{ UserProgressQueries ⇒ Q, UserProgress }
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
+import org.scalaexercises.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
+
 import org.scalaexercises.exercises.support.DatabaseInstance
 import doobie.contrib.specs2.analysisspec.AnalysisSpec
 import doobie.imports._

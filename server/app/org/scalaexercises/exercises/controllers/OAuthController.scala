@@ -8,10 +8,16 @@ package org.scalaexercises.exercises.controllers
 import cats.data.Xor
 import cats.std.option._
 import cats.syntax.cartesian._
+
 import org.scalaexercises.exercises.Secure
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.persistence.domain.UserCreation
-import org.scalaexercises.exercises.services.free.{ GithubOps, UserOps }
+
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.algebra.github.GithubOps
+import org.scalaexercises.algebra.user.UserOps
+
+import org.scalaexercises.types.user.UserCreation
+import org.scalaexercises.types.github.GithubUser
+
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import org.scalaexercises.exercises.utils.OAuth2._
@@ -36,18 +42,28 @@ class OAuthController(
         case (code, state, oauthState) ⇒
           if (state == oauthState) {
             githubOps.getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state).runFuture.map {
-              case Xor.Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.access_token)
+              case Xor.Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.accessToken)
               case Xor.Left(ex) ⇒ Unauthorized(ex.getMessage)
             }
           } else Future.successful(BadRequest("Invalid github login"))
       }
   })
 
+  def createUserRequest(githubUser: GithubUser): UserCreation.Request =
+    UserCreation.Request(
+      login = githubUser.login,
+      name = githubUser.name,
+      githubId = githubUser.login,
+      pictureUrl = githubUser.avatar,
+      githubUrl = githubUser.url,
+      email = githubUser.email
+    )
+
   def success() = Secure(Action.async { implicit request ⇒
     request.session.get("oauth-token").fold(Future.successful(Unauthorized("Missing OAuth token"))) { accessToken ⇒
       val ops = for {
         ghuser ← githubOps.getAuthUser(Some(accessToken))
-        user ← userOps.getOrCreate(UserCreation.toUser(ghuser))
+        user ← userOps.getOrCreate(createUserRequest(ghuser))
       } yield (ghuser, user)
 
       ops.runFuture.map {

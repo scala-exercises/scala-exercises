@@ -9,15 +9,17 @@ import org.scalaexercises.exercises.Secure
 
 import java.util.UUID
 import cats.free.Free
-import shared.{ Contribution, Contributor }
 
 import cats.data.Xor
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.services.free._
+
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.algebra.exercises.ExerciseOps
+import org.scalaexercises.types.exercises.{ Contribution, Contributor }
+
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import org.scalaexercises.exercises.utils.OAuth2
-import org.scalaexercises.shared.free.ExerciseOps
+
 import doobie.imports._
 import play.api.{ Play, Application }
 import play.api.libs.concurrent.Execution.Implicits.defaultContext

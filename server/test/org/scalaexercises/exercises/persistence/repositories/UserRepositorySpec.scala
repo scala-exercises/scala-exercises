@@ -5,8 +5,9 @@ package org.scalaexercises.exercises.persistence.repositories
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-import org.scalaexercises.exercises.persistence.domain.UserCreation
-import org.scalaexercises.exercises.persistence.domain.UserCreation.Request
+import org.scalaexercises.types.user.UserCreation
+import org.scalaexercises.types.user.UserCreation.Request
+
 import org.scalaexercises.exercises.support.{ ArbitraryInstances, DatabaseInstance }
 import doobie.imports._
 import org.scalacheck.Arbitrary

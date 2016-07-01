@@ -13,7 +13,7 @@ import doobie.contrib.specs2.analysisspec.AnalysisSpec
 import doobie.util.query.Query
 import doobie.util.update.Update
 import org.specs2.mutable.Specification
-import shared.User
+import org.scalaexercises.types.user.User
 import scalaz.concurrent.Task
 
 class UserQueriesSpec

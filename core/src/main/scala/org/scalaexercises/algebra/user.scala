@@ -1,14 +1,9 @@
-/*
- * scala-exercises-server
- * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
- */
+package org.scalaexercises.algebra.user
 
-package org.scalaexercises.exercises.services.free
+import org.scalaexercises.types.user.{ User, UserCreation }
 
 import cats.data.Xor
-import cats.free.{ Free, Inject }
-import org.scalaexercises.exercises.persistence.domain.UserCreation
-import shared.User
+import cats.free._
 
 /** Users Ops GADT
   */

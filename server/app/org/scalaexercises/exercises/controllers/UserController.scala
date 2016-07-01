@@ -6,10 +6,14 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.data.Xor
+
 import org.scalaexercises.exercises.Secure
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.services.free.UserOps
+
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.algebra.user.UserOps
+
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
+
 import doobie.imports._
 import play.api.libs.json.Reads._
 import play.api.libs.json._

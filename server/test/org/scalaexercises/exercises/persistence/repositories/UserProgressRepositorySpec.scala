@@ -5,7 +5,8 @@ package org.scalaexercises.exercises.persistence.repositories
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-import org.scalaexercises.exercises.persistence.domain.{ UserCreation, SaveUserProgress }
+import org.scalaexercises.types.user.{ UserCreation }
+import org.scalaexercises.types.progress.{ SaveUserProgress }
 import org.scalaexercises.exercises.support.{ ArbitraryInstances, DatabaseInstance }
 import doobie.imports._
 import org.scalacheck.Arbitrary
@@ -13,7 +14,7 @@ import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import scalaz.concurrent.Task
-import shared.User
+import org.scalaexercises.types.user.User
 
 class UserProgressRepositorySpec
     extends PropSpec

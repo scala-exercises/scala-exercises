@@ -1,4 +1,4 @@
-package shared
+package fp
 
 import cats.Monad
 

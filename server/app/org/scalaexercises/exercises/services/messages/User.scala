@@ -5,7 +5,7 @@
 
 package org.scalaexercises.exercises.services.messages
 
-import shared.User
+import org.scalaexercises.types.user.User
 
 case class GetUserOrCreateRequest(
   login:      String,

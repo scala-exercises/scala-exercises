@@ -68,6 +68,24 @@ lazy val commonSettings = Seq(
   )}
 ) ++ formattingSettings ++ publishSettings ++ wartSettings
 
+// Purely functional core
+
+lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
+  .jsConfigure(_ enablePlugins ScalaJSPlay)
+  .jsSettings(sourceMapsBase := baseDirectory.value / "..",  scalaVersion := "2.11.7")
+  .settings(commonSettings: _*)
+  .settings(
+    name := "core",
+    scalaVersion := "2.11.7",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %%% "cats-core" % "0.4.1",
+      compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
+    )
+)
+
+lazy val coreJvm = core.jvm
+lazy val coreJs = core.js
+
 // Client and Server projects
 
 lazy val clients = Seq(client)
@@ -76,7 +94,7 @@ lazy val scalazVersion = "7.1.4"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(sharedJvm)
+  .dependsOn(core.jvm)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
@@ -119,14 +137,14 @@ lazy val server = (project in file("server"))
     compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")))
 
 lazy val client = (project in file("client"))
-  .dependsOn(sharedJs)
+  .dependsOn(core.js)
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .settings(commonSettings: _*)
   .settings(
     scalaVersion := "2.11.7",
     persistLauncher := true,
     persistLauncher in Test := false,
-    sourceMapsDirectories += sharedJs.base / "..",
+    sourceMapsDirectories += core.js.base / "..",
     jsDependencies ++= Seq(
       "org.webjars" % "bootstrap" % "3.2.0" / "bootstrap.js" minified "bootstrap.min.js"
     ),
@@ -143,23 +161,6 @@ lazy val client = (project in file("client"))
       "org.typelevel" %%% "cats-core" % "0.4.1"
     )
   )
-
-
-// Code shared by both the client and server projects
-
-lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
-  .jsConfigure(_ enablePlugins ScalaJSPlay)
-  .jsSettings(sourceMapsBase := baseDirectory.value / "..",  scalaVersion := "2.11.7")
-  .settings(commonSettings: _*)
-  .settings(
-  scalaVersion := "2.11.7",
-  libraryDependencies ++= Seq(
-    "org.typelevel" %%% "cats-core" % "0.4.1" % "compile"
-  )
-)
-
-lazy val sharedJvm = shared.jvm
-lazy val sharedJs = shared.js
 
 // Definitions
 

@@ -5,6 +5,10 @@
 
 package org.scalaexercises.exercises.persistence.repositories
 
+import org.scalaexercises.types.user._
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
+
 import org.scalaexercises.exercises.persistence.PersistenceModule
 import org.scalaexercises.exercises.persistence.domain._
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
@@ -12,7 +16,6 @@ import doobie.imports._
 import org.scalaexercises.exercises.persistence.domain.{ UserProgressQueries ⇒ Q }
 import Q.Implicits._
 import doobie.contrib.postgresql.pgtypes._
-import shared._
 
 trait UserProgressRepository {
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]

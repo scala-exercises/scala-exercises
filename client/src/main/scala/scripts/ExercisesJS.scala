@@ -10,7 +10,7 @@ import utils.DomHandler._
 import scala.scalajs.js
 import scala.concurrent.Future
 
-import shared.IO
+import fp.IO
 import IO._
 import model._
 import model.Exercises._

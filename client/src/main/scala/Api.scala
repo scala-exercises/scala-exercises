@@ -10,8 +10,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import model._
 import config.Routes
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
+
 import messages.{ EvaluationRequest, EvaluationResult }
-import shared._
 
 import upickle._
 import common.ExtAjax._

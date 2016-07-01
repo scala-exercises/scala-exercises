@@ -5,21 +5,26 @@
 
 package org.scalaexercises.exercises.services.interpreters
 
-import org.scalaexercises.exercises.app.C01
-import org.scalaexercises.exercises.app.C02
+import org.scalaexercises.algebra.app._
+import org.scalaexercises.algebra.user._
+import org.scalaexercises.algebra.exercises._
+import org.scalaexercises.algebra.progress._
+import org.scalaexercises.algebra.github._
+import org.scalaexercises.types.github._
+
+import org.scalaexercises.exercises.persistence.repositories.{ UserRepository, UserProgressRepository }
+
 import github4s.app.GitHub4s
 import github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters }
 import github4s.Github
 import Github._
 import github4s.implicits._
 import github4s.GithubResponses.{ GHResult, GHResponse }
+
 import cats._
 import cats.data.Xor
 import cats.free.Free
-import org.scalaexercises.exercises.app._
-import org.scalaexercises.exercises.persistence.repositories.{ UserRepository, UserProgressRepository }
-import org.scalaexercises.exercises.services.free._
-import org.scalaexercises.shared.free._
+
 import doobie.imports._
 
 import scala.concurrent.{ Future, Promise }
@@ -40,8 +45,7 @@ trait Interpreters[M[_]] {
   ): ExercisesApp ~> M = {
     val exerciseAndUserInterpreter: C01 ~> M = exerciseOpsInterpreter or userOpsInterpreter
     val userAndUserProgressInterpreter: C02 ~> M = userProgressOpsInterpreter or exerciseAndUserInterpreter
-    val c03Interpreter: C03 ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
-    val all: ExercisesApp ~> M = dbOpsInterpreter or c03Interpreter
+    val all: ExercisesApp ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
     all
   }
 
@@ -88,14 +92,6 @@ trait Interpreters[M[_]] {
     }
   }
 
-  implicit def dbOpsInterpreter(implicit A: MonadError[M, Throwable]): DBResult ~> M = new (DBResult ~> M) {
-
-    def apply[A](fa: DBResult[A]): M[A] = fa match {
-      case DBSuccess(value) ⇒ A.pure(value)
-      case DBFailure(error) ⇒ A.raiseError(error)
-    }
-  }
-
   implicit def githubOpsInterpreter(implicit A: MonadError[M, Throwable]): GithubOp ~> M = new (GithubOp ~> M) {
 
     def apply[A](fa: GithubOp[A]): M[A] = {
@@ -104,16 +100,27 @@ trait Interpreters[M[_]] {
       implicit val I: GitHub4s ~> M = ProdGHInterpreters.interpreters[M]
 
       fa match {
-        case GetAuthorizeUrl(client_id, redirect_uri, scopes) ⇒ ghResponseToEntity(Github().auth.authorizeUrl(client_id, redirect_uri, scopes).exec[M])
-        case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ ghResponseToEntity(Github().auth.getAccessToken(client_id, client_secret, code, redirect_uri, state).exec[M])
-        case GetAuthUser(accessToken) ⇒ ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])
-        case GetRepository(owner, repo) ⇒ ghResponseToEntity(Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M])
+        case GetAuthorizeUrl(client_id, redirect_uri, scopes)                    ⇒ ghResponseToEntity(Github().auth.authorizeUrl(client_id, redirect_uri, scopes).exec[M])(auth ⇒ Authorize(auth.url, auth.state))
+        case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ ghResponseToEntity(Github().auth.getAccessToken(client_id, client_secret, code, redirect_uri, state).exec[M])(token ⇒ OAuthToken(token.access_token))
+        case GetAuthUser(accessToken) ⇒ ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])(user ⇒ GithubUser(
+          login = user.login,
+          name = user.name,
+          avatar = user.avatar_url,
+          url = user.html_url,
+          email = user.email
+        ))
+        case GetRepository(owner, repo) ⇒ ghResponseToEntity(Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M])(repo ⇒
+          Repository(
+            subscribers = repo.status.subscribers_count,
+            stargazers = repo.status.stargazers_count,
+            forks = repo.status.forks_count
+          ))
       }
     }
 
-    private def ghResponseToEntity[T](response: M[GHResponse[T]]): M[T] = A.flatMap(response) {
-      case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(result)
-      case Xor.Left(e)                                  ⇒ A.raiseError[T](e)
+    private def ghResponseToEntity[A, B](response: M[GHResponse[A]])(f: A ⇒ B): M[B] = A.flatMap(response) {
+      case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(f(result))
+      case Xor.Left(e)                                  ⇒ A.raiseError[B](e)
     }
 
   }

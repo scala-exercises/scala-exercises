@@ -1,6 +1,10 @@
-@(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributors: List[shared.Contributor])(implicit request: RequestHeader)
+@import org.scalaexercises.types.user._
+@import org.scalaexercises.types.progress._
+@import org.scalaexercises.types.exercises._
 @import play.api.Play.current
 @import org.scalaexercises.exercises.utils.StringUtils._
+@(library: Library, section: Section, progress: LibraryProgress, user: Option[User] = None, redirectUrl: Option[String] = Some("#"), contributors: List[Contributor])(implicit request: RequestHeader)
+
 
 <!DOCTYPE html>
 <html lang="en">

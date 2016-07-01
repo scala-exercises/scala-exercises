@@ -12,7 +12,7 @@ import cats.syntax.option._
 import cats.std.list._
 import cats.syntax.traverse._
 
-import shared.IO
+import fp._
 import IO._
 import actions._
 import model._
