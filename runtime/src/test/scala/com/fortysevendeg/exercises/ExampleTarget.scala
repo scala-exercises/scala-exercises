@@ -1,4 +1,4 @@
-package org.scalaExercises.exercises
+package org.scalaexercises.exercises
 
 object ExampleTarget {
   def intStringMethod(a: Int, b: String): String = {

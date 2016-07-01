@@ -1,6 +1,6 @@
 @(library: shared.Library, section: shared.Section, progress: shared.LibraryProgress, user: Option[shared.User] = None, redirectUrl: Option[String] = Some("#"), contributors: List[shared.Contributor])(implicit request: RequestHeader)
 @import play.api.Play.current
-@import org.scalaExercises.exercises.utils.StringUtils._
+@import org.scalaexercises.exercises.utils.StringUtils._
 
 <!DOCTYPE html>
 <html lang="en">
@@ -124,7 +124,7 @@
     <script src="@routes.Assets.at("lib/highlightjs/highlight.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("lib/highlightjs/languages/scala.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/emojify-cdn.js")"></script>
-    <script src="@org.scalaExercises.exercises.controllers.routes.ApplicationController.javascriptRoutes" type="text/javascript"></script>
+    <script src="@org.scalaexercises.exercises.controllers.routes.ApplicationController.javascriptRoutes" type="text/javascript"></script>
     @playscalajs.html.scripts("client", "/assets")
     
   </body>

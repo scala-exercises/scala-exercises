@@ -1,4 +1,4 @@
-package org.scalaExercises.shared.free
+package org.scalaexercises.shared.free
 
 import cats.data.Xor
 import cats.free.Free
