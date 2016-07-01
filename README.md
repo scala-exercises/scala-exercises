@@ -37,6 +37,7 @@ Scala Exercises is available at [scala-exercises.org](https://scala-exercises.or
 
 #### Installing the app locally
 
+##### Get the repository
 First of all, either clone the repository via git
 
 ```sh
@@ -48,20 +49,24 @@ or download it
 ```sh
 $ wget https://github.com/scala-exercises/scala-exercises/archive/master.zip
 ```
+##### Configure the database
 
-You'll need a working PostgreSQL 9.4 database and user for running the app. Once the database is running,
-create a user called `scalaexercises_dev_user`
+You'll need a working [PostgreSQL 9.4](http://www.postgresql.org/download/) database and user for running the app. Once the database is running,
 
-```sh
-$ createuser -P -e scalaexercises_dev_user "a_password"
-```
-
-Create a db called `scalaexercises_dev` and grant all privileges on it to `scalaexercises_dev_user`
+- Create a user called `scalaexercises_dev_user`
 
 ```sh
-$ createdb scalaexercises_dev
-$ psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
+$ sudo -u postgres psql -c "CREATE USER scalaexercises_dev_user WITH PASSWORD 'a_password';"
 ```
+
+- Create a db called `scalaexercises_dev` and grant all privileges on it to `scalaexercises_dev_user`
+
+```sh
+$ sudo -u postgres createdb scalaexercises_dev
+$ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
+```
+
+##### Configure the application
 
 Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
 
