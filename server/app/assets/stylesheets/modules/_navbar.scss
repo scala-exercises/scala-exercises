@@ -58,7 +58,6 @@
 }
 
 @media (max-width: $screen-sm-min) {
-    
     .navbar-inverse {
         .navbar-collapse {
             background: $gray-light;
@@ -102,11 +101,9 @@
             .open .dropdown-menu {
                 > li > a {
                     color: $gray-dark;
-                    ;
                     &:hover,
                     &:focus {
                         color: $gray-dark;
-                        ;
                     }
                 }
                 > .active > a {
