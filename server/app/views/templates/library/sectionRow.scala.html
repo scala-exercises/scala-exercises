@@ -1,5 +1,5 @@
 @(sectionName: String, color: String, highlight: Boolean, completed: Boolean)(implicit request: RequestHeader)
-@import com.fortysevendeg.exercises.utils.StringUtils._
+@import org.scalaExercises.exercises.utils.StringUtils._
 
 <li class="actives @if(highlight){ current }">
   <span class="bullet-active" @if(completed) { style="background-color: @color;" }></span>

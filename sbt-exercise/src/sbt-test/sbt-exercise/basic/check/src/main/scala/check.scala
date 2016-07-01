@@ -1,4 +1,4 @@
-import com.fortysevendeg.exercises._
+import org.scalaExercises.exercises._
 
 import java.nio.file.Paths
 

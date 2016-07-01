@@ -8,7 +8,7 @@ package config
 import scala.scalajs.js
 
 object Routes {
-  private val controllers = js.Dynamic.global.jsRoutes.com.fortysevendeg.exercises.controllers
+  private val controllers = js.Dynamic.global.jsRoutes.org.scalaExercises.exercises.controllers
 
   object Exercises {
     def libraries: String =

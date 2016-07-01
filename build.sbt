@@ -220,7 +220,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     // the compiler, which requires Scala 2.11.x.
     compilerClasspath <<= fullClasspath in (compiler, Compile),
       buildInfoObject   := "Meta",
-      buildInfoPackage  := "com.fortysevendeg.exercises.sbtexercise",
+      buildInfoPackage  := "org.scalaExercises.exercises.sbtexercise",
       buildInfoKeys     := Seq(
         version,
         BuildInfoKey.map(compilerClasspath) {

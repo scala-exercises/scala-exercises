@@ -1,6 +1,6 @@
 package scalaExercisesContent
 
-import com.fortysevendeg.exercises.Library
+import org.scalaExercises.exercises.Library
 
 object LibraryA extends Library {
   override def owner = ???

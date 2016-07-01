@@ -3,34 +3,34 @@
 # ~~~~
 
 #Sitemap
-GET /sitemap.xml com.fortysevendeg.exercises.controllers.SitemapController.sitemap
+GET /sitemap.xml org.scalaExercises.exercises.controllers.SitemapController.sitemap
 
 #Loader IO load testing verification
-GET /loaderio-397122d360fee8afca6b77f62c4853ed/ com.fortysevendeg.exercises.controllers.LoaderIOController.verificationToken
+GET /loaderio-397122d360fee8afca6b77f62c4853ed/ org.scalaExercises.exercises.controllers.LoaderIOController.verificationToken
 
 # Home page
-GET / com.fortysevendeg.exercises.controllers.ApplicationController.index
+GET / org.scalaExercises.exercises.controllers.ApplicationController.index
 
-GET /users/:login com.fortysevendeg.exercises.controllers.UserController.byLogin(login: String)
+GET /users/:login org.scalaExercises.exercises.controllers.UserController.byLogin(login: String)
 
-POST /exercises/sections/:libraryName/:sectionName/evaluate com.fortysevendeg.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
+POST /exercises/sections/:libraryName/:sectionName/evaluate org.scalaExercises.exercises.controllers.ExercisesController.evaluate(libraryName: String, sectionName: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
 GET /assets/*file controllers.Assets.at(path="/public", file)
 
 # OAuth2
-GET /_oauth-callback  com.fortysevendeg.exercises.controllers.OAuthController.callback(code: Option[String], state: Option[String])
-GET /_oauth-success   com.fortysevendeg.exercises.controllers.OAuthController.success
-GET /logout           com.fortysevendeg.exercises.controllers.OAuthController.logout
+GET /_oauth-callback  org.scalaExercises.exercises.controllers.OAuthController.callback(code: Option[String], state: Option[String])
+GET /_oauth-success   org.scalaExercises.exercises.controllers.OAuthController.success
+GET /logout           org.scalaExercises.exercises.controllers.OAuthController.logout
 
 # Client-side routing
-GET /javascriptRoutes com.fortysevendeg.exercises.controllers.ApplicationController.javascriptRoutes
+GET /javascriptRoutes org.scalaExercises.exercises.controllers.ApplicationController.javascriptRoutes
 
 # Exercises
-GET /:libraryName               com.fortysevendeg.exercises.controllers.ApplicationController.library(libraryName: String)
-GET /:libraryName/:sectionName  com.fortysevendeg.exercises.controllers.ApplicationController.section(libraryName: String, sectionName: String)
+GET /:libraryName               org.scalaExercises.exercises.controllers.ApplicationController.library(libraryName: String)
+GET /:libraryName/:sectionName  org.scalaExercises.exercises.controllers.ApplicationController.section(libraryName: String, sectionName: String)
 
 #User Progress
-GET /progress/library/:libraryName/section/:sectionName com.fortysevendeg.exercises.controllers.UserProgressController.fetchUserProgressBySection(libraryName: String, sectionName: String)
+GET /progress/library/:libraryName/section/:sectionName org.scalaExercises.exercises.controllers.UserProgressController.fetchUserProgressBySection(libraryName: String, sectionName: String)
 
