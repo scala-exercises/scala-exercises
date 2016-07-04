@@ -113,10 +113,7 @@ case class TreeGen[U <: Universe](
     trees:       List[Tree]
   ) = q"""
         package ${makeRefTree(packageName)} {
-          import org.scalaexercises.exercises.Exercise
-          import org.scalaexercises.exercises.Library
-          import org.scalaexercises.exercises.Section
-          import org.scalaexercises.exercises.Contribution
+          import org.scalaexercises.runtime.model.{ Exercise, Library, Section, Contribution }
           ..$trees
         }"""
 
