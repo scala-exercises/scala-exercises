@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+package org.scalaexercises.client
 package common
 
 import org.scalajs.dom.XMLHttpRequest

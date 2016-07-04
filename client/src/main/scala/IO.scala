@@ -1,3 +1,4 @@
+package org.scalaexercises.client
 package fp
 
 import cats.Monad
