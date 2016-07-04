@@ -21,9 +21,4 @@ env:
 install:
   - gem install sass
 script:
-  - sbt 'server/test'
-  - sbt 'client/test'
-  - sbt 'definitions/test'
-  - sbt 'runtime/test'
-  - sbt 'compiler/test'
-  - sbt 'sbt-exercise/scripted'
+  - sbt testAll

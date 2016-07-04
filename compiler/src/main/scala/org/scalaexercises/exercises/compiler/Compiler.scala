@@ -3,9 +3,9 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises
-package compiler
+package org.scalaexercises.compiler
 
+import org.scalaexercises.definitions.Library
 import org.scalaexercises.runtime.Timestamp
 
 import scala.reflect.api.Universe
@@ -28,7 +28,7 @@ import CommentRendering.RenderedComment
 
 class CompilerJava {
   def compile(library: AnyRef, sources: Array[String], paths: Array[String], baseDir: String, targetPackage: String): Array[String] = {
-    Compiler().compile(library.asInstanceOf[exercise.Library], sources.toList, paths.toList, baseDir, targetPackage)
+    Compiler().compile(library.asInstanceOf[Library], sources.toList, paths.toList, baseDir, targetPackage)
       .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
   }
 }
@@ -36,7 +36,7 @@ class CompilerJava {
 case class Compiler() {
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  def compile(library: exercise.Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String) = {
+  def compile(library: Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String) = {
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
@@ -85,7 +85,7 @@ case class Compiler() {
       s"""$error in ${path.mkString(".")}"""
 
     def maybeMakeLibraryInfo(
-      library: exercise.Library
+      library: Library
     ) = for {
       symbol ← internal.instanceToClassSymbol(library)
       symbolPath = internal.symbolToPath(symbol)
@@ -123,7 +123,7 @@ case class Compiler() {
     }
 
     def maybeMakeSectionInfo(
-      library: exercise.Library,
+      library: Library,
       symbol:  ClassSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)

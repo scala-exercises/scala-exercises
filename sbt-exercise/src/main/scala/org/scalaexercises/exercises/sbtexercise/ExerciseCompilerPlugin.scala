@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises
+package org.scalaexercises.plugin
 package sbtexercise
 
 import scala.language.implicitConversions
@@ -120,7 +120,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       }).sorted
 
   // reflection is used to invoke a java-style interface to the exercise compiler
-  private val COMPILER_CLASS = "org.scalaexercises.exercises.compiler.CompilerJava"
+  private val COMPILER_CLASS = "org.scalaexercises.compiler.CompilerJava"
   private type COMPILER = {
     def compile(
       library:       AnyRef,

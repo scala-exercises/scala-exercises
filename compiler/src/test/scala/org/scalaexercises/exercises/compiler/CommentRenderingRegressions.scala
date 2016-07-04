@@ -1,5 +1,4 @@
-package org.scalaexercises.exercises
-package compiler
+package org.scalaexercises.compiler
 
 import org.scalatest._
 

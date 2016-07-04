@@ -1,5 +1,6 @@
-package org.scalaexercises.exercises
-package compiler
+package org.scalaexercises.compiler
+
+import org.scalaexercises.definitions.Library
 
 import scala.reflect.internal.util.AbstractFileClassLoader
 import scala.reflect.internal.util.BatchSourceFile
@@ -19,7 +20,7 @@ class CompilerSpec extends FunSpec with Matchers {
       /** This is the sample library.
         * @param name Sample Library
         */
-      object SampleLibrary extends exercise.Library {
+      object SampleLibrary extends org.scalaexercises.definitions.Library {
         override def owner = "scala-exercises"
         override def repository = "site"
         override def sections = List(
@@ -32,7 +33,7 @@ class CompilerSpec extends FunSpec with Matchers {
         *
         * @param name Section 1
         */
-      object Section1 extends exercise.Section {
+      object Section1 extends org.scalaexercises.definitions.Section {
         /** This is example exercise 1! */
         def example1() = { 1 }
 
@@ -49,7 +50,7 @@ class CompilerSpec extends FunSpec with Matchers {
       val library = classLoader
         .loadClass("SampleLibrary$")
         .getField("MODULE$").get(null)
-        .asInstanceOf[exercise.Library]
+        .asInstanceOf[Library]
 
       val path = "(internal)"
       val res = Compiler().compile(library, code :: Nil, path :: Nil, "/", "sample")

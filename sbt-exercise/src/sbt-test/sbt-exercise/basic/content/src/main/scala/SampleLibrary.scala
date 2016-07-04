@@ -1,6 +1,6 @@
 package stdlib
 
-import exercise.Library
+import org.scalaexercises.definitions.Library
 
 /** This is my Library
   * @param name sample

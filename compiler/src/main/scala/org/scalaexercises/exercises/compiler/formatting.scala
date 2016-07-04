@@ -1,4 +1,4 @@
-package org.scalaexercises.exercises
+package org.scalaexercises.compiler
 
 import scalariform.formatter.{ ScalaFormatter }
 

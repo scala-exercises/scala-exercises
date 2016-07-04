@@ -3,12 +3,11 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises
-package compiler
+package org.scalaexercises.compiler
 
 import scala.reflect.api.Universe
 
-import org.scalaexercises.exercises.formatting._
+import org.scalaexercises.compiler.formatting._
 
 /** This is responsible for generating exercise code. It generates
   * scala compiler trees, which can be evaluated or rendered to

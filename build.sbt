@@ -94,7 +94,7 @@ lazy val scalazVersion = "7.1.4"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(core.jvm)
+  .dependsOn(core.jvm, runtime)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
@@ -109,7 +109,6 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
     ws,
-      "org.scala-exercises" %% "runtime" % version.value,
       "org.scala-exercises" %% "exercises-stdlib" % version.value,
       "org.scala-exercises" %% "exercises-cats" % version.value,
       "org.scala-exercises" %% "exercises-shapeless" % version.value,
@@ -186,25 +185,25 @@ lazy val runtime = (project in file("runtime"))
     )
 )
 
-// Compiler & Compiler plugin
+// Compiler
 
 lazy val compiler = (project in file("compiler"))
   .settings(commonSettings:_*)
   .settings(
     name := "exercise-compiler",
     scalaVersion := "2.11.7",
-    exportJars      := true,
+    exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
       "com.fortysevendeg" %% "github4s" % "0.5",
-      "org.scala-exercises" %% "definitions" % version.value,
-      "org.scala-exercises" %% "runtime" % version.value,
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % "0.4.1" % "test",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
- )
+ ).dependsOn(definitions, runtime)
+
+// Compiler plugin
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(commonSettings:_*)
@@ -215,13 +214,12 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % "0.4.1" % "compile"
     ),
-
     // Leverage build info to populate compiler classpath--
     // This allows SBT, which currently requires Scala 2.10.x, to load and run
     // the compiler, which requires Scala 2.11.x.
     compilerClasspath <<= fullClasspath in (compiler, Compile),
       buildInfoObject   := "Meta",
-      buildInfoPackage  := "org.scalaexercises.exercises.sbtexercise",
+      buildInfoPackage  := "org.scalaexercises.plugin.sbtexercise",
       buildInfoKeys     := Seq(
         version,
         BuildInfoKey.map(compilerClasspath) {
@@ -301,5 +299,6 @@ lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 
 // Aliases
 
+addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
 addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
 addCommandAlias("publishSignedAll", ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")

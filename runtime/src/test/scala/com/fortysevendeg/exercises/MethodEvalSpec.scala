@@ -3,9 +3,10 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises
+package org.scalaexercises.runtime
 
 import org.scalatest._
+
 import MethodEval._
 
 class MethodEvalSpec extends FunSpec with Matchers {
@@ -16,8 +17,8 @@ class MethodEvalSpec extends FunSpec with Matchers {
 
     it("fails when incorrect parameter types are provided") {
       val res = methodEval.eval(
-        "org.scalaexercises.exercises",
-        "org.scalaexercises.exercises.ExampleTarget.intStringMethod",
+        "org.scalaexercises.runtime",
+        "org.scalaexercises.runtime.ExampleTarget.intStringMethod",
         "\"hello\"" :: "\"world\"" :: Nil
       )
       assert(!res.didRun)
@@ -27,8 +28,8 @@ class MethodEvalSpec extends FunSpec with Matchers {
 
     it("fails when too many parameters are provided") {
       val res = methodEval.eval(
-        "org.scalaexercises.exercises",
-        "org.scalaexercises.exercises.ExampleTarget.intStringMethod",
+        "org.scalaexercises.runtime",
+        "org.scalaexercises.runtime.ExampleTarget.intStringMethod",
         "\"hello\"" :: "\"world\"" :: "1" :: Nil
       )
       assert(!res.didRun)
@@ -38,8 +39,8 @@ class MethodEvalSpec extends FunSpec with Matchers {
 
     it("works when the parameters are appropriate") {
       val res = methodEval.eval(
-        "org.scalaexercises.exercises",
-        "org.scalaexercises.exercises.ExampleTarget.intStringMethod",
+        "org.scalaexercises.runtime",
+        "org.scalaexercises.runtime.ExampleTarget.intStringMethod",
         "1 + 2" :: "\"world\"" :: Nil
       )
 
@@ -50,8 +51,8 @@ class MethodEvalSpec extends FunSpec with Matchers {
 
     it("captures exceptions thrown by the called method") {
       val res = methodEval.eval(
-        "org.scalaexercises.exercises",
-        "org.scalaexercises.exercises.ExampleTarget.throwsExceptionMethod",
+        "org.scalaexercises.runtime",
+        "org.scalaexercises.runtime.ExampleTarget.throwsExceptionMethod",
         Nil
       )
 
@@ -64,8 +65,8 @@ class MethodEvalSpec extends FunSpec with Matchers {
 
     it("interprets imports properly") {
       val res = methodEval.eval(
-        "org.scalaexercises.exercises",
-        "org.scalaexercises.exercises.ExampleTarget.takesXorMethod",
+        "org.scalaexercises.runtime",
+        "org.scalaexercises.runtime.ExampleTarget.takesXorMethod",
         "Xor.right(1)" :: Nil,
         "import cats.data.Xor" :: Nil
       )

@@ -3,8 +3,7 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package org.scalaexercises.exercises
-package compiler
+package org.scalaexercises.compiler
 
 import scala.annotation.tailrec
 
