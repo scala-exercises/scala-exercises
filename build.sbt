@@ -1,3 +1,5 @@
+import scala.util.Try
+
 import play.PlayImport._
 
 import sbt.Keys._
@@ -29,9 +31,17 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 )
 
+// `WARTING=false sbt` to drop into SBT w/ wart checking off
+lazy val warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
+
+def wartSettings =
+  if (warting)
+    Seq(wartremoverWarnings in Compile ++= Warts.unsafe)
+  else Nil
+
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.1.1",
+  version := "0.1.2",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -56,7 +66,7 @@ lazy val commonSettings = Seq(
           |
           |""".stripMargin)
   )}
-) ++ formattingSettings ++ publishSettings
+) ++ formattingSettings ++ publishSettings ++ wartSettings
 
 // Client and Server projects
 
