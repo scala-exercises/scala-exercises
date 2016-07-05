@@ -91,9 +91,9 @@ class ApplicationController(cache: CacheApi)(
     } yield (library, user, section)
 
     ops.runFuture map {
-      case Xor.Right((Some(library), _, Some(sectionName))) ⇒
+      case Xor.Right((Some(library), _, Some(sectionName))) if library.sectionNames.contains(sectionName) ⇒
         Redirect(s"$libraryName/$sectionName")
-      case Xor.Right((Some(library), _, _)) ⇒
+      case Xor.Right((Some(library), _, _)) if library.sectionNames.nonEmpty ⇒
         Redirect(s"$libraryName/${library.sectionNames.head}")
       case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
       case Xor.Left(ex)            ⇒ InternalServerError(ex.getMessage)
