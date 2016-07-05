@@ -31,6 +31,8 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 )
 
+
+
 // `WARTING=false sbt` to drop into SBT w/ wart checking off
 lazy val warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
 
@@ -41,7 +43,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.0",
+  version := "0.2.1-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -78,7 +80,8 @@ lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
     name := "core",
     scalaVersion := "2.11.7",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "0.4.1",
+      "org.typelevel" %%% "cats-core" % cats,
+      "org.typelevel" %%% "cats-free" % cats,
       compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
     )
 )
@@ -86,11 +89,14 @@ lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
 lazy val coreJvm = core.jvm
 lazy val coreJs = core.js
 
-// Client and Server projects
+// Dependencies
 
-lazy val clients = Seq(client)
 lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
+lazy val github4s = "0.6-SNAPSHOT"
+lazy val cats = "0.6.0"
+
+// Client and Server projects
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
@@ -120,7 +126,7 @@ lazy val server = (project in file("server"))
       "org.webjars" % "bootstrap-sass" % "3.2.0",
       "org.webjars" % "highlightjs" % "9.2.0",
       "com.tristanhunt" %% "knockoff" % "0.8.3",
-      "com.fortysevendeg" %% "github4s" % "0.5",
+      "com.fortysevendeg" %% "github4s" % github4s,
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.scalatest" %% "scalatest" % "2.2.4" % "runtime",
@@ -157,9 +163,11 @@ lazy val client = (project in file("client"))
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
-      "org.typelevel" %%% "cats-core" % "0.4.1"
+      "org.typelevel" %%% "cats-core" % cats
     )
   )
+
+lazy val clients = Seq(client)
 
 // Definitions
 
@@ -180,7 +188,7 @@ lazy val runtime = (project in file("runtime"))
     libraryDependencies ++= Seq(
       "org.clapper" %% "classutil" % "1.0.11",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
-      "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
+      "org.typelevel" %%% "cats-core" % cats % "compile",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
 )
@@ -195,10 +203,10 @@ lazy val compiler = (project in file("compiler"))
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",
-      "com.fortysevendeg" %% "github4s" % "0.5",
-      "org.typelevel" %% "cats-core" % "0.4.1" % "compile",
+      "com.fortysevendeg" %% "github4s" % github4s,
+      "org.typelevel" %% "cats-core" % cats % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
-      "org.typelevel" %% "cats-laws" % "0.4.1" % "test",
+      "org.typelevel" %% "cats-laws" % cats % "test",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
  ).dependsOn(definitions, runtime)
@@ -212,7 +220,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scalaVersion := "2.10.6",
     sbtPlugin       := true,
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % "0.4.1" % "compile"
+      "org.typelevel" %% "cats-core" % cats % "compile"
     ),
     // Leverage build info to populate compiler classpath--
     // This allows SBT, which currently requires Scala 2.10.x, to load and run
@@ -299,6 +307,6 @@ lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 
 // Aliases
 
-addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
+addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test")
 addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
 addCommandAlias("publishSignedAll", ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")
