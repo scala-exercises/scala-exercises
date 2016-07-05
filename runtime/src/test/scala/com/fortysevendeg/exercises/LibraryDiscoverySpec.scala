@@ -11,7 +11,7 @@ import org.scalatest._
 
 class LibraryDiscoverySpec extends FunSpec with Matchers {
 
-  import scalaexercisesContent._
+  import org.scalaexercises.content._
 
   val cl = classOf[Exercise].getClassLoader
 

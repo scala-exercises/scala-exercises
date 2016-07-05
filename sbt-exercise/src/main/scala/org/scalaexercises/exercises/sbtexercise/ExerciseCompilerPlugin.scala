@@ -108,13 +108,13 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     * identify all modules implementing `exercise.Library`.
     */
   private def discoverLibraries(analysis: inc.Analysis): Seq[String] =
-    Discovery(Set("exercise.Library"), Set.empty)(Tests.allDefs(analysis))
+    Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(Tests.allDefs(analysis))
       .collect({
         case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
       }).sorted
 
   private def discoverSections(analysis: inc.Analysis): Seq[String] =
-    Discovery(Set("exercise.Section"), Set.empty)(Tests.allDefs(analysis))
+    Discovery(Set("org.scalaexercises.definitions.Section"), Set.empty)(Tests.allDefs(analysis))
       .collect({
         case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
       }).sorted
@@ -177,7 +177,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               sources = sourceCodes.map(_._2).toArray,
               paths = sourceCodes.map(_._1).toArray,
               baseDir = baseDir.getPath,
-              targetPackage = "scalaexercisesContent"
+              targetPackage = "org.scalaexercises.content"
             ).toList
           }
       } leftMap (e ⇒ e: Err) >>= {

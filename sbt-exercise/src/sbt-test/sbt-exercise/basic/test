@@ -1,11 +1,11 @@
 # check that the exercise plugin works on a minimal project
 
--$ exists content/target/scala-2.11/src_managed/main/scalaExercisesContent/
+-$ exists content/target/scala-2.11/src_managed/main/org/scalaexercises/content/
 
 > project content
 > package
 
-$ exists content/target/scala-2.11/src_managed/main/scalaExercisesContent/
+$ exists content/target/scala-2.11/src_managed/main/org/scalaexercises/content/
 
 > project check
 > run

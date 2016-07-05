@@ -307,6 +307,6 @@ lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 
 // Aliases
 
-addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test")
+addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
 addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
 addCommandAlias("publishSignedAll", ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")

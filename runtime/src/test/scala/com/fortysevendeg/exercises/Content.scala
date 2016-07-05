@@ -1,4 +1,4 @@
-package scalaexercisesContent
+package org.scalaexercises.content
 
 import org.scalaexercises.runtime.model.Library
 
