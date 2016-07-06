@@ -100,7 +100,7 @@ lazy val cats = "0.6.0"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(core.jvm, runtime)
+  .dependsOn(core.jvm)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
@@ -119,6 +119,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-cats" % version.value,
       "org.scala-exercises" %% "exercises-shapeless" % version.value,
       "org.scala-exercises" %% "exercises-fetch" % version.value,
+      "org.scala-exercises" %% "runtime" % version.value,
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
