@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+package org.scalaexercises.client
 package api
 
 import scala.concurrent.Future
@@ -10,8 +11,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import model._
 import config.Routes
+import org.scalaexercises.types.exercises._
+import org.scalaexercises.types.progress._
+
 import messages.{ EvaluationRequest, EvaluationResult }
-import shared._
 
 import upickle._
 import common.ExtAjax._

@@ -1,4 +1,4 @@
-package com.fortysevendeg.exercises
+package org.scalaexercises.runtime
 
 import org.scalatest._
 

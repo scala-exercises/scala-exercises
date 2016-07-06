@@ -1,4 +1,4 @@
-import com.fortysevendeg.exercises._
+import org.scalaexercises.runtime._
 
 import java.nio.file.Paths
 
@@ -9,6 +9,7 @@ object Check extends App {
 
   val (errors, libraries) =
     Exercises.discoverLibraries(cl = Check.getClass.getClassLoader)
+
   assert(errors.isEmpty, "expected errors to be empty")
   assert(libraries.length == 1, "expected one library from the content project")
 

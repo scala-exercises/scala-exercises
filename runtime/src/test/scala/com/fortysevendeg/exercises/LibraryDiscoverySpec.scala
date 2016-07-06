@@ -3,13 +3,15 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
-package com.fortysevendeg.exercises
+package org.scalaexercises.runtime
+
+import org.scalaexercises.runtime.model.Exercise
 
 import org.scalatest._
 
 class LibraryDiscoverySpec extends FunSpec with Matchers {
 
-  import scalaExercisesContent._
+  import org.scalaexercises.content._
 
   val cl = classOf[Exercise].getClassLoader
 

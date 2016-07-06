@@ -1,4 +1,5 @@
-@(contributors: List[shared.Contributor])(implicit request: RequestHeader)
+@import org.scalaexercises.types.exercises.Contributor
+@(contributors: List[Contributor])(implicit request: RequestHeader)
 <ul>
   <li><a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-user"></i>@contributors.size contributors</a>
   </li>

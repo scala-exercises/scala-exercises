@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+package org.scalaexercises.client
 package utils
 
 import org.scalajs.dom.ext.KeyCode
@@ -10,7 +11,7 @@ import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
-import shared.IO
+import fp.IO
 
 import cats.data.OptionT
 import cats.std.list._

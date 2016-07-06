@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+package org.scalaexercises.client
 package ui
 
 import org.scalajs.dom.raw.{ HTMLElement }
@@ -12,7 +13,7 @@ import cats.syntax.option._
 import cats.std.list._
 import cats.syntax.traverse._
 
-import shared.IO
+import fp._
 import IO._
 import actions._
 import model._

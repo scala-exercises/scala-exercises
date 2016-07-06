@@ -1,10 +1,12 @@
 package stdlib
 
+import org.scalaexercises.definitions.Section
+
 /** This is a Section
   *
   * @param name Section Bar
   */
-object BarSection extends exercise.Section {
+object BarSection extends Section {
 
   /** Exercise bar 1 */
   def bar1(value: String) {
