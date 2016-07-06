@@ -101,7 +101,7 @@ In order to avoid the error related to `Github API rate limit exceeded` during c
 
 While creating the PostgreSQL database, you may run into problems following the previous instructions if developing on a MacOS X environment. In that case we recommend using the following alternative ones:
 
-- Create a user called `scalaexercises_dev_user`. Note that if you installed PostgresSQL using Homebrew, your superuser may be different than `postgres`:
+- Create a user called `scalaexercises_dev_user`. Note that if you installed PostgreSQL using Homebrew, your superuser may be different than `postgres`:
 
 ```sh
 $ psql -U your_postgres_user -c "CREATE USER scalaexercises_dev_user WITH PASSWORD 'a_password';"
