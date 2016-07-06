@@ -99,6 +99,20 @@ dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
 
 In order to avoid the error related to `Github API rate limit exceeded` during compilation of exercises, we recommend setting locally an environment variable called `GITHUB_TOKEN` with a personal token which you can create [here](https://github.com/settings/tokens/new).
 
+While creating the PostgreSQL database, you may run into problems following the previous instructions if developing on a MacOS X environment. In that case we recommend using the following alternative ones:
+
+- Create a user called `scalaexercises_dev_user`. Note that if you installed PostgresSQL using Homebrew, your superuser may be different than `postgres`:
+
+```sh
+$ psql -U your_postgres_user -c "CREATE USER scalaexercises_dev_user WITH PASSWORD 'a_password';"
+```
+
+- Create a db called `scalaexercises_dev` and grant all privileges on it to `scalaexercises_dev_user`:
+
+```sh
+$ createdb scalaexercises_dev
+$ psql -U your_postgres_user -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
+```
 
 ## Project structure
 
