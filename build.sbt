@@ -118,6 +118,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-stdlib" % version.value,
       "org.scala-exercises" %% "exercises-cats" % version.value,
       "org.scala-exercises" %% "exercises-shapeless" % version.value,
+      "org.scala-exercises" %% "exercises-fetch" % version.value,
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
