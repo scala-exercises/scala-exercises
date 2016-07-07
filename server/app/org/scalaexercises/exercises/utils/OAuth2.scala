@@ -19,7 +19,7 @@ object OAuth2 {
 
   def callbackUrl = {
     val rootUrl = application.configuration.getString("application.url").getOrElse({ throw new IllegalStateException("The `application.url` setting must be present for computing the Oauth callback URL") })
-    s"${rootUrl}/_oauth-callback"
+    s"$rootUrl/_oauth-callback"
   }
 
   val successUrl = org.scalaexercises.exercises.controllers.routes.OAuthController.success()
