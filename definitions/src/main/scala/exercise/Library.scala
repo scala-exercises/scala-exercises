@@ -5,11 +5,13 @@
 
 package org.scalaexercises.definitions
 
+import cats.data.NonEmptyList
+
 /** Marker trait for exercise libraries.
   */
 trait Library {
   def owner: String
   def repository: String
-  def sections: List[Section]
+  def sections: NonEmptyList[Section]
   def color: Option[String] = None
 }

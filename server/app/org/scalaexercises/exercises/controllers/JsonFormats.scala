@@ -5,11 +5,17 @@
 
 package org.scalaexercises.exercises.controllers
 
+import cats.data.NonEmptyList
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 import play.api.libs.json._
 
 trait JsonFormats {
+
+  implicit def nonEmptyListWrites[A](implicit w: Writes[List[A]]): Writes[NonEmptyList[A]] =
+    new Writes[NonEmptyList[A]] {
+      override def writes(nel: NonEmptyList[A]): JsValue = Json.toJson(nel.head :: nel.tail)
+    }
 
   implicit val exerciseWrites: Writes[Exercise] = Json.writes[Exercise]
 

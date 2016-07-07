@@ -1,5 +1,8 @@
 package org.scalaexercises.types.progress
 
+import cats.{ Foldable, NonEmptyReducible, Reducible }
+import cats.data.{ NonEmptyList, OneAnd }
+import cats.std.list._
 import org.scalaexercises.types.user._
 import org.scalaexercises.types.exercises._
 
@@ -54,7 +57,7 @@ case class SectionExercises(
     exercises:      List[ExerciseProgress],
     totalExercises: Int
 ) {
-  def sectionSucceeded = exercises.filter(_.succeeded).size == totalExercises
+  def sectionSucceeded = exercises.count(_.succeeded) == totalExercises
 }
 
 // Per-section and library progress
@@ -66,8 +69,8 @@ case class SectionProgress(
 
 case class LibraryProgress(
     libraryName: String,
-    sections:    List[SectionProgress]
+    sections:    NonEmptyList[SectionProgress]
 ) {
-  def totalSections: Int = sections.size
+  def totalSections: Int = sections.tail.size + 1
   def completedSections: Int = sections.filter(_.succeeded).size
 }

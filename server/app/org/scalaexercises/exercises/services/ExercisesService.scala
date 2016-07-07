@@ -7,21 +7,16 @@ package org.scalaexercises.exercises
 package services
 
 import org.scalaexercises.runtime.{ Exercises, MethodEval, Timestamp }
-import org.scalaexercises.runtime.model.{ Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection, Exercise ⇒ RuntimeExercise, Contribution ⇒ RuntimeContribution, DefaultLibrary }
-
-import org.scalaexercises.types.exercises.{ Library, Section, Exercise, Contribution, ExerciseEvaluation }
-
+import org.scalaexercises.runtime.model.{ DefaultLibrary, Contribution ⇒ RuntimeContribution, Exercise ⇒ RuntimeExercise, Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection }
+import org.scalaexercises.types.exercises.{ Contribution, Exercise, ExerciseEvaluation, Library, Section }
 import play.api.Play
 import play.api.Logger
 
-import java.nio.file.Paths
-
-import cats.data.Xor
-import cats.data.Ior
+import cats.data.NonEmptyList
+import cats.std.list._
 import cats.std.option._
 import cats.syntax.flatMap._
 import cats.syntax.option._
-
 import org.scalatest.exceptions.TestFailedException
 
 object ExercisesService extends RuntimeSharedConversions {
@@ -32,7 +27,7 @@ object ExercisesService extends RuntimeSharedConversions {
   def classLoader = Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
 
-  lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
+  lazy val (libraries: List[Library], librarySections: Map[String, NonEmptyList[Section]]) = {
     val libraries1 = colorize(runtimeLibraries)
     errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
     (

@@ -5,22 +5,28 @@
 
 package org.scalaexercises.exercises.services
 
+import cats.data.NonEmptyList
+import cats.std.list._
 import org.scalatest._
-
 import org.scalaexercises.types.exercises._
 
 class ExercisesServiceSpec extends FlatSpec with Matchers {
 
   val expectedLibrary = "stdlib"
   val expectedTestSection = "Extractors"
+  val expectedTestSections = NonEmptyList("Extractors", Nil)
   val expectedTestExercise = "forAssigningValues"
   val expectedVersion = 1
   val expectedType = "Other"
   val expectedTestSuccesArgs = List("Chevy", "Camaro", "1978", "120")
   val expectedTestFailedArgs = List("a", "b", "1", "2")
 
+  def sections(names: NonEmptyList[String]): NonEmptyList[Section] = names map { name ⇒
+    Section(name = name, description = None, path = None, exercises = Nil, contributions = Nil)
+  }
+
   def library(name: String): Library =
-    Library(owner = "scala-exercises", repository = "site", name = name, description = "", color = "#BADA55", sections = Nil, timestamp = "19-12-1988")
+    Library(owner = "scala-exercises", repository = "site", name = name, description = "", color = "#BADA55", sections = sections(expectedTestSections), timestamp = "19-12-1988")
 
   "reorderLibraries" should "not reorder libraries when there aren't any top libraries" in {
     val libraries = List(

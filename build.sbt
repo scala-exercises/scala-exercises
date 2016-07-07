@@ -175,7 +175,10 @@ lazy val definitions = (project in file("definitions"))
   .settings(commonSettings: _*)
   .settings(
     name := "definitions",
-    scalaVersion := "2.11.7"
+    scalaVersion := "2.11.7",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %%% "cats-core" % cats
+    )
 )
 
 // Runtime evaluation

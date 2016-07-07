@@ -6,6 +6,8 @@
 package org.scalaexercises.runtime
 package model
 
+import cats.data.NonEmptyList
+
 // This is the exercise runtime metamodel
 
 /** An exercise library.
@@ -16,7 +18,7 @@ trait Library {
   def name: String
   def description: String
   def color: Option[String]
-  def sections: List[Section]
+  def sections: NonEmptyList[Section]
   def timestamp: String
 }
 
@@ -62,7 +64,7 @@ case class DefaultLibrary(
   name:        String,
   description: String,
   color:       Option[String],
-  sections:    List[Section]  = Nil,
+  sections:    NonEmptyList[Section],
   timestamp:   String
 ) extends Library
 

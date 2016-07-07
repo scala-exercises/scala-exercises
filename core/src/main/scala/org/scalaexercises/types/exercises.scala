@@ -1,6 +1,7 @@
 package org.scalaexercises.types.exercises
 
-import cats.data.Xor
+import cats.data.{ NonEmptyList, Xor }
+import cats.implicits._
 
 /** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
   */
@@ -10,10 +11,10 @@ case class Library(
     name:        String,
     description: String,
     color:       String,
-    sections:    List[Section] = Nil,
+    sections:    NonEmptyList[Section],
     timestamp:   String
 ) {
-  val sectionNames: List[String] = sections map (_.name)
+  val sectionNames: NonEmptyList[String] = sections map (_.name)
   val shortTimestamp: String = timestamp.split("T").headOption.getOrElse(timestamp)
 }
 

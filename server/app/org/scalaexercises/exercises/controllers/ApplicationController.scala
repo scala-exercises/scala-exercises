@@ -7,7 +7,7 @@ package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
 
-import java.util.UUID
+import cats.std.list._
 import cats.free.Free
 import play.api.cache.{ Cache, CacheApi }
 import org.scalaexercises.types.exercises.{ Contribution, Contributor }
@@ -97,9 +97,9 @@ class ApplicationController(cache: CacheApi)(
     } yield (library, user, section)
 
     ops.runFuture map {
-      case Xor.Right((Some(library), _, Some(sectionName))) if library.sectionNames.contains(sectionName) ⇒
+      case Xor.Right((Some(library), _, Some(sectionName))) if library.sectionNames.exists(_ == sectionName) ⇒
         Redirect(s"$libraryName/$sectionName")
-      case Xor.Right((Some(library), _, _)) if library.sectionNames.nonEmpty ⇒
+      case Xor.Right((Some(library), _, _)) ⇒
         Redirect(s"$libraryName/${library.sectionNames.head}")
       case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
       case Xor.Left(ex)            ⇒ InternalServerError(ex.getMessage)
@@ -117,7 +117,7 @@ class ApplicationController(cache: CacheApi)(
     } yield (library, section, user, request.session.get("oauth-token"), libProgress, authorize, contributors)
 
     ops.runFuture map {
-      case Xor.Right((Some(l), Some(s), user, Some(token), libProgress, _, contributors)) ⇒ {
+      case Xor.Right((Some(l), Some(s), user, Some(token), Some(libProgress), _, contributors)) ⇒
         Ok(
           views.html.templates.library.index(
             library = l,
@@ -127,8 +127,7 @@ class ApplicationController(cache: CacheApi)(
             contributors = contributors
           )
         )
-      }
-      case Xor.Right((Some(l), Some(s), user, None, libProgress, authorize, contributors)) ⇒ {
+      case Xor.Right((Some(l), Some(s), user, None, Some(libProgress), authorize, contributors)) ⇒
         Ok(
           views.html.templates.library.index(
             library = l,
@@ -139,7 +138,6 @@ class ApplicationController(cache: CacheApi)(
             contributors = contributors
           )
         ).withSession("oauth-state" → authorize.state)
-      }
       case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
       case Xor.Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
       case Xor.Right((_, _, _, _, _, _, _))          ⇒ InternalServerError("Library and section not found")

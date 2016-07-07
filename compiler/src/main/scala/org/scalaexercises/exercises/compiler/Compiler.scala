@@ -10,19 +10,16 @@ import org.scalaexercises.runtime.Timestamp
 
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
-
 import cats.{ Eval, MonadError }
-import cats.data.Xor
+import cats.data.{ NonEmptyList, Xor }
 import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
-
 import github4s.Github
 import Github._
 import github4s.implicits._
 import github4s.GithubResponses.GHResult
 import github4s.free.domain.Commit
-
 import Comments.Mode
 import CommentRendering.RenderedComment
 
@@ -47,7 +44,7 @@ case class Compiler() {
     case class LibraryInfo(
       symbol:     ClassSymbol,
       comment:    RenderedComment.Aux[Mode.Library],
-      sections:   List[SectionInfo],
+      sections:   NonEmptyList[SectionInfo],
       color:      Option[String],
       owner:      String,
       repository: String
@@ -91,7 +88,7 @@ case class Compiler() {
       symbolPath = internal.symbolToPath(symbol)
       comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
         .leftMap(enhanceDocError(symbolPath))
-      sections ← library.sections.toList
+      sections ← library.sections
         .map(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
         .sequenceU
     } yield LibraryInfo(
@@ -184,7 +181,7 @@ case class Compiler() {
     def dump(libraryInfo: LibraryInfo) {
       println(s"Found library ${libraryInfo.comment.name}")
       println(s" description: ${oneline(libraryInfo.comment.description)}")
-      libraryInfo.sections.foreach { sectionInfo ⇒
+      libraryInfo.sections.unwrap.foreach { sectionInfo ⇒
         println(s" with section ${sectionInfo.comment.name}")
         println(s"  path: ${sectionInfo.path}")
         println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
@@ -201,7 +198,7 @@ case class Compiler() {
       println(s" • symbol        ${libraryInfo.symbol}")
       println(s" - name          ${libraryInfo.comment.name}")
       println(s" - description   ${oneline(libraryInfo.comment.description)}")
-      libraryInfo.sections.foreach { sectionInfo ⇒
+      libraryInfo.sections.unwrap.foreach { sectionInfo ⇒
         println(" ~ section")
         println(s"  • symbol        ${sectionInfo.symbol}")
         println(s"  - name          ${sectionInfo.comment.name}")
@@ -258,7 +255,7 @@ case class Compiler() {
             )
 
           (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
-        }.unzip
+        }.unwrap.unzip
 
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
         name = libraryInfo.comment.name,
