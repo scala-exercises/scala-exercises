@@ -10,7 +10,7 @@ import java.util.jar.JarFile
 import scala.tools.nsc.Settings
 
 import scala.tools.nsc.{ Global, Settings }
-import scala.tools.nsc.reporters.StoreReporter
+import scala.tools.nsc.reporters._
 import scala.tools.nsc.io.{ VirtualDirectory, AbstractFile }
 import scala.reflect.internal.util.{ NoPosition, BatchSourceFile, AbstractFileClassLoader }
 
@@ -23,6 +23,9 @@ import scala.util.Try
 import scala.util.control.NonFatal
 import scala.concurrent.duration._
 import scala.language.reflectiveCalls
+import com.twitter.util.Eval
+
+import scala.reflect.internal.util.{ BatchSourceFile, Position }
 
 sealed trait Severity
 final case object Info extends Severity
@@ -34,6 +37,7 @@ case class CompilationInfo(message: String, pos: Option[RangePosition])
 case class RuntimeError(val error: Throwable, position: Option[Int])
 
 sealed trait EvalResult[+T]
+
 object EvalResult {
   type CI = Map[Severity, List[CompilationInfo]]
 
@@ -45,6 +49,92 @@ object EvalResult {
 }
 
 class Evaluator(timeout: Duration = 20.seconds) {
+
+  def convert(errors: (Position, String, String)): (Severity, List[CompilationInfo]) = {
+    val (pos, msg, severity) = errors
+    val sev = severity match {
+      case "ERROR"   ⇒ Error
+      case "WARNING" ⇒ Warning
+      case _         ⇒ Info
+    }
+    (sev, CompilationInfo(msg, Some(RangePosition(pos.start, pos.point, pos.end))) :: Nil)
+  }
+
+  def apply[T](pre: String, code: String): EvalResult[T] = {
+    val allCode = s"""
+                     |$pre
+                     |$code
+                   """.stripMargin
+    val eval = new Eval {
+      @volatile var errors: Map[Severity, List[CompilationInfo]] = Map.empty
+
+      override lazy val compilerMessageHandler: Option[Reporter] = Some(new AbstractReporter {
+        override val settings: Settings = compilerSettings
+        override def displayPrompt(): Unit = ()
+        override def display(pos: Position, msg: String, severity: this.type#Severity): Unit = {
+          errors += convert((pos, msg, severity.toString))
+        }
+        override def reset() = {
+          super.reset()
+          errors = Map.empty
+        }
+      })
+    }
+
+    val result = for {
+      _ ← Try(eval.check(allCode))
+      result ← Try(eval.apply[T](allCode, resetState = true))
+    } yield result
+
+    val errors: Map[Severity, List[CompilationInfo]] = eval.errors.toMap
+
+    println(allCode)
+
+    println(result)
+
+    println(errors)
+
+    result match {
+      case scala.util.Success(r) ⇒ EvalResult.Success[T](errors, r, "")
+      case scala.util.Failure(t) ⇒ t match {
+        case e: Eval.CompilerException ⇒ EvalResult.CompilationError(errors)
+        case e                         ⇒ EvalResult.EvalRuntimeError(errors, None)
+      }
+    }
+    /*
+    try {
+      runTimeout[T](pre, code)
+    } catch {
+      case NonFatal(e) ⇒ EvalResult.GeneralError(e)
+    }*/
+  }
+
+  //private def eval[T](pre: String, code: String): EvalResult[T] = {
+  //  null
+  //val twitterEval = new com.twitter.util.Eval
+  /*
+    val className = "Eval" + Math.abs(scala.util.Random.nextLong).toString
+    val wrapedCode =
+      s"""|$pre
+          |class $className extends (() ⇒ Any) {
+          |  def apply() = $code
+          |}""".stripMargin
+
+    secured { compile(wrapedCode) }
+
+    val complilationInfos = check()
+    if (!complilationInfos.contains(Error)) {
+      try {
+        val (result, consoleOutput) = run[T](className)
+        EvalResult.Success(complilationInfos, result, consoleOutput)
+      } catch { case NonFatal(e) ⇒ EvalResult.EvalRuntimeError(complilationInfos, handleException(e)) }
+    } else {
+      EvalResult.CompilationError(complilationInfos)
+    }
+ 
+  }
+
+  
   val security = false
 
   private def classPathOfClass(className: String) = {
@@ -148,18 +238,18 @@ class Evaluator(timeout: Duration = 20.seconds) {
     }
   }
 
-//  private def withTimeout[T](f: ⇒ T)(timeout: Duration): Option[T] = {
-//    val task = new FutureTask(new Callable[T]() { def call = f })
-//    val thread = new Thread(task)
-//    try {
-//      thread.start()
-//      Some(task.get(timeout.toMillis, TimeUnit.MILLISECONDS))
-//    } catch {
-//      case e: TimeoutException ⇒ None
-//    } finally {
-//      if (thread.isAlive) thread.stop()
-//    }
-//  }
+  //  private def withTimeout[T](f: ⇒ T)(timeout: Duration): Option[T] = {
+  //    val task = new FutureTask(new Callable[T]() { def call = f })
+  //    val thread = new Thread(task)
+  //    try {
+  //      thread.start()
+  //      Some(task.get(timeout.toMillis, TimeUnit.MILLISECONDS))
+  //    } catch {
+  //      case e: TimeoutException ⇒ None
+  //    } finally {
+  //      if (thread.isAlive) thread.stop()
+  //    }
+  //  }
 
   private def withTimeout[T](f: ⇒ T)(timeout: Duration): Option[T] = {
     Try(f).toOption
@@ -260,4 +350,6 @@ class Evaluator(timeout: Duration = 20.seconds) {
   private var classLoader: AbstractFileClassLoader = _
   // private val compiler = new Global(settings, reporter)
   private val secured = new Secured(security)
+
+ */
 }

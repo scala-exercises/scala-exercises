@@ -87,7 +87,8 @@ class MethodEvalSpec extends FunSpec with Matchers {
 
       // This fragment of code does several concurrent evaluations,
       // before checking the final call to ensure there are no race conditions:
-      1 to 10 foreach { i ⇒
+
+      1 to 30 foreach { i ⇒
         val thread = new Thread {
           override def run() = evalCalls()
         }

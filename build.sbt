@@ -188,7 +188,8 @@ lazy val runtime = (project in file("runtime"))
     scalaVersion := "2.11.7",
     libraryDependencies ++= Seq(
       "org.clapper" %% "classutil" % "1.0.11",
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
+      //"org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
+      "com.twitter" %% "util-eval" % "6.34.0",
       "org.typelevel" %%% "cats-core" % cats % "compile",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
