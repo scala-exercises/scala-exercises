@@ -28,7 +28,7 @@ import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 
 import doobie.imports._
-import play.api.{ Play, Application }
+import play.api.{ Play, Application, Logger }
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -61,8 +61,10 @@ class ApplicationController(cache: CacheApi)(
           case Xor.Right(repo) ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
             Future.successful(repo)
-          case Xor.Left(err) ⇒
+          case Xor.Left(err) ⇒ {
+            Logger.error("Error fetching scala-exercises repository information", err)
             Future.failed[Repository](err)
+          }
         }
     }
   }
@@ -79,10 +81,13 @@ class ApplicationController(cache: CacheApi)(
     for {
       repo ← scalaexercisesRepo
       result ← ops.runFuture map {
-        case Xor.Right((libraries, user, Some(token), progress, _)) ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
+        case Xor.Right((libraries, user, Some(token), progress, _))  ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
         case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
-        case Xor.Right((libraries, Some(user), None, _, _)) ⇒ InternalServerError("Session token not found")
-        case Xor.Left(ex) ⇒ InternalServerError(ex.getMessage)
+        case Xor.Right((libraries, Some(user), None, _, _))          ⇒ InternalServerError("Session token not found")
+        case Xor.Left(ex) ⇒ {
+          Logger.error("Error rendering index page", ex)
+          InternalServerError(ex.getMessage)
+        }
       }
     } yield result
   })
@@ -102,7 +107,10 @@ class ApplicationController(cache: CacheApi)(
       case Xor.Right((Some(library), _, _)) if library.sectionNames.nonEmpty ⇒
         Redirect(s"$libraryName/${library.sectionNames.head}")
       case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
-      case Xor.Left(ex)            ⇒ InternalServerError(ex.getMessage)
+      case Xor.Left(ex) ⇒ {
+        Logger.error(s"Error rendering library: $libraryName", ex)
+        InternalServerError(ex.getMessage)
+      }
     }
   })
 
@@ -143,7 +151,10 @@ class ApplicationController(cache: CacheApi)(
       case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
       case Xor.Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
       case Xor.Right((_, _, _, _, _, _, _))          ⇒ InternalServerError("Library and section not found")
-      case Xor.Left(ex)                              ⇒ InternalServerError(ex.getMessage)
+      case Xor.Left(ex) ⇒ {
+        Logger.error(s"Error rendering section: $libraryName/$sectionName", ex)
+        InternalServerError(ex.getMessage)
+      }
     }
   })
 

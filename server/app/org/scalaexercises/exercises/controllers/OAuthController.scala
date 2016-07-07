@@ -71,7 +71,10 @@ class OAuthController(
           case Some(url) if !url.contains("github") ⇒ url
           case _                                    ⇒ "/"
         }).withSession("oauth-token" → accessToken, "user" → ghu.login)
-        case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
+        case Xor.Left(error) ⇒ {
+          Logger.error("Failed to save GitHub user information", error)
+          InternalServerError("Failed to save user information")
+        }
       }
     }
 
