@@ -56,15 +56,12 @@ object ClientExerciseSpec extends TestSuite {
       assert(!erroredExercise.isBeingEvaluated)
     }
 
-    "canBeCompiled only returns true when an exercise is filled and unsolved" - {
+    "canBeCompiled only returns true when an exercise is filled and not being evaluated" - {
       val unfilledExercise = clientExercise(args = Seq("", ""))
       assert(!unfilledExercise.canBeCompiled)
 
-      val solvedExercise = clientExercise(args = Seq("foo", "bar"), state = Solved)
-      assert(!solvedExercise.canBeCompiled)
-
-      val filledAndUnsolvedExercise = clientExercise(args = Seq("foo", "bar"), state = Unsolved)
-      assert(filledAndUnsolvedExercise.canBeCompiled)
+      val filledExercise = clientExercise(args = Seq("foo", "bar"))
+      assert(filledExercise.canBeCompiled)
 
       val evaluatingExercise = clientExercise(args = Seq("foo", "bar"), state = Evaluating)
       assert(!evaluatingExercise.canBeCompiled)
