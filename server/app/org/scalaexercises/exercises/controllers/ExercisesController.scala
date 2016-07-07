@@ -38,7 +38,7 @@ class ExercisesController(
     T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
-  def evaluate(libraryName: String, sectionName: String): Action[JsValue] = synchronized {
+  def evaluate(libraryName: String, sectionName: String): Action[JsValue] = 
     AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
         val eval = for {
@@ -59,7 +59,7 @@ class ExercisesController(
           )
         }
     }
-  }
+  
 
   private[this] def mkSaveProgressRequest(user: User, evaluation: ExerciseEvaluation, success: Boolean) =
     new SaveUserProgress.Request(

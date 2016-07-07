@@ -64,7 +64,7 @@ class MethodEvalSpec extends FunSpec with Matchers {
       assert(res.toExecutionXor.isRight)
     }
  */
-    
+
     it("interprets imports properly") {
       val res = methodEval.eval(
         "org.scalaexercises.runtime",
