@@ -13,10 +13,13 @@ class LoaderIOController extends Controller {
 
   implicit def application: Application = Play.current
 
-  def verificationToken = Secure(Action {
-    application
+  def verificationToken(token: String) = Secure(Action {
+    val maybeConf = application
       .configuration
-      .getString("loaderio.verificationToken", None) map (Ok(_)) getOrElse NotFound
+      .getString("loaderio.verificationToken", None)
+    maybeConf map (conf ⇒ conf == s"loaderio-$token" match {
+      case true ⇒ Ok(conf)
+      case _    ⇒ NotFound
+    }) getOrElse NotFound
   })
-
 }
