@@ -6,7 +6,7 @@
 GET /sitemap.xml org.scalaexercises.exercises.controllers.SitemapController.sitemap
 
 #Loader IO load testing verification
-GET /loaderio-e4245192ace6c868b1eeb87658682562/ org.scalaexercises.exercises.controllers.LoaderIOController.verificationToken
+GET /loaderio-:token/ org.scalaexercises.exercises.controllers.LoaderIOController.verificationToken(token: String)
 
 # Home page
 GET / org.scalaexercises.exercises.controllers.ApplicationController.index
