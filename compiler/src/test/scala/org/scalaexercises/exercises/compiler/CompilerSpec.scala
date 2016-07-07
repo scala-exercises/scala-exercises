@@ -53,7 +53,7 @@ class CompilerSpec extends FunSpec with Matchers {
         .asInstanceOf[Library]
 
       val path = "(internal)"
-      val res = Compiler().compile(library, code :: Nil, path :: Nil, "/", "sample")
+      val res = Compiler().compile(library, code :: Nil, path :: Nil, "/", "sample", fetchContributors = false)
       assert(res.isRight, s"""; ${res.fold(identity, _ ⇒ "")}""")
     }
   }

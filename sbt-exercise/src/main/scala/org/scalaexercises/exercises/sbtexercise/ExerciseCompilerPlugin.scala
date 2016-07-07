@@ -43,6 +43,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   val generateExercises = TaskKey[List[(String, String)]]("generate-exercises")
 
+  val fetchContributors = SettingKey[Boolean]("fetch-contributors", "Fetch contributors when compiling")
+
   object autoImport {
     def CompileGeneratedExercises = ExerciseCompilerPlugin.CompileGeneratedExercises
   }
@@ -74,7 +76,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       ivyConfigurations   :=
         overrideConfigs(CompileGeneratedExercises, CustomCompile)(ivyConfigurations.value),
       classDirectory in CompileGeneratedExercises := (classDirectory in Compile).value,
-      classpathConfiguration in CompileGeneratedExercises := (classpathConfiguration in Compile).value
+      classpathConfiguration in CompileGeneratedExercises := (classpathConfiguration in Compile).value,
+      fetchContributors := true
     )
   // format: ON
 
@@ -123,11 +126,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private val COMPILER_CLASS = "org.scalaexercises.compiler.CompilerJava"
   private type COMPILER = {
     def compile(
-      library:       AnyRef,
-      sources:       Array[String],
-      paths:         Array[String],
-      baseDir:       String,
-      targetPackage: String
+      library:           AnyRef,
+      sources:           Array[String],
+      paths:             Array[String],
+      baseDir:           String,
+      targetPackage:     String,
+      fetchContributors: Boolean
     ): Array[String]
   }
 
@@ -177,7 +181,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               sources = sourceCodes.map(_._2).toArray,
               paths = sourceCodes.map(_._1).toArray,
               baseDir = baseDir.getPath,
-              targetPackage = "org.scalaexercises.content"
+              targetPackage = "org.scalaexercises.content",
+              fetchContributors = fetchContributors.value
             ).toList
           }
       } leftMap (e ⇒ e: Err) >>= {
@@ -241,6 +246,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   }
 
   /** Output stream that captures an output on a line by line basis.
+    *
     * @param f the function to invoke with each line
     */
   private[this] class LineByLineOutputStream(
