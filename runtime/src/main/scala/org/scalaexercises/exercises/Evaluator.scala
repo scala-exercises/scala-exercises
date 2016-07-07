@@ -105,9 +105,12 @@ class Evaluator(timeout: Duration = 20.seconds) {
     }) ::: classPath.tail.flatten
   }
 
-  def apply[T](pre: String, code: String): EvalResult[T] = {
-    try { runTimeout[T](pre, code) }
-    catch { case NonFatal(e) ⇒ EvalResult.GeneralError(e) }
+  def apply[T](pre: String, code: String): EvalResult[T] = synchronized {
+    try {
+      runTimeout[T](pre, code)
+    } catch {
+      case NonFatal(e) ⇒ EvalResult.GeneralError(e)
+    }
   }
 
   private def runTimeout[T](pre: String, code: String) =

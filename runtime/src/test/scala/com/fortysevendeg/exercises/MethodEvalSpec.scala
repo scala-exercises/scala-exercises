@@ -76,5 +76,30 @@ class MethodEvalSpec extends FunSpec with Matchers {
       assert(res.toExecutionXor.isRight)
     }
 
+    it("works when there are several concurrent evaluations") {
+      def evalCalls() = {
+        methodEval.eval(
+          "org.scalaexercises.runtime",
+          "org.scalaexercises.runtime.ExampleTarget.intStringMethod",
+          "1 + 2" :: "\"world\"" :: Nil
+        )
+      }
+
+      // This fragment of code does several concurrent evaluations,
+      // before checking the final call to ensure there are no race conditions:
+      1 to 10 foreach { i ⇒
+        val thread = new Thread {
+          override def run() = evalCalls()
+        }
+        thread.start()
+      }
+
+      val res = evalCalls()
+
+      res should equal(EvaluationSuccess[String]("3world"))
+      assert(res.toSuccessXor.isRight)
+      assert(res.toExecutionXor.isRight)
+    }
+
   }
 }
