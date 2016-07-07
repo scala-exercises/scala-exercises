@@ -100,7 +100,7 @@ lazy val cats = "0.6.0"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(core.jvm)
+  .dependsOn(core.jvm, runtime)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
@@ -118,7 +118,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
-      "org.scala-exercises" %% "runtime" % version.value changing(),
+     // "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -188,7 +188,8 @@ lazy val runtime = (project in file("runtime"))
     scalaVersion := "2.11.7",
     libraryDependencies ++= Seq(
       "org.clapper" %% "classutil" % "1.0.11",
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
+      //"org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
+      "com.twitter" %% "util-eval" % "6.34.0",
       "org.typelevel" %%% "cats-core" % cats % "compile",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )
