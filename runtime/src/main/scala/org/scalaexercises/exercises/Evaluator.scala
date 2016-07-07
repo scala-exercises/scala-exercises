@@ -148,17 +148,21 @@ class Evaluator(timeout: Duration = 20.seconds) {
     }
   }
 
+//  private def withTimeout[T](f: ⇒ T)(timeout: Duration): Option[T] = {
+//    val task = new FutureTask(new Callable[T]() { def call = f })
+//    val thread = new Thread(task)
+//    try {
+//      thread.start()
+//      Some(task.get(timeout.toMillis, TimeUnit.MILLISECONDS))
+//    } catch {
+//      case e: TimeoutException ⇒ None
+//    } finally {
+//      if (thread.isAlive) thread.stop()
+//    }
+//  }
+
   private def withTimeout[T](f: ⇒ T)(timeout: Duration): Option[T] = {
-    val task = new FutureTask(new Callable[T]() { def call = f })
-    val thread = new Thread(task)
-    try {
-      thread.start()
-      Some(task.get(timeout.toMillis, TimeUnit.MILLISECONDS))
-    } catch {
-      case e: TimeoutException ⇒ None
-    } finally {
-      if (thread.isAlive) thread.stop()
-    }
+    Try(f).toOption
   }
 
   private def handleException(e: Throwable): Option[RuntimeError] = {
