@@ -15,6 +15,8 @@ import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 
 import doobie.imports._
+
+import play.api.Logger
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
@@ -40,7 +42,10 @@ class UserController(
         case Some(u) ⇒ Ok(write(u))
         case None    ⇒ NotFound("The user doesn't exist")
       }
-      case Xor.Left(error) ⇒ InternalServerError(error.getMessage)
+      case Xor.Left(error) ⇒ {
+        Logger.error(s"Error rendering user $login", error)
+        InternalServerError(error.getMessage)
+      }
     }
   })
 }

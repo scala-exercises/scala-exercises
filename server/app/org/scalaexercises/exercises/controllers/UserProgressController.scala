@@ -13,7 +13,10 @@ import org.scalaexercises.algebra.progress.UserProgressOps
 
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
+
 import doobie.imports._
+
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Controller
 
@@ -35,7 +38,10 @@ class UserProgressController(
     AuthenticatedUser { user ⇒
       userProgressOps.fetchUserProgressByLibrarySection(user, libraryName, sectionName).runFuture map {
         case Xor.Right(response) ⇒ Ok(Json.toJson(response))
-        case Xor.Left(error)     ⇒ BadRequest(error.getMessage)
+        case Xor.Left(error) ⇒ {
+          Logger.error(s"Error while fetching user progress for $libraryName/$sectionName", error)
+          BadRequest(error.getMessage)
+        }
       }
     }
 }

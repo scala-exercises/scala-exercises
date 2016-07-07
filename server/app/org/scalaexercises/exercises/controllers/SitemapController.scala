@@ -21,7 +21,8 @@ import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import org.scalaexercises.exercises.utils.OAuth2
 
 import doobie.imports._
-import play.api.{ Play, Application }
+
+import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 
@@ -38,7 +39,10 @@ class SitemapController(
   def sitemap = Secure(Action.async { implicit request ⇒
     exerciseOps.getLibraries.runFuture map {
       case Xor.Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-      case Xor.Left(ex)         ⇒ InternalServerError(ex.getMessage)
+      case Xor.Left(ex) ⇒ {
+        Logger.error("Error rendering sitemap", ex)
+        InternalServerError(ex.getMessage)
+      }
     }
   })
 

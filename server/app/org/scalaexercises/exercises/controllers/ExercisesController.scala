@@ -20,6 +20,7 @@ import org.scalaexercises.algebra.github.GithubOps
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 
 import doobie.imports._
+import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
 
@@ -48,7 +49,10 @@ class ExercisesController(
         } yield exerciseEvaluation
 
         eval.runFuture.map {
-          case Xor.Left(e) ⇒ BadRequest(s"Evaluation failed : $e")
+          case Xor.Left(e) ⇒ {
+            Logger.error("Error while evaluating $evaluation with user $user", e)
+            BadRequest(s"Evaluation failed : $e")
+          }
           case Xor.Right(r) ⇒ r.fold(
             msg ⇒ BadRequest(msg),
             v ⇒ Ok(s"Evaluation succeeded : $v")

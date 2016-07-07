@@ -21,7 +21,10 @@ import org.scalaexercises.types.github.GithubUser
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import org.scalaexercises.exercises.utils.OAuth2._
+
 import doobie.imports._
+
+import play.api.Logger
 import play.api.mvc.{ Action, Controller }
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -71,7 +74,10 @@ class OAuthController(
           case Some(url) if !url.contains("github") ⇒ url
           case _                                    ⇒ "/"
         }).withSession("oauth-token" → accessToken, "user" → ghu.login)
-        case Xor.Left(_) ⇒ InternalServerError("Failed to save user information")
+        case Xor.Left(error) ⇒ {
+          Logger.error("Failed to save GitHub user information", error)
+          InternalServerError("Failed to save user information")
+        }
       }
     }
 
