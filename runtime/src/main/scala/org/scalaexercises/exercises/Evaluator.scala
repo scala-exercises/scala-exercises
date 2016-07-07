@@ -352,5 +352,5 @@ class Evaluator(timeout: Duration = 20.seconds) {
   private val secured = new Secured(security)
 
    */
-  
+
 }
