@@ -21,7 +21,10 @@ import org.scalaexercises.types.github.GithubUser
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import org.scalaexercises.exercises.utils.OAuth2._
+
 import doobie.imports._
+
+import play.api.Logger
 import play.api.mvc.{ Action, Controller }
 
 import scala.concurrent.ExecutionContext.Implicits.global
