@@ -221,6 +221,7 @@ class Evaluator(timeout: Duration = 20.seconds) {
 
   private def compile(code: String): Unit = {
     reset()
+    val compiler = new Global(settings, reporter)
     val run = new compiler.Run
     val sourceFiles = List(new BatchSourceFile("(inline)", code))
     run.compileSources(sourceFiles)
@@ -253,6 +254,6 @@ class Evaluator(timeout: Duration = 20.seconds) {
   private val target = new VirtualDirectory("(memory)", None)
   settings.outputDirs.setSingleOutput(target)
   private var classLoader: AbstractFileClassLoader = _
-  private val compiler = new Global(settings, reporter)
+  // private val compiler = new Global(settings, reporter)
   private val secured = new Secured(security)
 }
