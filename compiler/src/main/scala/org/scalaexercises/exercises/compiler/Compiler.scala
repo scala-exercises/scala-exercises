@@ -27,8 +27,8 @@ import Comments.Mode
 import CommentRendering.RenderedComment
 
 class CompilerJava {
-  def compile(library: AnyRef, sources: Array[String], paths: Array[String], baseDir: String, targetPackage: String): Array[String] = {
-    Compiler().compile(library.asInstanceOf[Library], sources.toList, paths.toList, baseDir, targetPackage)
+  def compile(library: AnyRef, sources: Array[String], paths: Array[String], baseDir: String, targetPackage: String, fetchContributors: Boolean): Array[String] = {
+    Compiler().compile(library.asInstanceOf[Library], sources.toList, paths.toList, baseDir, targetPackage, fetchContributors)
       .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
   }
 }
@@ -36,7 +36,7 @@ class CompilerJava {
 case class Compiler() {
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  def compile(library: Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String) = {
+  def compile(library: Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String, fetchContributors: Boolean) = {
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
@@ -132,7 +132,7 @@ case class Compiler() {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
           .leftMap(enhanceDocError(symbolPath))
 
-        contributions = filePath.fold(
+        contributions = (if (fetchContributors) filePath else None).fold(
           List.empty[ContributionInfo]
         )(path ⇒ fetchContributions(library.owner, library.repository, path))
 
