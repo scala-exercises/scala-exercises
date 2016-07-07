@@ -64,7 +64,7 @@ class MethodEval() {
   import EvalResult._
 
   val timeout = 20.seconds
-  private val evaluator = new Evaluator(timeout)
+  private def evaluator = new Evaluator(timeout)
 
   def eval[T](pkg: String, qualifiedMethod: String, rawArgs: List[String], imports: List[String] = Nil): EvaluationResult[_] = {
     val pre = (s"import $pkg._" :: imports).mkString(System.lineSeparator)
