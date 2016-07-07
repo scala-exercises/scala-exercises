@@ -26,7 +26,7 @@ case class ClientExercise(
 
   def isBeingEvaluated: Boolean = state == Evaluating
 
-  def canBeCompiled: Boolean = isFilled && !isSolved && !isBeingEvaluated
+  def canBeCompiled: Boolean = isFilled && !isBeingEvaluated
 }
 
 object Exercises {
