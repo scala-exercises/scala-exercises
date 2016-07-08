@@ -21,9 +21,8 @@ import java.util.concurrent.{ TimeoutException, Callable, FutureTask, TimeUnit }
 
 import scala.util.Try
 import scala.util.control.NonFatal
-import scala.concurrent._
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext
+import scala.concurrent._
 import scala.language.reflectiveCalls
 
 import com.twitter.util.Eval
