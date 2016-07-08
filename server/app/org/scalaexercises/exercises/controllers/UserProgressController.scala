@@ -38,10 +38,9 @@ class UserProgressController(
     AuthenticatedUser { user ⇒
       userProgressOps.fetchUserProgressByLibrarySection(user, libraryName, sectionName).runFuture map {
         case Xor.Right(response) ⇒ Ok(Json.toJson(response))
-        case Xor.Left(error) ⇒ {
+        case Xor.Left(error) ⇒
           Logger.error(s"Error while fetching user progress for $libraryName/$sectionName", error)
           BadRequest(error.getMessage)
-        }
       }
     }
 }
