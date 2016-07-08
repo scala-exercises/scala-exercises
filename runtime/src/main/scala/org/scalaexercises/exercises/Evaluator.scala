@@ -88,20 +88,13 @@ class Evaluator(timeout: Duration = 20.seconds) {
 
     val errors: Map[Severity, List[CompilationInfo]] = eval.errors.toMap
 
-    println(allCode)
-
-    println(result)
-
-    println(errors)
-
     result match {
       case scala.util.Success(r) ⇒ EvalResult.Success[T](errors, r, "")
       case scala.util.Failure(t) ⇒ t match {
         case e: Eval.CompilerException ⇒ EvalResult.CompilationError(errors)
-        case e                         ⇒ EvalResult.EvalRuntimeError(errors, None)
+        case NonFatal(e)               ⇒ EvalResult.EvalRuntimeError(errors, Option(RuntimeError(e, None)))
+        case e                         ⇒ EvalResult.GeneralError(e)
       }
     }
-   
   }
-
 }

@@ -49,6 +49,18 @@ class MethodEvalSpec extends FunSpec with Matchers {
       assert(res.toExecutionXor.isRight)
     }
 
+    it("fails with assertion error when the parameters are incorrect") {
+      val res = methodEval.eval(
+        "org.scalaexercises.runtime",
+        "org.scalaexercises.runtime.ExampleTarget.isOne",
+        "2" :: Nil
+      )
+
+      res should matchPattern {
+        case EvaluationException(_: TestFailedException) ⇒
+      }
+    }
+
     it("captures exceptions thrown by the called method") {
       val res = methodEval.eval(
         "org.scalaexercises.runtime",
