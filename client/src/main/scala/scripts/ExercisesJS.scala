@@ -34,13 +34,13 @@ object ExercisesJS extends js.JSApp {
 
     // A stream of (State, Action) pairs that emits a value each time the state is affected
     // by an action
-    val stateAndAction: Observable[(State, Action)] = state.zip(actions).distinct
+    val stateAndAction: Observable[(State, Action)] = state.zip(actions)
 
     // UI modifications
-    val ui: Observable[IO[Unit]] = stateAndAction.map((sa) ⇒ UI.update(sa._1, sa._2))
+    val ui: Observable[IO[Unit]] = state.zipWith(actions)(UI.update)
 
     // Effects that can trigger further actions
-    val effects: Observable[Future[Option[Action]]] = stateAndAction.map((sa) ⇒ Effects.perform(sa._1, sa._2))
+    val effects: Observable[Future[Option[Action]]] = state.zipWith(actions)(Effects.perform)
 
     def triggerAction(action: Action): IO[Unit] = io {
       actions.onNext(action)

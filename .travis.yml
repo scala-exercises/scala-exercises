@@ -22,3 +22,5 @@ install:
   - gem install sass
 script:
   - sbt testAll
+after_success:
+  - bash deploy.sh
