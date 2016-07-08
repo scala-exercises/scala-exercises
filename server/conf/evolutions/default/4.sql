@@ -1,9 +1,9 @@
 # --- !Ups
 
-CREATE INDEX "libraryname_idx" ON "userProgress" ("libraryname");
-CREATE INDEX "sectionname_idx" ON "userProgress" ("sectionname");
+CREATE INDEX "fetchUserProgress_idx" ON "userProgress" ("userid", "libraryname", "sectionname");
+CREATE UNIQUE INDEX "userLogin_idx" ON "users" ("login");
 
 # --- !Downs
 
-DROP INDEX "libraryname_idx";
-DROP INDEX "sectionname_idx";
+DROP INDEX "fetchUserProgress_idx";
+DROP INDEX "userLogin_idx";
