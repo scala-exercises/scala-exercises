@@ -8,7 +8,7 @@
     "success_url": "\/",
     "env": {
         "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
-        "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
+        "JAVA_OPTS": "-Xms512m -Xmx2048m -XX:ReservedCodeCacheSize=128m -Xmx2G -Xss2M -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled",
         "JAVA_TOOL_OPTIONS": {
             "required": true
         },
