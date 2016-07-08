@@ -42,6 +42,9 @@ object Client {
     }).recover({ case exc: AjaxException ⇒ None })
   }
 
+  val SERVER_ERROR = "There was a problem evaluating your answer, please try again later."
+  val TIMEOUT_ERROR = "We couldn't evaluate your exercise. You may be experiencing internet connectivity issues."
+
   def compileExercise(e: ClientExercise): Future[EvaluationResult] = {
     val url = Routes.Exercises.evaluate(e.library, e.section)
     //TODO: TBD version and exercise types
@@ -50,16 +53,16 @@ object Client {
       if (r.ok)
         EvaluationResult(true, e.method)
       else
-        EvaluationResult(false, e.method, r.responseText)
+        EvaluationResult(false, e.method, SERVER_ERROR)
     }).recover({
       case exc: AjaxException ⇒ {
         EvaluationResult(
           false,
           e.method,
           if (exc.isTimeout)
-            "We couldn't evaluate your exercise. You may be experiencing internet connectivity issues."
+            TIMEOUT_ERROR
           else
-            exc.xhr.responseText
+            SERVER_ERROR
         )
       }
     })
