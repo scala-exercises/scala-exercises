@@ -21,9 +21,14 @@ import java.util.concurrent.{ TimeoutException, Callable, FutureTask, TimeUnit }
 
 import scala.util.Try
 import scala.util.control.NonFatal
+import scala.concurrent._
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
 import scala.language.reflectiveCalls
+
 import com.twitter.util.Eval
+
+import monix.execution._
 
 import scala.reflect.internal.util.{ BatchSourceFile, Position }
 
@@ -43,12 +48,14 @@ object EvalResult {
 
   case object Timeout extends EvalResult[Nothing]
   case class Success[T](complilationInfos: CI, result: T, consoleOutput: String) extends EvalResult[T]
+  case class Timeout[T]() extends EvalResult[T]
   case class EvalRuntimeError(complilationInfos: CI, runtimeError: Option[RuntimeError]) extends EvalResult[Nothing]
   case class CompilationError(complilationInfos: CI) extends EvalResult[Nothing]
   case class GeneralError(stack: Throwable) extends EvalResult[Nothing]
 }
 
-class Evaluator(timeout: Duration = 20.seconds) {
+class Evaluator(timeout: FiniteDuration = 20.seconds) {
+  implicit val scheduler: ExecutionContext = Scheduler.io("evaluation-scheduler")
 
   def convert(errors: (Position, String, String)): (Severity, List[CompilationInfo]) = {
     val (pos, msg, severity) = errors
@@ -60,11 +67,7 @@ class Evaluator(timeout: Duration = 20.seconds) {
     (sev, CompilationInfo(msg, Some(RangePosition(pos.start, pos.point, pos.end))) :: Nil)
   }
 
-  def apply[T](pre: String, code: String): EvalResult[T] = {
-    val allCode = s"""
-                     |$pre
-                     |$code
-                   """.stripMargin
+  def eval[T](code: String): EvalResult[T] = {
     val eval = new Eval {
       @volatile var errors: Map[Severity, List[CompilationInfo]] = Map.empty
 
@@ -82,8 +85,8 @@ class Evaluator(timeout: Duration = 20.seconds) {
     }
 
     val result = for {
-      _ ← Try(eval.check(allCode))
-      result ← Try(eval.apply[T](allCode, resetState = true))
+      _ ← Try(eval.check(code))
+      result ← Try(eval.apply[T](code, resetState = true))
     } yield result
 
     val errors: Map[Severity, List[CompilationInfo]] = eval.errors.toMap
@@ -96,5 +99,16 @@ class Evaluator(timeout: Duration = 20.seconds) {
         case e                         ⇒ EvalResult.GeneralError(e)
       }
     }
+  }
+
+  def apply[T](pre: String, code: String): EvalResult[T] = {
+    val allCode = s"""
+                     |$pre
+                     |$code
+                   """.stripMargin
+    val fut = Future({ eval(allCode) })
+    Try(
+      Await.result(fut, timeout)
+    ).getOrElse(EvalResult.Timeout())
   }
 }
