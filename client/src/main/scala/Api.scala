@@ -44,16 +44,14 @@ object Client {
 
   val SERVER_ERROR = "There was a problem evaluating your answer, please try again later."
   val TIMEOUT_ERROR = "We couldn't evaluate your exercise. You may be experiencing internet connectivity issues."
+  val BAD_REQUEST = 400
 
   def compileExercise(e: ClientExercise): Future[EvaluationResult] = {
     val url = Routes.Exercises.evaluate(e.library, e.section)
     //TODO: TBD version and exercise types
     val request = EvaluationRequest(e.library, e.section, e.method, 1, "Koans", e.arguments)
     Ajax.postAsJson(url, write(request)).map(r ⇒ {
-      if (r.ok)
-        EvaluationResult(true, e.method)
-      else
-        EvaluationResult(false, e.method, SERVER_ERROR)
+      EvaluationResult(true, e.method)
     }).recover({
       case exc: AjaxException ⇒ {
         EvaluationResult(
@@ -61,8 +59,11 @@ object Client {
           e.method,
           if (exc.isTimeout)
             TIMEOUT_ERROR
+          else if (exc.xhr.status == BAD_REQUEST)
+            exc.xhr.responseText
           else
             SERVER_ERROR
+
         )
       }
     })
