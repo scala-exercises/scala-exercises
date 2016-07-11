@@ -43,7 +43,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.1-SNAPSHOT",
+  version := "0.2.2-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -176,7 +176,13 @@ lazy val definitions = (project in file("definitions"))
   .settings(commonSettings: _*)
   .settings(
     name := "definitions",
-    scalaVersion := "2.11.7"
+    scalaVersion := "2.11.7",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % cats,
+      "org.scalatest" %% "scalatest" % "2.2.4",
+      "org.scalacheck" %% "scalacheck" % "1.12.5",
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1"
+    )
 )
 
 // Runtime evaluation
