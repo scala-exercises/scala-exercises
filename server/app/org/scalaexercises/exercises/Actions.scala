@@ -24,9 +24,6 @@ case class Secure[A](action: Action[A]) extends Action[A] {
     val redirect =
       (!previewApp && Play.isProd && (!isSecure || !inWWW))
 
-    println("Redirect : " + redirect)
-    println(s"Values : previewApp:$previewApp, Play.isProd:${Play.isProd}, request.secure:${request.secure}, inWWW:$inWWW")
-
     if (redirect) {
       val secureUrl =
         if (inWWW) s"https://${request.domain}${request.uri}"
