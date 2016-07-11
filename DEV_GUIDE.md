@@ -6,7 +6,7 @@ In addition to including features / fixes, you can contribute new content to Sca
 
 ###Overview
 
-The `scala-exercises` organization holds different repositories for both the core project ("scala-exercises"), and each of the main exercises libraries (i.e.: "exercises-stdlib", "exercises-cats"...). The core project is currently built on one single module, but it'll be potentially splitted up in several ones in a not-so-distant future. The content you can provide to the platform doesn't necessarily be in the previously mentioned organization, but for them to appear inside the main `scala-exercises` in production, they need to be published in a public artifact repository like Sonatype or Maven-central. All the steps, from creating the content library to the publication process, are described in the following sections.
+The `scala-exercises` organization holds different repositories for both the core project ("scala-exercises"), and each of the main exercises libraries (i.e.: "exercises-stdlib", "exercises-cats"...). The core project is currently built on one single module. The content you can provide to the platform doesn't necessarily be in the previously mentioned organization, but for them to appear inside the main `scala-exercises` in production, they need to be published in a public artifact repository like Sonatype or Maven-central. All the steps, from creating the content library to the publication process, are described in the following sections.
 
 ###Content creation
 
@@ -61,9 +61,9 @@ object MyLibrary extends Library {
 
 Let's dig into each one of these points:
 
-* (1) A package name for your exercises library. 
-* (2) Inside the first ScalaDoc block, we define the description of the library as it'll appear in the list of the available libraries.
-* (3) Also, this ScalaDoc block defines the title of the library. It'll also be used as the path suffix for its URL. If you need to use spaces, use an underscore symbol (i.e.: "STD_lib")
+* (1) A package name for your exercises library.
+* (2) Inside the first [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, we define the description of the library as it'll appear in the list of the available libraries.
+* (3) Also, this [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block defines the title of the library. It'll also be used as the path suffix for its URL. If you need to use spaces, use an underscore symbol (i.e.: "STD_lib")
 * (4) Owner username or organization in GitHub.
 * (5) Name of the repository that will contain the library.
 * (6) Color (in hexadecimal code format) that will identify the library in the website.
@@ -79,21 +79,24 @@ As previously mentioned, exercises are organized in sections that will be based 
 How does a section look like?
 
 ```scala
+import org.scalatest._
+import org.scalaexercises.definitions.Section
+
 /** @param name section_title (1)
 */
-object MySection extends FlatSpec with Matchers with org.scalaexercises.definitions.Section (2) {
+object MySection extends FlatSpec with Matchers with Section (2) {
     // exercises definition (3)
 }
 ```
 
-* (1) As when defining the library, you need to use ScalaDoc to define the name of the section. Use an underscore symbol to include spaces.
+* (1) As when defining the library, you need to use [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) to define the name of the section. Use an underscore symbol to include spaces.
 * (2) Each section `object` should inherit from `org.scalaexercises.definitions.Section`. `FlatSpec` and `Matchers` are traits from the ScalaTest library, the framework Scala Exercises uses to check the results.
 * (3) Inside the section `object` we can start defining the exercises, as it'll be shown in the following section.
 
 
 ####Creating new exercises
 
-The content for each exercise is defined in a ScalaDoc block, with some specific particularities.
+The content for each exercise is defined in a [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, with some specific particularities.
 
 ```scala
 /** = Title = (1)
@@ -111,10 +114,10 @@ def functionAssert(res0: Boolean): Unit {
 }
 ```
 
-* (1) You can define titles in the documentation for your library wrapping it inside a pair of equal signs (=).
+* (1) You can define titles in the documentation for your library wrapping it inside a pair of equal signs (=), defining a [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) heading.
 * (2) The documentation itself can be splitted up in several paragraphs, depending on your needs. You can use backquotes (`) to highlight an specific item or a code reference.
 * (3) Code that illustrates your exercises should be surrounded by triple curly braces.
-* (4) Code that defines your exercises is contained in a Scala function below the ScalaDoc containing the documentation.
+* (4) Code that defines your exercises is contained in a Scala function below the [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) containing the documentation.
 
 Exercise functions (as described in (4)) should receive one parameter per placeholder that users will fill in the UI, and return `Unit`. You can include as many placeholders as needed, with a minimum of one. Inside the function, you can include nested functions that your exercise may need to work, and a set of ScalaTest asserts checking the user's inputs.
 
