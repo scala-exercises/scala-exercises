@@ -51,7 +51,7 @@ object ExercisesService extends RuntimeSharedConversions {
 
     def userError(ee: EvaluationException[_]): String = ee.e match {
       case _: TestFailedException ⇒ "Assertion error!"
-      case e                      ⇒ s"Runtime error: ${e.getMessage}"
+      case e                      ⇒ s"Runtime error: ${e.getClass.getName}"
     }
 
     def eval(pkg: String, imports: List[String]) = {
