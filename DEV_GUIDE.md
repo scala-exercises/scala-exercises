@@ -98,15 +98,13 @@ object MyLibrary extends Library {
 
 Examining each of these points:
 
-* (1) A package name for your exercises library. Currently, the package name can only be one level deep (i.e.: `package pkg` instead of `package com.foo.pkg`).
+* (1) A package name for your exercises library.
 * (2) Inside the first [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, you define the description of the library as it'll appear in the list of the available libraries.
 * (3) Also, this [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block defines the title of the library. It'll also be used as the path suffix for its URL. If you need to use spaces, use an underscore symbol (i.e.: "STD_lib")
 * (4) The existing owner username or organization for the content on GitHub.
 * (5) The name of the repository that will contain the library. This should lead to an existing repository with actual content within. The owner (4) and repository (5) fields must resolve to a real GitHub repository (https://github.com/owner/repository).
 * (6) Color in hexadecimal code format that will identify the library in the website. This value is optional, although it's recommended to pick one.
 * (7) A list that contains every section you want to include in this library. Every item defined here is a Scala object containing the exercises per section.
-
-Note that when defining a new library, it should be placed on a single package level, multi-package levels are not currently allowed by the Scala Exercises Compiler.
 
 ####Creating a new section
 
