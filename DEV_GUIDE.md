@@ -200,7 +200,7 @@ Once you've got your sections and exercises laid out, there are some final steps
 
 * (1) Publish your library artifacts. It doesn't matter if you use Sonatype, Artifactory, Bintray..., as long as they're publically available.
 * (2) Submit a pull request to Scala Exercises to include a dependency to your library.
-* (3) You should include an exercise library logo file, contained inside the classpath of your library, in the same location as your livrary. The logo should be an SVG file, sporting a white design over a color background, and a square ratio. If you need help to design your logo, you can submit an issue mentioning any 47 Degrees member. They can lend you a hand!
+* (3) You should include an exercise library logo file, contained inside the classpath of your library, in the same location as your library. The logo should be an SVG file, sporting a white design over a color background, and a square ratio. If you need help to design your logo, you can submit an issue mentioning any 47 Degrees member. They can lend you a hand!
 
 ###Conclusions
 
