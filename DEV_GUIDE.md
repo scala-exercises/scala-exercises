@@ -2,11 +2,11 @@
 
 ##Contributing new content
 
-In addition to including features / fixes, you can contribute new content to Scala Exercises! The platform is designed in a way that creating new exercises is pretty straight-forward. Currently there are several libraries available in production (i.e.: STD lib, Cats, Shapeless...), and more are to be included soon. If you're interested in creating a new exercises library, you'll find all the needed steps in this document.
+In addition to including features and fixes, you can contribute new content to Scala Exercises! The platform is designed in a way that creating new exercises is pretty straightforward. Currently there are several libraries available (such as the Scala standard library, Cats, and Shapeless), and more are to be included soon. If you're interested in creating a new exercises library, you'll find all the needed steps in this document.
 
 ###Overview
 
-The `scala-exercises` organization holds different repositories for both the core project ("scala-exercises"), and each of the main exercises libraries (i.e.: "exercises-stdlib", "exercises-cats"...). The core project is currently built on one single module. The content you can provide to the platform doesn't necessarily be in the previously mentioned organization, but for them to appear inside the main `scala-exercises` in production, they need to be published in a public artifact repository like Sonatype or Maven-central. All the steps, from creating the content library to the publication process, are described in the following sections.
+The [scala-exercises](https://github.com/scala-exercises) organization holds different repositories for both the core project ([scala-exercises](https://github.com/scala-exercises/scala-exercises)), and each of the main scala-exercises libraries (such as [exercises-stdlib](https://github.com/scala-exercises/exercises-stdlib) or [exercises-cats](https://github.com/scala-exercises/exercises-cats)). The core project is currently built on one single module. The content you can provide to the platform doesn't necessarily need to be in the previously mentioned organization, but for them to appear inside the main hosted `scala-exercises`, they need to be published in a public artifact repository like Sonatype or Maven-central. All the steps, from creating the content library to the publication process, are described in the following sections.
 
 ###Content creation
 
@@ -44,7 +44,7 @@ addSbtPlugin("org.scala-exercises" % "sbt-exercise" % "0.2.1-SNAPSHOT", "0.13", 
 ```scala
 lazy val contentLibrary = (project in file("."))
 .enablePlugins(ExerciseCompilerPlugin)
-// further configurations for your project would go here
+// further configurations for your project go here
 ```
 
 * (3) Extra dependencies should be added to the `build.sbt` file of your library (replacing `version` for the proper one):
@@ -56,7 +56,7 @@ resolvers ++= Seq(
     Resolver.sonatypeRepo("releases")
 )
 
-// Needed dependencies:
+// Necessary dependencies:
 libraryDependencies ++= Seq(
 // ...
     "org.scala-exercises" %% "exercise-compiler" % version
@@ -67,7 +67,7 @@ libraryDependencies ++= Seq(
 
 ####Creating a new content library
 
-Each content library is an independent SBT module working as a library, which should be published as an artifact for it to be included in Scala Exercises. You'll also need to set up a GitHub repository for your libraries, at least containing one file, as repository information is needed by the Scala Exercises compiler to fetch their contributors. From now on, we'll consider you've already set up a new project for your exercises library, and we'll focus on the specifics on how to layout the content itself.
+Each content library is an independent SBT module working as a library, which should be published as an artifact for it to be included in Scala Exercises. You'll also need to set up a GitHub repository for your libraries, at least containing one file, as repository information is needed by the Scala Exercises compiler to fetch their contributors. From now on, we'll assume you've already set up a new project for your exercises library, and we'll focus on the specifics on how to layout the content itself.
 
 First of all you need to set up the library by creating a new Scala `object` that contains basic details about it. This `object` must subclass from `org.scalaexercises.definitions.Library`. Here you can find a template for this object:
 
@@ -96,26 +96,26 @@ object MyLibrary extends Library {
 }
 ```
 
-Let's dig into each one of these points:
+Examining each of these points:
 
-* (1) A package name for your exercises library. This should be a one level deep package name (i.e.: `package pkg` instead of `package com.foo.pkg`).
-* (2) Inside the first [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, we define the description of the library as it'll appear in the list of the available libraries.
+* (1) A package name for your exercises library. Currently, the package name can only be one level deep (i.e.: `package pkg` instead of `package com.foo.pkg`).
+* (2) Inside the first [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, you define the description of the library as it'll appear in the list of the available libraries.
 * (3) Also, this [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block defines the title of the library. It'll also be used as the path suffix for its URL. If you need to use spaces, use an underscore symbol (i.e.: "STD_lib")
-* (4) Existing owner username or organization in GitHub.
-* (5) Name of the repository that will contain the library. This should lead to an existing repository with actual content within. The owner (4) and repository (5) fields must resolve to a real GitHub repository (https://github.com/owner/repository).
-* (6) Color (in hexadecimal code format) that will identify the library in the website. This value is optional, although it's recommended to pick one.
+* (4) The existing owner username or organization for the content on GitHub.
+* (5) The name of the repository that will contain the library. This should lead to an existing repository with actual content within. The owner (4) and repository (5) fields must resolve to a real GitHub repository (https://github.com/owner/repository).
+* (6) Color in hexadecimal code format that will identify the library in the website. This value is optional, although it's recommended to pick one.
 * (7) A list that contains every section you want to include in this library. Every item defined here is a Scala object containing the exercises per section.
 
-Note that when defining a new library, it should be placed on a single package level, multi-package levels are not allowed at this moment by the Scala Exercises Compiler.
+Note that when defining a new library, it should be placed on a single package level, multi-package levels are not currently allowed by the Scala Exercises Compiler.
 
 ####Creating a new section
 
-As previously mentioned, exercises are organized in sections that will be based on a Scala `object`. A good practice would be to have each section in a separate Scala file. So basically, the basic flow to create new exercises would be:
+As previously mentioned, exercises are organized in sections that will be based on a Scala `object`. A good practice would be to have each section in a separate Scala file. So the basic flow to create new exercises would be:
 
-1. Define the section `object` (we'll go through this process in a moment).
+1. Define the section `object`. The process for defining this is in the next section.
 2. Include a reference to this object in the `sections` list in the library `object` described in the previous section.
 
-How does a section look like?
+What does a section look like?
 
 ```scala
 import org.scalatest._  // (1)
@@ -128,15 +128,15 @@ object SectionA extends FlatSpec with Matchers with Section { // (3)
 }
 ```
 
-* (1) You will need to set up a [ScalaTest](http://www.scalatest.org/) dependency in your library. If you're using SBT you might not need to set it up only for the `test` scope (note that ScalaTest is also been used in the main source of your library).
+* (1) You will need to set up a [ScalaTest](http://www.scalatest.org/) dependency in your library. If you're using SBT you will not need to set it up for the `test` scope (note that ScalaTest is also been used in the main source of your library).
 * (2) As when defining the library, you need to use [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) to define the name of the section. Use an underscore symbol to include spaces.
 * (3) Each section `object` should inherit from `org.scalaexercises.definitions.Section`. `FlatSpec` and `Matchers` are traits from the [ScalaTest](http://www.scalatest.org/) library, the framework Scala Exercises uses to check the results.
-* (4) Inside the section `object` we can start defining the exercises, as it'll be shown in the following section.
+* (4) Inside the section `object` you can start defining the exercises, as it'll be shown in the following section.
 
 
 ####Creating new exercises
 
-The content for each exercise is defined in a [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, with some specific particularities.
+The content for each exercise is defined in a [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, with some specific conventions.
 
 ```scala
 /** = Title = // (1)
@@ -155,17 +155,17 @@ def functionAssert(res0: Boolean): Unit {
 ```
 
 * (1) You can define titles in the documentation for your library wrapping it inside a pair of equal signs (=), defining a [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) heading.
-* (2) The documentation itself can be splitted up in several paragraphs, depending on your needs. You can use backquotes (`) to highlight an specific item or a code reference.
+* (2) The documentation itself can be split up in several paragraphs, depending on your needs. You can use backquotes (`) to highlight a specific item or a code reference.
 * (3) Code that illustrates your exercises should be surrounded by triple curly braces.
-* (4) Code that defines your exercises is contained in a Scala function below the [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) containing the documentation.
+* (4) Code that defines your exercises is contained in a normal Scala function below the [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) containing the documentation.
 
-Exercise functions (as described in (4)) should receive one parameter per placeholder that users will fill in the UI, and return `Unit`. You can include as many placeholders as needed, with a minimum of one. Inside the function, you can include nested functions that your exercise may need to work, and a set of [ScalaTest](http://www.scalatest.org/) asserts checking the user's inputs.
+Exercise functions (as described in (4)) should receive one parameter per placeholder that users will fill in the user interface, and return `Unit`. You can include as many placeholders as needed, but you must have a minimum of one. Inside the function, you can include nested functions that your exercise may need to work, and a set of [ScalaTest](http://www.scalatest.org/) asserts checking the user's inputs.
 
-Currently Scala Exercises only supports this kind of input (i.e.: filling placeholders). Potentially it'll allow writing complete code snippets from the users in order to complete an exercise.
+Currently Scala Exercises only supports filling placeholders. Potentially it'll allow writing complete code snippets from the users in order to complete an exercise.
 
 ####Local development
 
-In order to see and debug your exercises in your local environment, you need to publish them locally and include them as a dependency for your local instance. Here are the steps to achieve this:
+In order to see and debug your exercises in your local environment, you need to publish them locally and include them as a dependency for your local instance of the `scala-exercises` project. Here are the steps to achieve this:
 
 * (1) Compile your exercises (i.e.: `sbt compile`). This is needed for each change, as the publication process can fail otherwise.
 * (2) Publish your excersises locally (i.e.: `sbt publishLocal`).
@@ -196,11 +196,11 @@ Writing tests for your exercises is easy thanks to the `Test` utility class, whi
 
 ###Publishing the new library
 
-Once you've got your sections and exercises laid out, there are some final steps to see them published in the Scala Exercises website. Let's run them through:
+Once you've got your sections and exercises laid out, there are some final steps to see them published in the Scala Exercises website:
 
 * (1) Publish your library artifacts. It doesn't matter if you use Sonatype, Artifactory, Bintray..., as long as they're publically available.
-* (2) Submit a PR to Scala Exercises, including a dependency to your library.
-* (3) Your exercises library logo file should be contained inside the classpath of your library (i.e.: in the same location as `MyLibrary.scala`). Your logo should be an SVG file, sporting a white design over a  color background, and a square ratio. If you need help to design your logo, you can submit an issue mentioning any 47 Degrees member. They can lend you a hand!
+* (2) Submit a pull request to Scala Exercises to include a dependency to your library.
+* (3) You should include an exercise library logo file, contained inside the classpath of your library, in the same location as your livrary. The logo should be an SVG file, sporting a white design over a color background, and a square ratio. If you need help to design your logo, you can submit an issue mentioning any 47 Degrees member. They can lend you a hand!
 
 ###Conclusions
 
