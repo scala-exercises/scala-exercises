@@ -6,7 +6,7 @@
 @(user: Option[User] = None, libraries: List[Library] = Nil, progress: OverallUserProgress, redirectUrl: Option[String] = Some("#"), repo: Repository)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     @templates.base.head(
       current.configuration.getString("application.name").getOrElse("Scala Exercises"),
@@ -87,6 +87,29 @@
             @for(library <- libraries) {
               @templates.home.libraryGridItem(library, progress.libraries.find(_.libraryName == library.name))
             }
+
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <a href="https://github.com/scala-exercises/scala-exercises/blob/master/DEV_GUIDE.md" title="Add a new exercises pack">
+                <div class="tech scala">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <img src=""/>
+                      <h3 class="panel-title">Your library here</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p>Send an exercises pack of a new library is easy peasy. Help us with your collaboration to make this platform bigger.</p>
+
+
+                      <div><button class="btn btn-primary" style="background-color:#3C4F58;">How can I help?</button></div>
+
+
+                    </div>
+
+                  </div>
+                </div>
+              </a>
+            </div>
+
 
           </div>
         </div>
