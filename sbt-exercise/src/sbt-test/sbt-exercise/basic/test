@@ -5,6 +5,11 @@
 > project content
 > package
 
+-$ exists contentinpackages/target/scala-2.11/src_managed/main/org/scalaexercises/contentinpackages/
+
+> project contentInPackages
+> package
+
 $ exists content/target/scala-2.11/src_managed/main/org/scalaexercises/content/
 
 > project check

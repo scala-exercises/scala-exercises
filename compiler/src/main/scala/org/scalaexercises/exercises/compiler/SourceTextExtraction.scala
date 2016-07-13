@@ -69,11 +69,14 @@ class SourceTextExtraction {
     def expandPath[T](kv: (List[global.Name], T)): (List[String], T) =
       (kv._1.map(nameToString), kv._2)
 
+    def splitPackage(p: List[String]) =
+      p flatMap (_.split('.').toList)
+
     val (commentss, methodss) = extractions.map { extraction ⇒
 
       val comments = extraction.comments.map(expandPath).map {
         case (k, v) ⇒
-          k → new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
+          splitPackage(k) → new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
       }
 
       val rawImports = extraction.imports
@@ -92,7 +95,7 @@ class SourceTextExtraction {
             .collect {
               case (order, imp) if order < v._1 ⇒ showCode(imp)
             }
-          k → new ExtractedMethod(boundReadCode(v._2), methodImports)
+          splitPackage(k) → new ExtractedMethod(boundReadCode(v._2), methodImports)
       }
       (comments, methods)
     }.unzip
@@ -191,7 +194,7 @@ object SourceTextExtraction {
           case q"package $ref { ..$topstats }" ⇒
             val nextPath =
               if (ref.name == termNames.EMPTY_PACKAGE_NAME) path
-              else ref.name :: path
+              else TermName(ref.toString) :: path
             traversal(
               topstats.zipWithIndex.map { case (body, index) ⇒ (nextPath, index, body) } ::: rs,
               acc
@@ -232,8 +235,6 @@ object SourceTextExtraction {
         //RawAcc(methods = (path → expr) :: Nil)
       },
       visitImport = { (path, imp, acc) ⇒
-        //println("looking at import " + imp + " at position " + acc.position)
-        //println("previous import processed " + acc.imports)
         acc.copy(
           imports = acc.imports :+ (path, (acc.position, imp)),
           position = acc.position + 1

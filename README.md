@@ -1,6 +1,6 @@
 [![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
 [![Build status](https://img.shields.io/travis/scala-exercises/scala-exercises.svg)](https://travis-ci.org/scala-exercises/scala-exercises)
-[![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/47deg/scala-exercises)
+[![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/scala-exercises/scala-exercises)
 
 #Scala Exercises
 
@@ -142,6 +142,10 @@ to get involved.
 Feel free to open an issue if you notice a bug, have an idea for a
 feature, or have a question about the code. Pull requests are also
 gladly accepted. 
+
+In the same fashion, if you're interested in providing your own content
+for your library (or a third-party's), you can find more information
+on how to do it in the [Developer Guide](DEV_GUIDE.md).
 
 People are expected to follow the
 [Typelevel Code of Conduct](http://typelevel.org/conduct.html) when
