@@ -8,6 +8,8 @@ In addition to including features and fixes, you can contribute new content to S
 
 The [scala-exercises](https://github.com/scala-exercises) organization holds different repositories for both the core project ([scala-exercises](https://github.com/scala-exercises/scala-exercises)), and each of the main scala-exercises libraries (such as [exercises-stdlib](https://github.com/scala-exercises/exercises-stdlib) or [exercises-cats](https://github.com/scala-exercises/exercises-cats)). The core project is currently built on one single module. The content you can provide to the platform doesn't necessarily need to be in the previously mentioned organization, but for them to appear inside the main hosted `scala-exercises`, they need to be published in a public artifact repository like Sonatype or Maven-central. All the steps, from creating the content library to the publication process, are described in the following sections.
 
+You can also find a [bare-bones template](https://github.com/scala-exercises/exercises-template) set up for you, containing a basic library with one section. Feel free to fork it as a foundation for your own library.
+
 ###Content creation
 
 Scala Exercises content is organized in the following way:
@@ -131,7 +133,6 @@ object SectionA extends FlatSpec with Matchers with Section { // (3)
 * (3) Each section `object` should inherit from `org.scalaexercises.definitions.Section`. `FlatSpec` and `Matchers` are traits from the [ScalaTest](http://www.scalatest.org/) library, the framework Scala Exercises uses to check the results.
 * (4) Inside the section `object` you can start defining the exercises, as it'll be shown in the following section.
 
-
 ####Creating new exercises
 
 The content for each exercise is defined in a [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block, with some specific conventions.
@@ -159,7 +160,12 @@ def functionAssert(res0: Boolean): Unit {
 
 Exercise functions (as described in (4)) should receive one parameter per placeholder that users will fill in the user interface, and return `Unit`. You can include as many placeholders as needed, but you must have a minimum of one. Inside the function, you can include nested functions that your exercise may need to work, and a set of [ScalaTest](http://www.scalatest.org/) asserts checking the user's inputs.
 
-Currently Scala Exercises only supports filling placeholders. Potentially it'll allow writing complete code snippets from the users in order to complete an exercise.
+####Known limitations
+
+Scala Exercises is still in development, so in some situations you might potentially find some limitations while laying out your exercises. Some of them are described as follows:
+
+* (1) Currently every [ScalaDoc](https://wiki.scala-lang.org/display/SW/Syntax) block in an exercise must be associated with a function, which in practice it means that all sections must end with an exercise. This is currently referenced in issue [#556](https://github.com/scala-exercises/scala-exercises/issues/556).
+* (2) Scala Exercises only supports exercises with placeholders to be filled by the user. Potentially it'll allow writing complete code snippets from the users in order to complete an exercise.
 
 ####Local development
 
