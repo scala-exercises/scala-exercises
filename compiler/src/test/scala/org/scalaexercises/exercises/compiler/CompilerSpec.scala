@@ -1,15 +1,11 @@
 package org.scalaexercises.compiler
 
 import org.scalaexercises.definitions.Library
-
-import scala.reflect.internal.util.AbstractFileClassLoader
-import scala.reflect.internal.util.BatchSourceFile
-import scala.tools.nsc.{ Global, Settings }
-import scala.tools.nsc.io.{ VirtualDirectory, AbstractFile }
-
-import java.lang.ClassLoader
-
 import org.scalatest._
+
+import scala.reflect.internal.util.{ AbstractFileClassLoader, BatchSourceFile }
+import scala.tools.nsc.io.VirtualDirectory
+import scala.tools.nsc.{ Global, Settings }
 
 class CompilerSpec extends FunSpec with Matchers {
 
@@ -55,6 +51,29 @@ class CompilerSpec extends FunSpec with Matchers {
       val path = "(internal)"
       val res = Compiler().compile(library, code :: Nil, path :: Nil, "/", "sample", fetchContributors = false)
       assert(res.isRight, s"""; ${res.fold(identity, _ ⇒ "")}""")
+    }
+
+    it("fails if sections list is empty") {
+
+      val code = """
+      /** This is the sample library.
+        * @param name Sample Library
+        */
+      object SampleLibrary extends org.scalaexercises.definitions.Library {
+        override def owner = "scala-exercises"
+        override def repository = "site"
+        override def sections = Nil
+      }"""
+
+      val classLoader = globalUtil.load(code)
+      val library = classLoader
+        .loadClass("SampleLibrary$")
+        .getField("MODULE$").get(null)
+        .asInstanceOf[Library]
+
+      val path = "(internal)"
+      val res = Compiler().compile(library, code :: Nil, path :: Nil, "/", "sample", fetchContributors = false)
+      assert(res.isLeft, s"""; ${res.fold(identity, _ ⇒ "")}""")
     }
   }
 
