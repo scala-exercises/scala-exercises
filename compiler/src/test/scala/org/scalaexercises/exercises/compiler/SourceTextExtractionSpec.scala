@@ -1,19 +1,12 @@
 package org.scalaexercises.compiler
 
 import org.scalatest._
-import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc.Global
 
 class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
 
-  describe("source text extraction") {
-
-    val code = """
-      /** This is a comment that gets ignored */
-      import scala.collection.immutable.{ Seq => Seqq }
-      package myPackage {
-        import scala.collection._
-        /** This is Foo */
+  private val innerClassCode: String =
+    """/** This is Foo */
         class Foo { val value = 1 }
         /** This is Bar */
         object Bar {
@@ -28,7 +21,16 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
             }
           }
         }
-        import scala.io._
+        import scala.io._"""
+
+  describe("source text extraction") {
+
+    val code = s"""
+      /** This is a comment that gets ignored */
+      import scala.collection.immutable.{ Seq => Seqq }
+      package myPackage {
+        import scala.collection._
+        $innerClassCode
       }
       """
 
@@ -41,6 +43,37 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
         "myPackage.Bar.bar" → "/** This is Bar.bar */",
         "myPackage.Bar" → "/** This is Bar */",
         "myPackage.Foo" → "/** This is Foo */"
+      ))
+    }
+  }
+
+  describe("source text extraction with multi-level deep package") {
+
+    val multiLevelPackage = "com.my.nestedPackage"
+    val code = s"""
+      /** This is a comment that gets ignored */
+      import scala.collection.immutable.{ Seq => Seqq }
+      package $multiLevelPackage {
+        import scala.collection._
+        $innerClassCode
+      }
+               """
+
+    val res = new SourceTextExtraction().extractAll(code :: Nil, List(""), "/")
+
+    it("should find all doc comments on classes and objects") {
+      val comments = res.comments
+      comments shouldNot be(empty)
+      comments foreach {
+        case (k, _) ⇒
+          multiLevelPackage.split('.') foreach (k should contain(_))
+      }
+      comments map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(Map(
+        s"$multiLevelPackage.Bar.fizz.SubBar" → "/** This is SubBar */",
+        s"$multiLevelPackage.Bar.fizz.SubBar.subbar" → "/** This is SubBar.subbar */",
+        s"$multiLevelPackage.Bar.bar" → "/** This is Bar.bar */",
+        s"$multiLevelPackage.Bar" → "/** This is Bar */",
+        s"$multiLevelPackage.Foo" → "/** This is Foo */"
       ))
     }
 
