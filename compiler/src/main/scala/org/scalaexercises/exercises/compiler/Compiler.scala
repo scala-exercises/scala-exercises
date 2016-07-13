@@ -91,9 +91,11 @@ case class Compiler() {
       symbolPath = internal.symbolToPath(symbol)
       comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
         .leftMap(enhanceDocError(symbolPath))
-      sections ← library.sections.toList
-        .map(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
-        .sequenceU
+      sections ← checkEmptySectionList(symbol, library) >>= {
+        _.sections
+          .map(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
+          .sequenceU
+      }
     } yield LibraryInfo(
       symbol = symbol,
       comment = comment,
@@ -102,6 +104,12 @@ case class Compiler() {
       owner = library.owner,
       repository = library.repository
     )
+
+    def checkEmptySectionList(librarySymbol: Symbol, library: Library): Xor[String, Library] =
+      if (library.sections.isEmpty)
+        Xor.left(s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section")
+      else
+        Xor.right(library)
 
     def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
