@@ -66,6 +66,12 @@ $ sudo -u postgres createdb scalaexercises_dev
 $ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
 ```
 
+Alternatively, you can also use Docker to run the database. The following command creates a database container and exposes it:
+
+```sh
+$ docker run --name scala-exercises-db -e POSTGRES_DB=scalaexercises_dev -e POSTGRES_PASSWORD=scalaexercises_pass -e POSTGRES_USER=scalaexercises_dev_user -p 5432:5432 -d postgres:9.4
+```
+
 ##### Configure the application
 
 Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
