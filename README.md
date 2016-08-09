@@ -23,7 +23,7 @@
 
 ### Online
 
-Scala Exercises is available at [scala-exercises.org](https://scala-exercises.org). 
+Scala Exercises is available at [scala-exercises.org](https://scala-exercises.org).
 
 ### Local development
 
@@ -87,7 +87,22 @@ $ sbt run
 After compilation the application will be running, listening in the 9000 port. Point your browser
 to `localhost:9000` and start having fun!
 
-#### Troubleshooting
+## Troubleshooting
+
+#### Running locally
+
+Currently there is classloading issue causing no exercise modules to be displayed on the homepage (See [issue #560](https://github.com/scala-exercises/scala-exercises/issues/560)).
+
+This issue is still pending to be fixed. In the meantime, you could do a quick fix locally.
+
+In the ```server``` project configuration in the ```build.sbt```:
+* replace line (~L103) ```.dependsOn(core.jvm, runtime)``` for ```.dependsOn(core.jvm)```
+* and uncommenting this line (~L121)  
+```// "org.scala-exercises" %% "runtime" % version.value changing(),```
+
+Then run ```sbt run``` and now the exercise modules should show up.
+
+#### Ensime
 
 If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
 global settings, likely you might have this issue running the application locally:
@@ -131,7 +146,7 @@ The project is split between a few directories, namely:
 - `compiler` for compiling exercises,
 - `runtime` for runtime evaluation of exercises.
 
-The `compiler` and `runtime` directories allow exercises to be defined using 
+The `compiler` and `runtime` directories allow exercises to be defined using
 regular Scala which is compiled into an exercise library.
 
 The `site`, `client` and `shared` directories contain the website. These items depend on components in `compiler` and `runtime`.
@@ -147,7 +162,7 @@ to get involved.
 
 Feel free to open an issue if you notice a bug, have an idea for a
 feature, or have a question about the code. Pull requests are also
-gladly accepted. 
+gladly accepted.
 
 In the same fashion, if you're interested in providing your own content
 for your library (or a third-party's), you can find more information
@@ -161,7 +176,7 @@ venues.
 We hope that our community will be respectful, helpful, and kind. If
 you find yourself embroiled in a situation that becomes heated, or
 that fails to live up to our expectations, you should disengage and
-contact one of the project maintainers in private. 
+contact one of the project maintainers in private.
 
 ##License
 
