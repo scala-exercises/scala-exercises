@@ -11,11 +11,19 @@ case class Library(
     description: String,
     color:       String,
     sections:    List[Section] = Nil,
-    timestamp:   String
+    timestamp:   String,
+    buildInfo:   BuildInfo
 ) {
   val sectionNames: List[String] = sections map (_.name)
   val shortTimestamp: String = timestamp.split("T").headOption.getOrElse(timestamp)
 }
+
+/** Represents the Library Build Metadata Information
+  */
+case class BuildInfo(
+  resolvers:           List[String],
+  libraryDependencies: List[String]
+)
 
 /** A section in a library. For example `Extractors`
   */

@@ -7,21 +7,14 @@ package org.scalaexercises.exercises
 package services
 
 import org.scalaexercises.runtime.{ Exercises, MethodEval, Timestamp }
-import org.scalaexercises.runtime.model.{ Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection, Exercise ⇒ RuntimeExercise, Contribution ⇒ RuntimeContribution, DefaultLibrary }
-
-import org.scalaexercises.types.exercises.{ Library, Section, Exercise, Contribution, ExerciseEvaluation }
-
+import org.scalaexercises.runtime.model.{ DefaultLibrary, BuildInfo ⇒ RuntimeBuildInfo, Contribution ⇒ RuntimeContribution, Exercise ⇒ RuntimeExercise, Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection }
+import org.scalaexercises.types.exercises._
 import play.api.Play
 import play.api.Logger
 
-import java.nio.file.Paths
-
-import cats.data.Xor
-import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
 import cats.syntax.option._
-
 import org.scalatest.exceptions.TestFailedException
 
 object ExercisesService extends RuntimeSharedConversions {
@@ -62,7 +55,7 @@ object ExercisesService extends RuntimeSharedConversions {
         imports
       )
       res.toSuccessXor.bimap(
-        _.fold(compileError(_), userError(_)),
+        _.fold(compileError, userError),
         _ ⇒ Unit
       )
     }
@@ -134,7 +127,8 @@ sealed trait RuntimeSharedConversions {
           description = library.description,
           color = color,
           sections = library.sections,
-          timestamp = Timestamp.fromDate(new java.util.Date())
+          timestamp = Timestamp.fromDate(new java.util.Date()),
+          buildMetaInfo = library.buildMetaInfo
         ) :: librariesAcc)
       } else
         colors → (library :: librariesAcc)
@@ -150,7 +144,14 @@ sealed trait RuntimeSharedConversions {
       description = library.description,
       color = library.color getOrElse "black",
       sections = library.sections map convertSection,
-      timestamp = library.timestamp
+      timestamp = library.timestamp,
+      buildInfo = convertBuildInfo(library.buildMetaInfo)
+    )
+
+  def convertBuildInfo(buildInfo: RuntimeBuildInfo): BuildInfo =
+    BuildInfo(
+      resolvers = buildInfo.resolvers,
+      libraryDependencies = buildInfo.libraryDependencies
     )
 
   def convertSection(section: RuntimeSection): Section =

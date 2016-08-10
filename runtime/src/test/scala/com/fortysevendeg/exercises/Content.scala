@@ -10,6 +10,7 @@ object LibraryA extends Library {
   override def name = ???
   override def sections = ???
   override def timestamp = ???
+  override def buildMetaInfo = ???
 }
 
 object LibraryB extends Library {
@@ -20,6 +21,7 @@ object LibraryB extends Library {
   override def name = ???
   override def sections = ???
   override def timestamp = ???
+  override def buildMetaInfo = ???
 }
 
 object LibraryC extends Library {
@@ -30,6 +32,7 @@ object LibraryC extends Library {
   override def name = ???
   override def sections = ???
   override def timestamp = ???
+  override def buildMetaInfo = ???
 }
 
 class ErrorLibrary extends Library {
@@ -40,4 +43,5 @@ class ErrorLibrary extends Library {
   override def name = ???
   override def sections = ???
   override def timestamp = ???
+  override def buildMetaInfo = ???
 }
