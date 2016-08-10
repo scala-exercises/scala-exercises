@@ -17,6 +17,9 @@ object OAuth2 {
   lazy val githubSiteOwner = application.configuration.getString("github.site.owner").getOrElse("")
   lazy val githubSiteRepo = application.configuration.getString("github.site.repo").getOrElse("")
 
+  lazy val evaluatorUrl = application.configuration.getString("evaluator.url").getOrElse("")
+  lazy val evaluatorAuthKey = application.configuration.getString("evaluator.authKey").getOrElse("")
+
   def callbackUrl = {
     val rootUrl = application.configuration.getString("application.url").getOrElse({ throw new IllegalStateException("The `application.url` setting must be present for computing the Oauth callback URL") })
     s"${rootUrl}/_oauth-callback"
