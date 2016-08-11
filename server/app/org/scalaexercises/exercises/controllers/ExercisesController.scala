@@ -71,11 +71,12 @@ class ExercisesController(
     code:         String
   ): Free[ExercisesApp, Result] = for {
     evaluationResult ← evaluatorOps.evaluates(
-      ConfigUtils.evaluatorUrl,
-      ConfigUtils.evaluatorAuthKey,
-      resolvers,
-      dependencies,
-      code
+      url = ConfigUtils.evaluatorUrl,
+      authKey = ConfigUtils.evaluatorAuthKey,
+      readTimeout = ConfigUtils.evaluatorReadTimeout,
+      resolvers = resolvers,
+      dependencies = dependencies,
+      code = code
     )
     _ ← userProgressOps.saveUserProgress(
       mkSaveProgressRequest(user, evaluation, evaluationResult.isRight)

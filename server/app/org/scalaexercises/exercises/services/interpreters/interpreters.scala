@@ -136,10 +136,10 @@ trait Interpreters[M[_]] {
       implicit val I: org.scalaexercises.evaluator.free.algebra.EvaluatorOp ~> M = ProdEvaluatorInterpreters.interpreter[M]
 
       fa match {
-        case Evaluates(url, authKey, resolvers, dependencies, code) ⇒
+        case Evaluates(url, authKey, connTimeout, readTimeout, resolvers, dependencies, code) ⇒
           val convertedDependencies = dependencies map (d ⇒ SharedDependency(d.groupId, d.artifactId, d.version))
           evaluatorResponseToEntity(
-            EvaluatorClient(url, authKey)
+            EvaluatorClient(url, authKey, connTimeout, readTimeout)
             .api
             .evaluates(
               resolvers,
