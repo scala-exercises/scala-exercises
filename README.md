@@ -87,6 +87,19 @@ $ sbt run
 After compilation the application will be running, listening in the 9000 port. Point your browser
 to `localhost:9000` and start having fun!
 
+#### Adding more exercises
+
+Currently scala-exercises includes exercises for the Scala Standard Library, Cats and Shapeless. However, more exercises are available like for Doobie, Functional Programming in Scala and ScalaCheck. See the [scala-exercises on github](https://github.com/scala-exercises) or you can include exercises from other parties or create your own (see [Contributing](#contributing) section).
+
+To add additional exercises to your locally running server:
+* clone the exercises repository to a local folder
+* 'cd' into the local repository folder.
+* run ```sbt compile publishLocal``` to create a jar in your local ivy repository.  
+!Note: The _compile_ task is **mandatory** here otherwise the exercises will not show up in the application.
+* add a dependency to the exersises jar in the `server` project in the `build.sbt` file (~L118).
+
+Now run `sbt run` and the application index will also display the added exercises.
+
 ## Troubleshooting
 
 #### Running locally
@@ -101,6 +114,10 @@ In the ```server``` project configuration in the ```build.sbt```:
 ```// "org.scala-exercises" %% "runtime" % version.value changing(),```
 
 Then run ```sbt run``` and now the exercise modules should show up.
+
+#### Additional exercises do not show up in the application
+
+See the [Adding more exercises](#adding-more-exercises) section. Note that currently the `compile` step is required before `publishLocal` for the application to be able to pickup the exercises.
 
 #### Ensime
 
