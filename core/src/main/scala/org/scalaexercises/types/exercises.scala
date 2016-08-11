@@ -1,6 +1,7 @@
 package org.scalaexercises.types.exercises
 
 import cats.data.Xor
+import org.scalaexercises.types.evaluator.Dependency
 
 /** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
   */
@@ -57,6 +58,7 @@ case class ExerciseEvaluation(
 )
 
 object ExerciseEvaluation {
+  type EvaluationRequest = String Xor (List[String], List[Dependency], String)
   type Result = String Xor Any
 }
 

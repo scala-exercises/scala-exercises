@@ -6,21 +6,19 @@
 package org.scalaexercises.exercises
 package services
 
-import org.scalaexercises.runtime.{ Exercises, MethodEval, Timestamp }
+import cats.data.Xor
+import org.scalaexercises.runtime.{ Exercises, Timestamp }
 import org.scalaexercises.runtime.model.{ DefaultLibrary, BuildInfo ⇒ RuntimeBuildInfo, Contribution ⇒ RuntimeContribution, Exercise ⇒ RuntimeExercise, Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection }
 import org.scalaexercises.types.exercises._
 import play.api.Play
 import play.api.Logger
-
 import cats.std.option._
 import cats.syntax.flatMap._
 import cats.syntax.option._
-import org.scalatest.exceptions.TestFailedException
+import cats.syntax.xor._
+import org.scalaexercises.types.evaluator.Dependency
 
 object ExercisesService extends RuntimeSharedConversions {
-  import MethodEval._
-
-  val methodEval = new MethodEval()
 
   def classLoader = Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
@@ -37,30 +35,9 @@ object ExercisesService extends RuntimeSharedConversions {
   def section(libraryName: String, name: String): Option[Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def evaluate(evaluation: ExerciseEvaluation): ExerciseEvaluation.Result = {
+  def buildRuntimeInfo(evaluation: ExerciseEvaluation): ExerciseEvaluation.EvaluationRequest = {
 
-    def compileError(ef: EvaluationFailure[_]): String =
-      s"Compilation error: ${ef.foldedException.getMessage}"
-
-    def userError(ee: EvaluationException[_]): String = ee.e match {
-      case _: TestFailedException ⇒ "Assertion error!"
-      case e                      ⇒ s"Runtime error: ${e.getClass.getName}"
-    }
-
-    def eval(pkg: String, imports: List[String]) = {
-      val res = methodEval.eval(
-        pkg,
-        evaluation.method,
-        evaluation.args,
-        imports
-      )
-      res.toSuccessXor.bimap(
-        _.fold(compileError, userError),
-        _ ⇒ Unit
-      )
-    }
-
-    val imports = for {
+    val runtimeInfo: Xor[String, (RuntimeBuildInfo, String, List[String])] = for {
 
       runtimeLibrary ← runtimeLibraries.find(_.name == evaluation.libraryName)
         .toRightXor(s"Unable to find library ${evaluation.libraryName} when " +
@@ -73,12 +50,28 @@ object ExercisesService extends RuntimeSharedConversions {
       runtimeExercise ← runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method)
         .toRightXor(s"Unable to find exercise for method ${evaluation.method}")
 
-    } yield (runtimeExercise.packageName, runtimeExercise.imports)
+    } yield (runtimeLibrary.buildMetaInfo, runtimeExercise.packageName, runtimeExercise.imports)
 
-    val res = imports >>= (eval _).tupled
-    Logger.info(s"evaluation for $evaluation: $res")
-    res
+    runtimeInfo match {
+      case Xor.Right((b: RuntimeBuildInfo, pckgName: String, importList: List[String])) ⇒
 
+        val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
+          pckgName,
+          evaluation.method,
+          evaluation.args,
+          importList,
+          b.resolvers,
+          b.libraryDependencies
+        )
+
+        (
+          resolvers,
+          dependencies map (d ⇒ Dependency(d.groupId, d.artifactId, d.version)),
+          code
+        ).right
+
+      case Xor.Left(msg) ⇒ msg.left
+    }
   }
 
   def reorderLibraries(topLibNames: List[String], libraries: List[Library]): List[Library] = {

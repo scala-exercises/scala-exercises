@@ -118,7 +118,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
-     // "org.scala-exercises" %% "runtime" % version.value changing(),
+      // "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.scala-exercises" %% "evaluator-client" % "0.0.1-SNAPSHOT" changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
@@ -197,6 +197,7 @@ lazy val runtime = (project in file("runtime"))
       "org.clapper" %% "classutil" % "1.0.11",
       "com.twitter" %% "util-eval" % "6.34.0",
       "io.monix" %% "monix" % "2.0-RC8",
+      "org.scala-exercises" %% "evaluator-shared" % "0.0.1-SNAPSHOT" changing(),
       "org.typelevel" %%% "cats-core" % cats % "compile",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )

@@ -18,7 +18,7 @@ import org.scalaexercises.types.exercises.{ Contribution, Contributor }
 
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import org.scalaexercises.exercises.utils.OAuth2
+import org.scalaexercises.exercises.utils.ConfigUtils
 
 import doobie.imports._
 

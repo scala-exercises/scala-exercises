@@ -7,18 +7,14 @@ package org.scalaexercises.runtime
 
 import org.scalaexercises.runtime.model._
 
-import scala.annotation.tailrec
 import scala.collection.immutable.List
-import scala.collection.JavaConversions._
 import scala.reflect.ClassTag
-
 import java.net.URLClassLoader
 import java.io.File
-import java.lang.ClassNotFoundException
 
 import cats.data.Xor
-
 import org.clapper.classutil.ClassFinder
+import org.scalaexercises.evaluator.Dependency
 
 object Exercises {
   val LIBRARIES_PACKAGE = "org.scalaexercises.content"
@@ -49,9 +45,9 @@ object Exercises {
 
     val (errors, libraries) = classNames.foldLeft((Nil: List[String], Nil: List[Library])) { (acc, name) ⇒
       val loadedLibrary = for {
-        loadedClass ← guard(Class.forName(name, true, cl), s"${name} not found")
-        loadedObject ← guard(loadedClass.getField("MODULE$").get(null), s"${name} must be defined as an object")
-        loadedLibrary ← guard(loadedObject.asInstanceOf[Library], s"${name} must extend Library")
+        loadedClass ← guard(Class.forName(name, true, cl), s"$name not found")
+        loadedObject ← guard(loadedClass.getField("MODULE$").get(null), s"$name must be defined as an object")
+        loadedLibrary ← guard(loadedObject.asInstanceOf[Library], s"$name must extend Library")
       } yield loadedLibrary
 
       // until a bifoldable exists in Cats...
@@ -67,4 +63,33 @@ object Exercises {
   private def guard[A](f: ⇒ A, message: ⇒ String) =
     Xor.catchNonFatal(f).leftMap(_ ⇒ message)
 
+  def buildEvaluatorRequest(
+    pkg:                 String,
+    qualifiedMethod:     String,
+    rawArgs:             List[String],
+    imports:             List[String] = Nil,
+    resolvers:           List[String],
+    libraryDependencies: List[String]
+  ): (List[String], List[Dependency], String) = {
+
+    val extractEvaluatorResolvers: List[String] = {
+      resolvers.filter(!_.isEmpty) map { resolver ⇒
+        resolver.substring(resolver.indexOf("http"))
+      }
+    }
+
+    val extractEvaluatorDependencies: List[Dependency] = {
+      libraryDependencies map { dep ⇒
+        val depArray = dep.split(":")
+        Dependency(groupId = depArray(0), artifactId = depArray(1), version = depArray(2))
+      }
+    }
+
+    val pre = (s"import $pkg._" :: imports).mkString("; ")
+    val code = s"""$qualifiedMethod(${rawArgs.mkString(", ")})"""
+
+    val allCode = s"{$pre; $code}"
+
+    (extractEvaluatorResolvers, extractEvaluatorDependencies, allCode)
+  }
 }

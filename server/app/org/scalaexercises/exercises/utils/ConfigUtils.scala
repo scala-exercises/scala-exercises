@@ -8,7 +8,7 @@ package org.scalaexercises.exercises.utils
 import play.api.mvc.{ Request, AnyContent }
 import play.api.{ Application, Play }
 
-object OAuth2 {
+object ConfigUtils {
 
   implicit def application: Application = Play.current
 
@@ -21,8 +21,15 @@ object OAuth2 {
   lazy val evaluatorAuthKey = application.configuration.getString("evaluator.authKey").getOrElse("")
 
   def callbackUrl = {
-    val rootUrl = application.configuration.getString("application.url").getOrElse({ throw new IllegalStateException("The `application.url` setting must be present for computing the Oauth callback URL") })
-    s"${rootUrl}/_oauth-callback"
+    val rootUrl = application
+      .configuration
+      .getString("application.url")
+      .getOrElse(
+        throw new IllegalStateException(
+          "The `application.url` setting must be present for computing the Oauth callback URL"
+        )
+      )
+    s"$rootUrl/_oauth-callback"
   }
 
   val successUrl = org.scalaexercises.exercises.controllers.routes.OAuthController.success()

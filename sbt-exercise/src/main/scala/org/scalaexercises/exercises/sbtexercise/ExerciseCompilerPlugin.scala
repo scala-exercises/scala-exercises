@@ -79,6 +79,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       buildInfoObject   := "LibMetaInfo",
       buildInfoPackage  := "org.scalaexercises.content",
       buildInfoKeys     := Seq(
+        name,
+        version,
+        scalaVersion,
+        organization,
         resolvers,
         libraryDependencies
       ),
