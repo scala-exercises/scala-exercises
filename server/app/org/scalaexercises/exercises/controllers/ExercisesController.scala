@@ -18,6 +18,8 @@ import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import doobie.imports._
 import org.scalaexercises.algebra.EvaluatorOps
+import org.scalaexercises.evaluator.EvalResponse
+import org.scalaexercises.evaluator.EvalResult.CI
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
@@ -78,10 +80,20 @@ class ExercisesController(
       dependencies = dependencies,
       code = code
     )
+    analyzedResult ← evaluationResult match {
+      case Xor.Left(msg) ⇒
+        Free.pure[ExercisesApp, Result](msg.left)
+      case Xor.Right(EvalResponse(EvalResponse.messages.ok, _, _, _)) ⇒
+        Free.pure[ExercisesApp, Result](evaluationResult)
+      case Xor.Right(EvalResponse(msg, value, valueType, compilationInfos)) ⇒
+        Free.pure[ExercisesApp, Result](
+          formatEvalResponse(msg, value, valueType, compilationInfos).left
+        )
+    }
     _ ← userProgressOps.saveUserProgress(
-      mkSaveProgressRequest(user, evaluation, evaluationResult.isRight)
+      mkSaveProgressRequest(user, evaluation, analyzedResult.isRight)
     )
-  } yield evaluationResult
+  } yield analyzedResult
 
   private[this] def mkSaveProgressRequest(user: User, evaluation: ExerciseEvaluation, success: Boolean) =
     SaveUserProgress.Request(
@@ -94,4 +106,20 @@ class ExercisesController(
       args = evaluation.args,
       succeeded = success
     )
+
+  private[this] def formatEvalResponse(
+    msg:              String,
+    value:            Option[String],
+    valueType:        Option[String],
+    compilationInfos: CI
+  ) = {
+
+    def printOption[T](maybeValue: Option[T]) =
+      maybeValue map (v ⇒ s"; $v") getOrElse ""
+
+    s"""$msg
+        |${printOption(value)}
+        |${printOption(valueType)}
+        |; ${if (compilationInfos.nonEmpty) compilationInfos}""".stripMargin
+  }
 }
