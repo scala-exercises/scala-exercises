@@ -19,7 +19,6 @@ import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import doobie.imports._
 import org.scalaexercises.algebra.EvaluatorOps
 import org.scalaexercises.evaluator.EvalResponse
-import org.scalaexercises.evaluator.EvalResult.CI
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.{ Action, BodyParsers, Controller }
@@ -87,7 +86,7 @@ class ExercisesController(
         Free.pure[ExercisesApp, Result](evaluationResult)
       case Xor.Right(EvalResponse(msg, value, valueType, compilationInfos)) ⇒
         Free.pure[ExercisesApp, Result](
-          formatEvalResponse(msg, value, valueType, compilationInfos).left
+          formatEvaluationResponse(msg, value, valueType, compilationInfos).left
         )
     }
     _ ← userProgressOps.saveUserProgress(
@@ -106,20 +105,4 @@ class ExercisesController(
       args = evaluation.args,
       succeeded = success
     )
-
-  private[this] def formatEvalResponse(
-    msg:              String,
-    value:            Option[String],
-    valueType:        Option[String],
-    compilationInfos: CI
-  ) = {
-
-    def printOption[T](maybeValue: Option[T]) =
-      maybeValue map (v ⇒ s"; $v") getOrElse ""
-
-    s"""$msg
-        |${printOption(value)}
-        |${printOption(valueType)}
-        |; ${if (compilationInfos.nonEmpty) compilationInfos}""".stripMargin
-  }
 }
