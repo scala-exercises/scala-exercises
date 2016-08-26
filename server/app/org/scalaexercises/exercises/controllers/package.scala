@@ -42,6 +42,15 @@ object `package` {
     def printOption[T](maybeValue: Option[T]): String =
       maybeValue map (v ⇒ s"$blockSeparator $v") getOrElse ""
 
+    def printTestFailed: String = valueType match {
+      case vt if vt.contains("org.scalatest.exceptions.TestFailedException") ⇒
+        s"$blockSeparator Compilation and evaluation succeeded but that is not the right answer!"
+      case _ ⇒
+        s"""
+           |${printOption(value)}
+           |${printOption(valueType)}""".stripMargin
+    }
+
     def printCIList(list: List[CompilationInfo]): String =
       list map { ci ⇒
         s"${ci.message}${ci.pos.fold("")(rp ⇒ s" at [${rp.start}, ${rp.point}, ${rp.end}]")}"
@@ -59,8 +68,7 @@ object `package` {
     else ""
 
     s"""$msg
-       |${printOption(value)}
-       |${printOption(valueType)}
+       |$printTestFailed
        |$printCIMap""".stripMargin
   }
 }
