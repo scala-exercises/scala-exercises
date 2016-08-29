@@ -1,7 +1,6 @@
 package org.scalaexercises.types.exercises
 
 import cats.data.Xor
-import org.scalaexercises.types.evaluator.Dependency
 
 /** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
   */
@@ -12,19 +11,11 @@ case class Library(
     description: String,
     color:       String,
     sections:    List[Section] = Nil,
-    timestamp:   String,
-    buildInfo:   BuildInfo
+    timestamp:   String
 ) {
   val sectionNames: List[String] = sections map (_.name)
   val shortTimestamp: String = timestamp.split("T").headOption.getOrElse(timestamp)
 }
-
-/** Represents the Library Build Metadata Information
-  */
-case class BuildInfo(
-  resolvers:           List[String],
-  libraryDependencies: List[String]
-)
 
 /** A section in a library. For example `Extractors`
   */
@@ -58,7 +49,6 @@ case class ExerciseEvaluation(
 )
 
 object ExerciseEvaluation {
-  type EvaluationRequest = String Xor (List[String], List[Dependency], String)
   type Result = String Xor Any
 }
 

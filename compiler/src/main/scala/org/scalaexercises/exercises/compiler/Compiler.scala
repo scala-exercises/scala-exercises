@@ -5,44 +5,30 @@
 
 package org.scalaexercises.compiler
 
-import org.scalaexercises.definitions.{ BuildInfo, Library }
+import org.scalaexercises.definitions.Library
 import org.scalaexercises.runtime.Timestamp
 
+import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe ⇒ ru }
-import cats.Eval
+
+import cats.{ Eval, MonadError }
 import cats.data.Xor
 import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
+
 import github4s.Github
 import Github._
 import github4s.implicits._
 import github4s.GithubResponses.GHResult
 import github4s.free.domain.Commit
+
 import Comments.Mode
 import CommentRendering.RenderedComment
 
 class CompilerJava {
-  def compile(
-    library:           AnyRef,
-    sources:           Array[String],
-    paths:             Array[String],
-    buildMetaInfo:     AnyRef,
-    baseDir:           String,
-    targetPackage:     String,
-    fetchContributors: Boolean
-  ): Array[String] = {
-
-    Compiler()
-      .compile(
-        library.asInstanceOf[Library],
-        sources.toList,
-        paths.toList,
-        buildMetaInfo.asInstanceOf[BuildInfo],
-        baseDir,
-        targetPackage,
-        fetchContributors
-      )
+  def compile(library: AnyRef, sources: Array[String], paths: Array[String], baseDir: String, targetPackage: String, fetchContributors: Boolean): Array[String] = {
+    Compiler().compile(library.asInstanceOf[Library], sources.toList, paths.toList, baseDir, targetPackage, fetchContributors)
       .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
   }
 }
@@ -50,16 +36,7 @@ class CompilerJava {
 case class Compiler() {
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  def compile(
-    library:           Library,
-    sources:           List[String],
-    paths:             List[String],
-    buildMetaInfo:     BuildInfo,
-    baseDir:           String,
-    targetPackage:     String,
-    fetchContributors: Boolean
-  ) = {
-
+  def compile(library: Library, sources: List[String], paths: List[String], baseDir: String, targetPackage: String, fetchContributors: Boolean) = {
     val mirror = ru.runtimeMirror(library.getClass.getClassLoader)
     import mirror.universe._
 
@@ -291,15 +268,6 @@ case class Compiler() {
           (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
         }.unzip
 
-      val allDependencies: List[String] = transformDependencyList(buildMetaInfo)
-
-      val (buildInfoTerm, buildInfoTree) =
-        treeGen.makeBuildInfo(
-          name = libraryInfo.comment.name,
-          resolvers = buildMetaInfo.resolvers.toList,
-          libraryDependencies = allDependencies
-        )
-
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
         name = libraryInfo.comment.name,
         description = libraryInfo.comment.description,
@@ -307,13 +275,12 @@ case class Compiler() {
         sectionTerms = sectionTerms,
         owner = libraryInfo.owner,
         repository = libraryInfo.repository,
-        timestamp = compilationTimestamp,
-        buildInfoT = buildInfoTerm
+        timestamp = compilationTimestamp
       )
 
       libraryTerm → treeGen.makePackage(
         packageName = targetPackage,
-        trees = libraryTree :: (sectionAndExerciseTrees.flatten :+ buildInfoTree)
+        trees = libraryTree :: sectionAndExerciseTrees.flatten
       )
 
     }
@@ -322,12 +289,6 @@ case class Compiler() {
       .map(generateTree)
       .map { case (TermName(kname), v) ⇒ s"$targetPackage.$kname" → showCode(v) }
 
-  }
-
-  private[this] def transformDependencyList(buildMetaInfo: BuildInfo): List[String] = {
-    val libraryAsDependency = s"${buildMetaInfo.organization}:${buildMetaInfo.name}_2.11:${buildMetaInfo.version}"
-
-    libraryAsDependency :: buildMetaInfo.libraryDependencies.toList
   }
 
   private case class CompilerInternal(
