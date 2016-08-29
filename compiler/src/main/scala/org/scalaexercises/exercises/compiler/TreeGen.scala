@@ -85,6 +85,19 @@ case class TreeGen[U <: Universe](
         }"""
   }
 
+  def makeBuildInfo(
+    name:                String,
+    resolvers:           List[String],
+    libraryDependencies: List[String]
+  ) = {
+    val term = makeTermName("BuildInfo", name)
+    term → q"""
+        object $term extends BuildInfo {
+          override val resolvers            = $resolvers
+          override val libraryDependencies  = $libraryDependencies
+        }"""
+  }
+
   def makeLibrary(
     name:         String,
     description:  String,
@@ -92,18 +105,20 @@ case class TreeGen[U <: Universe](
     sectionTerms: List[TermName],
     owner:        String,
     repository:   String,
-    timestamp:    String
+    timestamp:    String,
+    buildInfoT:   TermName
   ) = {
     val term = makeTermName("Library", name)
     term → q"""
         object $term extends Library {
-          override val name         = $name
-          override val description  = $description
-          override val color        = $color
-          override val sections     = $sectionTerms
-          override val owner        = $owner
-          override val repository   = $repository
-          override val timestamp    = $timestamp
+          override val name           = $name
+          override val description    = $description
+          override val color          = $color
+          override val sections       = $sectionTerms
+          override val owner          = $owner
+          override val repository     = $repository
+          override val timestamp      = $timestamp
+          override val buildMetaInfo  = $buildInfoT
         }"""
   }
 
@@ -112,7 +127,7 @@ case class TreeGen[U <: Universe](
     trees:       List[Tree]
   ) = q"""
         package ${makeRefTree(packageName)} {
-          import org.scalaexercises.runtime.model.{ Exercise, Library, Section, Contribution }
+          import org.scalaexercises.runtime.model.{ Exercise, Library, Section, Contribution, BuildInfo }
           ..$trees
         }"""
 

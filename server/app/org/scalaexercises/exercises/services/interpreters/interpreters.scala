@@ -11,28 +11,30 @@ import org.scalaexercises.algebra.exercises._
 import org.scalaexercises.algebra.progress._
 import org.scalaexercises.algebra.github._
 import org.scalaexercises.types.github._
-
-import org.scalaexercises.exercises.persistence.repositories.{ UserRepository, UserProgressRepository }
-
+import org.scalaexercises.exercises.persistence.repositories.{ UserProgressRepository, UserRepository }
 import github4s.app.GitHub4s
 import github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters }
 import github4s.Github
 import Github._
 import github4s.implicits._
-import github4s.GithubResponses.{ GHResult, GHResponse }
-
+import github4s.GithubResponses.{ GHResponse, GHResult }
+import org.scalaexercises.algebra.{ Evaluates, EvaluatorOp }
+import org.scalaexercises.evaluator.free.interpreters.{ Interpreter ⇒ EvaluatorInterpreter }
+import org.scalaexercises.evaluator.{ Dependency ⇒ SharedDependency }
+import org.scalaexercises.evaluator.EvaluatorClient._
 import cats._
 import cats.data.Xor
+import cats.syntax.xor._
 import cats.free.Free
-
 import doobie.imports._
 
 import scala.concurrent.{ Future, Promise }
-
 import scala.language.higherKinds
 import scalaz.\/
 import scalaz.concurrent.Task
 import FreeExtensions._
+import org.scalaexercises.evaluator.{ EvalResponse, EvaluatorClient }
+import org.scalaexercises.evaluator.EvaluatorResponses.{ EvaluationResponse, EvaluationResult }
 
 /** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
   */
@@ -45,7 +47,8 @@ trait Interpreters[M[_]] {
   ): ExercisesApp ~> M = {
     val exerciseAndUserInterpreter: C01 ~> M = exerciseOpsInterpreter or userOpsInterpreter
     val userAndUserProgressInterpreter: C02 ~> M = userProgressOpsInterpreter or exerciseAndUserInterpreter
-    val all: ExercisesApp ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
+    val githubAndExercisesAppInterpreter: C03 ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
+    val all: ExercisesApp ~> M = evaluatorExercisesOpsInterpreter or githubAndExercisesAppInterpreter
     all
   }
 
@@ -58,7 +61,7 @@ trait Interpreters[M[_]] {
     def apply[A](fa: ExerciseOp[A]): M[A] = fa match {
       case GetLibraries()                       ⇒ A.pureEval(Eval.later(libraries))
       case GetSection(libraryName, sectionName) ⇒ A.pureEval(Eval.later(section(libraryName, sectionName)))
-      case Evaluate(evalInfo)                   ⇒ A.pureEval(Eval.later(evaluate(evalInfo)))
+      case BuildRuntimeInfo(evalInfo)           ⇒ A.pureEval(Eval.later(buildRuntimeInfo(evalInfo)))
     }
   }
 
@@ -121,6 +124,36 @@ trait Interpreters[M[_]] {
     private def ghResponseToEntity[A, B](response: M[GHResponse[A]])(f: A ⇒ B): M[B] = A.flatMap(response) {
       case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(f(result))
       case Xor.Left(e)                                  ⇒ A.raiseError[B](e)
+    }
+
+  }
+
+  implicit def evaluatorExercisesOpsInterpreter(implicit A: MonadError[M, Throwable]): EvaluatorOp ~> M = new (EvaluatorOp ~> M) {
+
+    def apply[A](fa: EvaluatorOp[A]): M[A] = {
+
+      object ProdEvaluatorInterpreters extends EvaluatorInterpreter
+      implicit val I: org.scalaexercises.evaluator.free.algebra.EvaluatorOp ~> M = ProdEvaluatorInterpreters.interpreter[M]
+
+      fa match {
+        case Evaluates(url, authKey, connTimeout, readTimeout, resolvers, dependencies, code) ⇒
+          val convertedDependencies = dependencies map (d ⇒ SharedDependency(d.groupId, d.artifactId, d.version))
+          evaluatorResponseToEntity(
+            EvaluatorClient(url, authKey, connTimeout, readTimeout)
+            .api
+            .evaluates(
+              resolvers,
+              convertedDependencies,
+              code
+            )
+            .exec[M]
+          )(_.right)
+      }
+    }
+
+    private def evaluatorResponseToEntity[A, B](response: M[EvaluationResponse[A]])(f: A ⇒ B): M[B] = A.flatMap(response) {
+      case Xor.Right(EvaluationResult(result, _, _)) ⇒ A.pure(f(result))
+      case Xor.Left(e)                               ⇒ A.raiseError[B](e)
     }
 
   }
