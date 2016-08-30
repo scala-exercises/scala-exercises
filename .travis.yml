@@ -22,7 +22,7 @@ install:
   - gem install sass
 script:
   - sbt testAll
-  - sbt clean coverage test coverageReport
+  - sbt clean coverage test coverageOff coverageReport
 after_success:
   - bash deploy.sh
   - bash <(curl -s https://codecov.io/bash)
