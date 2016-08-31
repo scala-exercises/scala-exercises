@@ -278,7 +278,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
 
 // Test coverage
 
-lazy val coverage = (project in file("coverage"))
+lazy val coverageTests = (project in file("coverageTests"))
     .settings(commonSettings: _*)
     .aggregate(server, client, runtime, definitions, compiler)
 
