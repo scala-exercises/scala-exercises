@@ -31,8 +31,6 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 )
 
-
-
 // `WARTING=false sbt` to drop into SBT w/ wart checking off
 lazy val warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
 
@@ -56,6 +54,7 @@ lazy val commonSettings = Seq(
   ),
   resolvers ++= Seq(
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+    Resolver.url("sbt-plugins", url("https://dl.bintray.com/ssidorenko/sbt-plugins/"))(Resolver.ivyStylePatterns),
     Resolver.sonatypeRepo("snapshots")
   ),
   headers <<= (name, version) { (name, version) => Map(
@@ -166,7 +165,8 @@ lazy val client = (project in file("client"))
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
-      "org.typelevel" %%% "cats-core" % cats
+      "org.typelevel" %%% "cats-core" % cats,
+      "ch.sidorenko.scoverage" %%% "scalac-scoverage-runtime" % "1.1.0-JS"
     )
   )
 
