@@ -32,8 +32,6 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
 )
 
 lazy val scoverageSettings = Seq(
-  ScoverageKeys.coverageMinimum := 60,
-  ScoverageKeys.coverageFailOnMinimum := false,
   ScoverageKeys.coverageHighlighting := scalaBinaryVersion.value != "2.10",
   pomPostProcess := { (node: xml.Node) =>
     new RuleTransformer(
