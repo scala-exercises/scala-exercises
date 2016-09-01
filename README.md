@@ -23,7 +23,7 @@
 
 ### Online
 
-Scala Exercises is available at [scala-exercises.org](https://scala-exercises.org). 
+Scala Exercises is available at [scala-exercises.org](https://scala-exercises.org).
 
 ### Local development
 
@@ -66,6 +66,12 @@ $ sudo -u postgres createdb scalaexercises_dev
 $ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_dev TO scalaexercises_dev_user;"
 ```
 
+Alternatively, you can also use Docker to run the database. The following command creates a database container and exposes it:
+
+```sh
+$ docker run --name scala-exercises-db -e POSTGRES_DB=scalaexercises_dev -e POSTGRES_PASSWORD=scalaexercises_pass -e POSTGRES_USER=scalaexercises_dev_user -p 5432:5432 -d postgres:9.4
+```
+
 ##### Configure the application
 
 Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
@@ -81,7 +87,39 @@ $ sbt run
 After compilation the application will be running, listening in the 9000 port. Point your browser
 to `localhost:9000` and start having fun!
 
-#### Troubleshooting
+#### Adding more exercises
+
+Currently scala-exercises includes exercises for the Scala Standard Library, Cats and Shapeless. However, more exercises are available like for Doobie, Functional Programming in Scala and ScalaCheck. See the [scala-exercises on github](https://github.com/scala-exercises) or you can include exercises from other parties or create your own (see [Contributing](#contributing) section).
+
+To add additional exercises to your locally running server:
+* clone the exercises repository to a local folder
+* 'cd' into the local repository folder.
+* run ```sbt compile publishLocal``` to create a jar in your local ivy repository.  
+!Note: The _compile_ task is **mandatory** here otherwise the exercises will not show up in the application.
+* add a dependency to the exersises jar in the `server` project in the `build.sbt` file (~L118).
+
+Now run `sbt run` and the application index will also display the added exercises.
+
+## Troubleshooting
+
+#### Running locally
+
+Currently there is classloading issue causing no exercise modules to be displayed on the homepage (See [issue #560](https://github.com/scala-exercises/scala-exercises/issues/560)).
+
+This issue is still pending to be fixed. In the meantime, you could do a quick fix locally.
+
+In the ```server``` project configuration in the ```build.sbt```:
+* replace line (~L103) ```.dependsOn(core.jvm, runtime)``` for ```.dependsOn(core.jvm)```
+* and uncommenting this line (~L121)  
+```// "org.scala-exercises" %% "runtime" % version.value changing(),```
+
+Then run ```sbt run``` and now the exercise modules should show up.
+
+#### Additional exercises do not show up in the application
+
+See the [Adding more exercises](#adding-more-exercises) section. Note that currently the `compile` step is required before `publishLocal` for the application to be able to pickup the exercises.
+
+#### Ensime
 
 If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
 global settings, likely you might have this issue running the application locally:
@@ -125,7 +163,7 @@ The project is split between a few directories, namely:
 - `compiler` for compiling exercises,
 - `runtime` for runtime evaluation of exercises.
 
-The `compiler` and `runtime` directories allow exercises to be defined using 
+The `compiler` and `runtime` directories allow exercises to be defined using
 regular Scala which is compiled into an exercise library.
 
 The `site`, `client` and `shared` directories contain the website. These items depend on components in `compiler` and `runtime`.
@@ -141,7 +179,7 @@ to get involved.
 
 Feel free to open an issue if you notice a bug, have an idea for a
 feature, or have a question about the code. Pull requests are also
-gladly accepted. 
+gladly accepted.
 
 In the same fashion, if you're interested in providing your own content
 for your library (or a third-party's), you can find more information
@@ -155,7 +193,7 @@ venues.
 We hope that our community will be respectful, helpful, and kind. If
 you find yourself embroiled in a situation that becomes heated, or
 that fails to live up to our expectations, you should disengage and
-contact one of the project maintainers in private. 
+contact one of the project maintainers in private.
 
 ##License
 

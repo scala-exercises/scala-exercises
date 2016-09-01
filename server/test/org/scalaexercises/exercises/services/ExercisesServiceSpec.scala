@@ -18,9 +18,31 @@ class ExercisesServiceSpec extends FlatSpec with Matchers {
   val expectedType = "Other"
   val expectedTestSuccesArgs = List("Chevy", "Camaro", "1978", "120")
   val expectedTestFailedArgs = List("a", "b", "1", "2")
+  val resolvers = List(
+    "sonatype-snapshots: https://oss.sonatype.org/content/repositories/snapshots",
+    "sonatype-releases: https://oss.sonatype.org/content/repositories/releases"
+  )
+  val dependencies = List(
+    "org.scala-lang:scala-library:2.11.7",
+    "com.chuusai:shapeless:2.2.5",
+    "org.scalatest:scalatest:2.2.4",
+    "org.scala-exercises:exercise-compiler:0.2.3-SNAPSHOT"
+  )
 
   def library(name: String): Library =
-    Library(owner = "scala-exercises", repository = "site", name = name, description = "", color = "#BADA55", sections = Nil, timestamp = "19-12-1988")
+    Library(
+      owner = "scala-exercises",
+      repository = "site",
+      name = name,
+      description = "",
+      color = "#BADA55",
+      sections = Nil,
+      timestamp = "19-12-1988",
+      buildInfo = BuildInfo(
+        resolvers = resolvers,
+        libraryDependencies = dependencies
+      )
+    )
 
   "reorderLibraries" should "not reorder libraries when there aren't any top libraries" in {
     val libraries = List(

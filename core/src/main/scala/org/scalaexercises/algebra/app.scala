@@ -15,5 +15,6 @@ import org.scalaexercises.algebra.github.GithubOp
 object app {
   type C01[A] = Coproduct[ExerciseOp, UserOp, A]
   type C02[A] = Coproduct[UserProgressOp, C01, A]
-  type ExercisesApp[A] = Coproduct[GithubOp, C02, A]
+  type C03[A] = Coproduct[GithubOp, C02, A]
+  type ExercisesApp[A] = Coproduct[EvaluatorOp, C03, A]
 }

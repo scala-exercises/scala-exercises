@@ -1,16 +1,15 @@
 package org.scalaexercises.algebra.exercises
 
 import org.scalaexercises.types.exercises._
-
-import cats.data.Xor
 import cats.free._
+import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 
 /** Exercise Ops GADT
   */
 sealed trait ExerciseOp[A]
 final case class GetLibraries() extends ExerciseOp[List[Library]]
 final case class GetSection(libraryName: String, sectionName: String) extends ExerciseOp[Option[Section]]
-final case class Evaluate(exerciseEvaluation: ExerciseEvaluation) extends ExerciseOp[ExerciseEvaluation.Result]
+final case class BuildRuntimeInfo(exerciseEvaluation: ExerciseEvaluation) extends ExerciseOp[EvaluationRequest]
 
 /** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
   * Coproduct
@@ -26,8 +25,8 @@ class ExerciseOps[F[_]](implicit I: Inject[ExerciseOp, F]) {
   def getSection(libraryName: String, sectionName: String): Free[F, Option[Section]] =
     Free.inject[ExerciseOp, F](GetSection(libraryName, sectionName))
 
-  def evaluate(evaluation: ExerciseEvaluation): Free[F, ExerciseEvaluation.Result] =
-    Free.inject[ExerciseOp, F](Evaluate(evaluation))
+  def buildRuntimeInfo(evaluation: ExerciseEvaluation): Free[F, EvaluationRequest] =
+    Free.inject[ExerciseOp, F](BuildRuntimeInfo(evaluation))
 
 }
 

@@ -18,6 +18,14 @@ trait Library {
   def color: Option[String]
   def sections: List[Section]
   def timestamp: String
+  def buildMetaInfo: BuildInfo
+}
+
+/** Library Build Metadata Information
+  */
+trait BuildInfo {
+  def resolvers: List[String]
+  def libraryDependencies: List[String]
 }
 
 /** A section in a library.
@@ -57,13 +65,14 @@ trait Exercise {
 
 // default case class implementations
 case class DefaultLibrary(
-  owner:       String,
-  repository:  String,
-  name:        String,
-  description: String,
-  color:       Option[String],
-  sections:    List[Section]  = Nil,
-  timestamp:   String
+  owner:         String,
+  repository:    String,
+  name:          String,
+  description:   String,
+  color:         Option[String],
+  sections:      List[Section]  = Nil,
+  timestamp:     String,
+  buildMetaInfo: BuildInfo
 ) extends Library
 
 case class DefaultContribution(
