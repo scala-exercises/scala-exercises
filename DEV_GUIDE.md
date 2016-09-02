@@ -34,11 +34,11 @@ Scala Exercises Core
 
 First of all, before starting to develop your library, you need to add a couple of dependencies and configurations to your project. These are:
 
-* (1) Add a dependency to the `sbt-exercises` plugin in the `plugins.sbt` file of your project:
+* (1) Add a dependency to the `sbt-exercises` plugin in the `plugins.sbt` file of your project (replacing `version` for the proper one):
 
 ```scala
 resolvers += Resolver.sonatypeRepo("snapshots")
-addSbtPlugin("org.scala-exercises" % "sbt-exercise" % "0.2.1-SNAPSHOT", "0.13", "2.10")
+addSbtPlugin("org.scala-exercises" % "sbt-exercise" % version, "0.13", "2.10")
 ```
 
 * (2) Activate the plugin in the `build.sbt` file of your library, for instance in the following way:
