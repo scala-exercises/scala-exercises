@@ -103,19 +103,6 @@ Now run `sbt run` and the application index will also display the added exercise
 
 ## Troubleshooting
 
-#### Running locally
-
-Currently there is classloading issue causing no exercise modules to be displayed on the homepage (See [issue #560](https://github.com/scala-exercises/scala-exercises/issues/560)).
-
-This issue is still pending to be fixed. In the meantime, you could do a quick fix locally.
-
-In the ```server``` project configuration in the ```build.sbt```:
-* replace line (~L103) ```.dependsOn(core.jvm, runtime)``` for ```.dependsOn(core.jvm)```
-* and uncommenting this line (~L121)  
-```// "org.scala-exercises" %% "runtime" % version.value changing(),```
-
-Then run ```sbt run``` and now the exercise modules should show up.
-
 #### Additional exercises do not show up in the application
 
 See the [Adding more exercises](#adding-more-exercises) section. Note that currently the `compile` step is required before `publishLocal` for the application to be able to pickup the exercises.
