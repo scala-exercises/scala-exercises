@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 
 import cats.data.Xor
 
-import org.scalaexercises.exercises.utils.ConfigUtils
+import org.scalaexercises.exercises.utils.OAuth2
 
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.user.UserOps
@@ -57,7 +57,7 @@ class ApplicationController(cache: CacheApi)(
     cache.get[Repository](MainRepoCacheKey) match {
       case Some(repo) ⇒ Future.successful(repo)
       case None ⇒
-        githubOps.getRepository(ConfigUtils.githubSiteOwner, ConfigUtils.githubSiteRepo).runFuture flatMap {
+        githubOps.getRepository(OAuth2.githubSiteOwner, OAuth2.githubSiteRepo).runFuture flatMap {
           case Xor.Right(repo) ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
             Future.successful(repo)
@@ -72,7 +72,7 @@ class ApplicationController(cache: CacheApi)(
   def index = Secure(Action.async { implicit request ⇒
 
     val ops = for {
-      authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
+      authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
       libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       progress ← userProgressOps.fetchMaybeUserProgress(user)
@@ -116,7 +116,7 @@ class ApplicationController(cache: CacheApi)(
 
   def section(libraryName: String, sectionName: String) = Secure(Action.async { implicit request ⇒
     val ops = for {
-      authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
+      authorize ← githubOps.getAuthorizeUrl(OAuth2.githubAuthId, OAuth2.callbackUrl)
       library ← exerciseOps.getLibrary(libraryName)
       section ← exerciseOps.getSection(libraryName, sectionName)
       contributors = toContributors(section.fold(List.empty[Contribution])(s ⇒ s.contributions))

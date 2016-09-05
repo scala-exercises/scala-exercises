@@ -8,36 +8,38 @@ package sbtexercise
 
 import scala.language.implicitConversions
 import scala.language.reflectiveCalls
+
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Codec
+import scala.util.{ Try, Success, Failure }
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
-import scala.language.reflectiveCalls
+import java.net.URLClassLoader
 
 import sbt.{ `package` ⇒ _, _ }
 import sbt.Keys._
 import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
-import cats.{ `package` ⇒ _ }
+
+import cats.{ `package` ⇒ _, _ }
 import cats.data.Ior
 import cats.data.Xor
 import cats.std.all._
 import cats.syntax.flatMap._
 import cats.syntax.traverse._
-//import org.scalaexercises.definitions.BuildInfo
-import sbtbuildinfo.BuildInfoPlugin
-import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
 /** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
 
   // this plugin requires the JvmPlugin and must be
   // explicitly enabled by projects
-  override def requires = plugins.JvmPlugin && BuildInfoPlugin
+  override def requires = plugins.JvmPlugin
   override def trigger = noTrigger
 
+  //val CompileMain = config("compile-main")
   lazy val CompileGeneratedExercises = config("compile-generated-exercises")
-  lazy val CustomCompile = config("compile") extend CompileGeneratedExercises
+  lazy val CustomCompile = config("compile") extend (CompileGeneratedExercises)
 
   val generateExercises = TaskKey[List[(String, String)]]("generate-exercises")
 
@@ -75,19 +77,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
         overrideConfigs(CompileGeneratedExercises, CustomCompile)(ivyConfigurations.value),
       classDirectory in CompileGeneratedExercises := (classDirectory in Compile).value,
       classpathConfiguration in CompileGeneratedExercises := (classpathConfiguration in Compile).value,
-      fetchContributors := true,
-      buildInfoObject   := "LibMetaInfo",
-      buildInfoPackage  := "org.scalaexercises.content",
-      buildInfoKeys     := Seq(
-        name,
-        version,
-        scalaVersion,
-        organization,
-        resolvers,
-        libraryDependencies
-      ),
-      buildInfoOptions += BuildInfoOption.Traits("org.scalaexercises.definitions.BuildInfo")
-  )
+      fetchContributors := true
+    )
   // format: ON
 
   def redirSettings = Seq(
@@ -97,7 +88,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     resourceManaged <<= reconfigureSub(resourceManaged)
   )
 
-  /** Helper to facilitate changing the directories. By default, a configuration
+  /** Helper to faciliate changing the directories. By default, a configuration
     * inheriting from Compile will compile source in
     * `src/<configuration_name>/[scala|test|...]`. This forces the directory
     * back to `src/main/[scala|test|...]`.
@@ -138,7 +129,6 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       library:           AnyRef,
       sources:           Array[String],
       paths:             Array[String],
-      buildMetaInfo:     AnyRef,
       baseDir:           String,
       targetPackage:     String,
       fetchContributors: Boolean
@@ -165,28 +155,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       )
     )
 
-    val libMetaInfoClass = catching(
-      loader
-        .loadClass("org.scalaexercises.content.LibMetaInfo$")
-    )("Unable to find LibMetaInfo class")
-      .fold({
-        case Ior.Left(message) ⇒ throw new Exception(message)
-        case Ior.Right(error)  ⇒ throw error
-        case Ior.Both(message, error) ⇒
-          log.error(message)
-          throw error
-      }, identity)
-
-    val metaInfo = libMetaInfoClass
-      .getField("MODULE$")
-      .get(libMetaInfoClass)
-
     def loadLibraryModule(name: String) = for {
-      loadedClass ← catching(loader.loadClass(name + "$"))(s"$name not found")
+      loadedClass ← catching(loader.loadClass(name + "$"))(s"${name} not found")
       loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(
-        s"$name must be defined as an object"
+        s"${name} must be defined as an object"
       )
     } yield loadedModule
+
+    def relativePath(absolutePath: String, root: String) = absolutePath.split(root).lift(1).getOrElse("")
 
     def invokeCompiler(
       compiler: COMPILER, library: AnyRef
@@ -204,17 +180,18 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               library = library,
               sources = sourceCodes.map(_._2).toArray,
               paths = sourceCodes.map(_._1).toArray,
-              buildMetaInfo = metaInfo,
               baseDir = baseDir.getPath,
               targetPackage = "org.scalaexercises.content",
               fetchContributors = fetchContributors.value
             ).toList
           }
       } leftMap (e ⇒ e: Err) >>= {
-        case mn :: moduleSource :: Nil ⇒
-          Xor.right(mn → moduleSource)
-        case _ ⇒
-          Xor.left("Unexpected return value from exercise compiler": Err)
+        _ match {
+          case moduleName :: moduleSource :: Nil ⇒
+            Xor.right(moduleName → moduleSource)
+          case _ ⇒
+            Xor.left("Unexpected return value from exercise compiler": Err)
+        }
       }
 
     val result = for {
@@ -229,11 +206,13 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     } yield result
 
     result.fold({
-      case Ior.Left(message) ⇒ throw new Exception(message)
-      case Ior.Right(error)  ⇒ throw error
-      case Ior.Both(message, error) ⇒
-        log.error(message)
-        throw error
+      _ match {
+        case Ior.Left(message) ⇒ throw new Exception(message)
+        case Ior.Right(error)  ⇒ throw error
+        case Ior.Both(message, error) ⇒
+          log.error(message)
+          throw error
+      }
     }, identity)
   }
 
@@ -245,8 +224,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
     val dir = (sourceManaged in Compile).value
     generated.map {
-      case (n, code) ⇒
-        val file = dir / (n.replace(".", "/") + ".scala")
+      case (name, code) ⇒
+        val file = dir / (name.replace(".", "/") + ".scala")
         IO.write(file, code)
         log.info(s"Generated library at $file")
         file
@@ -277,7 +256,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     val buf = new ArrayBuffer[Byte](200)
     override def write(b: Int) = if (b != 0) buf += b.toByte
     override def flush() {
-      if (buf.nonEmpty) {
+      if (!buf.isEmpty) {
         val message = new String(buf.toArray)
         buf.clear()
         if (message != ls) f(message)

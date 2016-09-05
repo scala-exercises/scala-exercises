@@ -3,6 +3,7 @@ package org.scalaexercises.compiler
 import scala.tools.reflect.ToolBox
 
 import org.scalaexercises.runtime.model.Library
+import org.scalaexercises.runtime.Timestamp
 
 import org.scalatest._
 
@@ -59,12 +60,6 @@ class TreeGenSpec extends FunSpec with Matchers {
         )
       )
 
-      val buildInfo = treeGen.makeBuildInfo(
-        name = "MyLibrary",
-        resolvers = Nil,
-        libraryDependencies = Nil
-      )
-
       val library = treeGen.makeLibrary(
         name = "MyLibrary",
         description = "This is my library",
@@ -72,13 +67,12 @@ class TreeGenSpec extends FunSpec with Matchers {
         sectionTerms = sections.map(_._1),
         owner = "scala-exercises",
         repository = "site",
-        timestamp = "1-1-1970",
-        buildInfoT = buildInfo._1
+        timestamp = "1-1-1970"
       )
 
       val tree = treeGen.makePackage(
         packageName = "fail.sauce",
-        trees = (library._2 :: sections.map(_._2) ::: exercises.map(_._2)) :+ buildInfo._2
+        trees = library._2 :: sections.map(_._2) ::: exercises.map(_._2)
       )
 
       val runtimeLibrary = evalLibrary(tree)

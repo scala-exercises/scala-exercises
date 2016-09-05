@@ -6,19 +6,28 @@
 package org.scalaexercises.exercises
 package services
 
-import cats.data.Xor
-import org.scalaexercises.runtime.{ Exercises, Timestamp }
-import org.scalaexercises.runtime.model.{ DefaultLibrary, BuildInfo ⇒ RuntimeBuildInfo, Contribution ⇒ RuntimeContribution, Exercise ⇒ RuntimeExercise, Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection }
-import org.scalaexercises.types.exercises._
+import org.scalaexercises.runtime.{ Exercises, MethodEval, Timestamp }
+import org.scalaexercises.runtime.model.{ Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection, Exercise ⇒ RuntimeExercise, Contribution ⇒ RuntimeContribution, DefaultLibrary }
+
+import org.scalaexercises.types.exercises.{ Library, Section, Exercise, Contribution, ExerciseEvaluation }
+
 import play.api.Play
 import play.api.Logger
+
+import java.nio.file.Paths
+
+import cats.data.Xor
+import cats.data.Ior
 import cats.std.option._
 import cats.syntax.flatMap._
 import cats.syntax.option._
-import cats.syntax.xor._
-import org.scalaexercises.types.evaluator.Dependency
+
+import org.scalatest.exceptions.TestFailedException
 
 object ExercisesService extends RuntimeSharedConversions {
+  import MethodEval._
+
+  val methodEval = new MethodEval()
 
   def classLoader = Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
@@ -35,9 +44,30 @@ object ExercisesService extends RuntimeSharedConversions {
   def section(libraryName: String, name: String): Option[Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
-  def buildRuntimeInfo(evaluation: ExerciseEvaluation): ExerciseEvaluation.EvaluationRequest = {
+  def evaluate(evaluation: ExerciseEvaluation): ExerciseEvaluation.Result = {
 
-    val runtimeInfo: Xor[String, (RuntimeBuildInfo, String, List[String])] = for {
+    def compileError(ef: EvaluationFailure[_]): String =
+      s"Compilation error: ${ef.foldedException.getMessage}"
+
+    def userError(ee: EvaluationException[_]): String = ee.e match {
+      case _: TestFailedException ⇒ "Assertion error!"
+      case e                      ⇒ s"Runtime error: ${e.getClass.getName}"
+    }
+
+    def eval(pkg: String, imports: List[String]) = {
+      val res = methodEval.eval(
+        pkg,
+        evaluation.method,
+        evaluation.args,
+        imports
+      )
+      res.toSuccessXor.bimap(
+        _.fold(compileError(_), userError(_)),
+        _ ⇒ Unit
+      )
+    }
+
+    val imports = for {
 
       runtimeLibrary ← runtimeLibraries.find(_.name == evaluation.libraryName)
         .toRightXor(s"Unable to find library ${evaluation.libraryName} when " +
@@ -50,28 +80,12 @@ object ExercisesService extends RuntimeSharedConversions {
       runtimeExercise ← runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method)
         .toRightXor(s"Unable to find exercise for method ${evaluation.method}")
 
-    } yield (runtimeLibrary.buildMetaInfo, runtimeExercise.packageName, runtimeExercise.imports)
+    } yield (runtimeExercise.packageName, runtimeExercise.imports)
 
-    runtimeInfo match {
-      case Xor.Right((b: RuntimeBuildInfo, pckgName: String, importList: List[String])) ⇒
+    val res = imports >>= (eval _).tupled
+    Logger.info(s"evaluation for $evaluation: $res")
+    res
 
-        val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
-          pckgName,
-          evaluation.method,
-          evaluation.args,
-          importList,
-          b.resolvers,
-          b.libraryDependencies
-        )
-
-        (
-          resolvers,
-          dependencies map (d ⇒ Dependency(d.groupId, d.artifactId, d.version)),
-          code
-        ).right
-
-      case Xor.Left(msg) ⇒ msg.left
-    }
   }
 
   def reorderLibraries(topLibNames: List[String], libraries: List[Library]): List[Library] = {
@@ -120,8 +134,7 @@ sealed trait RuntimeSharedConversions {
           description = library.description,
           color = color,
           sections = library.sections,
-          timestamp = Timestamp.fromDate(new java.util.Date()),
-          buildMetaInfo = library.buildMetaInfo
+          timestamp = Timestamp.fromDate(new java.util.Date())
         ) :: librariesAcc)
       } else
         colors → (library :: librariesAcc)
@@ -137,14 +150,7 @@ sealed trait RuntimeSharedConversions {
       description = library.description,
       color = library.color getOrElse "black",
       sections = library.sections map convertSection,
-      timestamp = library.timestamp,
-      buildInfo = convertBuildInfo(library.buildMetaInfo)
-    )
-
-  def convertBuildInfo(buildInfo: RuntimeBuildInfo): BuildInfo =
-    BuildInfo(
-      resolvers = buildInfo.resolvers,
-      libraryDependencies = buildInfo.libraryDependencies
+      timestamp = library.timestamp
     )
 
   def convertSection(section: RuntimeSection): Section =

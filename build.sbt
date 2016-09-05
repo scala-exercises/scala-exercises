@@ -43,7 +43,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.3-SNAPSHOT",
+  version := "0.2.2-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -95,7 +95,6 @@ lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
 lazy val github4s = "0.6-SNAPSHOT"
 lazy val cats = "0.6.0"
-lazy val evaluatorVersion = "0.0.2-SNAPSHOT"
 
 // Client and Server projects
 
@@ -119,8 +118,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
-      // "org.scala-exercises" %% "runtime" % version.value changing(),
-      "org.scala-exercises" %% "evaluator-client" % evaluatorVersion changing(),
+     // "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
       "com.vmunier" %% "play-scalajs-scripts" % "0.2.1",
@@ -187,7 +185,7 @@ lazy val definitions = (project in file("definitions"))
     )
 )
 
-// Runtime
+// Runtime evaluation
 
 lazy val runtime = (project in file("runtime"))
   .settings(commonSettings:_*)
@@ -198,7 +196,6 @@ lazy val runtime = (project in file("runtime"))
       "org.clapper" %% "classutil" % "1.0.11",
       "com.twitter" %% "util-eval" % "6.34.0",
       "io.monix" %% "monix" % "2.0-RC8",
-      "org.scala-exercises" %% "evaluator-shared" % evaluatorVersion changing(),
       "org.typelevel" %%% "cats-core" % cats % "compile",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     )

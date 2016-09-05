@@ -5,8 +5,6 @@
 
 package org.scalaexercises.exercises.controllers
 
-import org.scalaexercises.evaluator.CompilationInfo
-import org.scalaexercises.evaluator.EvalResult._
 import play.api.http.{ ContentTypeOf, ContentTypes, Writeable }
 import play.api.libs.json.JsError
 import play.api.mvc.{ Codec, Request }
@@ -31,44 +29,4 @@ object `package` {
     Writeable(e ⇒ JsError.toJson(e).toString.getBytes("utf-8"))
   }
 
-  def formatEvaluationResponse(
-    msg:              String,
-    value:            Option[String],
-    valueType:        Option[String],
-    compilationInfos: CI
-  ) = {
-    val blockSeparator = ";"
-
-    def printOption[T](maybeValue: Option[T]): String =
-      maybeValue map (v ⇒ s"$blockSeparator $v") getOrElse ""
-
-    def printTestFailed: String = valueType match {
-      case vt if vt.contains("org.scalatest.exceptions.TestFailedException") ⇒
-        s"$blockSeparator Compilation and evaluation succeeded but that is not the right answer!"
-      case _ ⇒
-        s"""
-           |${printOption(value)}
-           |${printOption(valueType)}""".stripMargin
-    }
-
-    def printCIList(list: List[CompilationInfo]): String =
-      list map { ci ⇒
-        s"${ci.message}${ci.pos.fold("")(rp ⇒ s" at [${rp.start}, ${rp.point}, ${rp.end}]")}"
-      } mkString ", "
-
-    def printCIMap: String = if (compilationInfos.nonEmpty)
-      s"${
-        val ciList = compilationInfos map {
-          case (k: String, list: List[CompilationInfo]) ⇒
-            s"""
-             |$blockSeparator $k -> ${printCIList(list)}""".stripMargin
-        }
-        ciList.mkString(" ")
-      }"
-    else ""
-
-    s"""$msg
-       |$printTestFailed
-       |$printCIMap""".stripMargin
-  }
 }

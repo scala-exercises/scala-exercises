@@ -20,7 +20,7 @@ import org.scalaexercises.types.github.GithubUser
 
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import org.scalaexercises.exercises.utils.ConfigUtils._
+import org.scalaexercises.exercises.utils.OAuth2._
 
 import doobie.imports._
 
