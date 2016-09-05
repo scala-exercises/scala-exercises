@@ -8,6 +8,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 resolvers += Resolver.url("GitHub repository", url("http://shaggyyeti.github.io/releases"))(Resolver.ivyStylePatterns)
 
+resolvers += Resolver.url("scoverage-bintray", url("https://dl.bintray.com/sksamuel/sbt-plugins/"))(Resolver.ivyStylePatterns)
 
 // Sbt plugins
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.8")
@@ -21,6 +22,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 addSbtPlugin("default" % "sbt-sass" % "0.1.9")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.5.0")
+
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
 
 // Build common plugin
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.5.1")

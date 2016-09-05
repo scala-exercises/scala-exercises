@@ -12,6 +12,15 @@
         "JAVA_TOOL_OPTIONS": {
             "required": true
         },
+        "EVALUATOR_AUTH_KEY": {
+            "required": true
+        },
+        "EVALUATOR_READ_TIMEOUT": {
+            "required": true
+        },
+        "EVALUATOR_URL": {
+            "required": true
+        },
 	"EVOLUTIONS_AUTO_APPLY" : "true",
 	"EVOLUTIONS_AUTO_APPLY_DOWNS" : "true"
     },
