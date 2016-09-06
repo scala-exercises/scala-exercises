@@ -57,7 +57,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.3-SNAPSHOT",
+  version := "0.2.4-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",

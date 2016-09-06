@@ -291,13 +291,13 @@ case class Compiler() {
           (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
         }.unzip
 
-      val allDependencies: List[String] = transformDependencyList(buildMetaInfo)
+      val libraryAsDependency = s"${buildMetaInfo.organization}:${buildMetaInfo.name}_2.11:${buildMetaInfo.version}"
 
       val (buildInfoTerm, buildInfoTree) =
         treeGen.makeBuildInfo(
           name = libraryInfo.comment.name,
           resolvers = buildMetaInfo.resolvers.toList,
-          libraryDependencies = allDependencies
+          libraryDependencies = List(libraryAsDependency)
         )
 
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
@@ -322,12 +322,6 @@ case class Compiler() {
       .map(generateTree)
       .map { case (TermName(kname), v) ⇒ s"$targetPackage.$kname" → showCode(v) }
 
-  }
-
-  private[this] def transformDependencyList(buildMetaInfo: BuildInfo): List[String] = {
-    val libraryAsDependency = s"${buildMetaInfo.organization}:${buildMetaInfo.name}_2.11:${buildMetaInfo.version}"
-
-    libraryAsDependency :: buildMetaInfo.libraryDependencies.toList
   }
 
   private case class CompilerInternal(
