@@ -57,7 +57,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.3-SNAPSHOT",
+  version := "0.2.5-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -116,7 +116,7 @@ lazy val evaluatorVersion = "0.0.2-SNAPSHOT"
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(core.jvm, runtime)
+  .dependsOn(core.jvm)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
@@ -134,7 +134,8 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
-      // "org.scala-exercises" %% "runtime" % version.value changing(),
+      "org.scala-exercises" %% "exercises-fpinscala" % version.value changing(),
+      "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.scala-exercises" %% "evaluator-client" % evaluatorVersion changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",

@@ -72,6 +72,8 @@ case class Compiler() {
       comment:    RenderedComment.Aux[Mode.Library],
       sections:   List[SectionInfo],
       color:      Option[String],
+      logoPath:   String,
+      logoData:   Option[String]                      = None,
       owner:      String,
       repository: String
     )
@@ -124,6 +126,7 @@ case class Compiler() {
       comment = comment,
       sections = sections,
       color = library.color,
+      logoPath = library.logoPath,
       owner = library.owner,
       repository = library.repository
     )
@@ -304,6 +307,8 @@ case class Compiler() {
         name = libraryInfo.comment.name,
         description = libraryInfo.comment.description,
         color = libraryInfo.color,
+        logoPath = libraryInfo.logoPath,
+        logoData = libraryInfo.logoData,
         sectionTerms = sectionTerms,
         owner = libraryInfo.owner,
         repository = libraryInfo.repository,

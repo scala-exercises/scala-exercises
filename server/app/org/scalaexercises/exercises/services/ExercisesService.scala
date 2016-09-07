@@ -17,6 +17,8 @@ import cats.syntax.flatMap._
 import cats.syntax.option._
 import cats.syntax.xor._
 import org.scalaexercises.types.evaluator.Dependency
+import org.apache.commons.io.IOUtils
+import sun.misc.BASE64Encoder
 
 object ExercisesService extends RuntimeSharedConversions {
 
@@ -119,6 +121,8 @@ sealed trait RuntimeSharedConversions {
           name = library.name,
           description = library.description,
           color = color,
+          logoPath = library.logoPath,
+          logoData = library.logoData,
           sections = library.sections,
           timestamp = Timestamp.fromDate(new java.util.Date()),
           buildMetaInfo = library.buildMetaInfo
@@ -136,10 +140,25 @@ sealed trait RuntimeSharedConversions {
       name = library.name,
       description = library.description,
       color = library.color getOrElse "black",
+      logoPath = library.logoPath,
+      logoData = loadLogoSrc(library.logoPath),
       sections = library.sections map convertSection,
       timestamp = library.timestamp,
       buildInfo = convertBuildInfo(library.buildMetaInfo)
     )
+
+  def loadLogoSrc(logoPath: String): Option[String] = {
+    def checkLogoPath(): Boolean =
+      Option(getClass.getClassLoader.getResource(logoPath + ".svg")).isDefined
+
+    def logoData(path: String): Option[String] =
+      Option(getClass().getClassLoader.getResourceAsStream(path))
+        .map(stream ⇒ new BASE64Encoder().encode(IOUtils.toByteArray(stream)))
+
+    // TODO: define default logo
+    val logoPathOrDefault = if (checkLogoPath()) logoPath + ".svg" else "public/images/std_lib.svg"
+    logoData(logoPathOrDefault)
+  }
 
   def convertBuildInfo(buildInfo: RuntimeBuildInfo): BuildInfo =
     BuildInfo(
