@@ -110,7 +110,7 @@ lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
 lazy val github4s = "0.6-SNAPSHOT"
 lazy val cats = "0.6.0"
-lazy val evaluatorVersion = "0.0.2-SNAPSHOT"
+lazy val evaluatorVersion = "0.0.3-SNAPSHOT"
 
 // Client and Server projects
 
@@ -134,7 +134,6 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
-      "org.scala-exercises" %% "exercises-fpinscala" % version.value changing(),
       "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.scala-exercises" %% "evaluator-client" % evaluatorVersion changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
