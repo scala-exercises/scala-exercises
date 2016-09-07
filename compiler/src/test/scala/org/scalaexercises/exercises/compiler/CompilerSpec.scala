@@ -54,6 +54,7 @@ class CompilerSpec extends FunSpec with Matchers {
         override def sections = List(
           Section1
         )
+        override def logoPath = "logo_path"
       }
 
       /** This is section 1.
@@ -95,6 +96,7 @@ class CompilerSpec extends FunSpec with Matchers {
         override def owner = "scala-exercises"
         override def repository = "site"
         override def sections = Nil
+        override def logoPath = "logo_path"
       }"""
 
       val classLoader = globalUtil.load(code)

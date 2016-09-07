@@ -73,7 +73,7 @@ case class Compiler() {
       sections:   List[SectionInfo],
       color:      Option[String],
       logoPath:   String,
-      logoData:   Option[String]                      = None,
+      logoData:   Option[String]                    = None,
       owner:      String,
       repository: String
     )
