@@ -1,5 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
-[![Build status](https://img.shields.io/travis/scala-exercises/scala-exercises.svg)](https://travis-ci.org/scala-exercises/scala-exercises)
+[![Build Status](https://travis-ci.org/scala-exercises/scala-exercises.svg?branch=master)](https://travis-ci.org/scala-exercises/scala-exercises)
 [![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/scala-exercises/scala-exercises)
 [![codecov.io](http://codecov.io/github/scala-exercises/scala-exercises/coverage.svg?branch=master)](http://codecov.io/github/scala-exercises/scala-exercises?branch=master)
 
