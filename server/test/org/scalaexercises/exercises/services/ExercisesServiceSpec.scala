@@ -36,6 +36,8 @@ class ExercisesServiceSpec extends FlatSpec with Matchers {
       name = name,
       description = "",
       color = "#BADA55",
+      logoPath = "std_lib",
+      logoData = None,
       sections = Nil,
       timestamp = "19-12-1988",
       buildInfo = BuildInfo(

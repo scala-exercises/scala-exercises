@@ -95,6 +95,9 @@ object MyLibrary extends Library {
     ...
     SectionN
   )
+
+  // (8)
+  override def logoPath = "logo_path"
 }
 ```
 
@@ -107,6 +110,7 @@ Examining each of these points:
 * (5) The name of the repository that will contain the library. This should lead to an existing repository with actual content within. The owner (4) and repository (5) fields must resolve to a real GitHub repository (https://github.com/owner/repository).
 * (6) Color in hexadecimal code format that will identify the library in the website. This value is optional, although it's recommended to pick one.
 * (7) A list that contains every section you want to include in this library. Every item defined here is a Scala object containing the exercises per section.
+* (8) The filename of the library logo (without extension) to be displayed in Scala Exercises, in SVG format.
 
 ####Creating a new section
 

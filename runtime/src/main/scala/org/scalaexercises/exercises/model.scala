@@ -16,6 +16,8 @@ trait Library {
   def name: String
   def description: String
   def color: Option[String]
+  def logoPath: String
+  def logoData: Option[String]
   def sections: List[Section]
   def timestamp: String
   def buildMetaInfo: BuildInfo
@@ -70,6 +72,8 @@ case class DefaultLibrary(
   name:          String,
   description:   String,
   color:         Option[String],
+  logoPath:      String,
+  logoData:      Option[String],
   sections:      List[Section]  = Nil,
   timestamp:     String,
   buildMetaInfo: BuildInfo
