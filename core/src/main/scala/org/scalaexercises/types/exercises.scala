@@ -11,7 +11,9 @@ case class Library(
     name:        String,
     description: String,
     color:       String,
-    sections:    List[Section] = Nil,
+    logoPath:    String,
+    logoData:    Option[String],
+    sections:    List[Section]  = Nil,
     timestamp:   String,
     buildInfo:   BuildInfo
 ) {

@@ -17,6 +17,8 @@ import cats.syntax.flatMap._
 import cats.syntax.option._
 import cats.syntax.xor._
 import org.scalaexercises.types.evaluator.Dependency
+import org.apache.commons.io.IOUtils
+import sun.misc.BASE64Encoder
 
 object ExercisesService extends RuntimeSharedConversions {
 
@@ -31,6 +33,8 @@ object ExercisesService extends RuntimeSharedConversions {
       libraries1.map(library0 ⇒ library0.name → library0.sections.map(convertSection)).toMap
     )
   }
+
+  lazy val base64Encoder = new BASE64Encoder()
 
   def section(libraryName: String, name: String): Option[Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
@@ -119,6 +123,8 @@ sealed trait RuntimeSharedConversions {
           name = library.name,
           description = library.description,
           color = color,
+          logoPath = library.logoPath,
+          logoData = library.logoData,
           sections = library.sections,
           timestamp = Timestamp.fromDate(new java.util.Date()),
           buildMetaInfo = library.buildMetaInfo
@@ -136,10 +142,24 @@ sealed trait RuntimeSharedConversions {
       name = library.name,
       description = library.description,
       color = library.color getOrElse "black",
+      logoPath = library.logoPath,
+      logoData = loadLogoSrc(library.logoPath),
       sections = library.sections map convertSection,
       timestamp = library.timestamp,
       buildInfo = convertBuildInfo(library.buildMetaInfo)
     )
+
+  def loadLogoSrc(logoPath: String): Option[String] = {
+    def checkLogoPath(): Boolean =
+      Option(getClass.getClassLoader.getResource(logoPath + ".svg")).isDefined
+
+    def logoData(path: String): Option[String] =
+      Option(getClass().getClassLoader.getResourceAsStream(path))
+        .map(stream ⇒ ExercisesService.base64Encoder.encode(IOUtils.toByteArray(stream)))
+
+    val logoPathOrDefault = if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"
+    logoData(logoPathOrDefault)
+  }
 
   def convertBuildInfo(buildInfo: RuntimeBuildInfo): BuildInfo =
     BuildInfo(

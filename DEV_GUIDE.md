@@ -34,11 +34,11 @@ Scala Exercises Core
 
 First of all, before starting to develop your library, you need to add a couple of dependencies and configurations to your project. These are:
 
-* (1) Add a dependency to the `sbt-exercises` plugin in the `plugins.sbt` file of your project:
+* (1) Add a dependency to the `sbt-exercises` plugin in the `plugins.sbt` file of your project (replacing `version` for the proper one):
 
 ```scala
 resolvers += Resolver.sonatypeRepo("snapshots")
-addSbtPlugin("org.scala-exercises" % "sbt-exercise" % "0.2.1-SNAPSHOT", "0.13", "2.10")
+addSbtPlugin("org.scala-exercises" % "sbt-exercise" % version, "0.13", "2.10")
 ```
 
 * (2) Activate the plugin in the `build.sbt` file of your library, for instance in the following way:
@@ -95,6 +95,9 @@ object MyLibrary extends Library {
     ...
     SectionN
   )
+
+  // (8)
+  override def logoPath = "logo_path"
 }
 ```
 
@@ -107,6 +110,7 @@ Examining each of these points:
 * (5) The name of the repository that will contain the library. This should lead to an existing repository with actual content within. The owner (4) and repository (5) fields must resolve to a real GitHub repository (https://github.com/owner/repository).
 * (6) Color in hexadecimal code format that will identify the library in the website. This value is optional, although it's recommended to pick one.
 * (7) A list that contains every section you want to include in this library. Every item defined here is a Scala object containing the exercises per section.
+* (8) The filename of the library logo (without extension) to be displayed in Scala Exercises, in SVG format.
 
 ####Creating a new section
 

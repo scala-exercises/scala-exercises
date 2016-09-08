@@ -54,7 +54,7 @@
       <section id="sidebar">
           <div class="header-technologie">
               <div class="content-logo-technologie" style="background-color: @library.color;">
-                   <img src="@routes.Assets.at("images/" + library.name + ".svg")"/>
+                   <img src="data:image/svg+xml;base64,@library.logoData.getOrElse("")"/>
               </div>
               <h1 class="text-center">@library.name.humanizeUnderscore</h1>
           </div>
