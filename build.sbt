@@ -1,7 +1,5 @@
 import scala.util.Try
-
 import play.PlayImport._
-
 import sbt.Keys._
 import sbt.Project.projectToRef
 import NativePackagerHelper._
@@ -9,10 +7,12 @@ import NativePackagerHelper._
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-
 import de.heikoseeberger.sbtheader.HeaderPattern
 import de.heikoseeberger.sbtheader.HeaderPlugin
 import de.heikoseeberger.sbtheader.HeaderKey.headers
+import scoverage.ScoverageKeys
+
+import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
@@ -31,7 +31,21 @@ lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 )
 
+lazy val scoverageSettings = Seq(
+  ScoverageKeys.coverageHighlighting := scalaBinaryVersion.value != "2.10",
+  pomPostProcess := { (node: xml.Node) =>
+    new RuleTransformer(
+      new RewriteRule {
+        override def transform(node: xml.Node): Seq[xml.Node] = node match {
+          case e: xml.Elem
+            if e.label == "dependency" && e.child.exists(child => child.label == "groupId" && child.text == "org.scoverage") => Nil
+          case _ => Seq(node)
 
+        }
+
+      }).transform(node).head
+  }
+)
 
 // `WARTING=false sbt` to drop into SBT w/ wart checking off
 lazy val warting = Try(sys.env("WARTING").toBoolean).getOrElse(true)
@@ -43,7 +57,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.3-SNAPSHOT",
+  version := "0.2.4-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -56,6 +70,7 @@ lazy val commonSettings = Seq(
   ),
   resolvers ++= Seq(
     "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+    Resolver.url("sbt-plugins", url("https://dl.bintray.com/ssidorenko/sbt-plugins/"))(Resolver.ivyStylePatterns),
     Resolver.sonatypeRepo("snapshots")
   ),
   headers <<= (name, version) { (name, version) => Map(
@@ -95,13 +110,13 @@ lazy val doobieVersion = "0.2.3"
 lazy val scalazVersion = "7.1.4"
 lazy val github4s = "0.6-SNAPSHOT"
 lazy val cats = "0.6.0"
-lazy val evaluatorVersion = "0.0.2-SNAPSHOT"
+lazy val evaluatorVersion = "0.0.3-SNAPSHOT"
 
 // Client and Server projects
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(core.jvm, runtime)
+  .dependsOn(core.jvm)
   .enablePlugins(PlayScala)
   .settings(commonSettings: _*)
   .settings(
@@ -120,7 +135,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
       "org.scala-exercises" %% "exercises-doobie" % version.value changing(),
-      // "org.scala-exercises" %% "runtime" % version.value changing(),
+      "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.scala-exercises" %% "evaluator-client" % evaluatorVersion changing(),
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
@@ -167,7 +182,8 @@ lazy val client = (project in file("client"))
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
-      "org.typelevel" %%% "cats-core" % cats
+      "org.typelevel" %%% "cats-core" % cats,
+      "ch.sidorenko.scoverage" %%% "scalac-scoverage-runtime" % "1.1.0-JS"
     )
   )
 
@@ -258,6 +274,12 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedDependencies <<= (publishLocal in definitions, publishLocal in runtime, scriptedDependencies) map { (_, _, _) => Unit }
   )
   .enablePlugins(BuildInfoPlugin)
+
+// Test coverage
+
+lazy val coverageTests = (project in file("coverageTests"))
+    .settings(commonSettings: _*)
+    .aggregate(server, client, runtime, definitions, compiler)
 
 // Distribution
 

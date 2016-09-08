@@ -1,6 +1,7 @@
 [![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
-[![Build status](https://img.shields.io/travis/scala-exercises/scala-exercises.svg)](https://travis-ci.org/scala-exercises/scala-exercises)
+[![Build Status](https://travis-ci.org/scala-exercises/scala-exercises.svg?branch=master)](https://travis-ci.org/scala-exercises/scala-exercises)
 [![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/scala-exercises/scala-exercises)
+[![codecov.io](http://codecov.io/github/scala-exercises/scala-exercises/coverage.svg?branch=master)](http://codecov.io/github/scala-exercises/scala-exercises?branch=master)
 
 #Scala Exercises
 
@@ -101,19 +102,6 @@ To add additional exercises to your locally running server:
 Now run `sbt run` and the application index will also display the added exercises.
 
 ## Troubleshooting
-
-#### Running locally
-
-Currently there is classloading issue causing no exercise modules to be displayed on the homepage (See [issue #560](https://github.com/scala-exercises/scala-exercises/issues/560)).
-
-This issue is still pending to be fixed. In the meantime, you could do a quick fix locally.
-
-In the ```server``` project configuration in the ```build.sbt```:
-* replace line (~L103) ```.dependsOn(core.jvm, runtime)``` for ```.dependsOn(core.jvm)```
-* and uncommenting this line (~L121)  
-```// "org.scala-exercises" %% "runtime" % version.value changing(),```
-
-Then run ```sbt run``` and now the exercise modules should show up.
 
 #### Additional exercises do not show up in the application
 
