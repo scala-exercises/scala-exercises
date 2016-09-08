@@ -155,8 +155,7 @@ sealed trait RuntimeSharedConversions {
       Option(getClass().getClassLoader.getResourceAsStream(path))
         .map(stream ⇒ new BASE64Encoder().encode(IOUtils.toByteArray(stream)))
 
-    // TODO: define default logo
-    val logoPathOrDefault = if (checkLogoPath()) logoPath + ".svg" else "public/images/std_lib.svg"
+    val logoPathOrDefault = if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"
     logoData(logoPathOrDefault)
   }
 
