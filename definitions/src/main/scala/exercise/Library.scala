@@ -12,4 +12,5 @@ trait Library {
   def repository: String
   def sections: List[Section]
   def color: Option[String] = None
+  def logoPath: String
 }

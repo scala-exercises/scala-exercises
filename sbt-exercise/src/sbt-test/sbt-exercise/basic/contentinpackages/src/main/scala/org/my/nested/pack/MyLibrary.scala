@@ -17,4 +17,6 @@ object MyLibrary extends Library {
     BarSection
   )
 
+  override def logoPath = "logo-path"
+
 }
