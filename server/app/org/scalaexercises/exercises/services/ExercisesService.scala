@@ -34,6 +34,8 @@ object ExercisesService extends RuntimeSharedConversions {
     )
   }
 
+  lazy val base64Encoder = new BASE64Encoder()
+
   def section(libraryName: String, name: String): Option[Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
 
@@ -153,7 +155,7 @@ sealed trait RuntimeSharedConversions {
 
     def logoData(path: String): Option[String] =
       Option(getClass().getClassLoader.getResourceAsStream(path))
-        .map(stream ⇒ new BASE64Encoder().encode(IOUtils.toByteArray(stream)))
+        .map(stream ⇒ ExercisesService.base64Encoder.encode(IOUtils.toByteArray(stream)))
 
     val logoPathOrDefault = if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"
     logoData(logoPathOrDefault)
