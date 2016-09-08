@@ -69,6 +69,8 @@ class TreeGenSpec extends FunSpec with Matchers {
         name = "MyLibrary",
         description = "This is my library",
         color = Some("#FFFFFF"),
+        logoPath = "logoPath",
+        logoData = None,
         sectionTerms = sections.map(_._1),
         owner = "scala-exercises",
         repository = "site",

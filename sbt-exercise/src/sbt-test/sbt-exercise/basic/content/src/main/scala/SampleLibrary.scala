@@ -17,4 +17,6 @@ object SampleLibrary extends Library {
     BarSection
   )
 
+  override def logoPath = "logo_path"
+
 }

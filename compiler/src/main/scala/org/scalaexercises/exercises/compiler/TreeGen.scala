@@ -102,6 +102,8 @@ case class TreeGen[U <: Universe](
     name:         String,
     description:  String,
     color:        Option[String],
+    logoPath:     String,
+    logoData:     Option[String],
     sectionTerms: List[TermName],
     owner:        String,
     repository:   String,
@@ -114,6 +116,8 @@ case class TreeGen[U <: Universe](
           override val name           = $name
           override val description    = $description
           override val color          = $color
+          override val logoPath       = $logoPath
+          override val logoData       = $logoData
           override val sections       = $sectionTerms
           override val owner          = $owner
           override val repository     = $repository
