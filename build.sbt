@@ -135,6 +135,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
       "org.scala-exercises" %% "exercises-doobie" % version.value changing(),
+      "org.scala-exercises" %% "exercises-scalacheck" % version.value changing(),
       "org.scala-exercises" %% "exercises-fpinscala" % version.value changing(),
       "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.scala-exercises" %% "evaluator-client" % evaluatorVersion changing(),
