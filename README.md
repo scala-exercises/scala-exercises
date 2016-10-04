@@ -88,6 +88,23 @@ $ sbt run
 After compilation the application will be running, listening in the 9000 port. Point your browser
 to `localhost:9000` and start having fun!
 
+#### Running the tests
+
+To run the tests (for the `server` project), you need to add a test database and a test user.
+
+- Create a user called `scalaexercises_user`
+
+```sh
+$ sudo -u postgres psql -c "CREATE USER scalaexercises_user WITH PASSWORD 'scalaexercises_pass';"
+```
+
+- Create a db called `scalaexercises_test` and grant all privileges on it to `scalaexercises_user`
+
+```sh
+$ sudo -u postgres createdb scalaexercises_test
+$ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises_test TO scalaexercises_user;"
+```
+
 #### Adding more exercises
 
 Currently scala-exercises includes exercises for the Scala Standard Library, Cats and Shapeless. However, more exercises are available like for Doobie, Functional Programming in Scala and ScalaCheck. See the [scala-exercises on github](https://github.com/scala-exercises) or you can include exercises from other parties or create your own (see [Contributing](#contributing) section).
