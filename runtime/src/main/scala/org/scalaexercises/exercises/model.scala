@@ -21,6 +21,7 @@ trait Library {
   def sections: List[Section]
   def timestamp: String
   def buildMetaInfo: BuildInfo
+  def inProgress: Boolean
 }
 
 /** Library Build Metadata Information
@@ -76,7 +77,8 @@ case class DefaultLibrary(
   logoData:      Option[String],
   sections:      List[Section]  = Nil,
   timestamp:     String,
-  buildMetaInfo: BuildInfo
+  buildMetaInfo: BuildInfo,
+  inProgress:    Boolean
 ) extends Library
 
 case class DefaultContribution(

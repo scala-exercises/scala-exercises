@@ -5,25 +5,34 @@
 
 
 <div class="col-xs-12 col-sm-6 col-md-4">
-  <a href="@library.name">
+  @if(library.inProgress) {
+    <a href="@library.githubLink" class="lib-coming-soon">
+  } else {
+    <a href="@library.name">
+  }
     <div class="tech scala">
       <div class="panel panel-default">
         <div class="panel-heading" style="background-color: @library.color;">
           <img src='data:image/svg+xml;base64,@library.logoData.getOrElse("")'/>
-          <h3 class="panel-title">@library.name.humanizeUnderscore</h3>
+          <h3 class="panel-title">
+            @library.name.humanizeUnderscore
+            @if(library.inProgress) {
+              <small class="badge">Coming soon</small>
+            }
+          </h3>
         </div>
         <div class="panel-body">
           @Html(library.description)
 
-	  @progress match {
-   	    case None => {
-	      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
-	    }
-	    case Some(p) if p.completedSections == 0 => {
-	      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
-	    }
- 	    case Some(p) => { @templates.widgets.progress(p.completedSections, p.totalSections, library.color) }
-	  }
+    @if(library.inProgress) {
+      <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Contribute</button></div>
+    } else {
+      @progress match {
+        case Some(p) if p.completedSections > 0 => { @templates.widgets.progress(p.completedSections, p.totalSections, library.color) }
+        case _ => {
+          <div><button class="btn btn-primary btn-sm" style="background-color: @library.color;">Start</button></div>
+        }
+	  }}
         </div>
       </div>
     </div>

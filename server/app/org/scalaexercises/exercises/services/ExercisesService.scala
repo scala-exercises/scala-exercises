@@ -82,7 +82,7 @@ object ExercisesService extends RuntimeSharedConversions {
     libraries.sortBy(lib ⇒ {
       val idx = topLibNames.indexOf(lib.name)
       if (idx == -1)
-        Integer.MAX_VALUE
+        if (lib.inProgress) Integer.MAX_VALUE else Integer.MAX_VALUE - 1
       else
         idx
     })
@@ -127,7 +127,8 @@ sealed trait RuntimeSharedConversions {
           logoData = library.logoData,
           sections = library.sections,
           timestamp = Timestamp.fromDate(new java.util.Date()),
-          buildMetaInfo = library.buildMetaInfo
+          buildMetaInfo = library.buildMetaInfo,
+          inProgress = library.inProgress
         ) :: librariesAcc)
       } else
         colors → (library :: librariesAcc)
@@ -146,7 +147,8 @@ sealed trait RuntimeSharedConversions {
       logoData = loadLogoSrc(library.logoPath),
       sections = library.sections map convertSection,
       timestamp = library.timestamp,
-      buildInfo = convertBuildInfo(library.buildMetaInfo)
+      buildInfo = convertBuildInfo(library.buildMetaInfo),
+      inProgress = library.inProgress
     )
 
   def loadLogoSrc(logoPath: String): Option[String] = {

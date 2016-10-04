@@ -50,6 +50,12 @@
                 color: #ffffff;
             }
         }
+        .lib-coming-soon {
+            opacity: 0.65;
+            &:hover {
+                opacity: 0.85;
+            }
+        }
     }
     .content-new-library {
         position: relative;

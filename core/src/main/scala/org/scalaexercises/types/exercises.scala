@@ -15,10 +15,12 @@ case class Library(
     logoData:    Option[String],
     sections:    List[Section]  = Nil,
     timestamp:   String,
-    buildInfo:   BuildInfo
+    buildInfo:   BuildInfo,
+    inProgress:  Boolean
 ) {
   val sectionNames: List[String] = sections map (_.name)
   val shortTimestamp: String = timestamp.split("T").headOption.getOrElse(timestamp)
+  def githubLink: String = s"https://github.com/$owner/$repository"
 }
 
 /** Represents the Library Build Metadata Information

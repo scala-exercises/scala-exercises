@@ -76,11 +76,23 @@ class ApplicationController(cache: CacheApi)(
       progress ← userProgressOps.fetchMaybeUserProgress(user)
     } yield (libraries, user, request.session.get("oauth-token"), progress, authorize)
 
+    // demo data
+    import org.scalaexercises.types.exercises.{ BuildInfo, Library }
+    val demoLibraries =
+      List(
+        Library("scala-exercises", "scala-exercises", "scala-exercises", "Exercises for Scala",
+          "#26525B", "", None, Nil, new java.util.Date().toString, BuildInfo(Nil, Nil), true),
+        Library("typelevel", "cats", "cats", "Cats is a library which provides abstractions for functional programming in the Scala programming language.",
+          "#5B5988", "", None, Nil, new java.util.Date().toString, BuildInfo(Nil, Nil), false)
+      )
+
     for {
       repo ← scalaexercisesRepo
       result ← ops.runFuture map {
-        case Xor.Right((libraries, user, Some(token), progress, _))  ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
-        case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
+        // case Xor.Right((libraries, user, Some(token), progress, _))  ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
+        // case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
+        case Xor.Right((libraries, user, Some(token), progress, _))  ⇒ Ok(views.html.templates.home.index(user = user, libraries = demoLibraries, progress = progress, repo = repo))
+        case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = demoLibraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
         case Xor.Right((libraries, Some(user), None, _, _))          ⇒ InternalServerError("Session token not found")
         case Xor.Left(ex) ⇒
           Logger.error("Error rendering index page", ex)
