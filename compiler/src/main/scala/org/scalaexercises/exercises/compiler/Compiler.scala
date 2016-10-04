@@ -118,8 +118,7 @@ case class Compiler() {
         .leftMap(enhanceDocError(symbolPath))
       sections ← checkEmptySectionList(symbol, library) >>= {
         _.sections
-          .map(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
-          .sequenceU
+          .traverseU(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
       }
     } yield LibraryInfo(
       symbol = symbol,
@@ -176,8 +175,7 @@ case class Compiler() {
               symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
           .map(_.asMethod)
           .filterNot(_.isGetter)
-          .map(maybeMakeExerciseInfo)
-          .sequenceU
+          .traverseU(maybeMakeExerciseInfo)
       } yield SectionInfo(
         symbol = symbol,
         comment = comment,

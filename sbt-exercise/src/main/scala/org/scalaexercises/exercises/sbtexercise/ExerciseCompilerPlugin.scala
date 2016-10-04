@@ -224,8 +224,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
         "Unable to create instance of exercise compiler"
       )
-      libraries ← libraryNames.map(loadLibraryModule).toList.sequenceU
-      result ← libraries.map(invokeCompiler(compiler, _)).sequenceU
+      libraries ← libraryNames.toList.traverseU(loadLibraryModule)
+      result ← libraries.traverseU(invokeCompiler(compiler, _))
     } yield result
 
     result.fold({

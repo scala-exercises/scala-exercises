@@ -6,15 +6,17 @@
 package org.scalaexercises.exercises
 package services
 
-import cats.data.Xor
 import org.scalaexercises.runtime.{ Exercises, Timestamp }
 import org.scalaexercises.runtime.model.{ DefaultLibrary, BuildInfo ⇒ RuntimeBuildInfo, Contribution ⇒ RuntimeContribution, Exercise ⇒ RuntimeExercise, Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection }
 import org.scalaexercises.types.exercises._
 import play.api.Play
 import play.api.Logger
+import cats.data.{ State, Xor }
+import cats.std.list._
 import cats.std.option._
 import cats.syntax.flatMap._
 import cats.syntax.option._
+import cats.syntax.traverse._
 import cats.syntax.xor._
 import org.scalaexercises.types.evaluator.Dependency
 import org.apache.commons.io.IOUtils
@@ -26,12 +28,9 @@ object ExercisesService extends RuntimeSharedConversions {
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
-    val libraries1 = colorize(runtimeLibraries)
+    val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
     errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
-    (
-      libraries1.map(convertLibrary),
-      libraries1.map(library0 ⇒ library0.name → library0.sections.map(convertSection)).toMap
-    )
+    (libraries1, libraries1.map(lib ⇒ lib.name → lib.sections).toMap)
   }
 
   lazy val base64Encoder = new BASE64Encoder()
@@ -79,13 +78,8 @@ object ExercisesService extends RuntimeSharedConversions {
   }
 
   def reorderLibraries(topLibNames: List[String], libraries: List[Library]): List[Library] = {
-    libraries.sortBy(lib ⇒ {
-      val idx = topLibNames.indexOf(lib.name)
-      if (idx == -1)
-        Integer.MAX_VALUE
-      else
-        idx
-    })
+    val topLibIndex = topLibNames.zipWithIndex.toMap
+    libraries.sortBy(lib ⇒ topLibIndex.getOrElse(lib.name, Integer.MAX_VALUE))
   }
 }
 
@@ -94,7 +88,8 @@ sealed trait RuntimeSharedConversions {
   // to libraries that don't have a default color provided
   // TODO: make this nicer
   def colorize(libraries: List[RuntimeLibrary]): List[RuntimeLibrary] = {
-    val autoPalette = List(
+    type Colors = List[String]
+    val autoPalette: Colors = List(
       "#00587A",
       "#44BBFF",
       "#EBF680",
@@ -110,29 +105,31 @@ sealed trait RuntimeSharedConversions {
       "#0F3057"
     )
 
-    val (_, res) = libraries.foldLeft((autoPalette, Nil: List[RuntimeLibrary])) { (acc, library) ⇒
-      val (colors, librariesAcc) = acc
+    libraries.traverseU { library ⇒
       if (library.color.isEmpty) {
-        val (color, colors0) = colors match {
-          case head :: tail ⇒ Some(head) → tail
-          case Nil          ⇒ None → Nil
+        State[Colors, RuntimeLibrary] { colors ⇒
+          val (color, colors0) = colors match {
+            case head :: tail ⇒ Some(head) → tail
+            case Nil          ⇒ None → Nil
+          }
+          val library0 = DefaultLibrary(
+            owner = library.owner,
+            repository = library.repository,
+            name = library.name,
+            description = library.description,
+            color = color,
+            logoPath = library.logoPath,
+            logoData = library.logoData,
+            sections = library.sections,
+            timestamp = Timestamp.fromDate(new java.util.Date()),
+            buildMetaInfo = library.buildMetaInfo
+          )
+          (colors0, library0)
         }
-        colors0 → (DefaultLibrary(
-          owner = library.owner,
-          repository = library.repository,
-          name = library.name,
-          description = library.description,
-          color = color,
-          logoPath = library.logoPath,
-          logoData = library.logoData,
-          sections = library.sections,
-          timestamp = Timestamp.fromDate(new java.util.Date()),
-          buildMetaInfo = library.buildMetaInfo
-        ) :: librariesAcc)
-      } else
-        colors → (library :: librariesAcc)
-    }
-    res.reverse
+      } else {
+        State.pure[Colors, RuntimeLibrary](library)
+      }
+    }.runA(autoPalette).value
   }
 
   def convertLibrary(library: RuntimeLibrary): Library =

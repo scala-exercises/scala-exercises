@@ -13,6 +13,8 @@ import java.net.URLClassLoader
 import java.io.File
 
 import cats.data.Xor
+import cats.std.list._
+import cats.syntax.monadCombine._
 import org.clapper.classutil.ClassFinder
 import org.scalaexercises.evaluator.Dependency
 
@@ -40,24 +42,18 @@ object Exercises {
     loop(cl, Nil)
   }
 
-  def discoverLibraries(cl: ClassLoader = classOf[Exercise].getClassLoader) = {
+  def discoverLibraries(cl: ClassLoader = classOf[Exercise].getClassLoader): (List[String], List[Library]) = {
     val classNames: List[String] = subclassesOf[Library](cl)
 
-    val (errors, libraries) = classNames.foldLeft((Nil: List[String], Nil: List[Library])) { (acc, name) ⇒
-      val loadedLibrary = for {
+    val errorsAndLibraries = classNames.map { name ⇒
+      for {
         loadedClass ← guard(Class.forName(name, true, cl), s"$name not found")
         loadedObject ← guard(loadedClass.getField("MODULE$").get(null), s"$name must be defined as an object")
         loadedLibrary ← guard(loadedObject.asInstanceOf[Library], s"$name must extend Library")
       } yield loadedLibrary
-
-      // until a bifoldable exists in Cats...
-      loadedLibrary match {
-        case Xor.Right(c) ⇒ (acc._1, c :: acc._2)
-        case Xor.Left(e)  ⇒ (e :: acc._1, acc._2)
-      }
     }
 
-    (errors, libraries)
+    errorsAndLibraries.separate
   }
 
   private def guard[A](f: ⇒ A, message: ⇒ String) =
