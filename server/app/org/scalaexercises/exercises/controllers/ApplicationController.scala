@@ -167,4 +167,11 @@ class ApplicationController(cache: CacheApi)(
     .map { case (author, authorUrl, avatarUrl) ⇒ Contributor(author, authorUrl, avatarUrl) }
     .toList
 
+  def onHandlerNotFound(route: String) = Action { implicit request ⇒
+    if (route.endsWith("/")) {
+      MovedPermanently("/" + request.path.take(request.path.length - 1).dropWhile(_ == '/'))
+    } else {
+      NotFound
+    }
+  }
 }
