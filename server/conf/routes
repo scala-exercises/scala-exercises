@@ -2,10 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-#Sitemap
+# Sitemap
 GET /sitemap.xml org.scalaexercises.exercises.controllers.SitemapController.sitemap
 
-#Loader IO load testing verification
+# Loader IO load testing verification
 GET /loaderio-:token/ org.scalaexercises.exercises.controllers.LoaderIOController.verificationToken(token: String)
 
 # Home page
@@ -31,6 +31,8 @@ GET /javascriptRoutes org.scalaexercises.exercises.controllers.ApplicationContro
 GET /:libraryName               org.scalaexercises.exercises.controllers.ApplicationController.library(libraryName: String)
 GET /:libraryName/:sectionName  org.scalaexercises.exercises.controllers.ApplicationController.section(libraryName: String, sectionName: String)
 
-#User Progress
+# User Progress
 GET /progress/library/:libraryName/section/:sectionName org.scalaexercises.exercises.controllers.UserProgressController.fetchUserProgressBySection(libraryName: String, sectionName: String)
 
+# Handler not found for route
+GET /*route org.scalaexercises.exercises.controllers.ApplicationController.onHandlerNotFound(route)
