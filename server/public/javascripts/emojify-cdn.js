@@ -38,7 +38,7 @@
     return {
       config: {
         emojify_tag_type: 'img',
-        cdn_host: 'http://www.tortue.me/emoji',
+        cdn_host: 'https://www.tortue.me/emoji',
         emoji_image_extension: 'png',
         emoticons_enabled: true,
         people_enabled: true,
