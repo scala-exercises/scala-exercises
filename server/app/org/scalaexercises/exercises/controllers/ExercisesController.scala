@@ -7,7 +7,7 @@ package org.scalaexercises.exercises.controllers
 
 import cats.data.Xor
 import cats.free.Free
-import cats.syntax.xor._
+import cats.implicits._
 import org.scalaexercises.types.user.User
 import org.scalaexercises.types.exercises.ExerciseEvaluation
 import org.scalaexercises.types.progress.SaveUserProgress
@@ -17,18 +17,22 @@ import org.scalaexercises.algebra.progress.UserProgressOps
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import doobie.imports._
-import org.scalaexercises.algebra.EvaluatorOps
 import org.scalaexercises.evaluator.EvalResponse
 import play.api.Logger
 import play.api.libs.json.JsValue
-import play.api.mvc.{ Action, BodyParsers, Controller }
+import play.api.mvc.{ Action, BodyParsers, Controller, Result }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
-import org.scalaexercises.exercises.utils.ConfigUtils
 import org.scalaexercises.types.evaluator.Dependency
-import org.scalaexercises.types.exercises.ExerciseEvaluation.Result
+import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
+import org.scalaexercises.evaluator.EvaluatorClient
+import org.scalaexercises.evaluator.EvaluatorClient._
+import org.scalaexercises.evaluator.EvaluatorResponses.{ EvaluationResponse, EvaluationResult }
+import org.scalaexercises.evaluator.free.algebra.EvaluatorOp
+import org.scalaexercises.evaluator.implicits._
 
+import scala.concurrent.Future
 import scalaz.concurrent.Task
 
 class ExercisesController(
@@ -36,7 +40,7 @@ class ExercisesController(
     exerciseOps:     ExerciseOps[ExercisesApp],
     userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    evaluatorOps:    EvaluatorOps[ExercisesApp],
+    evaluatorClient: EvaluatorClient,
     T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
@@ -44,65 +48,77 @@ class ExercisesController(
     AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
 
-        val eval = for {
-          buildRuntimeInfo ← exerciseOps.buildRuntimeInfo(evaluation = evaluation)
-          evaluationResult ← buildRuntimeInfo match {
-            case Xor.Left(msg) ⇒ Free.pure[ExercisesApp, Result](msg.left)
-            case Xor.Right((resolvers, dependencies, code)) ⇒
-              evaluateAndSaveProgress(evaluation, user, resolvers, dependencies, code)
+        def eval(runtimeInfo: Xor[Throwable, EvaluationRequest]): Future[Either[String, EvalResponse]] =
+          runtimeInfo match {
+            case Xor.Left(ex) ⇒
+              logError("eval", "Error while building the evaluation request", Some(ex))
+              Future.successful(Either.left(ex.getMessage))
+            case Xor.Right(evalRequest) ⇒
+              evalRequest match {
+                case Xor.Left(msg) ⇒
+                  logError("eval", "Error before performing the evaluation")
+                  Future.successful(Either.left(msg))
+                case Xor.Right((resolvers, dependencies, code)) ⇒
+                  evalRemote(resolvers, dependencies, code)
+              }
           }
-        } yield evaluationResult
 
-        eval.runFuture.map {
-          case Xor.Left(e) ⇒
-            Logger.error("Error while evaluating $evaluation with user $user", e)
-            BadRequest(s"Evaluation failed : $e")
-          case Xor.Right(r) ⇒ r.fold(
-            msg ⇒ BadRequest(msg),
-            v ⇒ Ok(s"Evaluation succeeded : $v")
-          )
+        def evalRemote(
+          resolvers:    List[String],
+          dependencies: List[Dependency],
+          code:         String
+        ): Future[Either[String, EvalResponse]] = {
+          val evalResponse: Free[EvaluatorOp, EvaluationResponse[EvalResponse]] =
+            evaluatorClient.api.evaluates(resolvers, dependencies.toEvaluatorDeps, code)
+
+          evalResponse.exec map {
+            case Left(evalException) ⇒
+              logError("evalRemote", "Error while evaluating", Some(evalException))
+              Either.left(s"Evaluation failed : $evalException")
+            case Right(EvaluationResult(result, statusCode, _)) ⇒
+              result match {
+                case EvalResponse(EvalResponse.messages.ok, _, _, _) ⇒
+                  Either.right(result)
+                case EvalResponse(msg, value, valueType, compilationInfos) ⇒
+                  Either.left(formatEvaluationResponse(msg, value, valueType, compilationInfos))
+              }
+          }
         }
-    }
 
-  private[this] def evaluateAndSaveProgress(
-    evaluation:   ExerciseEvaluation,
-    user:         User,
-    resolvers:    List[String],
-    dependencies: List[Dependency],
-    code:         String
-  ): Free[ExercisesApp, Result] = for {
-    evaluationResult ← evaluatorOps.evaluates(
-      url = ConfigUtils.evaluatorUrl,
-      authKey = ConfigUtils.evaluatorAuthKey,
-      readTimeout = ConfigUtils.evaluatorReadTimeout,
-      resolvers = resolvers,
-      dependencies = dependencies,
-      code = code
-    )
-    analyzedResult ← evaluationResult match {
-      case Xor.Left(msg) ⇒
-        Free.pure[ExercisesApp, Result](msg.left)
-      case Xor.Right(EvalResponse(EvalResponse.messages.ok, _, _, _)) ⇒
-        Free.pure[ExercisesApp, Result](evaluationResult)
-      case Xor.Right(EvalResponse(msg, value, valueType, compilationInfos)) ⇒
-        Free.pure[ExercisesApp, Result](
-          formatEvaluationResponse(msg, value, valueType, compilationInfos).left
-        )
-    }
-    _ ← userProgressOps.saveUserProgress(
-      mkSaveProgressRequest(user, evaluation, analyzedResult.isRight)
-    )
-  } yield analyzedResult
+        def mkHttpStatusCodeResponse(evaluationResult: Either[String, EvalResponse]): Future[Result] = {
+          Future.successful(evaluationResult match {
+            case Left(msg) ⇒
+              BadRequest(s"Evaluation failed : $msg")
+            case Right(evalResponse) ⇒
+              Ok(s"Evaluation succeeded : $evalResponse")
+          })
+        }
 
-  private[this] def mkSaveProgressRequest(user: User, evaluation: ExerciseEvaluation, success: Boolean) =
-    SaveUserProgress.Request(
-      user = user,
-      libraryName = evaluation.libraryName,
-      sectionName = evaluation.sectionName,
-      method = evaluation.method,
-      version = evaluation.version,
-      exerciseType = evaluation.exerciseType,
-      args = evaluation.args,
-      succeeded = success
-    )
+        def mkSaveProgressRequest(success: Boolean) =
+          SaveUserProgress.Request(
+            user = user,
+            libraryName = evaluation.libraryName,
+            sectionName = evaluation.sectionName,
+            method = evaluation.method,
+            version = evaluation.version,
+            exerciseType = evaluation.exerciseType,
+            args = evaluation.args,
+            succeeded = success
+          )
+
+        def logError(method: String, mainMsg: String, ex: Option[Throwable] = None) = {
+          val msg = s"[$method] $mainMsg. ExerciseEvaluation: $evaluation with user $user"
+          ex match {
+            case Some(e) ⇒ Logger.error(msg, e)
+            case None    ⇒ Logger.error(msg)
+          }
+        }
+
+        for {
+          runtimeInfo ← exerciseOps.buildRuntimeInfo(evaluation = evaluation).runFuture
+          evaluationResult ← eval(runtimeInfo)
+          httpResponse ← mkHttpStatusCodeResponse(evaluationResult)
+          _ ← userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight)).runFuture
+        } yield httpResponse
+    }
 }

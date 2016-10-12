@@ -18,13 +18,12 @@ import github4s.Github
 import Github._
 import github4s.implicits._
 import github4s.GithubResponses.{ GHResponse, GHResult }
-import org.scalaexercises.algebra.{ Evaluates, EvaluatorOp }
 import org.scalaexercises.evaluator.free.interpreters.{ Interpreter ⇒ EvaluatorInterpreter }
 import org.scalaexercises.evaluator.{ Dependency ⇒ SharedDependency }
 import org.scalaexercises.evaluator.EvaluatorClient._
 import cats._
+import cats.implicits._
 import cats.data.Xor
-import cats.syntax.xor._
 import cats.free.Free
 import doobie.imports._
 
@@ -33,8 +32,14 @@ import scala.language.higherKinds
 import scalaz.\/
 import scalaz.concurrent.Task
 import FreeExtensions._
-import org.scalaexercises.evaluator.{ EvalResponse, EvaluatorClient }
-import org.scalaexercises.evaluator.EvaluatorResponses.{ EvaluationResponse, EvaluationResult }
+
+import simulacrum.typeclass
+
+import scala.concurrent.Future
+
+@typeclass trait Capture[M[_]] {
+  def capture[A](a: ⇒ A): M[A]
+}
 
 /** Generic interpreters that can be lazily lifted via evidence of the target F via Applicative Pure Eval
   */
@@ -43,25 +48,27 @@ trait Interpreters[M[_]] {
   implicit def interpreters(
     implicit
     A: MonadError[M, Throwable],
-    T: Transactor[M]
+    T: Transactor[M],
+    C: Capture[M]
   ): ExercisesApp ~> M = {
     val exerciseAndUserInterpreter: C01 ~> M = exerciseOpsInterpreter or userOpsInterpreter
     val userAndUserProgressInterpreter: C02 ~> M = userProgressOpsInterpreter or exerciseAndUserInterpreter
-    val githubAndExercisesAppInterpreter: C03 ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
-    val all: ExercisesApp ~> M = evaluatorExercisesOpsInterpreter or githubAndExercisesAppInterpreter
+    val all: ExercisesApp ~> M = githubOpsInterpreter or userAndUserProgressInterpreter
     all
   }
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def exerciseOpsInterpreter(implicit A: MonadError[M, Throwable]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
+  implicit def exerciseOpsInterpreter(implicit
+    A: MonadError[M, Throwable],
+                                      C: Capture[M]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
 
     import org.scalaexercises.exercises.services.ExercisesService._
 
     def apply[A](fa: ExerciseOp[A]): M[A] = fa match {
-      case GetLibraries()                       ⇒ A.pureEval(Eval.later(libraries))
-      case GetSection(libraryName, sectionName) ⇒ A.pureEval(Eval.later(section(libraryName, sectionName)))
-      case BuildRuntimeInfo(evalInfo)           ⇒ A.pureEval(Eval.later(buildRuntimeInfo(evalInfo)))
+      case GetLibraries()                       ⇒ Capture[M].capture(libraries)
+      case GetSection(libraryName, sectionName) ⇒ Capture[M].capture(section(libraryName, sectionName))
+      case BuildRuntimeInfo(evalInfo)           ⇒ Capture[M].capture(buildRuntimeInfo(evalInfo))
     }
   }
 
@@ -128,43 +135,23 @@ trait Interpreters[M[_]] {
 
   }
 
-  implicit def evaluatorExercisesOpsInterpreter(implicit A: MonadError[M, Throwable]): EvaluatorOp ~> M = new (EvaluatorOp ~> M) {
-
-    def apply[A](fa: EvaluatorOp[A]): M[A] = {
-
-      object ProdEvaluatorInterpreters extends EvaluatorInterpreter
-      implicit val I: org.scalaexercises.evaluator.free.algebra.EvaluatorOp ~> M = ProdEvaluatorInterpreters.interpreter[M]
-
-      fa match {
-        case Evaluates(url, authKey, connTimeout, readTimeout, resolvers, dependencies, code) ⇒
-          val convertedDependencies = dependencies map (d ⇒ SharedDependency(d.groupId, d.artifactId, d.version))
-          evaluatorResponseToEntity(
-            EvaluatorClient(url, authKey, connTimeout, readTimeout)
-            .api
-            .evaluates(
-              resolvers,
-              convertedDependencies,
-              code
-            )
-            .exec[M]
-          )(_.right)
-      }
-    }
-
-    private def evaluatorResponseToEntity[A, B](response: M[EvaluationResponse[A]])(f: A ⇒ B): M[B] = A.flatMap(response) {
-      case Xor.Right(EvaluationResult(result, _, _)) ⇒ A.pure(f(result))
-      case Xor.Left(e)                               ⇒ A.raiseError[B](e)
-    }
-
-  }
-
 }
 
 /** Production based interpreters lifting ops to the effect capturing scalaz.concurrent.Task **/
-trait ProdInterpreters extends Interpreters[Task] with TaskInstances
+trait ProdInterpreters extends Interpreters[Task] with TaskInstances {
+
+  implicit val taskCaptureInstance = new Capture[Task] {
+    override def capture[A](a: ⇒ A): Task[A] = Task.delay(a)
+  }
+}
 
 /** Test based interpreters lifting ops to their result identity **/
-trait TestInterpreters extends Interpreters[Id] with IdInstances
+trait TestInterpreters extends Interpreters[Id] with IdInstances {
+
+  implicit val idCaptureInstance = new Capture[Id] {
+    override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
+  }
+}
 
 object FreeExtensions {
 
@@ -172,8 +159,6 @@ object FreeExtensions {
     disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
 
   implicit class FreeOps[F[_], A](f: Free[F, A]) {
-
-    def runF[M[_]: Monad](implicit interpreter: F ~> M) = f.foldMap(interpreter)
 
     def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Throwable Xor A] = {
       val p = Promise[Throwable Xor A]
@@ -187,6 +172,7 @@ object FreeExtensions {
 }
 
 trait TaskInstances {
+
   implicit val taskMonad: MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
 
     def pure[A](x: A): Task[A] = Task.now(x)
@@ -209,6 +195,7 @@ trait TaskInstances {
 }
 
 trait IdInstances {
+
   implicit val idMonad: MonadError[Id, Throwable] = new MonadError[Id, Throwable] {
 
     override def pure[A](x: A): Id[A] = idMonad.pure(x)

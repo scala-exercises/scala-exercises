@@ -89,15 +89,15 @@ lazy val commonSettings = Seq(
 
 lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
   .jsConfigure(_ enablePlugins ScalaJSPlay)
-  .jsSettings(sourceMapsBase := baseDirectory.value / "..",  scalaVersion := "2.11.7")
+  .jsSettings(sourceMapsBase := baseDirectory.value / "..",  scalaVersion := "2.11.8")
   .settings(commonSettings: _*)
   .settings(
     name := "core",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % cats,
       "org.typelevel" %%% "cats-free" % cats,
-      compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
+      compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0")
     )
 )
 
@@ -106,11 +106,12 @@ lazy val coreJs = core.js
 
 // Dependencies
 
-lazy val doobieVersion = "0.2.3"
+lazy val doobieVersion = "0.2.4"
 lazy val scalazVersion = "7.1.4"
 lazy val github4s = "0.6-SNAPSHOT"
-lazy val cats = "0.6.0"
-lazy val evaluatorVersion = "0.0.3-SNAPSHOT"
+lazy val cats = "0.7.2"
+lazy val evaluatorVersion = "0.1.1-SNAPSHOT"
+lazy val monixVersion = "2.0.3"
 
 // Client and Server projects
 
@@ -122,7 +123,7 @@ lazy val server = (project in file("server"))
   .settings(
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
   libraryDependencies ++= Seq(
@@ -155,19 +156,21 @@ lazy val server = (project in file("server"))
       "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "com.github.mpilquist" %% "simulacrum" % "0.8.0",
       specs2,
       "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test",
       "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1" % "test",
       "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion % "test",
-    compilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")))
+    compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0"),
+    compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)))
 
 lazy val client = (project in file("client"))
   .dependsOn(core.js)
   .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .settings(commonSettings: _*)
   .settings(
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     persistLauncher := true,
     persistLauncher in Test := false,
     sourceMapsDirectories += core.js.base / "..",
@@ -180,7 +183,8 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.8.1",
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
-      "io.monix" %%% "monix" % "2.0-M1",
+      "io.monix" %%% "monix" % monixVersion,
+      "io.monix" %%% "monix-cats" % monixVersion,
       "be.doeraene" %%% "scalajs-jquery" % "0.8.1",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
       "com.lihaoyi" %%% "upickle" % "0.2.8",
@@ -197,7 +201,7 @@ lazy val definitions = (project in file("definitions"))
   .settings(commonSettings: _*)
   .settings(
     name := "definitions",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % cats,
       "org.scalatest" %% "scalatest" % "2.2.4",
@@ -212,11 +216,11 @@ lazy val runtime = (project in file("runtime"))
   .settings(commonSettings:_*)
   .settings(
     name := "runtime",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     libraryDependencies ++= Seq(
       "org.clapper" %% "classutil" % "1.0.11",
       "com.twitter" %% "util-eval" % "6.34.0",
-      "io.monix" %% "monix" % "2.0-RC8",
+      "io.monix" %% "monix" % monixVersion,
       "org.scala-exercises" %% "evaluator-shared" % evaluatorVersion changing(),
       "org.typelevel" %%% "cats-core" % cats % "compile",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test"
@@ -229,7 +233,7 @@ lazy val compiler = (project in file("compiler"))
   .settings(commonSettings:_*)
   .settings(
     name := "exercise-compiler",
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % "0.1.8",

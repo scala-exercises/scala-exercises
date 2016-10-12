@@ -18,7 +18,7 @@ import scala.xml.NodeSeq
 import scala.xml.Xhtml
 
 import cats.{ Id, Eq, Functor }
-import cats.data.Xor
+import cats.implicits._
 
 import org.scalaexercises.compiler.formatting._
 
@@ -143,14 +143,14 @@ private[compiler] object CommentParsing {
   /** Parse value container typeclass */
   trait ParseK[A[_]] {
     /** Take a potential value and map it into the desired
-      * type. If the value coming in is `Xor.Left`, then the value
-      * was not present during parsing. An incoming value of `Xor.Right`
-      * indicates that a value was parsed. An output of `Xor.Left` indicates
-      * that an error should be raised. And an output value of `Xor.Right`
+      * type. If the value coming in is `Either.Left`, then the value
+      * was not present during parsing. An incoming value of `Either.Right`
+      * indicates that a value was parsed. An output of `Either.Left` indicates
+      * that an error should be raised. And an output value of `Either.Right`
       * indicates that the value was parsed and mapped into the appropriate
       * type.
       */
-    def fromXor[T](value: Xor[String, T]): Xor[String, A[T]]
+    def fromEither[T](value: Either[String, T]): Either[String, A[T]]
   }
 
   object ParseK {
@@ -160,23 +160,23 @@ private[compiler] object CommentParsing {
       * A value that wasn't present during parsing will raise an error.
       */
     implicit val idParseK = new ParseK[Id] {
-      override def fromXor[T](value: Xor[String, T]) = value
+      override def fromEither[T](value: Either[String, T]) = value
     }
 
-    /** Parse an optional value. The result is always the right side `Xor`
+    /** Parse an optional value. The result is always the right side `Either`
       * projection because the value is optional and shouldn't fail.
       */
     implicit val optionParseK = new ParseK[Option] {
-      override def fromXor[T](value: Xor[String, T]) =
-        Xor.right(value.toOption)
+      override def fromEither[T](value: Either[String, T]) =
+        Either.Right(value.toOption)
     }
 
-    /** Parse a value that shouldn't exist. The input `Xor` is swapped
+    /** Parse a value that shouldn't exist. The input `Either` is swapped
       * so that a parsed input value yields an error and a nonexistant
       * input value yields a success.
       */
     implicit val emptyParseK = new ParseK[Empty] {
-      override def fromXor[T](value: Xor[String, T]) =
+      override def fromEither[T](value: Either[String, T]) =
         value.swap.bimap(
           _ ⇒ "Unexpected value",
           _ ⇒ Empty
@@ -187,8 +187,8 @@ private[compiler] object CommentParsing {
       * always success with a placeholder value.
       */
     implicit val ignoreParseK = new ParseK[Ignore] {
-      override def fromXor[T](xor: Xor[String, T]) =
-        Xor.right(Ignore)
+      override def fromEither[T](xor: Either[String, T]) =
+        Either.Right(Ignore)
     }
   }
 
@@ -209,36 +209,36 @@ private[compiler] object CommentParsing {
     evN: ParseK[A#Name],
     evD: ParseK[A#Description],
     evE: ParseK[A#Explanation]
-  ): String Xor ParsedComment[A#Name, A#Description, A#Explanation] = parse0(comment)
+  ): String Either ParsedComment[A#Name, A#Description, A#Explanation] = parse0(comment)
 
-  private[this] def parse0[N[_]: ParseK, D[_]: ParseK, E[_]: ParseK](comment: Comment): String Xor ParsedComment[N, D, E] = {
+  private[this] def parse0[N[_]: ParseK, D[_]: ParseK, E[_]: ParseK](comment: Comment): String Either ParsedComment[N, D, E] = {
     val params = comment.valueParams
 
-    lazy val nameXor = {
+    lazy val nameEither = {
       val name1 = params.get("name").collect {
         case Body(List(Paragraph(Chain(List(Summary(Text(value))))))) ⇒ value.trim
       }
       val name2 = name1.filter(_.lines.length == 1)
-      Xor.fromOption(
+      Either.fromOption(
         name2,
         "Expected single name value defined as '@param name <value>'"
       )
     }
 
-    lazy val descriptionXor = comment.body match {
-      case Body(Nil) ⇒ Xor.left("Unable to parse comment body")
-      case body      ⇒ Xor.right(body)
+    lazy val descriptionEither = comment.body match {
+      case Body(Nil) ⇒ Either.left("Unable to parse comment body")
+      case body      ⇒ Either.right(body)
     }
 
-    lazy val explanationXor = Xor.fromOption(
+    lazy val explanationEither = Either.fromOption(
       params.get("explanation"),
       "Expected explanation defined as '@param explanation <...extended value...>'"
     )
 
     for {
-      name ← ParseK[N].fromXor(nameXor)
-      description ← ParseK[D].fromXor(descriptionXor)
-      explanation ← ParseK[E].fromXor(explanationXor)
+      name ← ParseK[N].fromEither(nameEither)
+      description ← ParseK[D].fromEither(descriptionEither)
+      explanation ← ParseK[E].fromEitherY(explanationEither)
     } yield ParsedComment(
       name = name,
       description = description,

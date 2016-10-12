@@ -61,7 +61,7 @@ case class ExerciseEvaluation(
 
 object ExerciseEvaluation {
   type EvaluationRequest = String Xor (List[String], List[Dependency], String)
-  type Result = String Xor Any
+  type Result = Either[String, Any]
 }
 
 sealed abstract class ExerciseType extends Product with Serializable

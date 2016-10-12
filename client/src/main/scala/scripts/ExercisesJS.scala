@@ -11,8 +11,9 @@ import utils.DomHandler._
 import scala.scalajs.js
 import scala.concurrent.Future
 
-import fp.IO
-import IO._
+import monix.cats._
+import monix.eval.Coeval
+
 import model._
 import model.Exercises._
 import actions._
@@ -37,18 +38,18 @@ object ExercisesJS extends js.JSApp {
     val stateAndAction: Observable[(State, Action)] = state.zip(actions)
 
     // UI modifications
-    val ui: Observable[IO[Unit]] = state.zipWith(actions)(UI.update)
+    val ui: Observable[Coeval[Unit]] = Observable.zipMap2(state, actions)(UI.update _)
 
     // Effects that can trigger further actions
-    val effects: Observable[Future[Option[Action]]] = state.zipWith(actions)(Effects.perform)
+    val effects: Observable[Future[Option[Action]]] = Observable.zipMap2(state, actions)(Effects.perform _)
 
-    def triggerAction(action: Action): IO[Unit] = io {
+    def triggerAction(action: Action): Coeval[Unit] = Coeval {
       actions.onNext(action)
     }
 
-    def wireObservables: IO[Unit] = io {
+    def wireObservables: Coeval[Unit] = Coeval {
       ui.foreach(ioAction ⇒ {
-        ioAction.unsafePerformIO()
+        ioAction.value
       })
       effects.foreach((f: Future[Option[Action]]) ⇒ {
         f.foreach(m ⇒ {
@@ -57,7 +58,7 @@ object ExercisesJS extends js.JSApp {
       })
     }
 
-    def startInteraction: IO[Unit] = {
+    def startInteraction: Coeval[Unit] = {
       for {
         _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
           triggerAction(UpdateExercise(method, arguments))
@@ -77,6 +78,6 @@ object ExercisesJS extends js.JSApp {
       _ ← startInteraction
     } yield ()
 
-    program.unsafePerformIO()
+    program.value
   }
 }

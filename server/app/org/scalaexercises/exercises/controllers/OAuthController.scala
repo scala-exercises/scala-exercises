@@ -6,8 +6,7 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.data.Xor
-import cats.std.option._
-import cats.syntax.cartesian._
+import cats.implicits._
 
 import org.scalaexercises.exercises.Secure
 

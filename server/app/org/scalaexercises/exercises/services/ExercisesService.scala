@@ -12,12 +12,7 @@ import org.scalaexercises.types.exercises._
 import play.api.Play
 import play.api.Logger
 import cats.data.{ State, Xor }
-import cats.std.list._
-import cats.std.option._
-import cats.syntax.flatMap._
-import cats.syntax.option._
-import cats.syntax.traverse._
-import cats.syntax.xor._
+import cats.implicits._
 import org.scalaexercises.types.evaluator.Dependency
 import org.apache.commons.io.IOUtils
 import sun.misc.BASE64Encoder
