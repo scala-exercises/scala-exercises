@@ -197,7 +197,7 @@ trait TaskInstances {
       fa flatMap f
 
     override def tailRecM[A, B](a: A)(f: A ⇒ Task[Either[A, B]]): Task[B] =
-      Task.tailrecM(a)(A ⇒ f(a) map (t ⇒ toScalazDisjunction(t)))
+      Task.tailrecM((a: A) ⇒ f(a) map (t ⇒ toScalazDisjunction(t)))(a)
 
     override def raiseError[A](e: Throwable): Task[A] =
       Task.fail(e)

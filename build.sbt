@@ -107,7 +107,7 @@ lazy val coreJs = core.js
 // Dependencies
 
 lazy val doobieVersion = "0.3.0"
-lazy val scalazVersion = "7.3.0-M5"
+lazy val scalazVersion = "7.2.4"
 lazy val github4s = "0.7-SNAPSHOT"
 lazy val cats = "0.7.2"
 lazy val evaluatorVersion = "0.1.1-SNAPSHOT"
@@ -126,6 +126,7 @@ lazy val server = (project in file("server"))
     scalaVersion := "2.11.8",
     scalaJSProjects := clients,
     pipelineStages := Seq(scalaJSProd, gzip),
+    testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
   libraryDependencies ++= Seq(
       filters,
       jdbc,
@@ -153,15 +154,21 @@ lazy val server = (project in file("server"))
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.scalatest" %% "scalatest" % "2.2.4" % "runtime",
       "com.newrelic.agent.java" % "newrelic-agent" % "3.29.0",
-      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
-      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
-      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "org.tpolecat" %% "doobie-core" % doobieVersion excludeAll(
+        ExclusionRule(organization = "org.scalaz")
+      ),
+      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion excludeAll(
+        ExclusionRule(organization = "org.scalaz")
+      ),
+      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion excludeAll(
+        ExclusionRule(organization = "org.scalaz")
+      ),
       "com.github.mpilquist" %% "simulacrum" % "0.8.0",
+      "commons-io" % "commons-io" % "2.5",
       specs2,
-      "org.typelevel" %% "scalaz-specs2" % "0.3.0" % "test",
-      "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.3.1" % "test",
       "org.tpolecat" %% "doobie-contrib-specs2" % doobieVersion % "test",
+      "org.typelevel" %% "scalaz-specs2" % "0.4.0" % "test",
     compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.0"),
     compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)))
 
