@@ -168,7 +168,7 @@ private[compiler] object CommentParsing {
       */
     implicit val optionParseK = new ParseK[Option] {
       override def fromEither[T](value: Either[String, T]) =
-        Either.Right(value.toOption)
+        Either.right(value.toOption)
     }
 
     /** Parse a value that shouldn't exist. The input `Either` is swapped
@@ -188,7 +188,7 @@ private[compiler] object CommentParsing {
       */
     implicit val ignoreParseK = new ParseK[Ignore] {
       override def fromEither[T](xor: Either[String, T]) =
-        Either.Right(Ignore)
+        Either.right(Ignore)
     }
   }
 
@@ -238,7 +238,7 @@ private[compiler] object CommentParsing {
     for {
       name ← ParseK[N].fromEither(nameEither)
       description ← ParseK[D].fromEither(descriptionEither)
-      explanation ← ParseK[E].fromEitherY(explanationEither)
+      explanation ← ParseK[E].fromEither(explanationEither)
     } yield ParsedComment(
       name = name,
       description = description,

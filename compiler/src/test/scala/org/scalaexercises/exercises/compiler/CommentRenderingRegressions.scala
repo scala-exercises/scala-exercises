@@ -3,7 +3,7 @@ package org.scalaexercises.compiler
 import org.scalatest._
 
 import cats.data.Xor
-import cats.std.option._
+import cats.implicits._
 
 class CommentRenderingRegressions extends FunSpec with Matchers
     with Inside {

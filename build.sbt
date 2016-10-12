@@ -57,7 +57,7 @@ def wartSettings =
 
 lazy val commonSettings = Seq(
   organization := "org.scala-exercises",
-  version := "0.2.5-SNAPSHOT",
+  version := "0.3.0-SNAPSHOT",
   scalacOptions ++= Seq(
     "-deprecation",
     "-encoding",
@@ -106,9 +106,9 @@ lazy val coreJs = core.js
 
 // Dependencies
 
-lazy val doobieVersion = "0.2.4"
-lazy val scalazVersion = "7.1.4"
-lazy val github4s = "0.6-SNAPSHOT"
+lazy val doobieVersion = "0.3.0"
+lazy val scalazVersion = "7.3.0-M5"
+lazy val github4s = "0.7-SNAPSHOT"
 lazy val cats = "0.7.2"
 lazy val evaluatorVersion = "0.1.1-SNAPSHOT"
 lazy val monixVersion = "2.0.3"

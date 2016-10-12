@@ -13,8 +13,7 @@ import java.net.URLClassLoader
 import java.io.File
 
 import cats.data.Xor
-import cats.std.list._
-import cats.syntax.monadCombine._
+import cats.implicits._
 import org.clapper.classutil.ClassFinder
 import org.scalaexercises.evaluator.Dependency
 

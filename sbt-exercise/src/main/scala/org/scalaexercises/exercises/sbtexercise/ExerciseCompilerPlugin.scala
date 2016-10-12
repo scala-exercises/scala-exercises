@@ -21,9 +21,7 @@ import xsbt.api.Discovery
 import cats.{ `package` ⇒ _ }
 import cats.data.Ior
 import cats.data.Xor
-import cats.std.all._
-import cats.syntax.flatMap._
-import cats.syntax.traverse._
+import cats.implicits._
 //import org.scalaexercises.definitions.BuildInfo
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
