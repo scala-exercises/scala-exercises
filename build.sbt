@@ -21,15 +21,21 @@ onLoad in Global := (Command.process("project server", _: State)) compose (onLoa
 fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
 // Common settings
-lazy val formattingSettings = SbtScalariform.scalariformSettings ++ Seq(
+
+// `FORMATCODE=false sbt` to drop into SBT w/ source code formatting off
+lazy val formatCode = Try(sys.env("FORMATCODE").toBoolean).getOrElse(true)
+
+def formattingSettings = if(formatCode)
+  SbtScalariform.scalariformSettings ++
+  Seq(
     ScalariformKeys.preferences := ScalariformKeys.preferences.value
       .setPreference(RewriteArrowSymbols, true)
       .setPreference(AlignParameters, true)
       .setPreference(AlignSingleLineCaseStatements, true)
       .setPreference(DoubleIndentClassDeclaration, true)
       .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-      .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
-)
+      .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true))
+  else Nil
 
 lazy val scoverageSettings = Seq(
   ScoverageKeys.coverageHighlighting := scalaBinaryVersion.value != "2.10",

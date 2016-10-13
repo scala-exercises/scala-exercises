@@ -67,9 +67,9 @@ trait Interpreters[M[_]] {
     import org.scalaexercises.exercises.services.ExercisesService._
 
     def apply[A](fa: ExerciseOp[A]): M[A] = fa match {
-      case GetLibraries()                       ⇒ Capture[M].capture(libraries)
-      case GetSection(libraryName, sectionName) ⇒ Capture[M].capture(section(libraryName, sectionName))
-      case BuildRuntimeInfo(evalInfo)           ⇒ Capture[M].capture(buildRuntimeInfo(evalInfo))
+      case GetLibraries()                       ⇒ C.capture(libraries)
+      case GetSection(libraryName, sectionName) ⇒ C.capture(section(libraryName, sectionName))
+      case BuildRuntimeInfo(evalInfo)           ⇒ C.capture(buildRuntimeInfo(evalInfo))
     }
   }
 
@@ -175,7 +175,7 @@ object FreeExtensions {
 
     def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Throwable Xor A] = {
       val p = Promise[Throwable Xor A]
-      f.foldMap(interpreter).runAsync { result: Throwable \/ A ⇒
+      f.foldMap(interpreter).unsafePerformAsync { result: Throwable \/ A ⇒
         p.success(scalazToCatsDisjunction(result))
       }
       p.future
