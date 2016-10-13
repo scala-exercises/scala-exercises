@@ -114,7 +114,7 @@ lazy val coreJs = core.js
 
 lazy val doobieVersion = "0.3.0"
 lazy val scalazVersion = "7.2.4"
-lazy val github4s = "0.7-SNAPSHOT"
+lazy val github4s = "0.8.0-SNAPSHOT"
 lazy val cats = "0.7.2"
 lazy val evaluatorVersion = "0.1.1-SNAPSHOT"
 lazy val monixVersion = "2.0.3"
@@ -160,15 +160,9 @@ lazy val server = (project in file("server"))
       "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
       "org.scalatest" %% "scalatest" % "2.2.4" % "runtime",
       "com.newrelic.agent.java" % "newrelic-agent" % "3.29.0",
-      "org.tpolecat" %% "doobie-core" % doobieVersion excludeAll(
-        ExclusionRule(organization = "org.scalaz")
-      ),
-      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion excludeAll(
-        ExclusionRule(organization = "org.scalaz")
-      ),
-      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion excludeAll(
-        ExclusionRule(organization = "org.scalaz")
-      ),
+      "org.tpolecat" %% "doobie-core" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "org.tpolecat" %% "doobie-contrib-hikari" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
+      "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion exclude("org.scalaz", "scalaz-concurrent"),
       "com.github.mpilquist" %% "simulacrum" % "0.8.0",
       "commons-io" % "commons-io" % "2.5",
       specs2,
@@ -187,6 +181,7 @@ lazy val client = (project in file("client"))
     persistLauncher := true,
     persistLauncher in Test := false,
     sourceMapsDirectories += core.js.base / "..",
+    scalaJSOptimizerOptions in (Compile, fullOptJS) ~= { _.withParallel(false) },
     jsDependencies ++= Seq(
       "org.webjars" % "bootstrap" % "3.2.0" / "bootstrap.js" minified "bootstrap.min.js"
     ),

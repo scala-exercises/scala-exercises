@@ -5,7 +5,6 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.data.Xor
 import cats.free.Free
 import cats.implicits._
 import org.scalaexercises.types.user.User
@@ -40,7 +39,6 @@ class ExercisesController(
     exerciseOps:     ExerciseOps[ExercisesApp],
     userOps:         UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    evaluatorClient: EvaluatorClient,
     T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 
@@ -48,17 +46,17 @@ class ExercisesController(
     AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
 
-        def eval(runtimeInfo: Xor[Throwable, EvaluationRequest]): Future[Either[String, EvalResponse]] =
+        def eval(runtimeInfo: Either[Throwable, EvaluationRequest]): Future[Either[String, EvalResponse]] =
           runtimeInfo match {
-            case Xor.Left(ex) ⇒
+            case Left(ex) ⇒
               logError("eval", "Error while building the evaluation request", Some(ex))
               Future.successful(Either.left(ex.getMessage))
-            case Xor.Right(evalRequest) ⇒
+            case Right(evalRequest) ⇒
               evalRequest match {
-                case Xor.Left(msg) ⇒
+                case Left(msg) ⇒
                   logError("eval", "Error before performing the evaluation")
                   Future.successful(Either.left(msg))
-                case Xor.Right((resolvers, dependencies, code)) ⇒
+                case Right((resolvers, dependencies, code)) ⇒
                   evalRemote(resolvers, dependencies, code)
               }
           }

@@ -187,7 +187,7 @@ private[compiler] object CommentParsing {
       * always success with a placeholder value.
       */
     implicit val ignoreParseK = new ParseK[Ignore] {
-      override def fromEither[T](xor: Either[String, T]) =
+      override def fromEither[T](either: Either[String, T]) =
         Either.right(Ignore)
     }
   }

@@ -6,7 +6,6 @@
 package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
-import cats.data.Xor
 
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.types.user.User
@@ -45,8 +44,8 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
   def AuthenticatedUser(block: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task]) =
     Secure(AuthenticationAction.async { request ⇒
       userOps.getUserByLogin(request.userId).runFuture flatMap {
-        case Xor.Right(Some(user)) ⇒ block(user)
-        case _                     ⇒ Future.successful(BadRequest("User login not found"))
+        case Right(Some(user)) ⇒ block(user)
+        case _                 ⇒ Future.successful(BadRequest("User login not found"))
       }
     })
 
@@ -55,8 +54,8 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
           userOps.getUserByLogin(request.userId).runFuture flatMap {
-            case Xor.Right(Some(user)) ⇒ block(validatedBody, user)
-            case _                     ⇒ Future.successful(BadRequest("User login not found"))
+            case Right(Some(user)) ⇒ block(validatedBody, user)
+            case _                 ⇒ Future.successful(BadRequest("User login not found"))
           }
         case JsError(errors) ⇒
           Future.successful(BadRequest(JsError.toJson(errors)))

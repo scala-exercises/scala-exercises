@@ -10,7 +10,6 @@ import org.scalaexercises.runtime.Timestamp
 
 import scala.reflect.runtime.{ universe ⇒ ru }
 import cats.Eval
-import cats.data.Xor
 import cats.implicits._
 import github4s.Github
 import Github._
@@ -138,7 +137,7 @@ case class Compiler() {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
-        case Xor.Right(GHResult(result, _, _)) ⇒ result.collect({
+        case Right(GHResult(result, _, _)) ⇒ result.collect({
           case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) ⇒ ContributionInfo(
             sha = sha,
             message = message,
@@ -149,7 +148,7 @@ case class Compiler() {
             authorUrl = author_url
           )
         })
-        case Xor.Left(ex) ⇒ throw ex
+        case Left(ex) ⇒ throw ex
       }
     }
 

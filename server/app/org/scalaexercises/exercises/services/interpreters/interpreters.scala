@@ -22,7 +22,6 @@ import org.scalaexercises.evaluator.{ Dependency ⇒ SharedDependency }
 import org.scalaexercises.evaluator.EvaluatorClient._
 import cats._
 import cats.implicits._
-import cats.data.Xor
 import cats.free.Free
 import doobie.imports._
 
@@ -129,8 +128,8 @@ trait Interpreters[M[_]] {
     }
 
     private def ghResponseToEntity[A, B](response: M[GHResponse[A]])(f: A ⇒ B): M[B] = A.flatMap(response) {
-      case Xor.Right(GHResult(result, status, headers)) ⇒ A.pure(f(result))
-      case Xor.Left(e)                                  ⇒ A.raiseError[B](e)
+      case Right(GHResult(result, status, headers)) ⇒ A.pure(f(result))
+      case Left(e)                                  ⇒ A.raiseError[B](e)
     }
 
   }
@@ -167,14 +166,14 @@ trait TestInterpreters extends Interpreters[Id] with IdInstances {
 
 object FreeExtensions {
 
-  def scalazToCatsDisjunction[A, B](disj: A \/ B): A Xor B =
-    disj.fold(l ⇒ Xor.Left(l), r ⇒ Xor.Right(r))
+  def scalazToCatsDisjunction[A, B](disj: A \/ B): Either[A, B] =
+    disj.fold(l ⇒ Either.left(l), r ⇒ Either.right(r))
 
   implicit class FreeOps[F[_], A](f: Free[F, A]) {
     implicit val tailRecMTask = new cats.RecursiveTailRecM[scalaz.concurrent.Task] {}
 
-    def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Throwable Xor A] = {
-      val p = Promise[Throwable Xor A]
+    def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Either[Throwable, A]] = {
+      val p = Promise[Either[Throwable, A]]
       f.foldMap(interpreter).unsafePerformAsync { result: Throwable \/ A ⇒
         p.success(scalazToCatsDisjunction(result))
       }

@@ -2,8 +2,8 @@ package org.scalaexercises.algebra.user
 
 import org.scalaexercises.types.user.{ User, UserCreation }
 
-import cats.data.Xor
 import cats.free._
+import cats.implicits._
 
 /** Users Ops GADT
   */
@@ -35,7 +35,7 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
 
   def getOrCreate(user: UserCreation.Request): Free[F, UserCreation.Response] = for {
     maybeUser ← getUserByLogin(user.login)
-    theUser ← maybeUser.fold(createUser(user))((user: User) ⇒ Free.pure(Xor.Right(user)))
+    theUser ← maybeUser.fold(createUser(user))((user: User) ⇒ Free.pure(Either.right(user)))
   } yield theUser
 }
 

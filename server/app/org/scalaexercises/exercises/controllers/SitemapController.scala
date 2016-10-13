@@ -10,8 +10,6 @@ import org.scalaexercises.exercises.Secure
 import java.util.UUID
 import cats.free.Free
 
-import cats.data.Xor
-
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.types.exercises.{ Contribution, Contributor }
@@ -38,8 +36,8 @@ class SitemapController(
 
   def sitemap = Secure(Action.async { implicit request ⇒
     exerciseOps.getLibraries.runFuture map {
-      case Xor.Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-      case Xor.Left(ex) ⇒ {
+      case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
+      case Left(ex) ⇒ {
         Logger.error("Error rendering sitemap", ex)
         InternalServerError(ex.getMessage)
       }

@@ -15,7 +15,16 @@ import org.scalaexercises.evaluator.{ Dependency ⇒ EvaluatorDependency }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import org.scalaexercises.exercises.utils._
+
+import org.scalaexercises.evaluator.EvaluatorClient
+import org.scalaexercises.evaluator.EvaluatorClient._
+
 object `package` {
+
+  lazy val evaluatorClient: EvaluatorClient = new EvaluatorClient(
+    ConfigUtils.evaluatorUrl, ConfigUtils.evaluatorAuthKey
+  )
 
   def isAjax[A](implicit request: Request[A]) = request.headers.get("X-Requested-With").contains("XMLHttpRequest")
 

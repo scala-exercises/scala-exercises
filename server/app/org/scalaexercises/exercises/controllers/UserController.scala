@@ -5,8 +5,6 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.data.Xor
-
 import org.scalaexercises.exercises.Secure
 
 import org.scalaexercises.algebra.app._
@@ -38,11 +36,11 @@ class UserController(
 
   def byLogin(login: String) = Secure(Action.async { implicit request ⇒
     userOps.getUserByLogin(login).runFuture map {
-      case Xor.Right(user) ⇒ user match {
+      case Right(user) ⇒ user match {
         case Some(u) ⇒ Ok(write(u))
         case None    ⇒ NotFound("The user doesn't exist")
       }
-      case Xor.Left(error) ⇒ {
+      case Left(error) ⇒ {
         Logger.error(s"Error rendering user $login", error)
         InternalServerError(error.getMessage)
       }

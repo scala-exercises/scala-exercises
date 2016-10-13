@@ -1,7 +1,5 @@
 package org.scalaexercises.types.user
 
-import cats.data.Xor
-
 case class User(
   id:         Long,
   login:      String,
@@ -29,5 +27,5 @@ object UserCreation {
       User(id, login, name, githubId, pictureUrl, githubUrl, email)
   }
 
-  type Response = CreationError Xor User
+  type Response = Either[CreationError, User]
 }

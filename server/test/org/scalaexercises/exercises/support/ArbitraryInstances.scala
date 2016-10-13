@@ -5,7 +5,6 @@
 
 package org.scalaexercises.exercises.support
 
-import cats.data.Xor
 import org.scalaexercises.types.user.UserCreation._
 import org.scalaexercises.types.progress.SaveUserProgress
 
@@ -46,8 +45,8 @@ trait ArbitraryInstances extends Assertions {
   def persistentUserArbitrary(implicit transactor: Transactor[Task], UR: UserRepository): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request ⇒
       UR.create(request).transact(transactor).run match {
-        case Xor.Right(user) ⇒ user
-        case Xor.Left(error) ⇒ fail("Failed generating persistent users : $error")
+        case Right(user) ⇒ user
+        case Left(error) ⇒ fail("Failed generating persistent users : $error")
       }
     })
   }

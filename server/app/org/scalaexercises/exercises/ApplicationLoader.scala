@@ -25,9 +25,6 @@ import scalaz.{ -\/, \/- }
 
 import play.api.db.evolutions.{ DynamicEvolutions, EvolutionsComponents }
 
-import org.scalaexercises.evaluator.EvaluatorClient
-import org.scalaexercises.evaluator.EvaluatorClient._
-
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
     val mode = context.environment.mode.toString.toLowerCase
@@ -53,9 +50,6 @@ class Components(context: Context)
     DataSourceTransactor[Task](dbApi.database("default").dataSource)
 
   implicit val wsClient: WSClient = NingWSClient()
-  implicit val evaluatorClient: EvaluatorClient = new EvaluatorClient(
-    ConfigUtils.evaluatorUrl, ConfigUtils.evaluatorAuthKey
-  )
 
   val applicationController = new ApplicationController(defaultCacheApi)
   val exercisesController = new ExercisesController

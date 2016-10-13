@@ -1,8 +1,7 @@
 package org.scalaexercises.compiler
 
-import scalariform.formatter.{ ScalaFormatter }
-
-import cats.data.Xor
+import scalariform.formatter.ScalaFormatter
+import cats.implicits._
 
 object formatting {
   private[this] def wrap(code: String): String = s"""// format: OFF
@@ -19,9 +18,9 @@ object formatting {
       .map(_.drop(2)).mkString("\n")
 
   def formatCode(code: String): String = {
-    Xor.catchNonFatal(ScalaFormatter.format(wrap(code))) match {
-      case Xor.Right(result) ⇒ unwrap(result)
-      case _                 ⇒ code
+    Either.catchNonFatal(ScalaFormatter.format(wrap(code))) match {
+      case Right(result) ⇒ unwrap(result)
+      case _             ⇒ code
     }
   }
 }
