@@ -5,7 +5,6 @@ import org.scalatest._
 import org.scalacheck.Arbitrary
 
 import cats.Id
-import cats.data.Xor
 import cats.laws.discipline.FunctorTests
 
 class CommentZedSpec extends FunSpec {
@@ -148,14 +147,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       comments.withoutNames.foreach { comment ⇒
 
         inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
         inside(CommentParsing.parse[Mode.Name[Option]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.name shouldEqual None
         }
         inside(CommentParsing.parse[Mode.Name[Empty]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.name shouldEqual Empty
         }
 
@@ -164,15 +163,15 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       comments.withNames.foreach { comment ⇒
 
         inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.name shouldEqual comments.name
         }
         inside(CommentParsing.parse[Mode.Name[Option]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.name shouldEqual Some(comments.name)
         }
         inside(CommentParsing.parse[Mode.Name[Empty]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
 
       }
@@ -182,13 +181,13 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       comments.invalidNames.foreach { comment ⇒
 
         inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
         inside(CommentParsing.parse[Mode.Name[Option]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
         inside(CommentParsing.parse[Mode.Name[Empty]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
       }
       */
@@ -200,14 +199,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       comments.withoutDescriptions.foreach { comment ⇒
 
         inside(CommentParsing.parse[Mode.Description[Id]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
         inside(CommentParsing.parse[Mode.Description[Option]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.description shouldEqual None
         }
         inside(CommentParsing.parse[Mode.Description[Empty]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.description shouldEqual Empty
         }
 
@@ -215,14 +214,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
       comments.withDescriptions.foreach { comment ⇒
         inside(CommentParsing.parse[Mode.Description[Id]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
         }
         inside(CommentParsing.parse[Mode.Description[Option]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.description shouldBe defined
         }
         inside(CommentParsing.parse[Mode.Description[Empty]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
       }
 
@@ -233,14 +232,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       comments.withoutExplanations.foreach { comment ⇒
 
         inside(CommentParsing.parse[Mode.Explanation[Id]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
         inside(CommentParsing.parse[Mode.Explanation[Option]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.explanation shouldEqual None
         }
         inside(CommentParsing.parse[Mode.Explanation[Empty]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.explanation shouldEqual Empty
         }
 
@@ -248,14 +247,14 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
       comments.withExplanations.foreach { comment ⇒
         inside(CommentParsing.parse[Mode.Explanation[Id]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
         }
         inside(CommentParsing.parse[Mode.Explanation[Option]](comment)) {
-          case Xor.Right(parsed) ⇒
+          case Right(parsed) ⇒
             parsed.explanation shouldBe defined
         }
         inside(CommentParsing.parse[Mode.Explanation[Empty]](comment)) {
-          case Xor.Left(_) ⇒
+          case Left(_) ⇒
         }
       }
 

@@ -17,5 +17,5 @@ object ExampleTarget extends FlatSpec with Matchers {
     throw new ExampleException
   }
 
-  def takesXorMethod(xor: cats.data.Xor[_, _]): Boolean = true
+  def takesEitherMethod(either: Either[_, _]): Boolean = true
 }

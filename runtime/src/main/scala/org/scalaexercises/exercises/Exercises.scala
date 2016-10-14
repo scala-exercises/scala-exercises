@@ -12,9 +12,7 @@ import scala.reflect.ClassTag
 import java.net.URLClassLoader
 import java.io.File
 
-import cats.data.Xor
-import cats.std.list._
-import cats.syntax.monadCombine._
+import cats.implicits._
 import org.clapper.classutil.ClassFinder
 import org.scalaexercises.evaluator.Dependency
 
@@ -57,7 +55,7 @@ object Exercises {
   }
 
   private def guard[A](f: ⇒ A, message: ⇒ String) =
-    Xor.catchNonFatal(f).leftMap(_ ⇒ message)
+    Either.catchNonFatal(f).leftMap(_ ⇒ message)
 
   def buildEvaluatorRequest(
     pkg:                 String,

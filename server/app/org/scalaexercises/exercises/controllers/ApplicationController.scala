@@ -12,8 +12,6 @@ import play.api.cache.CacheApi
 import org.scalaexercises.types.exercises.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
 
-import cats.data.Xor
-
 import org.scalaexercises.exercises.utils.ConfigUtils
 
 import org.scalaexercises.algebra.app._
@@ -57,10 +55,10 @@ class ApplicationController(cache: CacheApi)(
       case Some(repo) ⇒ Future.successful(repo)
       case None ⇒
         githubOps.getRepository(ConfigUtils.githubSiteOwner, ConfigUtils.githubSiteRepo).runFuture flatMap {
-          case Xor.Right(repo) ⇒
+          case Right(repo) ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
             Future.successful(repo)
-          case Xor.Left(err) ⇒
+          case Left(err) ⇒
             Logger.error("Error fetching scala-exercises repository information", err)
             Future.failed[Repository](err)
         }
@@ -79,10 +77,10 @@ class ApplicationController(cache: CacheApi)(
     for {
       repo ← scalaexercisesRepo
       result ← ops.runFuture map {
-        case Xor.Right((libraries, user, Some(token), progress, _))  ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
-        case Xor.Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
-        case Xor.Right((libraries, Some(user), None, _, _))          ⇒ InternalServerError("Session token not found")
-        case Xor.Left(ex) ⇒
+        case Right((libraries, user, Some(token), progress, _))  ⇒ Ok(views.html.templates.home.index(user = user, libraries = libraries, progress = progress, repo = repo))
+        case Right((libraries, None, None, progress, authorize)) ⇒ Ok(views.html.templates.home.index(user = None, libraries = libraries, progress = progress, redirectUrl = Option(authorize.url), repo = repo)).withSession("oauth-state" → authorize.state)
+        case Right((libraries, Some(user), None, _, _))          ⇒ InternalServerError("Session token not found")
+        case Left(ex) ⇒
           Logger.error("Error rendering index page", ex)
           InternalServerError(ex.getMessage)
       }
@@ -99,12 +97,12 @@ class ApplicationController(cache: CacheApi)(
     } yield (library, user, section)
 
     ops.runFuture map {
-      case Xor.Right((Some(library), _, Some(sectionName))) if library.sectionNames.contains(sectionName) ⇒
+      case Right((Some(library), _, Some(sectionName))) if library.sectionNames.contains(sectionName) ⇒
         Redirect(s"$libraryName/$sectionName")
-      case Xor.Right((Some(library), _, _)) if library.sectionNames.nonEmpty ⇒
+      case Right((Some(library), _, _)) if library.sectionNames.nonEmpty ⇒
         Redirect(s"$libraryName/${library.sectionNames.head}")
-      case Xor.Right((None, _, _)) ⇒ NotFound("Library not found")
-      case Xor.Left(ex) ⇒
+      case Right((None, _, _)) ⇒ NotFound("Library not found")
+      case Left(ex) ⇒
         Logger.error(s"Error rendering library: $libraryName", ex)
         InternalServerError(ex.getMessage)
     }
@@ -121,7 +119,7 @@ class ApplicationController(cache: CacheApi)(
     } yield (library, section, user, request.session.get("oauth-token"), libProgress, authorize, contributors)
 
     ops.runFuture map {
-      case Xor.Right((Some(l), Some(s), user, Some(token), libProgress, _, contributors)) ⇒
+      case Right((Some(l), Some(s), user, Some(token), libProgress, _, contributors)) ⇒
         Ok(
           views.html.templates.library.index(
             library = l,
@@ -131,7 +129,7 @@ class ApplicationController(cache: CacheApi)(
             contributors = contributors
           )
         )
-      case Xor.Right((Some(l), Some(s), user, None, libProgress, authorize, contributors)) ⇒
+      case Right((Some(l), Some(s), user, None, libProgress, authorize, contributors)) ⇒
         Ok(
           views.html.templates.library.index(
             library = l,
@@ -142,10 +140,10 @@ class ApplicationController(cache: CacheApi)(
             contributors = contributors
           )
         ).withSession("oauth-state" → authorize.state)
-      case Xor.Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
-      case Xor.Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
-      case Xor.Right((_, _, _, _, _, _, _))          ⇒ InternalServerError("Library and section not found")
-      case Xor.Left(ex) ⇒
+      case Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
+      case Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
+      case Right((_, _, _, _, _, _, _))          ⇒ InternalServerError("Library and section not found")
+      case Left(ex) ⇒
         Logger.error(s"Error rendering section: $libraryName/$sectionName", ex)
         InternalServerError(ex.getMessage)
     }

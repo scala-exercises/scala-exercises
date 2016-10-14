@@ -5,7 +5,6 @@
 
 package org.scalaexercises.exercises.persistence.domain
 
-import cats.data.Xor
 import github4s.free.domain.{ User ⇒ GHUser }
 import org.scalaexercises.types.user.User
 import shapeless._
@@ -32,7 +31,7 @@ object UserCreation {
 
   def toUser(ghu: GHUser) = Request(ghu.login, ghu.name, ghu.id.toString, ghu.avatar_url, ghu.html_url, ghu.email)
 
-  type Response = CreationError Xor User
+  type Response = Either[CreationError, User]
 }
 
 object UserQueries {

@@ -2,8 +2,7 @@ package org.scalaexercises.compiler
 
 import org.scalatest._
 
-import cats.data.Xor
-import cats.std.option._
+import cats.implicits._
 
 class CommentRenderingRegressions extends FunSpec with Matchers
     with Inside {
@@ -33,7 +32,7 @@ class CommentRenderingRegressions extends FunSpec with Matchers
           */""")
 
       inside(Comments.parseAndRender[Mode.Exercise](comment)) {
-        case Xor.Right(parsed) ⇒
+        case Right(parsed) ⇒
 
           // remove XML and check that there is code content
           val description = parsed.description

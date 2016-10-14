@@ -20,7 +20,6 @@ object ConfigUtils {
 
   lazy val evaluatorUrl = application.configuration.getString("evaluator.url").getOrElse("")
   lazy val evaluatorAuthKey = application.configuration.getString("evaluator.authKey").getOrElse("")
-  lazy val evaluatorReadTimeout = application.configuration.getMilliseconds("evaluator.readTimeout").getOrElse(10000l).milliseconds
 
   def callbackUrl = {
     val rootUrl = application

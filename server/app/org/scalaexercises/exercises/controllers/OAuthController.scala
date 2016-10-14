@@ -5,9 +5,7 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.data.Xor
-import cats.std.option._
-import cats.syntax.cartesian._
+import cats.implicits._
 
 import org.scalaexercises.exercises.Secure
 
@@ -45,8 +43,8 @@ class OAuthController(
         case (code, state, oauthState) ⇒
           if (state == oauthState) {
             githubOps.getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state).runFuture.map {
-              case Xor.Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.accessToken)
-              case Xor.Left(ex) ⇒ Unauthorized(ex.getMessage)
+              case Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.accessToken)
+              case Left(ex) ⇒ Unauthorized(ex.getMessage)
             }
           } else Future.successful(BadRequest("Invalid github login"))
       }
@@ -70,11 +68,11 @@ class OAuthController(
       } yield (ghuser, user)
 
       ops.runFuture.map {
-        case Xor.Right((ghu, u)) ⇒ Redirect(request.headers.get("referer") match {
+        case Right((ghu, u)) ⇒ Redirect(request.headers.get("referer") match {
           case Some(url) if !url.contains("github") ⇒ url
           case _                                    ⇒ "/"
         }).withSession("oauth-token" → accessToken, "user" → ghu.login)
-        case Xor.Left(error) ⇒ {
+        case Left(error) ⇒ {
           Logger.error("Failed to save GitHub user information", error)
           InternalServerError("Failed to save user information")
         }

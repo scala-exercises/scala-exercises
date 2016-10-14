@@ -15,6 +15,7 @@ import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import scalaz.concurrent.Task
 import org.scalaexercises.types.user.User
+import cats.implicits._
 
 class UserProgressRepositorySpec
     extends PropSpec

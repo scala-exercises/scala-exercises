@@ -11,13 +11,8 @@ import org.scalaexercises.runtime.model.{ DefaultLibrary, BuildInfo ⇒ RuntimeB
 import org.scalaexercises.types.exercises._
 import play.api.Play
 import play.api.Logger
-import cats.data.{ State, Xor }
-import cats.std.list._
-import cats.std.option._
-import cats.syntax.flatMap._
-import cats.syntax.option._
-import cats.syntax.traverse._
-import cats.syntax.xor._
+import cats.data.State
+import cats.implicits._
 import org.scalaexercises.types.evaluator.Dependency
 import org.apache.commons.io.IOUtils
 import sun.misc.BASE64Encoder
@@ -40,23 +35,29 @@ object ExercisesService extends RuntimeSharedConversions {
 
   def buildRuntimeInfo(evaluation: ExerciseEvaluation): ExerciseEvaluation.EvaluationRequest = {
 
-    val runtimeInfo: Xor[String, (RuntimeBuildInfo, String, List[String])] = for {
+    val runtimeInfo: Either[String, (RuntimeBuildInfo, String, List[String])] = for {
 
-      runtimeLibrary ← runtimeLibraries.find(_.name == evaluation.libraryName)
-        .toRightXor(s"Unable to find library ${evaluation.libraryName} when " +
-          s"attempting to evaluate method ${evaluation.method}")
+      runtimeLibrary ← Either.fromOption(
+        runtimeLibraries.find(_.name == evaluation.libraryName),
+        s"Unable to find library ${evaluation.libraryName} when " +
+          s"attempting to evaluate method ${evaluation.method}"
+      )
 
-      runtimeSection ← runtimeLibrary.sections.find(_.name == evaluation.sectionName)
-        .toRightXor(s"Unable to find section ${evaluation.sectionName} when " +
-          s"attempting to evaluate method ${evaluation.method}")
+      runtimeSection ← Either.fromOption(
+        runtimeLibrary.sections.find(_.name == evaluation.sectionName),
+        s"Unable to find section ${evaluation.sectionName} when " +
+          s"attempting to evaluate method ${evaluation.method}"
+      )
 
-      runtimeExercise ← runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method)
-        .toRightXor(s"Unable to find exercise for method ${evaluation.method}")
+      runtimeExercise ← Either.fromOption(
+        runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method),
+        s"Unable to find exercise for method ${evaluation.method}"
+      )
 
     } yield (runtimeLibrary.buildMetaInfo, runtimeExercise.packageName, runtimeExercise.imports)
 
     runtimeInfo match {
-      case Xor.Right((b: RuntimeBuildInfo, pckgName: String, importList: List[String])) ⇒
+      case Right((b: RuntimeBuildInfo, pckgName: String, importList: List[String])) ⇒
 
         val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
           pckgName,
@@ -67,13 +68,13 @@ object ExercisesService extends RuntimeSharedConversions {
           b.libraryDependencies
         )
 
-        (
+        Either.right((
           resolvers,
           dependencies map (d ⇒ Dependency(d.groupId, d.artifactId, d.version)),
           code
-        ).right
+        ))
 
-      case Xor.Left(msg) ⇒ msg.left
+      case Left(msg) ⇒ Either.left(msg)
     }
   }
 

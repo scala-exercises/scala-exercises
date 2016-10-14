@@ -1,28 +1,25 @@
 {
     "name": "Scala Exercises",
     "description": "Introducing Scala Exercises: Quick lessons that will get you on your way to learning Scala in no time.",
-    "website": "http:\/\/scala-exercises.47deg.com",
+    "website": "http:\/\/www.scala-exercises.org",
     "addons": [
         "heroku-postgresql:hobby-dev"
     ],
     "success_url": "\/",
     "env": {
+        "WARTING": "false",
+        "FORMATCODE": "false",
         "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
-        "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
-        "JAVA_TOOL_OPTIONS": {
-            "required": true
-        },
+        "JAVA_OPTS": "-Xmx4096m -Xms512m -Xss512k -XX:ReservedCodeCacheSize=128m -XX:+UseCompressedOops",
+        "JAVA_TOOL_OPTIONS": "-Xmx4096m -Xms512m -Xss512k -XX:ReservedCodeCacheSize=128m -XX:+UseCompressedOops",
         "EVALUATOR_AUTH_KEY": {
-            "required": true
-        },
-        "EVALUATOR_READ_TIMEOUT": {
             "required": true
         },
         "EVALUATOR_URL": {
             "required": true
         },
-	"EVOLUTIONS_AUTO_APPLY" : "true",
-	"EVOLUTIONS_AUTO_APPLY_DOWNS" : "true"
+	    "EVOLUTIONS_AUTO_APPLY" : "true",
+	    "EVOLUTIONS_AUTO_APPLY_DOWNS" : "true"
     },
     "formation": {
         "web": {
