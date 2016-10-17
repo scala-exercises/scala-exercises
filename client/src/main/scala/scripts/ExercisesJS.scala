@@ -27,16 +27,15 @@ import monix.execution.Scheduler.Implicits.{ global ⇒ scheduler }
 
 object ExercisesJS extends js.JSApp {
   def main(): Unit = {
+
     // A subject where every program action is published
     val actions = BehaviorSubject[Action](Start)
 
     // State is the reduction of the initial state and the stream of actions
     val state: Observable[State] = actions.scan(Nil: State)(State.update)
-
     // A stream of (State, Action) pairs that emits a value each time the state is affected
     // by an action
     val stateAndAction: Observable[(State, Action)] = state.zip(actions)
-
     // UI modifications
     val ui: Observable[Coeval[Unit]] = Observable.zipMap2(state, actions)(UI.update _)
 
@@ -60,6 +59,7 @@ object ExercisesJS extends js.JSApp {
 
     def startInteraction: Coeval[Unit] = {
       for {
+        _ ← inputReplacements flatMap replaceInputs
         _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
           triggerAction(UpdateExercise(method, arguments))
         }, (method: String) ⇒ {

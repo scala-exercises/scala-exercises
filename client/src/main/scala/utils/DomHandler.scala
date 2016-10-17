@@ -80,16 +80,21 @@ object DomHandler {
     onEnterPressed: String ⇒ Coeval[Unit]
   ): Coeval[Unit] = Coeval {
     $(input).keyup((e: dom.KeyboardEvent) ⇒ {
-      (for {
-        _ ← OptionT(setInputWidth(input) map (_.some))
-        methodName ← OptionT(Coeval(methodParent(input)))
-        exercise ← OptionT(Coeval(findExerciseByMethod(methodName)))
-        inputsValues = getInputsValues(exercise)
-        _ ← OptionT((e.keyCode match {
-          case KeyCode.Enter ⇒ onEnterPressed(methodName)
-          case _             ⇒ onkeyup(methodName, inputsValues)
-        }).map(_.some))
-      } yield ()).value
+
+      setInputWidth(input).value
+
+      val maybeKeyUpInfo = for {
+        methodName ← methodParent(input)
+        exercise ← findExerciseByMethod(methodName)
+        inputValues = getInputsValues(exercise)
+      } yield (methodName, inputValues)
+
+      maybeKeyUpInfo foreach { info ⇒
+        e.keyCode match {
+          case KeyCode.Enter ⇒ onEnterPressed(info._1).value
+          case _             ⇒ onkeyup(info._1, info._2).value
+        }
+      }
     })
   }
 

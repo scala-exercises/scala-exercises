@@ -42,7 +42,7 @@ object UI {
   def noop: Coeval[Unit] = Coeval {}
 
   def update(s: State, a: Action): Coeval[Unit] = a match {
-    case Start                        ⇒ insertInputs
+    case Start                        ⇒ noop
     case SetState(state)              ⇒ reflectState(state)
     case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
     case CompileExercise(method)      ⇒ startCompilation(s, method)
