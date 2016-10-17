@@ -20,10 +20,7 @@ import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
 import cats.{ `package` ⇒ _ }
 import cats.data.Ior
-import cats.data.Xor
-import cats.std.all._
-import cats.syntax.flatMap._
-import cats.syntax.traverse._
+import cats.implicits._
 //import org.scalaexercises.definitions.BuildInfo
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
@@ -114,7 +111,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private implicit def errFromThrowable(throwable: Throwable) = Ior.right(throwable)
 
   private def catching[A](f: ⇒ A)(msg: ⇒ String) =
-    Xor.catchNonFatal(f).leftMap(e ⇒ Ior.both(msg, e))
+    Either.catchNonFatal(f).leftMap(e ⇒ Ior.both(msg, e))
 
   /** Given an Analysis output from a compile run, this will
     * identify all modules implementing `exercise.Library`.
@@ -190,8 +187,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
     def invokeCompiler(
       compiler: COMPILER, library: AnyRef
-    ): Xor[Err, (String, String)] =
-      Xor.catchNonFatal {
+    ): Either[Err, (String, String)] =
+      Either.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).distinct
           .flatMap(analysisIn.relations.definesClass)
           .map(file ⇒ (file.getPath, IO.read(file)))
@@ -212,9 +209,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
           }
       } leftMap (e ⇒ e: Err) >>= {
         case mn :: moduleSource :: Nil ⇒
-          Xor.right(mn → moduleSource)
+          Right(mn → moduleSource)
         case _ ⇒
-          Xor.left("Unexpected return value from exercise compiler": Err)
+          Left("Unexpected return value from exercise compiler": Err)
       }
 
     val result = for {

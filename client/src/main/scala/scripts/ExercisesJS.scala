@@ -11,8 +11,9 @@ import utils.DomHandler._
 import scala.scalajs.js
 import scala.concurrent.Future
 
-import fp.IO
-import IO._
+import monix.cats._
+import monix.eval.Coeval
+
 import model._
 import model.Exercises._
 import actions._
@@ -26,29 +27,28 @@ import monix.execution.Scheduler.Implicits.{ global ⇒ scheduler }
 
 object ExercisesJS extends js.JSApp {
   def main(): Unit = {
+
     // A subject where every program action is published
     val actions = BehaviorSubject[Action](Start)
 
     // State is the reduction of the initial state and the stream of actions
     val state: Observable[State] = actions.scan(Nil: State)(State.update)
-
     // A stream of (State, Action) pairs that emits a value each time the state is affected
     // by an action
     val stateAndAction: Observable[(State, Action)] = state.zip(actions)
-
     // UI modifications
-    val ui: Observable[IO[Unit]] = state.zipWith(actions)(UI.update)
+    val ui: Observable[Coeval[Unit]] = Observable.zipMap2(state, actions)(UI.update _)
 
     // Effects that can trigger further actions
-    val effects: Observable[Future[Option[Action]]] = state.zipWith(actions)(Effects.perform)
+    val effects: Observable[Future[Option[Action]]] = Observable.zipMap2(state, actions)(Effects.perform _)
 
-    def triggerAction(action: Action): IO[Unit] = io {
+    def triggerAction(action: Action): Coeval[Unit] = Coeval {
       actions.onNext(action)
     }
 
-    def wireObservables: IO[Unit] = io {
+    def wireObservables: Coeval[Unit] = Coeval {
       ui.foreach(ioAction ⇒ {
-        ioAction.unsafePerformIO()
+        ioAction.value
       })
       effects.foreach((f: Future[Option[Action]]) ⇒ {
         f.foreach(m ⇒ {
@@ -57,8 +57,9 @@ object ExercisesJS extends js.JSApp {
       })
     }
 
-    def startInteraction: IO[Unit] = {
+    def startInteraction: Coeval[Unit] = {
       for {
+        _ ← inputReplacements flatMap replaceInputs
         _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
           triggerAction(UpdateExercise(method, arguments))
         }, (method: String) ⇒ {
@@ -77,6 +78,6 @@ object ExercisesJS extends js.JSApp {
       _ ← startInteraction
     } yield ()
 
-    program.unsafePerformIO()
+    program.value
   }
 }

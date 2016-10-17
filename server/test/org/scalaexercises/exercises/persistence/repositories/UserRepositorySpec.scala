@@ -15,6 +15,7 @@ import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import scalaz.concurrent.Task
+import cats.implicits._
 
 class UserRepositorySpec
     extends PropSpec

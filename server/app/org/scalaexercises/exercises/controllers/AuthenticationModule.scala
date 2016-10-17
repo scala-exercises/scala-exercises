@@ -6,7 +6,6 @@
 package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
-import cats.data.Xor
 
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.types.user.User
@@ -34,29 +33,29 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
 
     override def invokeBlock[A](
       request: Request[A],
-      block:   (UserRequest[A]) ⇒ Future[Result]
+      thunk:   (UserRequest[A]) ⇒ Future[Result]
     ): Future[Result] =
       request.session.get("user") match {
-        case Some(userId) ⇒ block(UserRequest(userId, request))
+        case Some(userId) ⇒ thunk(UserRequest(userId, request))
         case None         ⇒ Future.successful(Forbidden)
       }
   }
 
-  def AuthenticatedUser(block: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task]) =
+  def AuthenticatedUser(thunk: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task]) =
     Secure(AuthenticationAction.async { request ⇒
       userOps.getUserByLogin(request.userId).runFuture flatMap {
-        case Xor.Right(Some(user)) ⇒ block(user)
-        case _                     ⇒ Future.successful(BadRequest("User login not found"))
+        case Right(Some(user)) ⇒ thunk(user)
+        case _                 ⇒ Future.successful(BadRequest("User login not found"))
       }
     })
 
-  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(block: (T, User) ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task], format: Reads[T]) =
+  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task], format: Reads[T]) =
     Secure(AuthenticationAction.async(bodyParser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
           userOps.getUserByLogin(request.userId).runFuture flatMap {
-            case Xor.Right(Some(user)) ⇒ block(validatedBody, user)
-            case _                     ⇒ Future.successful(BadRequest("User login not found"))
+            case Right(Some(user)) ⇒ thunk(validatedBody, user)
+            case _                 ⇒ Future.successful(BadRequest("User login not found"))
           }
         case JsError(errors) ⇒
           Future.successful(BadRequest(JsError.toJson(errors)))

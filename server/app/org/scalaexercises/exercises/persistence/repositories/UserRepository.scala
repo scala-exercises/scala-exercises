@@ -11,6 +11,7 @@ import org.scalaexercises.exercises.persistence.domain.{ UserQueries ⇒ Q }
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
 
 import doobie.imports._
+import cats.implicits._
 
 import scalaz.syntax.applicative._
 
@@ -33,8 +34,6 @@ trait UserRepository {
 
 class UserDoobieRepository(implicit persistence: PersistenceModule) extends UserRepository {
 
-  import cats.syntax.xor._
-
   override def all: ConnectionIO[List[User]] =
     persistence.fetchList[User](Q.all)
 
@@ -55,7 +54,7 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
           (login, name, githubId, pictureUrl, githubUrl, email)
         )
       user ← getByLogin(login)
-    } yield user.fold(UserCreation.DuplicateName.left[User])(_.right[UserCreation.DuplicateName.type])
+    } yield Either.fromOption(user, UserCreation.DuplicateName)
   }
 
   override def delete(id: Long): ConnectionIO[Boolean] = persistence.update[Long](Q.deleteById, id) map (_ > 0)

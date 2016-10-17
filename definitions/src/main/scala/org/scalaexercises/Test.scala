@@ -1,10 +1,9 @@
 package org.scalaexercises
 
-import cats.data.Xor
-
 import shapeless._
 import shapeless.ops.function._
 
+import cats.implicits._
 import org.scalacheck.{ Prop, Arbitrary }
 import org.scalacheck.Gen
 import Prop.forAll
@@ -23,9 +22,9 @@ object Test {
     val rightGen = genRightAnswer(answer)
     val rightProp = forAll(rightGen)({ p ⇒
 
-      val result = Xor.catchOnly[GeneratorDrivenPropertyCheckFailedException]({ fntop(method)(p) })
+      val result = Either.catchOnly[GeneratorDrivenPropertyCheckFailedException]({ fntop(method)(p) })
       result match {
-        case Xor.Left(exc) ⇒ exc.cause match {
+        case Left(exc) ⇒ exc.cause match {
           case Some(originalException) ⇒ throw originalException
           case _                       ⇒ false
         }
@@ -35,7 +34,7 @@ object Test {
 
     val wrongGen = genWrongAnswer(answer)
     val wrongProp = forAll(wrongGen)({ p ⇒
-      Xor.catchNonFatal({ fntop(method)(p) }).isLeft
+      Either.catchNonFatal({ fntop(method)(p) }).isLeft
     })
 
     Prop.all(rightProp, wrongProp)

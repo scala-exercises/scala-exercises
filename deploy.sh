@@ -14,9 +14,9 @@ function release {
     publish
 }
 
-if [[ $TRAVIS_BRANCH == 'master' ]]; then
-   echo "Master branch, releasing..."
-   release
+if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    echo "Master branch, releasing..."
+    release
 else
     echo "Not in master branch, skipping release"
 fi

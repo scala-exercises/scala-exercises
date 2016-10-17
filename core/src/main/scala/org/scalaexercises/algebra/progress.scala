@@ -11,7 +11,7 @@ import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 
 import cats.Monad
-import cats.std.list._
+import cats.implicits._
 import cats.free._
 
 /** Users Progress Ops GADT

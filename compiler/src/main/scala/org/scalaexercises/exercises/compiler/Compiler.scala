@@ -10,10 +10,7 @@ import org.scalaexercises.runtime.Timestamp
 
 import scala.reflect.runtime.{ universe ⇒ ru }
 import cats.Eval
-import cats.data.Xor
-import cats.std.all._
-import cats.syntax.flatMap._
-import cats.syntax.traverse._
+import cats.implicits._
 import github4s.Github
 import Github._
 import github4s.implicits._
@@ -115,7 +112,7 @@ case class Compiler() {
       symbol ← internal.instanceToClassSymbol(library)
       symbolPath = internal.symbolToPath(symbol)
       comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
-        .leftMap(enhanceDocError(symbolPath))
+        .leftMap(enhanceDocError(symbolPath) _)
       sections ← checkEmptySectionList(symbol, library) >>= {
         _.sections
           .traverseU(internal.instanceToClassSymbol(_) >>= (symbol ⇒ maybeMakeSectionInfo(library, symbol)))
@@ -130,17 +127,17 @@ case class Compiler() {
       repository = library.repository
     )
 
-    def checkEmptySectionList(librarySymbol: Symbol, library: Library): Xor[String, Library] =
+    def checkEmptySectionList(librarySymbol: Symbol, library: Library): Either[String, Library] =
       if (library.sections.isEmpty)
-        Xor.left(s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section")
+        Either.left(s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section")
       else
-        Xor.right(library)
+        Either.right(library)
 
     def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos.listCommits(owner, repository, None, Option(path))
       contribs.exec[Eval].value match {
-        case Xor.Right(GHResult(result, _, _)) ⇒ result.collect({
+        case Right(GHResult(result, _, _)) ⇒ result.collect({
           case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) ⇒ ContributionInfo(
             sha = sha,
             message = message,
@@ -151,7 +148,7 @@ case class Compiler() {
             authorUrl = author_url
           )
         })
-        case Xor.Left(ex) ⇒ throw ex
+        case Left(ex) ⇒ throw ex
       }
     }
 
@@ -163,7 +160,7 @@ case class Compiler() {
       val filePath = extracted.symbolPaths.get(symbol.toString).filterNot(_.isEmpty)
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
-          .leftMap(enhanceDocError(symbolPath))
+          .leftMap(enhanceDocError(symbolPath) _)
 
         contributions = (if (fetchContributors) filePath else None).fold(
           List.empty[ContributionInfo]
@@ -193,7 +190,7 @@ case class Compiler() {
       val pkgName = symbolPath.headOption.fold("defaultPkg")(pkg ⇒ pkg)
       for {
         comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Exercise])
-          .leftMap(enhanceDocError(symbolPath))
+          .leftMap(enhanceDocError(symbolPath) _)
         method ← internal.resolveMethod(symbolPath)
       } yield ExerciseInfo(
         symbol = symbol,
@@ -334,17 +331,17 @@ case class Compiler() {
     import mirror.universe._
 
     def instanceToClassSymbol(instance: AnyRef) =
-      Xor.catchNonFatal(mirror.classSymbol(instance.getClass))
+      Either.catchNonFatal(mirror.classSymbol(instance.getClass))
         .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
 
-    def resolveComment(path: List[String]) /*: Xor[String, Comment] */ =
-      Xor.fromOption(
+    def resolveComment(path: List[String]) /*: Either[String, Comment] */ =
+      Either.fromOption(
         sourceExtracted.comments.get(path).map(_.comment),
         s"""Unable to retrieve doc comment for ${path.mkString(".")}"""
       )
 
-    def resolveMethod(path: List[String]): Xor[String, SourceTextExtraction#ExtractedMethod] =
-      Xor.fromOption(
+    def resolveMethod(path: List[String]): Either[String, SourceTextExtraction#ExtractedMethod] =
+      Either.fromOption(
         sourceExtracted.methods.get(path),
         s"""Unable to retrieve code for method ${path.mkString(".")}"""
       )

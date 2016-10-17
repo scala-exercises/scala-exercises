@@ -11,27 +11,24 @@ import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
-import fp.IO
+
+import monix.cats._
+import monix.eval.Coeval
 
 import cats.data.OptionT
-import cats.std.list._
-import cats.std.option._
-import cats.syntax.option._
-import cats.syntax.traverse._
+import cats.implicits._
 
 object DomHandler {
 
-  import IO._
-
   /** Replaces text matched into html inputs
     */
-  def replaceInputs(nodes: Seq[(HTMLElement, String)]): IO[Unit] = io {
+  def replaceInputs(nodes: Seq[(HTMLElement, String)]): Coeval[Unit] = Coeval {
     nodes foreach { case (n, r) ⇒ $(n).html(r) }
   }
 
   /** Highlights every preformatted code block.
     */
-  def highlightCodeBlocks: IO[Unit] = io {
+  def highlightCodeBlocks: Coeval[Unit] = Coeval {
     $("pre").each((_: Any, code: dom.Element) ⇒ {
       js.Dynamic.global.hljs.highlightBlock(code)
     })
@@ -39,7 +36,7 @@ object DomHandler {
 
   /** Converts emoji markup into inline emoji images.
     */
-  def emojify: IO[Unit] = io {
+  def emojify: Coeval[Unit] = Coeval {
     $(".modal-body").each((_: Any, el: dom.Element) ⇒ {
       js.Dynamic.global.emojify.run(el)
     })
@@ -47,68 +44,73 @@ object DomHandler {
 
   /** Set the class attribute to an exercise node
     */
-  def setExerciseClass(e: HTMLElement, style: String): IO[Unit] = io {
+  def setExerciseClass(e: HTMLElement, style: String): Coeval[Unit] = Coeval {
     $(e).attr("class", s"exercise $style")
   }
 
   /** Set the class attribute to an exercise code node
     */
-  def setCodeClass(e: HTMLElement, style: String): IO[Unit] = io {
+  def setCodeClass(e: HTMLElement, style: String): Coeval[Unit] = Coeval {
     $(e).attr("class", s"exercise-pre $style")
   }
 
   /** Write a message in the log of an exercise
     */
-  def writeLog(e: HTMLElement, msg: String): IO[Unit] = io {
+  def writeLog(e: HTMLElement, msg: String): Coeval[Unit] = Coeval {
     $(e).find(".log").text(msg)
   }
 
   /** Assigns behaviors to the keyup event for inputs elements.
     */
   def onInputKeyUp(
-    onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
-    onEnterPressed: String ⇒ IO[Unit]
-  ): IO[Unit] = for {
+    onkeyup:        (String, Seq[String]) ⇒ Coeval[Unit],
+    onEnterPressed: String ⇒ Coeval[Unit]
+  ): Coeval[Unit] = for {
     inputs ← allInputs
     _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
   } yield ()
 
   /** Shows modal for signing up
     */
-  def showSignUpModal: IO[Unit] = io($("#mustSignUp").modal("show"))
+  def showSignUpModal: Coeval[Unit] = Coeval($("#mustSignUp").modal("show"))
 
   def attachKeyUpHandler(
     input:          HTMLInputElement,
-    onkeyup:        (String, Seq[String]) ⇒ IO[Unit],
-    onEnterPressed: String ⇒ IO[Unit]
-  ): IO[Unit] = io {
+    onkeyup:        (String, Seq[String]) ⇒ Coeval[Unit],
+    onEnterPressed: String ⇒ Coeval[Unit]
+  ): Coeval[Unit] = Coeval {
     $(input).keyup((e: dom.KeyboardEvent) ⇒ {
-      (for {
-        _ ← OptionT(setInputWidth(input) map (_.some))
-        methodName ← OptionT(io(methodParent(input)))
-        exercise ← OptionT(io(findExerciseByMethod(methodName)))
-        inputsValues = getInputsValues(exercise)
-        _ ← OptionT((e.keyCode match {
-          case KeyCode.Enter ⇒ onEnterPressed(methodName)
-          case _             ⇒ onkeyup(methodName, inputsValues)
-        }).map(_.some))
-      } yield ()).value.unsafePerformIO()
+
+      setInputWidth(input).value
+
+      val maybeKeyUpInfo = for {
+        methodName ← methodParent(input)
+        exercise ← findExerciseByMethod(methodName)
+        inputValues = getInputsValues(exercise)
+      } yield (methodName, inputValues)
+
+      maybeKeyUpInfo foreach { info ⇒
+        e.keyCode match {
+          case KeyCode.Enter ⇒ onEnterPressed(info._1).value
+          case _             ⇒ onkeyup(info._1, info._2).value
+        }
+      }
     })
   }
 
-  def onButtonClick(onClick: String ⇒ IO[Unit]): IO[Unit] =
+  def onButtonClick(onClick: String ⇒ Coeval[Unit]): Coeval[Unit] =
     allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ ⇒ ())
 
-  def attachClickHandler(exercise: HTMLElement, onClick: String ⇒ IO[Unit]): IO[Unit] = io {
+  def attachClickHandler(exercise: HTMLElement, onClick: String ⇒ Coeval[Unit]): Coeval[Unit] = Coeval {
     $(exercise).find(".compile button").click((e: dom.Event) ⇒ {
-      onClick(getMethodAttr(exercise)).unsafePerformIO()
+      onClick(getMethodAttr(exercise)).value
     })
   }
 
-  def setInputWidth(input: HTMLInputElement): IO[JQuery] =
-    io($(input).width(inputSize(getInputLength(input))))
+  def setInputWidth(input: HTMLInputElement): Coeval[JQuery] =
+    Coeval($(input).width(inputSize(getInputLength(input))))
 
-  def inputReplacements: IO[Seq[(HTMLElement, String)]] = for {
+  def inputReplacements: Coeval[Seq[(HTMLElement, String)]] = for {
     blocks ← getCodeBlocks
   } yield blocks.map(code ⇒ code → replaceInputByRes(getTextInCode(code)))
 
@@ -137,7 +139,7 @@ object DomHandler {
 
   def methodParent(input: HTMLInputElement): Option[String] = methodName($(input).closest(".exercise").getDiv)
 
-  def allInputs: IO[List[HTMLInputElement]] = io { $(".exercise-code>input").inputs.toList }
+  def allInputs: Coeval[List[HTMLInputElement]] = Coeval { $(".exercise-code>input").inputs.toList }
 
   def inputs(el: HTMLElement): List[HTMLInputElement] = $(el).find("input").inputs.toList
 
@@ -153,7 +155,7 @@ object DomHandler {
 
   def inputsInExercise(exercise: HTMLElement): Seq[HTMLInputElement] = $(exercise).find("input").inputs
 
-  def getCodeBlocks: IO[Seq[HTMLElement]] = io { $("code.exercise-code").elements }
+  def getCodeBlocks: Coeval[Seq[HTMLElement]] = Coeval { $("code.exercise-code").elements }
 
   def getTextInCode(code: HTMLElement): String = $(code).text
 
@@ -163,8 +165,8 @@ object DomHandler {
 
   def isLogged: Boolean = $("#loggedUser").length > 0
 
-  def setInputValue(input: HTMLInputElement, v: String): IO[Unit] = for {
-    _ ← io { $(input) `val` (v) }
+  def setInputValue(input: HTMLInputElement, v: String): Coeval[Unit] = for {
+    _ ← Coeval { $(input) `val` (v) }
     _ ← setInputWidth(input)
   } yield ()
 

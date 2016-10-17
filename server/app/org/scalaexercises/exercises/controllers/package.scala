@@ -10,10 +10,21 @@ import org.scalaexercises.evaluator.EvalResult._
 import play.api.http.{ ContentTypeOf, ContentTypes, Writeable }
 import play.api.libs.json.JsError
 import play.api.mvc.{ Codec, Request }
+import org.scalaexercises.types.evaluator.Dependency
+import org.scalaexercises.evaluator.{ Dependency ⇒ EvaluatorDependency }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import org.scalaexercises.exercises.utils._
+
+import org.scalaexercises.evaluator.EvaluatorClient
+import org.scalaexercises.evaluator.EvaluatorClient._
+
 object `package` {
+
+  lazy val evaluatorClient: EvaluatorClient = new EvaluatorClient(
+    ConfigUtils.evaluatorUrl, ConfigUtils.evaluatorAuthKey
+  )
 
   def isAjax[A](implicit request: Request[A]) = request.headers.get("X-Requested-With").contains("XMLHttpRequest")
 
@@ -29,6 +40,10 @@ object `package` {
 
   implicit def writeableOf_JsError(implicit codec: Codec): Writeable[JsError] = {
     Writeable(e ⇒ JsError.toJson(e).toString.getBytes("utf-8"))
+  }
+
+  implicit class EvaluatorDependenciesConverter(deps: List[Dependency]) {
+    def toEvaluatorDeps = deps map (d ⇒ EvaluatorDependency(d.groupId, d.artifactId, d.version))
   }
 
   def formatEvaluationResponse(
