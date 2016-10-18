@@ -38,4 +38,4 @@ bin/
 .DS_Store
 
 # PGP keys
-*.gpg
+secring.gpg
