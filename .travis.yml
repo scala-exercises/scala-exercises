@@ -7,7 +7,7 @@ services:
 before_script:
   - ./scripts/create_test_db
 scala:
-  - 2.11.7
+  - 2.11.8
 jdk:
   - oraclejdk8
 cache:
@@ -18,11 +18,18 @@ env:
   global:
     JAVA_OPTS=-Xmx2g
     SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:MaxPermSize=512m"
+before_install:
+  - openssl aes-256-cbc -K $encrypted_ef7b2581dd2c_key -iv $encrypted_ef7b2581dd2c_iv -in secring.gpg.enc -out secring.gpg -d
 install:
   - gem install sass
 script:
   - sbt testAll
   - sbt coverageTests/clean coverage coverageTests/test coverageOff coverageTests/coverageReport coverageTests/coverageAggregate
 after_success:
-  - bash deploy.sh
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
+- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+     sbt publishSignedAll;
+  fi
+- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+     echo "Not in master branch, skipping deploy and release";
+  fi

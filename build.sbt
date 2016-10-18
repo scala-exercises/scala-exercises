@@ -2,27 +2,6 @@ import play.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
 
-///////////////////
-// Global settings:
-///////////////////
-
-// loads the jvm project at sbt startup
-onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
-
-
-parallelExecution in Global := false
-
-// Disable forking in CI
-fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
-
-lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
-
-// Aliases
-
-addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
-addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
-addCommandAlias("publishSignedAll", ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")
-
 
 ////////////////////
 // Project Modules:
@@ -214,3 +193,32 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
 
 lazy val coverageTests = (project in file("coverageTests"))
   .aggregate(server, client, runtime, definitions, compiler)
+
+///////////////////
+// Global settings:
+///////////////////
+
+// loads the jvm project at sbt startup
+onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
+
+parallelExecution in Global := false
+
+// Disable forking in CI
+fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
+
+
+// These settings should be global to be able to capture the env var:
+lazy val gpgFolder = sys.env.getOrElse("PGP_FOLDER", ".")
+
+pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
+pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
+pgpSecretRing := file(s"$gpgFolder/secring.gpg")
+
+lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
+
+// Aliases
+
+addCommandAlias("testAll", ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
+addCommandAlias("publishAll", ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
+addCommandAlias("publishSignedAll", ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")
+
