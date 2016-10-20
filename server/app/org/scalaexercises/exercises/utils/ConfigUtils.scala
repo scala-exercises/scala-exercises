@@ -13,13 +13,16 @@ object ConfigUtils {
 
   implicit def application: Application = Play.current
 
-  lazy val githubAuthId = application.configuration.getString("github.client.id").getOrElse("")
-  lazy val githubAuthSecret = application.configuration.getString("github.client.secret").getOrElse("")
-  lazy val githubSiteOwner = application.configuration.getString("github.site.owner").getOrElse("")
-  lazy val githubSiteRepo = application.configuration.getString("github.site.repo").getOrElse("")
+  lazy val githubAuthId = getConfigString("github.client.id")
+  lazy val githubAuthSecret = getConfigString("github.client.secret")
+  lazy val githubSiteOwner = getConfigString("github.site.owner")
+  lazy val githubSiteRepo = getConfigString("github.site.repo")
 
-  lazy val evaluatorUrl = application.configuration.getString("evaluator.url").getOrElse("")
-  lazy val evaluatorAuthKey = application.configuration.getString("evaluator.authKey").getOrElse("")
+  lazy val evaluatorUrl = getConfigString("evaluator.url")
+  lazy val evaluatorAuthKey = getConfigString("evaluator.authKey")
+
+  private[this] def getConfigString(key: String): String =
+    application.configuration.getString(key).getOrElse("")
 
   def callbackUrl = {
     val rootUrl = application
