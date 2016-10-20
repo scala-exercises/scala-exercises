@@ -7,8 +7,6 @@ package org.scalaexercises.exercises.persistence.domain
 
 import github4s.free.domain.{ User ⇒ GHUser }
 import org.scalaexercises.types.user.User
-import shapeless._
-import ops.record._
 
 object UserCreation {
 
@@ -36,12 +34,7 @@ object UserCreation {
 
 object UserQueries {
 
-  val userGen = LabelledGeneric[org.scalaexercises.types.user.User]
-  val userKeys = Keys[userGen.Repr]
-  val allFields: List[String] =
-    userKeys()
-      .to[List]
-      .map { case Symbol(s) ⇒ s.toLowerCase }
+  val allFields: List[String] = fieldNames[User]()
 
   private[this] val commonFindBy =
     """SELECT
