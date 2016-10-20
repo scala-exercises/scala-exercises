@@ -92,7 +92,7 @@ class ApplicationController(cache: CacheApi)(
       library ← exerciseOps.getLibrary(libraryName)
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       section ← user.fold(
-        Free.pure(None): Free[ExercisesApp, Option[String]]
+        Free.pure[ExercisesApp, Option[String]](None)
       )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
     } yield (library, user, section)
 
@@ -159,11 +159,8 @@ class ApplicationController(cache: CacheApi)(
     ).as("text/javascript")
   })
 
-  private def toContributors(contributions: List[Contribution]): List[Contributor] = contributions
-    .groupBy(c ⇒ (c.author, c.authorUrl, c.avatarUrl))
-    .keys
-    .map { case (author, authorUrl, avatarUrl) ⇒ Contributor(author, authorUrl, avatarUrl) }
-    .toList
+  private def toContributors(contributions: List[Contribution]): List[Contributor] =
+    contributions.map(c ⇒ Contributor(c.author, c.authorUrl, c.avatarUrl)).distinct
 
   def onHandlerNotFound(route: String) = Action { implicit request ⇒
     if (route.endsWith("/")) {
