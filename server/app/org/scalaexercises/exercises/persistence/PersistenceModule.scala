@@ -13,47 +13,47 @@ import scalaz.Foldable
 
 class PersistenceModule {
 
-  def fetchList[K](sql: String)(implicit ev: Composite[K]): ConnectionIO[List[K]] =
+  def fetchList[K: Composite](sql: String): ConnectionIO[List[K]] =
     Query[HNil, K](sql).toQuery0(HNil).to[List]
 
-  def fetchList[A, K](
+  def fetchList[A: Composite, K: Composite](
     sql:    String,
     values: A
-  )(implicit ev: Composite[A], ev2: Composite[K]): ConnectionIO[List[K]] =
+  ): ConnectionIO[List[K]] =
     Query[A, K](sql).to[List](values)
 
-  def fetchOption[A, K](
+  def fetchOption[A: Composite, K: Composite](
     sql:    String,
     values: A
-  )(implicit ev: Composite[A], ev2: Composite[K]): ConnectionIO[Option[K]] =
+  ): ConnectionIO[Option[K]] =
     Query[A, K](sql).option(values)
 
-  def fetchUnique[A, K](
+  def fetchUnique[A: Composite, K: Composite](
     sql:    String,
     values: A
-  )(implicit ev: Composite[A], ev2: Composite[K]): ConnectionIO[K] =
+  ): ConnectionIO[K] =
     Query[A, K](sql).unique(values)
 
   def update(sql: String): ConnectionIO[Int] =
     Update[HNil](sql).run(HNil)
 
-  def update[A](
+  def update[A: Composite](
     sql:    String,
     values: A
-  )(implicit ev: Composite[A]): ConnectionIO[Int] =
+  ): ConnectionIO[Int] =
     Update[A](sql).run(values)
 
-  def updateWithGeneratedKeys[A, K](
+  def updateWithGeneratedKeys[A: Composite, K: Composite](
     sql:    String,
     fields: List[String],
     values: A
-  )(implicit ev: Composite[A], ev2: Composite[K]): ConnectionIO[K] =
+  ): ConnectionIO[K] =
     Update[A](sql).withUniqueGeneratedKeys[K](fields: _*)(values)
 
-  def updateMany[F[_], A](
+  def updateMany[F[_]: Foldable, A: Composite](
     sql:    String,
     values: F[A]
-  )(implicit ev: Composite[A], F: Foldable[F]): ConnectionIO[Int] =
+  ): ConnectionIO[Int] =
     Update[A](sql).updateMany(values)
 
 }
