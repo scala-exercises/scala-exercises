@@ -10,8 +10,8 @@
         "WARTING": "false",
         "FORMATCODE": "false",
         "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
-        "JAVA_OPTS": "-Xmx1024m -Xms512m -Xss512k -XX:ReservedCodeCacheSize=128m -XX:+UseCompressedOops",
-        "JAVA_TOOL_OPTIONS": "-Xmx1024m -Xms512m -Xss512k -XX:ReservedCodeCacheSize=128m -XX:+UseCompressedOops",
+        "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
+        "JAVA_TOOL_OPTIONS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
         "EVALUATOR_AUTH_KEY": {
             "required": true
         },
