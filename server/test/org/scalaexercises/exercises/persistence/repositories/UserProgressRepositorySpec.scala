@@ -34,7 +34,7 @@ class UserProgressRepositorySpec
     (for {
       _ ← repository.deleteAll()
       _ ← userRepository.deleteAll()
-    } yield ()).transact(trx).run
+    } yield ()).transact(trx).unsafePerformSync
   }
 
   def newUser(usr: UserCreation.Request): ConnectionIO[User] = for {
@@ -49,7 +49,7 @@ class UserProgressRepositorySpec
         userProgress ← repository.create(progress)
       } yield userProgress == progress.asUserProgress(userProgress.id)
 
-      val result = tx.transact(trx).run
+      val result = tx.transact(trx).unsafePerformSync
       assert(result)
     }
   }
@@ -64,7 +64,7 @@ class UserProgressRepositorySpec
         userProgress ← repository.update(updatedProgress)
       } yield userProgress.equals(updatedProgress.asUserProgress(userProgress.id))
 
-      assert(tx.transact(trx).run)
+      assert(tx.transact(trx).unsafePerformSync)
     }
   }
 
@@ -77,7 +77,7 @@ class UserProgressRepositorySpec
         currentUserProgress ← repository.getExerciseEvaluations(user = user, libraryName = prg.libraryName, sectionName = prg.sectionName)
       } yield currentUserProgress.size.equals(1) && currentUserProgress.head.equals(userProgress)
 
-      assert(tx.transact(trx).run)
+      assert(tx.transact(trx).unsafePerformSync)
     }
   }
 
@@ -96,7 +96,7 @@ class UserProgressRepositorySpec
         )
       } yield currentUserProgress.fold(false)(up ⇒ up.equals(userProgress))
 
-      val result = tx.transact(trx).run
+      val result = tx.transact(trx).unsafePerformSync
       assert(result)
     }
   }
@@ -112,7 +112,7 @@ class UserProgressRepositorySpec
         up.equals(userProgress)
       })
 
-      assert(tx.transact(trx).run)
+      assert(tx.transact(trx).unsafePerformSync)
     }
 
   }
@@ -126,7 +126,7 @@ class UserProgressRepositorySpec
         maybeProgress ← repository.findById(userProgress.id)
       } yield !maybeProgress.isDefined
 
-      assert(tx.transact(trx).run)
+      assert(tx.transact(trx).unsafePerformSync)
     }
   }
 
@@ -139,7 +139,7 @@ class UserProgressRepositorySpec
         maybeProgress ← repository.findById(userProgress.id)
       } yield !maybeProgress.isDefined
 
-      assert(tx.transact(trx).run)
+      assert(tx.transact(trx).unsafePerformSync)
     }
   }
 }

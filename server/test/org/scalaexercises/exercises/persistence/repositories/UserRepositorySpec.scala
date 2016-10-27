@@ -29,7 +29,7 @@ class UserRepositorySpec
 
   val repository = implicitly[UserRepository]
   override def beforeAll() =
-    repository.deleteAll.transact(transactor).run
+    repository.deleteAll.transact(transactor).unsafePerformSync
 
   // Generators
   implicitly[Arbitrary[UserCreation.Request]]
@@ -37,7 +37,7 @@ class UserRepositorySpec
   // Properties
   property("new users can be created") {
     forAll { newUser: Request ⇒
-      val storedUser = repository.create(newUser).transact(transactor).run.toOption
+      val storedUser = repository.create(newUser).transact(transactor).unsafePerformSync.toOption
       storedUser.fold(false)(u ⇒ {
         u == newUser.asUser(u.id)
       }) shouldBe true
@@ -46,9 +46,9 @@ class UserRepositorySpec
 
   property("users can be queried by their login") {
     forAll { newUser: Request ⇒
-      repository.create(newUser).transact(transactor).run
+      repository.create(newUser).transact(transactor).unsafePerformSync
 
-      val storedUser = repository.getByLogin(newUser.login).transact(transactor).run
+      val storedUser = repository.getByLogin(newUser.login).transact(transactor).unsafePerformSync
       storedUser.fold(false)(u ⇒ {
         u == newUser.asUser(u.id)
       }) shouldBe true
@@ -57,10 +57,10 @@ class UserRepositorySpec
 
   property("users can be queried by their ID") {
     forAll { newUser: Request ⇒
-      val storedUser = repository.create(newUser).transact(transactor).run.toOption
+      val storedUser = repository.create(newUser).transact(transactor).unsafePerformSync.toOption
 
       storedUser.fold(false)(u ⇒ {
-        val userById = repository.getById(u.id).transact(transactor).run
+        val userById = repository.getById(u.id).transact(transactor).unsafePerformSync
         userById.contains(u)
       }) shouldBe true
     }
@@ -68,25 +68,25 @@ class UserRepositorySpec
 
   property("users can be deleted") {
     forAll { newUser: Request ⇒
-      val storedUser = repository.create(newUser).transact(transactor).run.toOption
+      val storedUser = repository.create(newUser).transact(transactor).unsafePerformSync.toOption
 
       storedUser.fold(false)(u ⇒ {
-        repository.delete(u.id).transact(transactor).run
-        repository.getByLogin(newUser.login).transact(transactor).run.isEmpty
+        repository.delete(u.id).transact(transactor).unsafePerformSync
+        repository.getByLogin(newUser.login).transact(transactor).unsafePerformSync.isEmpty
       }) shouldBe true
     }
   }
 
   property("users can be updated") {
     forAll { newUser: Request ⇒
-      repository.create(newUser).transact(transactor).run
+      repository.create(newUser).transact(transactor).unsafePerformSync
 
-      val storedUser = repository.getByLogin(newUser.login).transact(transactor).run
+      val storedUser = repository.getByLogin(newUser.login).transact(transactor).unsafePerformSync
       storedUser.fold(false)(u ⇒ {
         val modifiedUser = u.copy(email = Some("alice+spam@example.com"))
-        repository.update(modifiedUser).transact(transactor).run
+        repository.update(modifiedUser).transact(transactor).unsafePerformSync
 
-        repository.getByLogin(u.login).transact(transactor).run.contains(modifiedUser)
+        repository.getByLogin(u.login).transact(transactor).unsafePerformSync.contains(modifiedUser)
       }) shouldBe true
     }
   }
