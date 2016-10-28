@@ -16,6 +16,7 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import scalaz.concurrent.Task
 import org.scalaexercises.types.user.User
 import cats.implicits._
+import scalaz.syntax.apply._
 
 class UserProgressRepositorySpec
     extends PropSpec
@@ -30,12 +31,11 @@ class UserProgressRepositorySpec
   val repository = implicitly[UserProgressRepository]
   val userRepository = implicitly[UserRepository]
 
-  override def beforeAll() = {
-    (for {
-      _ ← repository.deleteAll()
-      _ ← userRepository.deleteAll()
-    } yield ()).transact(trx).unsafePerformSync
-  }
+  def assertConnectionIO(cio: ConnectionIO[Boolean]): Unit =
+    assert(cio.transact(trx).unsafePerformSync)
+
+  override def beforeAll() =
+    (repository.deleteAll() *> userRepository.deleteAll()).transact(trx).unsafePerformSync
 
   def newUser(usr: UserCreation.Request): ConnectionIO[User] = for {
     maybeUser ← userRepository.create(usr)
@@ -49,8 +49,7 @@ class UserProgressRepositorySpec
         userProgress ← repository.create(progress)
       } yield userProgress == progress.asUserProgress(userProgress.id)
 
-      val result = tx.transact(trx).unsafePerformSync
-      assert(result)
+      assertConnectionIO(tx)
     }
   }
 
@@ -64,7 +63,7 @@ class UserProgressRepositorySpec
         userProgress ← repository.update(updatedProgress)
       } yield userProgress.equals(updatedProgress.asUserProgress(userProgress.id))
 
-      assert(tx.transact(trx).unsafePerformSync)
+      assertConnectionIO(tx)
     }
   }
 
@@ -77,7 +76,7 @@ class UserProgressRepositorySpec
         currentUserProgress ← repository.getExerciseEvaluations(user = user, libraryName = prg.libraryName, sectionName = prg.sectionName)
       } yield currentUserProgress.size.equals(1) && currentUserProgress.head.equals(userProgress)
 
-      assert(tx.transact(trx).unsafePerformSync)
+      assertConnectionIO(tx)
     }
   }
 
@@ -94,10 +93,9 @@ class UserProgressRepositorySpec
           method = prg.method,
           version = prg.version
         )
-      } yield currentUserProgress.fold(false)(up ⇒ up.equals(userProgress))
+      } yield currentUserProgress.forall(up ⇒ up.equals(userProgress))
 
-      val result = tx.transact(trx).unsafePerformSync
-      assert(result)
+      assertConnectionIO(tx)
     }
   }
 
@@ -108,11 +106,9 @@ class UserProgressRepositorySpec
         progress = prg.copy(user = user)
         userProgress ← repository.create(progress)
         maybeUserProgress ← repository.findById(userProgress.id)
-      } yield maybeUserProgress.fold(false)(up ⇒ {
-        up.equals(userProgress)
-      })
+      } yield maybeUserProgress.forall(up ⇒ up.equals(userProgress))
 
-      assert(tx.transact(trx).unsafePerformSync)
+      assertConnectionIO(tx)
     }
 
   }
@@ -124,9 +120,9 @@ class UserProgressRepositorySpec
         userProgress ← repository.create(prg.copy(user = user))
         _ ← repository.delete(userProgress.id)
         maybeProgress ← repository.findById(userProgress.id)
-      } yield !maybeProgress.isDefined
+      } yield maybeProgress.isEmpty
 
-      assert(tx.transact(trx).unsafePerformSync)
+      assertConnectionIO(tx)
     }
   }
 
@@ -137,9 +133,9 @@ class UserProgressRepositorySpec
         userProgress ← repository.create(prg.copy(user = user))
         _ ← repository.deleteAll()
         maybeProgress ← repository.findById(userProgress.id)
-      } yield !maybeProgress.isDefined
+      } yield maybeProgress.isEmpty
 
-      assert(tx.transact(trx).unsafePerformSync)
+      assertConnectionIO(tx)
     }
   }
 }

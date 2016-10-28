@@ -44,7 +44,7 @@ trait ArbitraryInstances extends Assertions {
 
   def persistentUserArbitrary(implicit transactor: Transactor[Task], UR: UserRepository): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request ⇒
-      UR.create(request).transact(transactor).run match {
+      UR.create(request).transact(transactor).unsafePerformSync match {
         case Right(user) ⇒ user
         case Left(error) ⇒ fail("Failed generating persistent users : $error")
       }
