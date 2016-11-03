@@ -28,9 +28,11 @@ import scala.concurrent.Future
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
+import io.freestyle.syntax._
+
 class SitemapController(
     implicit
-    exerciseOps: ExerciseOps[ExercisesApp],
+    exerciseOps: ExerciseOps[ExercisesApp.T],
     T:           Transactor[Task]
 ) extends Controller with ProdInterpreters {
 

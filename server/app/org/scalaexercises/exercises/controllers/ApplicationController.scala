@@ -34,13 +34,14 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
+import io.freestyle.syntax._
 
 class ApplicationController(cache: CacheApi)(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp],
-    userOps:         UserOps[ExercisesApp],
-    userProgressOps: UserProgressOps[ExercisesApp],
-    githubOps:       GithubOps[ExercisesApp],
+    exerciseOps:     ExerciseOps[ExercisesApp.T],
+    userOps:         UserOps[ExercisesApp.T],
+    userProgressOps: UserProgressOps[ExercisesApp.T],
+    githubOps:       GithubOps[ExercisesApp.T],
     T:               Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
   implicit def application: Application = Play.current
@@ -92,7 +93,7 @@ class ApplicationController(cache: CacheApi)(
       library ← exerciseOps.getLibrary(libraryName)
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       section ← user.fold(
-        Free.pure[ExercisesApp, Option[String]](None)
+        Free.pure(None): Free[ExercisesApp.T, Option[String]]
       )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
     } yield (library, user, section)
 

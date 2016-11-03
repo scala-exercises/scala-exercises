@@ -18,9 +18,11 @@ lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
   .settings(
     name := "core",
     libraryDependencies ++= Seq(
+      "com.fortysevendeg" %%% "freestyle" % v('freestyle),
       "org.typelevel" %%% "cats-core" % v('cats),
       "org.typelevel" %%% "cats-free" % v('cats),
-      compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector))
+      compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector)),
+      compilerPlugin("org.scalamacros" % "paradise" % v('paradise) cross CrossVersion.full)
     )
   )
 

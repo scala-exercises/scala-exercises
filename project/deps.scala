@@ -36,7 +36,8 @@ trait deps {
     'slf4j -> "1.6.4",
     'upickle -> "0.2.8",
     'utileval -> "6.34.0",
-    'webjars -> "2.3.0"
+    'webjars -> "2.3.0",
+    'freestyle -> "0.1.1-SNAPSHOT"
   ) ++ Map(
     // JS Versions
     'scalajsdom -> "0.8.1",

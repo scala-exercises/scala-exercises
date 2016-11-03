@@ -5,15 +5,20 @@
 
 package org.scalaexercises.algebra
 
-import cats.data.Coproduct
+import org.scalaexercises.algebra.user.UserOps
+import org.scalaexercises.algebra.exercises.ExerciseOps
+import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.github.GithubOps
 
-import org.scalaexercises.algebra.user.UserOp
-import org.scalaexercises.algebra.exercises.ExerciseOp
-import org.scalaexercises.algebra.progress.UserProgressOp
-import org.scalaexercises.algebra.github.GithubOp
+import io.freestyle._
 
 object app {
-  type C01[A] = Coproduct[ExerciseOp, UserOp, A]
-  type C02[A] = Coproduct[UserProgressOp, C01, A]
-  type ExercisesApp[A] = Coproduct[GithubOp, C02, A]
+
+  @module trait ExercisesApp[F[_]] {
+    val exerciseOps: ExerciseOps[F]
+    val userOps: UserOps[F]
+    val userProgressOps: UserProgressOps[F]
+    val githubOps: GithubOps[F]
+  }
+
 }
