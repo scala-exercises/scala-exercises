@@ -11,6 +11,7 @@ import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery ⇒ $, JQuery }
+import scala.scalajs.js.timers._
 
 import monix.cats._
 import monix.eval.Coeval
@@ -70,9 +71,36 @@ object DomHandler {
     _ ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
   } yield ()
 
+  /** Assigns behavior to an input element change event
+    */
+  def onInputChange(
+    onchange: (String, Seq[String]) ⇒ Coeval[Unit]
+  ): Coeval[Unit] = {
+    for {
+      inputs ← allInputs
+      _ ← inputs.map(input ⇒ attachOnInputChange(input, onchange)).sequence
+      _ ← inputs.map(input ⇒ attachOnInputPaste(input, onchange)).sequence
+    } yield ()
+  }
+
   /** Shows modal for signing up
     */
   def showSignUpModal: Coeval[Unit] = Coeval($("#mustSignUp").modal("show"))
+
+  def updateExerciseInput(
+    input:   HTMLInputElement,
+    actions: ((String, Seq[String])) ⇒ Unit
+  ) = {
+    setInputWidth(input).value
+
+    val maybeInputInfo = for {
+      methodName ← methodParent(input)
+      exercise ← findExerciseByMethod(methodName)
+      inputValues = getInputsValues(exercise)
+    } yield (methodName, inputValues)
+
+    maybeInputInfo.foreach[Unit](actions)
+  }
 
   def attachKeyUpHandler(
     input:          HTMLInputElement,
@@ -80,21 +108,48 @@ object DomHandler {
     onEnterPressed: String ⇒ Coeval[Unit]
   ): Coeval[Unit] = Coeval {
     $(input).keyup((e: dom.KeyboardEvent) ⇒ {
-
-      setInputWidth(input).value
-
-      val maybeKeyUpInfo = for {
-        methodName ← methodParent(input)
-        exercise ← findExerciseByMethod(methodName)
-        inputValues = getInputsValues(exercise)
-      } yield (methodName, inputValues)
-
-      maybeKeyUpInfo foreach { info ⇒
-        e.keyCode match {
-          case KeyCode.Enter ⇒ onEnterPressed(info._1).value
-          case _             ⇒ onkeyup(info._1, info._2).value
+      updateExerciseInput(
+        input,
+        (info: (String, Seq[String])) ⇒ {
+          e.keyCode match {
+            case KeyCode.Enter ⇒ onEnterPressed(info._1).value
+            case _             ⇒ onkeyup(info._1, info._2).value
+          }
+          ()
         }
+      )
+    })
+  }
+
+  /** Provides support for input changes related to events like drag-and-drop and others (not pasting)
+    */
+  def attachOnInputChange(
+    input:    HTMLInputElement,
+    onchange: (String, Seq[String]) ⇒ Coeval[Unit]
+  ): Coeval[Unit] = Coeval {
+    $(input).change((e: dom.Event) ⇒ {
+      updateExerciseInput(
+        input,
+        (info: (String, Seq[String])) ⇒ ()
+      )
+    })
+  }
+
+  /** Provides support for input changes related to a pasting event
+    */
+  def attachOnInputPaste(
+    input:    HTMLInputElement,
+    onchange: (String, Seq[String]) ⇒ Coeval[Unit]
+  ): Coeval[Unit] = Coeval {
+    $(input).bind("paste", (e: dom.Event) ⇒ {
+
+      setTimeout(100.0) {
+        updateExerciseInput(
+          input,
+          (info: (String, Seq[String])) ⇒ ()
+        )
       }
+
     })
   }
 
@@ -172,7 +227,7 @@ object DomHandler {
 
   def inputSize(length: Int): Double = length match {
     case 0 ⇒ 12d
-    case _ ⇒ (12 + (length + 1) * 7).toDouble
+    case _ ⇒ 4d + length * 8.4
   }
 
   implicit class JQueryOps(j: JQuery) {
