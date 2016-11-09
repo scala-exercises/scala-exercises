@@ -68,6 +68,9 @@ object ExercisesJS extends js.JSApp {
         _ ← onButtonClick((method: String) ⇒ {
           triggerAction(CompileExercise(method))
         })
+        _ ← onInputChange((method: String, arguments: Seq[String]) ⇒ {
+          triggerAction(UpdateExercise(method, arguments))
+        })
       } yield ()
     }
 
