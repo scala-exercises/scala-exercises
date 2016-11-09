@@ -78,8 +78,10 @@ object DomHandler {
   ): Coeval[Unit] = {
     for {
       inputs ← allInputs
-      _ ← inputs.map(input ⇒ attachOnInputChange(input, onchange)).sequence
-      _ ← inputs.map(input ⇒ attachOnInputPaste(input, onchange)).sequence
+      _ ← inputs.map(input ⇒ {
+        attachOnInputChange(input, onchange)
+        attachOnInputPaste(input, onchange)
+      }).sequence
     } yield ()
   }
 
@@ -111,9 +113,10 @@ object DomHandler {
       updateExerciseInput(
         input,
         (info: (String, Seq[String])) ⇒ {
+          val (method, params) = info
           e.keyCode match {
-            case KeyCode.Enter ⇒ onEnterPressed(info._1).value
-            case _             ⇒ onkeyup(info._1, info._2).value
+            case KeyCode.Enter ⇒ onEnterPressed(method).value
+            case _             ⇒ onkeyup(method, params).value
           }
           ()
         }
