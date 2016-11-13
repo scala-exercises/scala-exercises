@@ -56,8 +56,8 @@ object ExercisesService extends RuntimeSharedConversions {
 
     } yield (runtimeLibrary.buildMetaInfo, runtimeExercise.packageName, runtimeExercise.imports)
 
-    runtimeInfo match {
-      case Right((b: RuntimeBuildInfo, pckgName: String, importList: List[String])) ⇒
+    runtimeInfo map {
+      case (b: RuntimeBuildInfo, pckgName: String, importList: List[String]) ⇒
 
         val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
           pckgName,
@@ -68,13 +68,12 @@ object ExercisesService extends RuntimeSharedConversions {
           b.libraryDependencies
         )
 
-        Either.right((
+        (
           resolvers,
           dependencies map (d ⇒ Dependency(d.groupId, d.artifactId, d.version)),
           code
-        ))
+        )
 
-      case Left(msg) ⇒ Either.left(msg)
     }
   }
 

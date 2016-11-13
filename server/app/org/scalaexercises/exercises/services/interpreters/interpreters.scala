@@ -12,6 +12,7 @@ import org.scalaexercises.algebra.progress._
 import org.scalaexercises.algebra.github._
 import org.scalaexercises.types.github._
 import org.scalaexercises.exercises.persistence.repositories.{ UserProgressRepository, UserRepository }
+import org.scalaexercises.exercises.services.ExercisesService
 import github4s.app.GitHub4s
 import github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters, Capture ⇒ GithubCapture }
 import github4s.Github
@@ -27,7 +28,7 @@ import doobie.imports._
 
 import scala.concurrent.{ Future, Promise }
 import scala.language.higherKinds
-import scalaz.{ \/, -\/, \/- }
+import scalaz.\/
 import scalaz.concurrent.Task
 import FreeExtensions._
 
@@ -59,50 +60,42 @@ trait Interpreters[M[_]] {
 
   /** Lifts Exercise Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def exerciseOpsInterpreter(implicit
-    A: MonadError[M, Throwable],
-                                      C: Capture[M]): ExerciseOp ~> M = new (ExerciseOp ~> M) {
-
-    import org.scalaexercises.exercises.services.ExercisesService._
-
-    def apply[A](fa: ExerciseOp[A]): M[A] = fa match {
-      case GetLibraries()                       ⇒ C.capture(libraries)
-      case GetSection(libraryName, sectionName) ⇒ C.capture(section(libraryName, sectionName))
-      case BuildRuntimeInfo(evalInfo)           ⇒ C.capture(buildRuntimeInfo(evalInfo))
-    }
+  implicit def exerciseOpsInterpreter(
+    implicit
+    A: MonadError[M, Throwable], C: Capture[M]
+  ): ExerciseOp ~> M = λ[(ExerciseOp ~> M)] {
+    case GetLibraries()                       ⇒ C.capture(ExercisesService.libraries)
+    case GetSection(libraryName, sectionName) ⇒ C.capture(ExercisesService.section(libraryName, sectionName))
+    case BuildRuntimeInfo(evalInfo)           ⇒ C.capture(ExercisesService.buildRuntimeInfo(evalInfo))
   }
 
-  implicit def userOpsInterpreter(implicit A: MonadError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOp ~> M = new (UserOp ~> M) {
-
-    import UR._
-
-    def apply[A](fa: UserOp[A]): M[A] = fa match {
-      case GetUsers()            ⇒ all.transact(T)
-      case GetUserByLogin(login) ⇒ getByLogin(login).transact(T)
-      case CreateUser(newUser)   ⇒ create(newUser).transact(T)
-      case UpdateUser(user)      ⇒ update(user).map(_.isDefined).transact(T)
-      case DeleteUser(user)      ⇒ delete(user.id).transact(T)
-    }
+  implicit def userOpsInterpreter(
+    implicit
+    A: MonadError[M, Throwable], T: Transactor[M], UR: UserRepository
+  ): UserOp ~> M = λ[(UserOp ~> M)] {
+    case GetUsers()            ⇒ UR.all.transact(T)
+    case GetUserByLogin(login) ⇒ UR.getByLogin(login).transact(T)
+    case CreateUser(newUser)   ⇒ UR.create(newUser).transact(T)
+    case UpdateUser(user)      ⇒ UR.update(user).map(_.isDefined).transact(T)
+    case DeleteUser(user)      ⇒ UR.delete(user.id).transact(T)
   }
 
   implicit def userProgressOpsInterpreter(
     implicit
     UPR: UserProgressRepository, T: Transactor[M]
-  ): UserProgressOp ~> M = new (UserProgressOp ~> M) {
-
-    def apply[A](fa: UserProgressOp[A]): M[A] = {
-      fa match {
-        case GetLastSeenSection(user, library) ⇒
-          UPR.getLastSeenSection(user, library).transact(T)
-        case GetExerciseEvaluations(user, library, section) ⇒
-          UPR.getExerciseEvaluations(user, library, section).transact(T)
-        case UpdateUserProgress(userProgress) ⇒
-          UPR.upsert(userProgress).transact(T)
-      }
-    }
+  ): UserProgressOp ~> M = λ[(UserProgressOp ~> M)] {
+    case GetLastSeenSection(user, library) ⇒
+      UPR.getLastSeenSection(user, library).transact(T)
+    case GetExerciseEvaluations(user, library, section) ⇒
+      UPR.getExerciseEvaluations(user, library, section).transact(T)
+    case UpdateUserProgress(userProgress) ⇒
+      UPR.upsert(userProgress).transact(T)
   }
 
-  implicit def githubOpsInterpreter(implicit A: MonadError[M, Throwable], CG: GithubCapture[M], TR: RecursiveTailRecM[M]): GithubOp ~> M = new (GithubOp ~> M) {
+  implicit def githubOpsInterpreter(
+    implicit
+    A: MonadError[M, Throwable], CG: GithubCapture[M], TR: RecursiveTailRecM[M]
+  ): GithubOp ~> M = new (GithubOp ~> M) {
 
     def apply[A](fa: GithubOp[A]): M[A] = {
 
@@ -166,16 +159,13 @@ trait TestInterpreters extends Interpreters[Id] with IdInstances {
 
 object FreeExtensions {
 
-  def scalazToCatsDisjunction[A, B](disj: A \/ B): Either[A, B] =
-    disj.fold(l ⇒ Either.left(l), r ⇒ Either.right(r))
-
   implicit class FreeOps[F[_], A](f: Free[F, A]) {
     implicit val tailRecMTask = new cats.RecursiveTailRecM[scalaz.concurrent.Task] {}
 
     def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Either[Throwable, A]] = {
       val p = Promise[Either[Throwable, A]]
       f.foldMap(interpreter).unsafePerformAsync { result: Throwable \/ A ⇒
-        p.success(scalazToCatsDisjunction(result))
+        p.success(result.toEither)
       }
       p.future
     }
@@ -196,16 +186,13 @@ trait TaskInstances {
       fa flatMap f
 
     override def tailRecM[A, B](a: A)(f: A ⇒ Task[Either[A, B]]): Task[B] =
-      Task.tailrecM((a: A) ⇒ f(a) map (t ⇒ toScalazDisjunction(t)))(a)
+      Task.tailrecM((a: A) ⇒ f(a) map (\/.fromEither))(a)
 
     override def raiseError[A](e: Throwable): Task[A] =
       Task.fail(e)
 
     override def handleErrorWith[A](fa: Task[A])(f: Throwable ⇒ Task[A]): Task[A] =
       fa.handleWith({ case x ⇒ f(x) })
-
-    private[this] def toScalazDisjunction[A, B](disj: Either[A, B]): A \/ B =
-      disj.fold(l ⇒ -\/(l), r ⇒ \/-(r))
   }
 }
 

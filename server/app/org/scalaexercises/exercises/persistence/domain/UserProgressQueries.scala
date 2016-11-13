@@ -7,18 +7,11 @@ package org.scalaexercises.exercises.persistence.domain
 
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
-import shapeless._
-import ops.record._
 import doobie.imports._
 
 object UserProgressQueries {
 
-  val userProgressGen = LabelledGeneric[UserProgress]
-  val userProgressKeys = Keys[userProgressGen.Repr]
-  val allFields: List[String] =
-    userProgressKeys()
-      .to[List]
-      .map { case Symbol(s) ⇒ s.toLowerCase }
+  val allFields: List[String] = fieldNames[UserProgress]()
 
   object Implicits {
     implicit val ExerciseTypeMeta: Meta[ExerciseType] =

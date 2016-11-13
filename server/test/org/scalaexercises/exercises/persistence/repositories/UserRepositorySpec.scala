@@ -15,7 +15,8 @@ import org.scalacheck.Shapeless._
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import scalaz.concurrent.Task
-import cats.implicits._
+import scalaz.syntax.applicative._
+import cats.syntax.either._
 
 class UserRepositorySpec
     extends PropSpec
@@ -29,65 +30,85 @@ class UserRepositorySpec
 
   val repository = implicitly[UserRepository]
   override def beforeAll() =
-    repository.deleteAll.transact(transactor).run
+    repository.deleteAll.transact(transactor).unsafePerformSync
 
   // Generators
   implicitly[Arbitrary[UserCreation.Request]]
 
+  def assertConnectionIO(cio: ConnectionIO[Boolean]): Unit =
+    assert(cio.transact(transactor).unsafePerformSync)
+
   // Properties
   property("new users can be created") {
     forAll { newUser: Request ⇒
-      val storedUser = repository.create(newUser).transact(transactor).run.toOption
-      storedUser.fold(false)(u ⇒ {
-        u == newUser.asUser(u.id)
-      }) shouldBe true
+      val tx: ConnectionIO[Boolean] =
+        repository.create(newUser).map { storedUser ⇒
+          storedUser.toOption.forall(u ⇒ u == newUser.asUser(u.id))
+        }
+      assertConnectionIO(tx)
     }
   }
 
   property("users can be queried by their login") {
     forAll { newUser: Request ⇒
-      repository.create(newUser).transact(transactor).run
+      val create = repository.create(newUser)
+      val get = repository.getByLogin(newUser.login)
 
-      val storedUser = repository.getByLogin(newUser.login).transact(transactor).run
-      storedUser.fold(false)(u ⇒ {
-        u == newUser.asUser(u.id)
-      }) shouldBe true
+      val tx: ConnectionIO[Boolean] =
+        (create *> get).map { storedUser ⇒
+          storedUser.forall(u ⇒ u == newUser.asUser(u.id))
+        }
+
+      assertConnectionIO(tx)
     }
   }
 
   property("users can be queried by their ID") {
     forAll { newUser: Request ⇒
-      val storedUser = repository.create(newUser).transact(transactor).run.toOption
+      val tx: ConnectionIO[Boolean] =
+        repository.create(newUser).flatMap { storedUser ⇒
+          storedUser.toOption.fold(
+            false.pure[ConnectionIO]
+          )(
+            u ⇒ repository.getById(u.id).map(_.contains(u))
+          )
+        }
 
-      storedUser.fold(false)(u ⇒ {
-        val userById = repository.getById(u.id).transact(transactor).run
-        userById.contains(u)
-      }) shouldBe true
+      assertConnectionIO(tx)
     }
   }
 
   property("users can be deleted") {
     forAll { newUser: Request ⇒
-      val storedUser = repository.create(newUser).transact(transactor).run.toOption
+      val tx: ConnectionIO[Boolean] =
+        repository.create(newUser).flatMap { storedUser ⇒
+          storedUser.toOption.fold(false.pure[ConnectionIO]) { u ⇒
+            val delete = repository.delete(u.id)
+            val get = repository.getByLogin(newUser.login)
+            (delete *> get).map(_.isEmpty)
+          }
+        }
 
-      storedUser.fold(false)(u ⇒ {
-        repository.delete(u.id).transact(transactor).run
-        repository.getByLogin(newUser.login).transact(transactor).run.isEmpty
-      }) shouldBe true
+      assertConnectionIO(tx)
     }
   }
 
   property("users can be updated") {
     forAll { newUser: Request ⇒
-      repository.create(newUser).transact(transactor).run
+      val create = repository.create(newUser)
+      val get = repository.getByLogin(newUser.login)
 
-      val storedUser = repository.getByLogin(newUser.login).transact(transactor).run
-      storedUser.fold(false)(u ⇒ {
-        val modifiedUser = u.copy(email = Some("alice+spam@example.com"))
-        repository.update(modifiedUser).transact(transactor).run
+      val tx: ConnectionIO[Boolean] =
+        (create *> get).flatMap { storedUser ⇒
+          storedUser.fold(false.pure[ConnectionIO]) { u ⇒
+            val modifiedUser = u.copy(email = Some("alice+spam@example.com"))
+            val update = repository.update(modifiedUser)
+            val get = repository.getByLogin(u.login)
+            (update *> get).map(_.contains(modifiedUser))
+          }
+        }
 
-        repository.getByLogin(u.login).transact(transactor).run.contains(modifiedUser)
-      }) shouldBe true
+      assertConnectionIO(tx)
     }
   }
 }

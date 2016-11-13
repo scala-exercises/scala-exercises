@@ -17,9 +17,6 @@ class LoaderIOController extends Controller {
     val maybeConf = application
       .configuration
       .getString("loaderio.verificationToken", None)
-    maybeConf map (conf ⇒ conf == s"loaderio-$token" match {
-      case true ⇒ Ok(conf)
-      case _    ⇒ NotFound
-    }) getOrElse NotFound
+    maybeConf.filter(_ == s"loaderio-$token").fold[Result](NotFound)(Ok(_))
   })
 }
