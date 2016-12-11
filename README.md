@@ -75,7 +75,7 @@ $ docker run --name scala-exercises-db -e POSTGRES_DB=scalaexercises_dev -e POST
 
 ##### Configure the application
 
-Edit the `site/server/conf/application.dev.conf` configuration file with your database information.
+Edit the `server/conf/application.dev.conf` configuration file with your database information.
 
 #### Running the app
 
