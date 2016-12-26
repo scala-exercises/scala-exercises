@@ -18,8 +18,12 @@ env:
   global:
     JAVA_OPTS=-Xmx2g
     SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:MaxPermSize=512m"
+
 before_install:
-  - openssl aes-256-cbc -K $encrypted_ef7b2581dd2c_key -iv $encrypted_ef7b2581dd2c_iv -in secring.gpg.enc -out secring.gpg -d
+- if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+     openssl aes-256-cbc -K $encrypted_ef7b2581dd2c_key -iv $encrypted_ef7b2581dd2c_iv -in secring.gpg.enc -out secring.gpg -d;
+  fi
+
 install:
   - gem install sass
 script:
