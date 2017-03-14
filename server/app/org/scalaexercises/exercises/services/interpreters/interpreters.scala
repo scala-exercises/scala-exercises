@@ -25,9 +25,11 @@ import github4s.GithubResponses.{ GHResponse, GHResult }
 import org.scalaexercises.evaluator.free.interpreters.{ Interpreter ⇒ EvaluatorInterpreter }
 import org.scalaexercises.evaluator.{ Dependency ⇒ SharedDependency }
 import org.scalaexercises.evaluator.EvaluatorClient._
+
 import cats._
 import cats.implicits._
 import cats.free.Free
+
 import doobie.imports._
 
 import scala.concurrent.{ Future, Promise }
@@ -39,6 +41,9 @@ import FreeExtensions._
 import simulacrum.typeclass
 
 import scala.concurrent.Future
+
+import freestyle._
+import freestyle.implicits._
 
 @typeclass trait Capture[M[_]] {
   def capture[A](a: ⇒ A): M[A]
@@ -52,81 +57,63 @@ trait Interpreters[M[_]] {
     */
   implicit def exerciseOpsInterpreter(
     implicit
-<<<<<<< HEAD
-    A: MonadError[M, Throwable], C: Capture[M]
-  ): ExerciseOp ~> M = λ[(ExerciseOp ~> M)] {
-    case GetLibraries()                       ⇒ C.capture(ExercisesService.libraries)
-    case GetSection(libraryName, sectionName) ⇒ C.capture(ExercisesService.section(libraryName, sectionName))
-    case BuildRuntimeInfo(evalInfo)           ⇒ C.capture(ExercisesService.buildRuntimeInfo(evalInfo))
-  }
-
-  implicit def userOpsInterpreter(
-    implicit
-    A: MonadError[M, Throwable], T: Transactor[M], UR: UserRepository
-  ): UserOp ~> M = λ[(UserOp ~> M)] {
-    case GetUsers()            ⇒ UR.all.transact(T)
-    case GetUserByLogin(login) ⇒ UR.getByLogin(login).transact(T)
-    case CreateUser(newUser)   ⇒ UR.create(newUser).transact(T)
-    case UpdateUser(user)      ⇒ UR.update(user).map(_.isDefined).transact(T)
-    case DeleteUser(user)      ⇒ UR.delete(user.id).transact(T)
-=======
     A: MonadError[M, Throwable],
     C: Capture[M]
-  ): ExerciseOps.Interpreter[M] = new ExerciseOps.Interpreter[M] {
+  ): ExerciseOps.Handler[M] = new ExerciseOps.Handler[M] {
+    def getLibraries: M[List[Library]] = C.capture(ExercisesService.libraries)
 
-    import org.scalaexercises.exercises.services.ExercisesService._
+    def getSection(libraryName: String, sectionName: String): M[Option[Section]] = C.capture(
+      ExercisesService.section(libraryName, sectionName)
+    )
 
-    def getLibrariesImpl: M[List[Library]] = C.capture(libraries)
-
-    def getSectionImpl(libraryName: String, sectionName: String): M[Option[Section]] = C.capture(section(libraryName, sectionName))
-
-    def buildRuntimeInfoImpl(evaluation: ExerciseEvaluation): M[EvaluationRequest] = C.capture(buildRuntimeInfo(evaluation))
-
+    def buildRuntimeInfo(evaluation: ExerciseEvaluation): M[EvaluationRequest] = C.capture(
+      ExercisesService.buildRuntimeInfo(evaluation)
+    )
   }
 
-  implicit def userOpsInterpreter(implicit A: MonadError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOps.Interpreter[M] = new UserOps.Interpreter[M] {
-
+  implicit def userOpsInterpreter(implicit A: MonadError[M, Throwable], T: Transactor[M], UR: UserRepository): UserOps.Handler[M] = new UserOps.Handler[M] {
     import UR._
 
-    def getUsersImpl: M[List[User]] = all.transact(T)
+    def getUsers: M[List[User]] = all.transact(T)
 
-    def getUserByLoginImpl(login: String): M[Option[User]] = getByLogin(login).transact(T)
+    def getUserByLogin(login: String): M[Option[User]] = getByLogin(login).transact(T)
 
-    def createUserImpl(user: UserCreation.Request): M[UserCreation.Response] = create(user).transact(T)
+    def createUser(user: UserCreation.Request): M[UserCreation.Response] = create(user).transact(T)
 
-    def updateUserImpl(user: User): M[Boolean] = update(user).map(_.isDefined).transact(T)
+    def updateUser(user: User): M[Boolean] = update(user).map(_.isDefined).transact(T)
 
-    def deleteUserImpl(user: User): M[Boolean] = delete(user.id).transact(T)
+    def deleteUser(user: User): M[Boolean] = delete(user.id).transact(T)
   }
 
   implicit def userProgressOpsInterpreter(
     implicit
-    UPR: UserProgressRepository, T: Transactor[M]
-  ): UserProgressOps.Interpreter[M] = new UserProgressOps.Interpreter[M] {
+    UPR: UserProgressRepository,
+    T:   Transactor[M]
+  ): UserProgressOps.Handler[M] = new UserProgressOps.Handler[M] {
 
-    def saveUserProgressImpl(userProgress: SaveUserProgress.Request): M[UserProgress] =
+    def saveUserProgress(userProgress: SaveUserProgress.Request): M[UserProgress] =
       UPR.upsert(userProgress).transact(T)
 
-    def getExerciseEvaluationsImpl(user: User, library: String, section: String): M[List[UserProgress]] =
+    def getExerciseEvaluations(user: User, library: String, section: String): M[List[UserProgress]] =
       UPR.getExerciseEvaluations(user, library, section).transact(T)
 
-    def getLastSeenSectionImpl(user: User, library: String): M[Option[String]] =
+    def getLastSeenSection(user: User, library: String): M[Option[String]] =
       UPR.getLastSeenSection(user, library).transact(T)
 
   }
 
-  implicit def githubOpsInterpreter(implicit A: MonadError[M, Throwable], CG: GithubCapture[M], TR: RecursiveTailRecM[M]): GithubOps.Interpreter[M] = new GithubOps.Interpreter[M] {
+  implicit def githubOpsInterpreter(implicit A: MonadError[M, Throwable], CG: GithubCapture[M]): GithubOps.Handler[M] = new GithubOps.Handler[M] {
 
     implicit val I: GitHub4s ~> M = github4s.implicits.interpreters[M]
 
-    def getAuthorizeUrlImpl(
+    def getAuthorizeUrl(
       clientId:    String,
       redirectUri: String,
       scopes:      List[String] = List.empty
     ): M[Authorize] =
       ghResponseToEntity(Github().auth.authorizeUrl(clientId, redirectUri, scopes).exec[M])(auth ⇒ Authorize(auth.url, auth.state))
 
-    def getAccessTokenImpl(
+    def getAccessToken(
       clientId:     String,
       clientSecret: String,
       code:         String,
@@ -135,7 +122,7 @@ trait Interpreters[M[_]] {
     ): M[OAuthToken] =
       ghResponseToEntity(Github().auth.getAccessToken(clientId, clientSecret, code, redirectUri, state).exec[M])(token ⇒ OAuthToken(token.access_token))
 
-    def getAuthUserImpl(accessToken: Option[String] = None): M[GithubUser] =
+    def getAuthUser(accessToken: Option[String] = None): M[GithubUser] =
       ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])(user ⇒ GithubUser(
         login = user.login,
         name = user.name,
@@ -144,7 +131,7 @@ trait Interpreters[M[_]] {
         email = user.email
       ))
 
-    def getRepositoryImpl(owner: String, repo: String): M[Repository] =
+    def getRepository(owner: String, repo: String): M[Repository] =
       ghResponseToEntity(Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M])(repo ⇒
         Repository(
           subscribers = repo.status.subscribers_count,
@@ -171,8 +158,6 @@ trait ProdInterpreters extends Interpreters[Task] with TaskInstances {
   implicit val gitHubTaskCaptureInstance = new GithubCapture[Task] {
     override def capture[A](a: ⇒ A): Task[A] = Task.delay(a)
   }
-
-  implicit val tailRecMTask = new RecursiveTailRecM[scalaz.concurrent.Task] {}
 }
 
 /** Test based interpreters lifting ops to their result identity **/
@@ -185,18 +170,18 @@ trait TestInterpreters extends Interpreters[Id] with IdInstances {
   implicit val gitHubIdCaptureInstance = new GithubCapture[Id] {
     override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
   }
-
-  implicit val tailRecMTask = new RecursiveTailRecM[Id] {}
 }
 
 object FreeExtensions {
 
-  implicit class FreeOps[F[_], A](f: Free[F, A]) {
-    implicit val tailRecMTask = new cats.RecursiveTailRecM[scalaz.concurrent.Task] {}
-
-    def runFuture(implicit interpreter: F ~> Task, T: Transactor[Task], M: Monad[Task]): Future[Either[Throwable, A]] = {
+  implicit class FreeOps[F[_], A](f: FreeS[F, A]) {
+    def runFuture(
+      implicit
+      T: Transactor[Task],
+      M: MonadError[Task, Throwable]
+    ): Future[Either[Throwable, A]] = {
       val p = Promise[Either[Throwable, A]]
-      f.foldMap(interpreter).unsafePerformAsync { result: Throwable \/ A ⇒
+      f.exec[Task].unsafePerformAsync { result: Throwable \/ A ⇒
         p.success(result.toEither)
       }
       p.future
@@ -217,9 +202,6 @@ trait TaskInstances {
     override def flatMap[A, B](fa: Task[A])(f: A ⇒ Task[B]): Task[B] =
       fa flatMap f
 
-    override def tailRecM[A, B](a: A)(f: A ⇒ Task[Either[A, B]]): Task[B] =
-      Task.tailrecM((a: A) ⇒ f(a) map (\/.fromEither))(a)
-
     override def raiseError[A](e: Throwable): Task[A] =
       Task.fail(e)
 
@@ -239,8 +221,6 @@ trait IdInstances {
     override def map[A, B](fa: Id[A])(f: A ⇒ B): Id[B] = idMonad.map(fa)(f)
 
     override def flatMap[A, B](fa: Id[A])(f: A ⇒ Id[B]): Id[B] = idMonad.flatMap(fa)(f)
-
-    override def tailRecM[A, B](a: A)(f: A ⇒ Id[Either[A, B]]): Id[B] = defaultTailRecM(a)(f)
 
     override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = idMonad.product(fa, fb)
 

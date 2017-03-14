@@ -26,11 +26,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
-import io.freestyle.syntax._
+import freestyle._
 
 class UserController(
     implicit
-    userOps: UserOps[ExercisesApp.T],
+    userOps: UserOps[ExercisesApp.Op],
     T:       Transactor[Task]
 ) extends Controller with ProdInterpreters {
 

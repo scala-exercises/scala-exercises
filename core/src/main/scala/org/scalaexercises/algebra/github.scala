@@ -2,18 +2,19 @@ package org.scalaexercises.algebra.github
 
 import cats.free._
 import org.scalaexercises.types.github._
-import io.freestyle._
+import freestyle._
 
 /** Exposes GitHub operations as a Free monadic algebra that may be combined with other Algebras via
   * Coproduct
   */
-@free trait GithubOps[F[_]] {
+@free
+trait GithubOps[F[_]] {
 
   def getAuthorizeUrl(
     clientId:    String,
     redirectUri: String,
     scopes:      List[String] = List.empty
-  ): Free[F, Authorize]
+  ): FreeS[F, Authorize]
 
   def getAccessToken(
     clientId:     String,
@@ -21,10 +22,10 @@ import io.freestyle._
     code:         String,
     redirectUri:  String,
     state:        String
-  ): Free[F, OAuthToken]
+  ): FreeS[F, OAuthToken]
 
-  def getAuthUser(accessToken: Option[String] = None): Free[F, GithubUser]
+  def getAuthUser(accessToken: Option[String] = None): FreeS[F, GithubUser]
 
-  def getRepository(owner: String, repo: String): Free[F, Repository]
+  def getRepository(owner: String, repo: String): FreeS[F, Repository]
 
 }

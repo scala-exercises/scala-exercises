@@ -34,13 +34,13 @@ import org.scalaexercises.evaluator.implicits._
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 
-import io.freestyle.syntax._
+import freestyle._
 
 class ExercisesController(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp.T],
-    userOps:         UserOps[ExercisesApp.T],
-    userProgressOps: UserProgressOps[ExercisesApp.T],
+    exerciseOps:     ExerciseOps[ExercisesApp.Op],
+    userOps:         UserOps[ExercisesApp.Op],
+    userProgressOps: UserProgressOps[ExercisesApp.Op],
     T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 

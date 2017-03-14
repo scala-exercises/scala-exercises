@@ -7,7 +7,9 @@ package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
 
-import cats.free.Free
+import cats.free._
+import cats.instances.future._
+
 import play.api.cache.CacheApi
 import org.scalaexercises.types.exercises.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
@@ -34,14 +36,15 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
-import io.freestyle.syntax._
+
+import freestyle._
 
 class ApplicationController(cache: CacheApi)(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp.T],
-    userOps:         UserOps[ExercisesApp.T],
-    userProgressOps: UserProgressOps[ExercisesApp.T],
-    githubOps:       GithubOps[ExercisesApp.T],
+    exerciseOps:     ExerciseOps[ExercisesApp.Op],
+    userOps:         UserOps[ExercisesApp.Op],
+    userProgressOps: UserProgressOps[ExercisesApp.Op],
+    githubOps:       GithubOps[ExercisesApp.Op],
     T:               Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
   implicit def application: Application = Play.current
@@ -93,7 +96,11 @@ class ApplicationController(cache: CacheApi)(
       library ← exerciseOps.getLibrary(libraryName)
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       section ← user.fold(
-        Free.pure(None): Free[ExercisesApp.T, Option[String]]
+        Free.liftF[FreeApplicative[ExercisesApp.Op, ?], Option[String]](
+          FreeApplicative.pure(
+            None: Option[String]
+          ): FreeApplicative[ExercisesApp.Op, Option[String]]
+        )
       )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
     } yield (library, user, section)
 

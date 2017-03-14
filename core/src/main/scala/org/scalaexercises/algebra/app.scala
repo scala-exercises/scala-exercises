@@ -10,7 +10,7 @@ import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.algebra.progress.UserProgressOps
 import org.scalaexercises.algebra.github.GithubOps
 
-import io.freestyle._
+import freestyle._
 
 object app {
 

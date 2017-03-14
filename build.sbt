@@ -18,7 +18,7 @@ lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
   .settings(
     name := "core",
     libraryDependencies ++= Seq(
-      "com.fortysevendeg" %%% "freestyle" % v('freestyle),
+      "com.47deg" %% "freestyle" % v('freestyle),
       "org.typelevel" %%% "cats-core" % v('cats),
       "org.typelevel" %%% "cats-free" % v('cats),
       compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector)),
@@ -47,6 +47,7 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
+      "com.47deg" %% "freestyle" % v('freestyle),
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
@@ -148,7 +149,7 @@ lazy val compiler = (project in file("compiler"))
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % v('scalariform),
-      "com.fortysevendeg" %% "github4s" % v('github4s),
+      "com.fortysevendeg" %% "github4s" % "0.10.1-SNAPSHOT",
       "org.typelevel" %% "cats-core" % v('cats) % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % v('cats) % "test",

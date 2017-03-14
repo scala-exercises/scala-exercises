@@ -37,7 +37,7 @@ trait deps {
     'upickle -> "0.2.8",
     'utileval -> "6.34.0",
     'webjars -> "2.3.0",
-    'freestyle -> "0.1.1-SNAPSHOT"
+    'freestyle -> "0.1.0-SNAPSHOT"
   ) ++ Map(
     // JS Versions
     'scalajsdom -> "0.8.1",
