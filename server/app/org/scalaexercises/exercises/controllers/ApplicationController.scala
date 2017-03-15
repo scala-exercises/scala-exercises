@@ -38,6 +38,7 @@ import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
 import freestyle._
+import freestyle.implicits._
 
 class ApplicationController(cache: CacheApi)(
     implicit

@@ -18,9 +18,7 @@ lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
   .settings(
     name := "core",
     libraryDependencies ++= Seq(
-      "com.47deg" %% "freestyle" % v('freestyle),
-      "org.typelevel" %%% "cats-core" % v('cats),
-      "org.typelevel" %%% "cats-free" % v('cats),
+      "com.fortysevendeg" %%% "freestyle" % v('freestyle),
       compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector)),
       compilerPlugin("org.scalamacros" % "paradise" % v('paradise) cross CrossVersion.full)
     )
@@ -47,7 +45,7 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
-      "com.47deg" %% "freestyle" % v('freestyle),
+      "com.fortysevendeg" %% "freestyle" % v('freestyle),
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
@@ -65,7 +63,7 @@ lazy val server = (project in file("server"))
       "org.webjars" % "bootstrap-sass" % v('bootstrap),
       "org.webjars" % "highlightjs" % v('highlightjs),
       "com.tristanhunt" %% "knockoff" % v('knockoff),
-      "com.fortysevendeg" %% "github4s" % v('github4s),
+      "com.47deg" %% "github4s" % "0.10.1-SNAPSHOT",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % v('scalaz),
       "org.scalatest" %% "scalatest" % v('scalaTest) % "runtime",
@@ -101,8 +99,8 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
       "com.lihaoyi" %%% "scalatags" % v('scalatags) xscalajs,
-      "io.monix" %%% "monix" % v('monix),
-      "io.monix" %%% "monix-cats" % v('monix),
+      "io.monix" %%% "monix" % "2.2.3",
+      "io.monix" %%% "monix-cats" % "2.2.3",
       "be.doeraene" %%% "scalajs-jquery" % v('scalajsjquery) xscalajs,
       "com.lihaoyi" %%% "utest" % v('utest) % "test",
       "com.lihaoyi" %%% "upickle" % v('upickle),
@@ -149,7 +147,7 @@ lazy val compiler = (project in file("compiler"))
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % v('scalariform),
-      "com.fortysevendeg" %% "github4s" % "0.10.1-SNAPSHOT",
+      "com.47deg" %% "github4s" % "0.10.1-SNAPSHOT",
       "org.typelevel" %% "cats-core" % v('cats) % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % v('cats) % "test",

@@ -178,6 +178,7 @@ object FreeExtensions {
     def runFuture(
       implicit
       T: Transactor[Task],
+      I: F ~> Task,
       M: MonadError[Task, Throwable]
     ): Future[Either[Throwable, A]] = {
       val p = Promise[Either[Throwable, A]]

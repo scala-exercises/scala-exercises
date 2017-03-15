@@ -26,6 +26,7 @@ import scala.concurrent.Future
 import scalaz.concurrent._
 
 import freestyle._
+import freestyle.implicits._
 import cats.instances.future._
 
 trait AuthenticationModule { self: ProdInterpreters ⇒

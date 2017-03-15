@@ -30,6 +30,7 @@ import scala.concurrent.Future
 import scalaz.concurrent.Task
 
 import freestyle._
+import freestyle.implicits._
 
 class OAuthController(
     implicit
