@@ -26,6 +26,7 @@ before_install:
 
 install:
   - gem install sass
+  - npm install jsdom
 script:
   - sbt testAll
   - sbt coverageTests/clean coverage coverageTests/test coverageOff coverageTests/coverageReport coverageTests/coverageAggregate

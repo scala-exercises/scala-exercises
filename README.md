@@ -35,6 +35,7 @@ Scala Exercises is available at [scala-exercises.org](https://scala-exercises.or
 - Install [SBT](http://www.scala-sbt.org/download.html)
 - Install [PostgreSQL 9.4](http://www.postgresql.org/download/)
 - Install the [Sass Ruby gem](http://sass-lang.com/install) and make sure the `sass` program can be run
+- Install [jsdom](https://github.com/tmpvar/jsdom) with `npm install jsdom`
 
 #### Installing the app locally
 
