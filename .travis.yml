@@ -26,6 +26,10 @@ before_install:
 
 install:
   - gem install sass
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install
   - npm install jsdom
 script:
   - sbt testAll
