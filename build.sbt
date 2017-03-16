@@ -63,7 +63,7 @@ lazy val server = (project in file("server"))
       "org.webjars" % "bootstrap-sass" % v('bootstrap),
       "org.webjars" % "highlightjs" % v('highlightjs),
       "com.tristanhunt" %% "knockoff" % v('knockoff),
-      "com.47deg" %% "github4s" % "0.10.1-SNAPSHOT",
+      "com.fortysevendeg" %% "github4s" % v('github4s),
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scalaz" %% "scalaz-concurrent" % v('scalaz),
       "org.scalatest" %% "scalatest" % v('scalaTest) % "runtime",
@@ -147,7 +147,7 @@ lazy val compiler = (project in file("compiler"))
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % v('scalariform),
-      "com.47deg" %% "github4s" % "0.10.1-SNAPSHOT",
+      "com.fortysevendeg" %% "github4s" % v('github4s),
       "org.typelevel" %% "cats-core" % v('cats) % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel" %% "cats-laws" % v('cats) % "test",
