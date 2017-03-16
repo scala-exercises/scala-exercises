@@ -17,11 +17,15 @@ import org.scalaexercises.types.progress._
 import org.scalaexercises.types.user._
 import org.scalaexercises.exercises.persistence.repositories.{ UserProgressRepository, UserRepository }
 import org.scalaexercises.exercises.services.ExercisesService
-import github4s.app.GitHub4s
-import github4s.free.interpreters.{ Interpreters ⇒ GithubInterpreters, Capture ⇒ GithubCapture }
+
 import github4s.Github
+import github4s.{ IdInstances ⇒ GithubIdInstances }
 import Github._
+import github4s.jvm.Implicits._
+import github4s.free.interpreters.{ Capture ⇒ GithubCapture, Interpreters ⇒ GithubInterpreters }
+
 import github4s.GithubResponses.{ GHResponse, GHResult }
+import scalaj.http._
 import org.scalaexercises.evaluator.free.interpreters.{ Interpreter ⇒ EvaluatorInterpreter }
 import org.scalaexercises.evaluator.{ Dependency ⇒ SharedDependency }
 import org.scalaexercises.evaluator.EvaluatorClient._
@@ -102,16 +106,20 @@ trait Interpreters[M[_]] {
 
   }
 
-  implicit def githubOpsInterpreter(implicit A: MonadError[M, Throwable], CG: GithubCapture[M]): GithubOps.Handler[M] = new GithubOps.Handler[M] {
-
-    implicit val I: GitHub4s ~> M = github4s.implicits.interpreters[M]
-
+  implicit def githubOpsInterpreter(
+    implicit
+    A:   MonadError[M, Throwable],
+    CG:  GithubCapture[M],
+    GHI: GithubInterpreters[M, HttpResponse[String]]
+  ): GithubOps.Handler[M] = new GithubOps.Handler[M] {
     def getAuthorizeUrl(
       clientId:    String,
       redirectUri: String,
       scopes:      List[String] = List.empty
-    ): M[Authorize] =
-      ghResponseToEntity(Github().auth.authorizeUrl(clientId, redirectUri, scopes).exec[M])(auth ⇒ Authorize(auth.url, auth.state))
+    ): M[Authorize] = {
+      val ghResponse = Github().auth.authorizeUrl(clientId, redirectUri, scopes).exec[M, HttpResponse[String]]()
+      ghResponseToEntity(ghResponse)(auth ⇒ Authorize(auth.url, auth.state))
+    }
 
     def getAccessToken(
       clientId:     String,
@@ -119,25 +127,31 @@ trait Interpreters[M[_]] {
       code:         String,
       redirectUri:  String,
       state:        String
-    ): M[OAuthToken] =
-      ghResponseToEntity(Github().auth.getAccessToken(clientId, clientSecret, code, redirectUri, state).exec[M])(token ⇒ OAuthToken(token.access_token))
+    ): M[OAuthToken] = {
+      val ghResponse = Github().auth.getAccessToken(clientId, clientSecret, code, redirectUri, state).exec[M, HttpResponse[String]]()
+      ghResponseToEntity(ghResponse)(token ⇒ OAuthToken(token.access_token))
+    }
 
-    def getAuthUser(accessToken: Option[String] = None): M[GithubUser] =
-      ghResponseToEntity(Github(accessToken).users.getAuth.exec[M])(user ⇒ GithubUser(
+    def getAuthUser(accessToken: Option[String] = None): M[GithubUser] = {
+      val ghResponse = Github(accessToken).users.getAuth.exec[M, HttpResponse[String]]()
+      ghResponseToEntity(ghResponse)(user ⇒ GithubUser(
         login = user.login,
         name = user.name,
         avatar = user.avatar_url,
         url = user.html_url,
         email = user.email
       ))
+    }
 
-    def getRepository(owner: String, repo: String): M[Repository] =
-      ghResponseToEntity(Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M])(repo ⇒
+    def getRepository(owner: String, repo: String): M[Repository] = {
+      val ghResponse = Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M, HttpResponse[String]]()
+      ghResponseToEntity(ghResponse)(repo ⇒
         Repository(
           subscribers = repo.status.subscribers_count,
           stargazers = repo.status.stargazers_count,
           forks = repo.status.forks_count
         ))
+    }
 
     private def ghResponseToEntity[A, B](response: M[GHResponse[A]])(f: A ⇒ B): M[B] = A.flatMap(response) {
       case Right(GHResult(result, status, headers)) ⇒ A.pure(f(result))
@@ -158,17 +172,19 @@ trait ProdInterpreters extends Interpreters[Task] with TaskInstances {
   implicit val gitHubTaskCaptureInstance = new GithubCapture[Task] {
     override def capture[A](a: ⇒ A): Task[A] = Task.delay(a)
   }
+
+  implicit val taskGhInterpreter: GithubInterpreters[Task, HttpResponse[String]] = new GithubInterpreters[Task, HttpResponse[String]]()
 }
 
 /** Test based interpreters lifting ops to their result identity **/
-trait TestInterpreters extends Interpreters[Id] with IdInstances {
+trait TestInterpreters extends Interpreters[Id] with GithubIdInstances {
 
-  implicit val idCaptureInstance = new Capture[Id] {
-    override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
+  implicit val ourIdCaptureInstance = new Capture[Id] {
+    override def capture[A](a: ⇒ A): Id[A] = a
   }
 
   implicit val gitHubIdCaptureInstance = new GithubCapture[Id] {
-    override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
+    override def capture[A](a: ⇒ A): Id[A] = a
   }
 }
 
@@ -206,34 +222,10 @@ trait TaskInstances {
     override def raiseError[A](e: Throwable): Task[A] =
       Task.fail(e)
 
+    override def tailRecM[A, B](a: A)(f: A ⇒ Task[Either[A, B]]): Task[B] =
+      Task.tailrecM((a: A) ⇒ f(a) map (\/.fromEither))(a)
+
     override def handleErrorWith[A](fa: Task[A])(f: Throwable ⇒ Task[A]): Task[A] =
       fa.handleWith({ case x ⇒ f(x) })
-  }
-}
-
-trait IdInstances {
-
-  implicit val idMonad: MonadError[Id, Throwable] = new MonadError[Id, Throwable] {
-
-    override def pure[A](x: A): Id[A] = idMonad.pure(x)
-
-    override def ap[A, B](ff: Id[A ⇒ B])(fa: Id[A]): Id[B] = idMonad.ap(ff)(fa)
-
-    override def map[A, B](fa: Id[A])(f: A ⇒ B): Id[B] = idMonad.map(fa)(f)
-
-    override def flatMap[A, B](fa: Id[A])(f: A ⇒ Id[B]): Id[B] = idMonad.flatMap(fa)(f)
-
-    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = idMonad.product(fa, fb)
-
-    override def raiseError[A](e: Throwable): Id[A] =
-      throw e
-
-    override def handleErrorWith[A](fa: Id[A])(f: Throwable ⇒ Id[A]): Id[A] = {
-      try {
-        fa
-      } catch {
-        case e: Exception ⇒ f(e)
-      }
-    }
   }
 }
