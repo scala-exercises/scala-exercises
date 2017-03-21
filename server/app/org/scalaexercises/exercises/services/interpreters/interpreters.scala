@@ -23,7 +23,7 @@ import github4s.app.GitHub4s
 import github4s.{ IdInstances ⇒ GithubIdInstances }
 import Github._
 import github4s.jvm.Implicits._
-import github4s.free.interpreters.{ Capture ⇒ GithubCapture }
+import github4s.free.interpreters.{ Capture ⇒ GithubCapture, Interpreters ⇒ GithubInterpreters }
 
 import github4s.GithubResponses.{ GHResponse, GHResult }
 import scalaj.http._
@@ -111,14 +111,14 @@ trait Interpreters[M[_]] {
     implicit
     A:   MonadError[M, Throwable],
     CG:  GithubCapture[M],
-    GHI: GitHub4s ~> M
+    GHI: GithubInterpreters[M, HttpResponse[String]]
   ): GithubOps.Handler[M] = new GithubOps.Handler[M] {
     def getAuthorizeUrl(
       clientId:    String,
       redirectUri: String,
       scopes:      List[String] = List.empty
     ): M[Authorize] = {
-      val ghResponse = Github().auth.authorizeUrl(clientId, redirectUri, scopes).exec[M]()
+      val ghResponse = Github().auth.authorizeUrl(clientId, redirectUri, scopes).exec[M, HttpResponse[String]]()
       ghResponseToEntity(ghResponse)(auth ⇒ Authorize(auth.url, auth.state))
     }
 
@@ -129,12 +129,12 @@ trait Interpreters[M[_]] {
       redirectUri:  String,
       state:        String
     ): M[OAuthToken] = {
-      val ghResponse = Github().auth.getAccessToken(clientId, clientSecret, code, redirectUri, state).exec[M]()
+      val ghResponse = Github().auth.getAccessToken(clientId, clientSecret, code, redirectUri, state).exec[M, HttpResponse[String]]()
       ghResponseToEntity(ghResponse)(token ⇒ OAuthToken(token.access_token))
     }
 
     def getAuthUser(accessToken: Option[String] = None): M[GithubUser] = {
-      val ghResponse = Github(accessToken).users.getAuth.exec[M]()
+      val ghResponse = Github(accessToken).users.getAuth.exec[M, HttpResponse[String]]()
       ghResponseToEntity(ghResponse)(user ⇒ GithubUser(
         login = user.login,
         name = user.name,
@@ -145,7 +145,7 @@ trait Interpreters[M[_]] {
     }
 
     def getRepository(owner: String, repo: String): M[Repository] = {
-      val ghResponse = Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M]()
+      val ghResponse = Github(sys.env.lift("GITHUB_TOKEN")).repos.get(owner, repo).exec[M, HttpResponse[String]]()
       ghResponseToEntity(ghResponse)(repo ⇒
         Repository(
           subscribers = repo.status.subscribers_count,
