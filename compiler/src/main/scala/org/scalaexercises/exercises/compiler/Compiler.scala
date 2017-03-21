@@ -13,7 +13,6 @@ import cats.Eval
 import cats.implicits._
 import github4s.Github
 import Github._
-import github4s.implicits._
 import github4s.GithubResponses.GHResult
 import github4s.free.interpreters.Interpreters
 import github4s.free.domain.Commit

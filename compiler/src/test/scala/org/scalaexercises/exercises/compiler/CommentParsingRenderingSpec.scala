@@ -17,7 +17,7 @@ class CommentZedSpec extends FunSpec {
 
     it("should pass Functor laws") {
       val rs = FunctorTests[Empty].functor[Int, Int, Int]
-      rs.all.check
+      rs.all
     }
 
   }
@@ -29,7 +29,7 @@ class CommentZedSpec extends FunSpec {
 
     it("should pass Functor laws") {
       val rs = FunctorTests[Ignore].functor[Int, Int, Int]
-      rs.all.check
+      rs.all
     }
 
   }

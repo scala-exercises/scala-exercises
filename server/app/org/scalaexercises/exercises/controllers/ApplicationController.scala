@@ -59,7 +59,10 @@ class ApplicationController(cache: CacheApi)(
     cache.get[Repository](MainRepoCacheKey) match {
       case Some(repo) ⇒ Future.successful(repo)
       case None ⇒
-        githubOps.getRepository(ConfigUtils.githubSiteOwner, ConfigUtils.githubSiteRepo).runFuture flatMap {
+        githubOps.getRepository(
+          ConfigUtils.githubSiteOwner,
+          ConfigUtils.githubSiteRepo
+        ).runFuture flatMap {
           case Right(repo) ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
             Future.successful(repo)

@@ -11,6 +11,7 @@ import org.scalaexercises.algebra.progress.UserProgressOps
 import org.scalaexercises.algebra.github.GithubOps
 
 import freestyle._
+import freestyle.implicits._
 
 object app {
 
