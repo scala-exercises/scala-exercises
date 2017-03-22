@@ -173,6 +173,8 @@ trait ProdInterpreters extends Interpreters[Task] with TaskInstances {
   implicit val gitHubTaskCaptureInstance = new GithubCapture[Task] {
     override def capture[A](a: ⇒ A): Task[A] = Task.delay(a)
   }
+
+  implicit val githubInterpreter: GithubInterpreters[Task, HttpResponse[String]] = new GithubInterpreters[Task, HttpResponse[String]]
 }
 
 /** Test based interpreters lifting ops to their result identity **/
@@ -185,6 +187,8 @@ trait TestInterpreters extends Interpreters[Id] with GithubIdInstances {
   implicit val gitHubIdCaptureInstance = new GithubCapture[Id] {
     override def capture[A](a: ⇒ A): Id[A] = a
   }
+
+  implicit val githubInterpreter: GithubInterpreters[Id, HttpResponse[String]] = new GithubInterpreters[Id, HttpResponse[String]]
 }
 
 object FreeExtensions {
