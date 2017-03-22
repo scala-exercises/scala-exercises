@@ -18,7 +18,7 @@ lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
   .settings(
     name := "core",
     libraryDependencies ++= Seq(
-      "com.fortysevendeg" %%% "freestyle" % v('freestyle),
+      "com.47deg" %%% "freestyle" % v('freestyle),
       compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector)),
       compilerPlugin("org.scalamacros" % "paradise" % v('paradise) cross CrossVersion.full)
     )
@@ -45,7 +45,7 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
-      "com.fortysevendeg" %% "freestyle" % v('freestyle),
+      "com.47deg" %% "freestyle" % v('freestyle),
       "org.scala-exercises" %% "exercises-stdlib" % version.value changing(),
       "org.scala-exercises" %% "exercises-cats" % version.value changing(),
       "org.scala-exercises" %% "exercises-shapeless" % version.value changing(),
