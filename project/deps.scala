@@ -16,7 +16,7 @@ trait deps {
     'config -> "1.3.0",
     'doobie -> "0.3.0",
     'evaluator -> "0.1.1-SNAPSHOT",
-    'github4s -> "0.11.0",
+    'github4s -> "0.11.1-SNAPSHOT",
     'highlightjs -> "9.2.0",
     'kindprojector -> "0.9.0",
     'knockoff -> "0.8.3",
