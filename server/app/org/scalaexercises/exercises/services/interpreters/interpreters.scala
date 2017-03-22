@@ -194,7 +194,7 @@ object FreeExtensions {
       implicit
       T: Transactor[Task],
       M: MonadError[Task, Throwable],
-      I: F ~> Task
+      I: ParInterpreter[F, Task]
     ): Future[Either[Throwable, A]] = {
       val p = Promise[Either[Throwable, A]]
       f.exec[Task].unsafePerformAsync { result: Throwable \/ A ⇒
