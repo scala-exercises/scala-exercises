@@ -7,7 +7,9 @@ package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
 
-import cats.free.Free
+import cats.free._
+import cats.instances.future._
+
 import play.api.cache.CacheApi
 import org.scalaexercises.types.exercises.{ Contribution, Contributor }
 import scala.collection.JavaConverters._
@@ -35,12 +37,15 @@ import scala.concurrent.duration._
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
+import freestyle._
+import freestyle.implicits._
+
 class ApplicationController(cache: CacheApi)(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp],
-    userOps:         UserOps[ExercisesApp],
-    userProgressOps: UserProgressOps[ExercisesApp],
-    githubOps:       GithubOps[ExercisesApp],
+    exerciseOps:     ExerciseOps[ExercisesApp.Op],
+    userOps:         UserOps[ExercisesApp.Op],
+    userProgressOps: UserProgressOps[ExercisesApp.Op],
+    githubOps:       GithubOps[ExercisesApp.Op],
     T:               Transactor[Task]
 ) extends Controller with AuthenticationModule with ProdInterpreters {
   implicit def application: Application = Play.current
@@ -54,7 +59,10 @@ class ApplicationController(cache: CacheApi)(
     cache.get[Repository](MainRepoCacheKey) match {
       case Some(repo) ⇒ Future.successful(repo)
       case None ⇒
-        githubOps.getRepository(ConfigUtils.githubSiteOwner, ConfigUtils.githubSiteRepo).runFuture flatMap {
+        githubOps.getRepository(
+          ConfigUtils.githubSiteOwner,
+          ConfigUtils.githubSiteRepo
+        ).runFuture flatMap {
           case Right(repo) ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
             Future.successful(repo)
@@ -92,7 +100,11 @@ class ApplicationController(cache: CacheApi)(
       library ← exerciseOps.getLibrary(libraryName)
       user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
       section ← user.fold(
-        Free.pure[ExercisesApp, Option[String]](None)
+        Free.liftF[FreeApplicative[ExercisesApp.Op, ?], Option[String]](
+          FreeApplicative.pure(
+            None: Option[String]
+          ): FreeApplicative[ExercisesApp.Op, Option[String]]
+        )
       )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
     } yield (library, user, section)
 

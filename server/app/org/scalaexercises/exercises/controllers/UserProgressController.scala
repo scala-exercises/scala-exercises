@@ -23,12 +23,14 @@ import scalaz.concurrent.Task
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
+import freestyle._
+import freestyle.implicits._
 
 class UserProgressController(
     implicit
-    exerciseOps:     ExerciseOps[ExercisesApp],
-    userOps:         UserOps[ExercisesApp],
-    userProgressOps: UserProgressOps[ExercisesApp],
+    exerciseOps:     ExerciseOps[ExercisesApp.Op],
+    userOps:         UserOps[ExercisesApp.Op],
+    userProgressOps: UserProgressOps[ExercisesApp.Op],
     T:               Transactor[Task]
 ) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
 

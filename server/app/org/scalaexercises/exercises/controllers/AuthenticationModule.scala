@@ -25,6 +25,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent._
 
+import freestyle._
+import freestyle.implicits._
+import cats.instances.future._
+
 trait AuthenticationModule { self: ProdInterpreters ⇒
 
   case class UserRequest[A](val userId: String, request: Request[A]) extends WrappedRequest[A](request)
@@ -41,7 +45,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
       }
   }
 
-  def AuthenticatedUser(thunk: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task]) =
+  def AuthenticatedUser(thunk: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp.Op], transactor: Transactor[Task]) =
     Secure(AuthenticationAction.async { request ⇒
       userOps.getUserByLogin(request.userId).runFuture flatMap {
         case Right(Some(user)) ⇒ thunk(user)
@@ -49,7 +53,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
       }
     })
 
-  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task], format: Reads[T]) =
+  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp.Op], transactor: Transactor[Task], format: Reads[T]) =
     Secure(AuthenticationAction.async(bodyParser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒

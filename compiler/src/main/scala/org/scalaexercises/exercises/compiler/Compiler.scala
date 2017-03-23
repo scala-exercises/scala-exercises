@@ -13,11 +13,14 @@ import cats.Eval
 import cats.implicits._
 import github4s.Github
 import Github._
-import github4s.implicits._
 import github4s.GithubResponses.GHResult
+import github4s.free.interpreters.Interpreters
 import github4s.free.domain.Commit
+import github4s.jvm.Implicits._
 import Comments.Mode
 import CommentRendering.RenderedComment
+
+import scalaj.http.HttpResponse
 
 class CompilerJava {
   def compile(
@@ -45,6 +48,7 @@ class CompilerJava {
 }
 
 case class Compiler() {
+
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
   def compile(
@@ -136,7 +140,9 @@ case class Compiler() {
     def fetchContributions(owner: String, repository: String, path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos.listCommits(owner, repository, None, Option(path))
-      contribs.exec[Eval].value match {
+
+      import github4s.implicits._
+      contribs.exec[Eval, HttpResponse[String]](Map.empty).value match {
         case Right(GHResult(result, _, _)) ⇒ result.collect({
           case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) ⇒ ContributionInfo(
             sha = sha,

@@ -29,10 +29,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 
+import freestyle._
+import freestyle.implicits._
+
 class OAuthController(
     implicit
-    userOps:   UserOps[ExercisesApp],
-    githubOps: GithubOps[ExercisesApp],
+    userOps:   UserOps[ExercisesApp.Op],
+    githubOps: GithubOps[ExercisesApp.Op],
     T:         Transactor[Task]
 ) extends Controller with ProdInterpreters {
 
