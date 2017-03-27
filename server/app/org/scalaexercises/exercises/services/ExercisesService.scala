@@ -1,13 +1,20 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
 package org.scalaexercises.exercises
 package services
 
-import org.scalaexercises.runtime.{ Exercises, Timestamp }
-import org.scalaexercises.runtime.model.{ DefaultLibrary, BuildInfo ⇒ RuntimeBuildInfo, Contribution ⇒ RuntimeContribution, Exercise ⇒ RuntimeExercise, Library ⇒ RuntimeLibrary, Section ⇒ RuntimeSection }
+import org.scalaexercises.runtime.{Exercises, Timestamp}
+import org.scalaexercises.runtime.model.{
+  DefaultLibrary,
+  BuildInfo ⇒ RuntimeBuildInfo,
+  Contribution ⇒ RuntimeContribution,
+  Exercise ⇒ RuntimeExercise,
+  Library ⇒ RuntimeLibrary,
+  Section ⇒ RuntimeSection
+}
 import org.scalaexercises.types.exercises._
 import play.api.Play
 import play.api.Logger
@@ -19,7 +26,8 @@ import sun.misc.BASE64Encoder
 
 object ExercisesService extends RuntimeSharedConversions {
 
-  def classLoader = Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
+  def classLoader =
+    Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
@@ -58,7 +66,6 @@ object ExercisesService extends RuntimeSharedConversions {
 
     runtimeInfo map {
       case (b: RuntimeBuildInfo, pckgName: String, importList: List[String]) ⇒
-
         val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
           pckgName,
           evaluation.method,
@@ -105,31 +112,34 @@ sealed trait RuntimeSharedConversions {
       "#0F3057"
     )
 
-    libraries.traverseU { library ⇒
-      if (library.color.isEmpty) {
-        State[Colors, RuntimeLibrary] { colors ⇒
-          val (color, colors0) = colors match {
-            case head :: tail ⇒ Some(head) → tail
-            case Nil          ⇒ None → Nil
+    libraries
+      .traverseU { library ⇒
+        if (library.color.isEmpty) {
+          State[Colors, RuntimeLibrary] { colors ⇒
+            val (color, colors0) = colors match {
+              case head :: tail ⇒ Some(head) → tail
+              case Nil          ⇒ None       → Nil
+            }
+            val library0 = DefaultLibrary(
+              owner = library.owner,
+              repository = library.repository,
+              name = library.name,
+              description = library.description,
+              color = color,
+              logoPath = library.logoPath,
+              logoData = library.logoData,
+              sections = library.sections,
+              timestamp = Timestamp.fromDate(new java.util.Date()),
+              buildMetaInfo = library.buildMetaInfo
+            )
+            (colors0, library0)
           }
-          val library0 = DefaultLibrary(
-            owner = library.owner,
-            repository = library.repository,
-            name = library.name,
-            description = library.description,
-            color = color,
-            logoPath = library.logoPath,
-            logoData = library.logoData,
-            sections = library.sections,
-            timestamp = Timestamp.fromDate(new java.util.Date()),
-            buildMetaInfo = library.buildMetaInfo
-          )
-          (colors0, library0)
+        } else {
+          State.pure[Colors, RuntimeLibrary](library)
         }
-      } else {
-        State.pure[Colors, RuntimeLibrary](library)
       }
-    }.runA(autoPalette).value
+      .runA(autoPalette)
+      .value
   }
 
   def convertLibrary(library: RuntimeLibrary): Library =
@@ -154,7 +164,8 @@ sealed trait RuntimeSharedConversions {
       Option(getClass().getClassLoader.getResourceAsStream(path))
         .map(stream ⇒ ExercisesService.base64Encoder.encode(IOUtils.toByteArray(stream)))
 
-    val logoPathOrDefault = if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"
+    val logoPathOrDefault =
+      if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"
     logoData(logoPathOrDefault)
   }
 

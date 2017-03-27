@@ -1,3 +1,8 @@
+/*
+ * scala-exercises - core
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package org.scalaexercises.types.progress
 
 import org.scalaexercises.types.user._

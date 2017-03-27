@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -25,7 +25,8 @@ trait JsonFormats {
 
   implicit val sectionExercisesWrites: Writes[SectionExercises] = Json.writes[SectionExercises]
 
-  implicit val exerciseTypeReads: Reads[ExerciseType] = JsPath.read[String].map(ExerciseType.fromString)
+  implicit val exerciseTypeReads: Reads[ExerciseType] =
+    JsPath.read[String].map(ExerciseType.fromString)
 
   implicit val exerciseEvaluationReads: Reads[ExerciseEvaluation] = Json.reads[ExerciseEvaluation]
 

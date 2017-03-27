@@ -1,5 +1,5 @@
 /*
- * scala-exercises-client
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -27,20 +27,25 @@ object Effects {
   def loadInitialData: Future[Option[Action]] = {
     DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection ⇒ {
       val (lib, sect) = libAndSection
-      Client.fetchProgress(lib, sect).collect({
-        case Some(state) ⇒ Some(SetState(state))
-      })
+      Client
+        .fetchProgress(lib, sect)
+        .collect({
+          case Some(state) ⇒ Some(SetState(state))
+        })
     })
   }
 
   def compileExercise(s: State, method: String): Future[Option[Action]] =
     findByMethod(s, method) match {
-      case Some(exercise) if exercise.isFilled ⇒ Client.compileExercise(exercise).map(result ⇒ {
-        if (result.ok)
-          Some(CompilationOk(result.method))
-        else
-          Some(CompilationFail(result.method, result.msg))
-      })
+      case Some(exercise) if exercise.isFilled ⇒
+        Client
+          .compileExercise(exercise)
+          .map(result ⇒ {
+            if (result.ok)
+              Some(CompilationOk(result.method))
+            else
+              Some(CompilationFail(result.method, result.msg))
+          })
       case _ ⇒ noop
     }
 

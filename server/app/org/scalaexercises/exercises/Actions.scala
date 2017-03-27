@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -16,10 +16,14 @@ case class Secure[A](action: Action[A]) extends Action[A] {
 
     println("Request from domain: " + request.domain)
 
-    val inWWW = request.domain.startsWith("www.")
+    val inWWW      = request.domain.startsWith("www.")
     val previewApp = request.domain.startsWith("scala-exercises-pr")
+
     /** Behing load balancers request.secure will be false **/
-    val isSecure = request.headers.get("x-forwarded-proto").getOrElse("").contains("https") || request.secure
+    val isSecure = request.headers
+      .get("x-forwarded-proto")
+      .getOrElse("")
+      .contains("https") || request.secure
 
     val redirect =
       (!previewApp && Play.isProd && (!isSecure || !inWWW))
@@ -30,9 +34,11 @@ case class Secure[A](action: Action[A]) extends Action[A] {
         else s"https://www.${request.domain}${request.uri}"
 
       Future.successful(
-        Results.MovedPermanently(secureUrl).withHeaders(
-          "Strict-Transport-Security" → "max-age=31536000" // tells browsers to request the site URLs through HTTPS
-        )
+        Results
+          .MovedPermanently(secureUrl)
+          .withHeaders(
+            "Strict-Transport-Security" → "max-age=31536000" // tells browsers to request the site URLs through HTTPS
+          )
       )
     } else {
       action(request)
