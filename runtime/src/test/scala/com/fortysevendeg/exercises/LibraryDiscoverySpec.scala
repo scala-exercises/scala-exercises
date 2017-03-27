@@ -1,5 +1,5 @@
 /*
- * scala-exercises-runtime
+ * scala-exercises - runtime
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -20,7 +20,9 @@ class LibraryDiscoverySpec extends FunSpec with Matchers {
       val (errors, discovered) = Exercises.discoverLibraries()
 
       discovered.toSet shouldEqual Set(
-        LibraryA, LibraryB, LibraryC
+        LibraryA,
+        LibraryB,
+        LibraryC
       )
     }
 

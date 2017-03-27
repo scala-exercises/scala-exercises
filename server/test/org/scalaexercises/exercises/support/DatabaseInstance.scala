@@ -1,19 +1,18 @@
 /*
- * scala-exercises-server
+ * scala-exercises - server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
 package org.scalaexercises.exercises.support
 
-import doobie.imports._
+import doobie.util.iolite.IOLite
+import doobie.util.transactor.{DriverManagerTransactor, Transactor}
 import play.api.db.evolutions._
-import play.api.db.{ Database, Databases }
-
-import scalaz.concurrent.Task
+import play.api.db.{Database, Databases}
 
 trait DatabaseInstance {
-  val testDriver = "org.postgresql.Driver"
-  def testUrl = "jdbc:postgresql://localhost:5432/scalaexercises_test"
+  val testDriver   = "org.postgresql.Driver"
+  def testUrl      = "jdbc:postgresql://localhost:5432/scalaexercises_test"
   val testUsername = "scalaexercises_user"
   val testPassword = "scalaexercises_pass"
 
@@ -30,15 +29,15 @@ trait DatabaseInstance {
     db
   }
 
-  def createTransactor(db: Database): Transactor[Task] =
-    DriverManagerTransactor[Task](
+  def createTransactor(db: Database): Transactor[IOLite] =
+    DriverManagerTransactor[IOLite](
       testDriver,
       testUrl,
       testUsername,
       testPassword
     )
 
-  val databaseTransactor: Transactor[Task] = createTransactor(evolve(createDatabase()))
+  val databaseTransactor: Transactor[IOLite] = createTransactor(evolve(createDatabase()))
 }
 
 object DatabaseInstance extends DatabaseInstance

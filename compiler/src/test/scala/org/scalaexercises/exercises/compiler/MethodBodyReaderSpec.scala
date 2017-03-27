@@ -1,3 +1,8 @@
+/*
+ * scala-exercises - exercise-compiler
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package org.scalaexercises.compiler
 
 import org.scalatest._
@@ -118,16 +123,17 @@ trait MethodBodyReaderSpecUtilities {
     def wrap(code: String): String = s"""package Code { object Code { $code }}"""
     def unwrap(tree: Tree): Tree = tree match {
       case q"package Code { object Code { $statements }}" ⇒ statements
-      case _ ⇒ EmptyTree
+      case _                                              ⇒ EmptyTree
     }
-    unwrap(global
-      .newUnitParser(wrap(code))
-      .compilationUnit())
+    unwrap(
+      global
+        .newUnitParser(wrap(code))
+        .compilationUnit())
   }
 
   def extractSnippet(code: String): String = {
     val method = compileMethod(code)
-    val body = unwrapBody(method)
+    val body   = unwrapBody(method)
     MethodBodyReader.read(global)(body)
   }
 

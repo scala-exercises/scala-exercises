@@ -15,7 +15,8 @@ import freestyle.implicits._
 
 object app {
 
-  @module trait ExercisesApp[F[_]] {
+  @module
+  trait ExercisesApp[F[_]] {
     val exerciseOps: ExerciseOps[F]
     val userOps: UserOps[F]
     val userProgressOps: UserProgressOps[F]

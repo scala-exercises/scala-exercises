@@ -1,10 +1,15 @@
+/*
+ * scala-exercises - definitions
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package org.scalaexercises
 
 import shapeless._
 import shapeless.ops.function._
 
 import cats.implicits._
-import org.scalacheck.{ Prop, Arbitrary }
+import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Gen
 import Prop.forAll
 
@@ -15,19 +20,20 @@ import org.scalacheck.Shapeless._
 object Test {
 
   def testSuccess[F, R, L <: HList](method: F, answer: L)(
-    implicit
-    A:     Arbitrary[L],
-    fntop: FnToProduct.Aux[F, L ⇒ R]
+      implicit A: Arbitrary[L],
+      fntop: FnToProduct.Aux[F, L ⇒ R]
   ): Prop = {
     val rightGen = genRightAnswer(answer)
     val rightProp = forAll(rightGen)({ p ⇒
-
-      val result = Either.catchOnly[GeneratorDrivenPropertyCheckFailedException]({ fntop(method)(p) })
+      val result = Either.catchOnly[GeneratorDrivenPropertyCheckFailedException]({
+        fntop(method)(p)
+      })
       result match {
-        case Left(exc) ⇒ exc.cause match {
-          case Some(originalException) ⇒ throw originalException
-          case _                       ⇒ false
-        }
+        case Left(exc) ⇒
+          exc.cause match {
+            case Some(originalException) ⇒ throw originalException
+            case _                       ⇒ false
+          }
         case _ ⇒ true
       }
     })
@@ -40,15 +46,11 @@ object Test {
     Prop.all(rightProp, wrongProp)
   }
 
-  def genRightAnswer[L <: HList](answer: L): Gen[L] = {
+  def genRightAnswer[L <: HList](answer: L): Gen[L] =
     Gen.const(answer)
-  }
 
   def genWrongAnswer[L <: HList](l: L)(
-    implicit
-    A: Arbitrary[L]
-  ): Gen[L] = {
+      implicit A: Arbitrary[L]
+  ): Gen[L] =
     A.arbitrary.suchThat(_ != l)
-  }
 }
-

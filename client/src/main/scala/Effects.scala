@@ -1,5 +1,5 @@
 /*
- * scala-exercises - scala-exercises
+ * scala-exercises - client
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 

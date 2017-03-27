@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -30,23 +30,25 @@ import freestyle._
 import freestyle.implicits._
 
 class UserController(
-    implicit
-    userOps: UserOps[ExercisesApp.Op],
-    T:       Transactor[Task]
-) extends Controller with ProdInterpreters {
+    implicit userOps: UserOps[ExercisesApp.Op],
+    T: Transactor[Task]
+) extends Controller
+    with ProdInterpreters {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
-  def byLogin(login: String) = Secure(Action.async { implicit request ⇒
-    userOps.getUserByLogin(login).runFuture map {
-      case Right(user) ⇒ user match {
-        case Some(u) ⇒ Ok(write(u))
-        case None    ⇒ NotFound("The user doesn't exist")
+  def byLogin(login: String) =
+    Secure(Action.async { implicit request ⇒
+      userOps.getUserByLogin(login).runFuture map {
+        case Right(user) ⇒
+          user match {
+            case Some(u) ⇒ Ok(write(u))
+            case None    ⇒ NotFound("The user doesn't exist")
+          }
+        case Left(error) ⇒ {
+          Logger.error(s"Error rendering user $login", error)
+          InternalServerError(error.getMessage)
+        }
       }
-      case Left(error) ⇒ {
-        Logger.error(s"Error rendering user $login", error)
-        InternalServerError(error.getMessage)
-      }
-    }
-  })
+    })
 }

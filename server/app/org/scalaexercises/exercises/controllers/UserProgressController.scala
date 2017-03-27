@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -27,16 +27,20 @@ import freestyle._
 import freestyle.implicits._
 
 class UserProgressController(
-    implicit
-    exerciseOps:     ExerciseOps[ExercisesApp.Op],
-    userOps:         UserOps[ExercisesApp.Op],
+    implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
+    userOps: UserOps[ExercisesApp.Op],
     userProgressOps: UserProgressOps[ExercisesApp.Op],
-    T:               Transactor[Task]
-) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
+    T: Transactor[Task]
+) extends Controller
+    with JsonFormats
+    with AuthenticationModule
+    with ProdInterpreters {
 
   def fetchUserProgressBySection(libraryName: String, sectionName: String) =
     AuthenticatedUser { user ⇒
-      userProgressOps.fetchUserProgressByLibrarySection(user, libraryName, sectionName).runFuture map {
+      userProgressOps
+        .fetchUserProgressByLibrarySection(user, libraryName, sectionName)
+        .runFuture map {
         case Right(response) ⇒ Ok(Json.toJson(response))
         case Left(error) ⇒
           Logger.error(s"Error while fetching user progress for $libraryName/$sectionName", error)

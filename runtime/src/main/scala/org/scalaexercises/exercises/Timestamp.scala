@@ -1,12 +1,12 @@
 /*
- * scala-exercises-exercise-compiler
+ * scala-exercises - runtime
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
 package org.scalaexercises.runtime
 
 import java.text.SimpleDateFormat
-import java.util.{ Date, TimeZone }
+import java.util.{Date, TimeZone}
 
 object Timestamp {
   val ISO8601 = "yyyy-MM-dd'T'HH:mm:ssz"
@@ -17,9 +17,8 @@ object Timestamp {
     setTimeZone(UTC)
   }
 
-  def fromDate(d: Date): String = {
+  def fromDate(d: Date): String =
     FORMAT.format(d)
-  }
 
   def toDate(timestamp: String): Date = FORMAT.parse(timestamp)
 }

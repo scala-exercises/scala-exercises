@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -12,7 +12,7 @@ import cats.free.Free
 
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.types.exercises.{ Contribution, Contributor }
+import org.scalaexercises.types.exercises.{Contribution, Contributor}
 
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
@@ -32,19 +32,20 @@ import freestyle._
 import freestyle.implicits._
 
 class SitemapController(
-    implicit
-    exerciseOps: ExerciseOps[ExercisesApp.Op],
-    T:           Transactor[Task]
-) extends Controller with ProdInterpreters {
+    implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
+    T: Transactor[Task]
+) extends Controller
+    with ProdInterpreters {
 
-  def sitemap = Secure(Action.async { implicit request ⇒
-    exerciseOps.getLibraries.runFuture map {
-      case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-      case Left(ex) ⇒ {
-        Logger.error("Error rendering sitemap", ex)
-        InternalServerError(ex.getMessage)
+  def sitemap =
+    Secure(Action.async { implicit request ⇒
+      exerciseOps.getLibraries.runFuture map {
+        case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
+        case Left(ex) ⇒ {
+          Logger.error("Error rendering sitemap", ex)
+          InternalServerError(ex.getMessage)
+        }
       }
-    }
-  })
+    })
 
 }

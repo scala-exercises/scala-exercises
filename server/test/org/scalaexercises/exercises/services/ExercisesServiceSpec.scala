@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - server
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -11,11 +11,11 @@ import org.scalaexercises.types.exercises._
 
 class ExercisesServiceSpec extends FlatSpec with Matchers {
 
-  val expectedLibrary = "stdlib"
-  val expectedTestSection = "Extractors"
-  val expectedTestExercise = "forAssigningValues"
-  val expectedVersion = 1
-  val expectedType = "Other"
+  val expectedLibrary        = "stdlib"
+  val expectedTestSection    = "Extractors"
+  val expectedTestExercise   = "forAssigningValues"
+  val expectedVersion        = 1
+  val expectedType           = "Other"
   val expectedTestSuccesArgs = List("Chevy", "Camaro", "1978", "120")
   val expectedTestFailedArgs = List("a", "b", "1", "2")
   val resolvers = List(
@@ -119,5 +119,5 @@ class ExercisesServiceSpec extends FlatSpec with Matchers {
     }.pendingUntilFixed("Need to update tests for new compiler")
 
   }
-  */
+ */
 }

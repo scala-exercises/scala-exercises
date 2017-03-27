@@ -1,5 +1,5 @@
 /*
- * scala-exercises-client
+ * scala-exercises - client
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -71,7 +71,7 @@ object ClientExerciseSpec extends TestSuite {
 
 object ExercisesSpec extends TestSuite {
   def tests = TestSuite {
-    'findByMethod{
+    'findByMethod {
       assert(Exercises.findByMethod(List(), "foo") == None)
 
       val exercise = clientExercise(method = "foo", args = Seq("one", "two"))
@@ -80,11 +80,11 @@ object ExercisesSpec extends TestSuite {
       )
     }
 
-    'updateByMethod{
-      val state = List(clientExercise(method = "foo", args = Seq("", "")))
+    'updateByMethod {
+      val state            = List(clientExercise(method = "foo", args = Seq("", "")))
       val updatedArguments = Seq("my", "answers")
-      val newState = Exercises.updateByMethod(state, "foo", updatedArguments)
-      val newExercise = Exercises.findByMethod(newState, "foo")
+      val newState         = Exercises.updateByMethod(state, "foo", updatedArguments)
+      val newExercise      = Exercises.findByMethod(newState, "foo")
       assert(newExercise != None)
       newExercise.foreach { ex ⇒
         assert(ex.arguments == updatedArguments)

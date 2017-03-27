@@ -1,11 +1,15 @@
+/*
+ * scala-exercises - exercise-compiler
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ */
+
 package org.scalaexercises.compiler
 
 import org.scalatest._
 
 import cats.implicits._
 
-class CommentRenderingRegressions extends FunSpec with Matchers
-    with Inside {
+class CommentRenderingRegressions extends FunSpec with Matchers with Inside {
   import Comments.Mode
 
   private[this] val global = new DocExtractionGlobal() {
@@ -33,7 +37,6 @@ class CommentRenderingRegressions extends FunSpec with Matchers
 
       inside(Comments.parseAndRender[Mode.Exercise](comment)) {
         case Right(parsed) ⇒
-
           // remove XML and check that there is code content
           val description = parsed.description
             .map(_.replaceAll("\\<.*?\\>", ""))

@@ -1,5 +1,5 @@
 /*
- * scala-exercises-runtime
+ * scala-exercises - runtime
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -20,33 +20,38 @@ object Exercises {
   val LIBRARIES_PACKAGE = "org.scalaexercises.content"
 
   private[this] def classMap(cl: ClassLoader) = {
-    val files = cl.asInstanceOf[URLClassLoader].getURLs map (_.getFile)
+    val files       = cl.asInstanceOf[URLClassLoader].getURLs map (_.getFile)
     val classFinder = ClassFinder(files map (new File(_)) filter (f ⇒ f.exists()))
-    val classes = classFinder.getClasses.toIterator
+    val classes     = classFinder.getClasses.toIterator
     ClassFinder.classInfoMap(classes)
   }
 
   private[this] def subclassesOf[A: ClassTag](cl: ClassLoader): List[String] = {
-    def loop(currentClassLoader: ClassLoader, acc: List[String]): List[String] = Option(currentClassLoader) match {
-      case None ⇒ acc
-      case Some(cll: URLClassLoader) ⇒
-        val cn = ClassFinder.concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
-          .filter(_.name.startsWith(LIBRARIES_PACKAGE))
-          .map(_.name)
-          .toList
-        loop(currentClassLoader.getParent, acc ++ cn)
-      case Some(o) ⇒ loop(o.getParent, acc)
-    }
+    def loop(currentClassLoader: ClassLoader, acc: List[String]): List[String] =
+      Option(currentClassLoader) match {
+        case None ⇒ acc
+        case Some(cll: URLClassLoader) ⇒
+          val cn = ClassFinder
+            .concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
+            .filter(_.name.startsWith(LIBRARIES_PACKAGE))
+            .map(_.name)
+            .toList
+          loop(currentClassLoader.getParent, acc ++ cn)
+        case Some(o) ⇒ loop(o.getParent, acc)
+      }
     loop(cl, Nil)
   }
 
-  def discoverLibraries(cl: ClassLoader = classOf[Exercise].getClassLoader): (List[String], List[Library]) = {
+  def discoverLibraries(
+      cl: ClassLoader = classOf[Exercise].getClassLoader): (List[String], List[Library]) = {
     val classNames: List[String] = subclassesOf[Library](cl)
 
     val errorsAndLibraries = classNames.map { name ⇒
       for {
         loadedClass ← guard(Class.forName(name, true, cl), s"$name not found")
-        loadedObject ← guard(loadedClass.getField("MODULE$").get(null), s"$name must be defined as an object")
+        loadedObject ← guard(
+          loadedClass.getField("MODULE$").get(null),
+          s"$name must be defined as an object")
         loadedLibrary ← guard(loadedObject.asInstanceOf[Library], s"$name must extend Library")
       } yield loadedLibrary
     }
@@ -58,12 +63,12 @@ object Exercises {
     Either.catchNonFatal(f).leftMap(_ ⇒ message)
 
   def buildEvaluatorRequest(
-    pkg:                 String,
-    qualifiedMethod:     String,
-    rawArgs:             List[String],
-    imports:             List[String] = Nil,
-    resolvers:           List[String],
-    libraryDependencies: List[String]
+      pkg: String,
+      qualifiedMethod: String,
+      rawArgs: List[String],
+      imports: List[String] = Nil,
+      resolvers: List[String],
+      libraryDependencies: List[String]
   ): (List[String], List[Dependency], String) = {
 
     val extractEvaluatorResolvers: List[String] = {
@@ -79,7 +84,7 @@ object Exercises {
       }
     }
 
-    val pre = (s"import $pkg._" :: imports).mkString("; ")
+    val pre  = (s"import $pkg._" :: imports).mkString("; ")
     val code = s"""$qualifiedMethod(${rawArgs.mkString(", ")})"""
 
     val allCode = s"{$pre; $code}"

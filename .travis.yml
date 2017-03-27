@@ -10,10 +10,6 @@ scala:
   - 2.11.8
 jdk:
   - oraclejdk8
-cache:
-  directories:
-    - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot/
 env:
   global:
     JAVA_OPTS=-Xmx2g
@@ -32,13 +28,11 @@ install:
   - npm install
   - npm install jsdom
 script:
+  - sbt sbt-exercise/publishLocal
   - sbt testAll
   - sbt coverageTests/clean coverage coverageTests/test coverageOff coverageTests/coverageReport coverageTests/coverageAggregate
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
      sbt publishSignedAll;
-  fi
-- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
-     echo "Not in master branch, skipping deploy and release";
   fi
