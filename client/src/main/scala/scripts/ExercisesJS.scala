@@ -1,5 +1,5 @@
 /*
- * scala-exercises-client
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -23,7 +23,7 @@ import effects.Effects
 
 import monix.reactive._
 import monix.reactive.subjects._
-import monix.execution.Scheduler.Implicits.{ global ⇒ scheduler }
+import monix.execution.Scheduler.Implicits.{global ⇒ scheduler}
 
 object ExercisesJS extends js.JSApp {
   def main(): Unit = {
@@ -40,7 +40,8 @@ object ExercisesJS extends js.JSApp {
     val ui: Observable[Coeval[Unit]] = Observable.zipMap2(state, actions)(UI.update _)
 
     // Effects that can trigger further actions
-    val effects: Observable[Future[Option[Action]]] = Observable.zipMap2(state, actions)(Effects.perform _)
+    val effects: Observable[Future[Option[Action]]] =
+      Observable.zipMap2(state, actions)(Effects.perform _)
 
     def triggerAction(action: Action): Coeval[Unit] = Coeval {
       actions.onNext(action)

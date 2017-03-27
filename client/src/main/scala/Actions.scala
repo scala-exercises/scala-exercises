@@ -1,5 +1,5 @@
 /*
- * scala-exercises-client
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -9,9 +9,9 @@ package actions
 import model.Exercises._
 
 sealed trait Action
-case object Start extends Action
-case class SetState(s: State) extends Action
+case object Start                                            extends Action
+case class SetState(s: State)                                extends Action
 case class UpdateExercise(method: String, args: Seq[String]) extends Action
-case class CompileExercise(method: String) extends Action
-case class CompilationOk(method: String) extends Action
-case class CompilationFail(method: String, msg: String) extends Action
+case class CompileExercise(method: String)                   extends Action
+case class CompilationOk(method: String)                     extends Action
+case class CompilationFail(method: String, msg: String)      extends Action

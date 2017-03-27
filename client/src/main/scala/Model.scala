@@ -1,5 +1,5 @@
 /*
- * scala-exercises-client
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -7,17 +7,17 @@ package org.scalaexercises.client
 package model
 
 sealed trait ExerciseState
-case object Unsolved extends ExerciseState
+case object Unsolved   extends ExerciseState
 case object Evaluating extends ExerciseState
-case object Errored extends ExerciseState
-case object Solved extends ExerciseState
+case object Errored    extends ExerciseState
+case object Solved     extends ExerciseState
 
 case class ClientExercise(
-    library:   String,
-    section:   String,
-    method:    String,
-    arguments: Seq[String]   = Nil,
-    state:     ExerciseState = Unsolved
+    library: String,
+    section: String,
+    method: String,
+    arguments: Seq[String] = Nil,
+    state: ExerciseState = Unsolved
 ) {
 
   def isFilled: Boolean = !arguments.exists(_.trim.isEmpty) && arguments.nonEmpty
@@ -47,8 +47,9 @@ object Exercises {
     applyByMethod(s, method, _.copy(arguments = args, state = Unsolved))
 
   def evaluate(s: State, method: String): State = findByMethod(s, method) match {
-    case Some(exercise) if exercise.canBeCompiled ⇒ applyByMethod(s, method, _.copy(state = Evaluating))
-    case _                                        ⇒ s
+    case Some(exercise) if exercise.canBeCompiled ⇒
+      applyByMethod(s, method, _.copy(state = Evaluating))
+    case _ ⇒ s
   }
 
   def setAsSolved(s: State, method: String): State =

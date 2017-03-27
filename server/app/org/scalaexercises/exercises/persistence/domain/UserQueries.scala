@@ -1,11 +1,11 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
 package org.scalaexercises.exercises.persistence.domain
 
-import github4s.free.domain.{ User ⇒ GHUser }
+import github4s.free.domain.{User ⇒ GHUser}
 import org.scalaexercises.types.user.User
 
 object UserCreation {
@@ -15,19 +15,20 @@ object UserCreation {
   case object DuplicateName extends CreationError
 
   case class Request(
-      login:      String,
-      name:       Option[String],
-      githubId:   String,
+      login: String,
+      name: Option[String],
+      githubId: String,
       pictureUrl: String,
-      githubUrl:  String,
-      email:      Option[String]
+      githubUrl: String,
+      email: Option[String]
   ) {
 
     def asUser(id: Long): User =
       User(id, login, name, githubId, pictureUrl, githubUrl, email)
   }
 
-  def toUser(ghu: GHUser) = Request(ghu.login, ghu.name, ghu.id.toString, ghu.avatar_url, ghu.html_url, ghu.email)
+  def toUser(ghu: GHUser) =
+    Request(ghu.login, ghu.name, ghu.id.toString, ghu.avatar_url, ghu.html_url, ghu.email)
 
   type Response = Either[CreationError, User]
 }

@@ -5,21 +5,18 @@
 
 package org.scalaexercises.exercises.persistence.queries
 
-import org.scalaexercises.exercises.persistence.domain.{ UserQueries ⇒ Q }
+import org.scalaexercises.exercises.persistence.domain.{UserQueries ⇒ Q}
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
 import org.scalaexercises.exercises.support.DatabaseInstance
 import doobie.imports._
-import doobie.contrib.specs2.analysisspec.AnalysisSpec
+import doobie.specs2.analysisspec.AnalysisSpec
 import doobie.util.query.Query
 import doobie.util.update.Update
 import org.specs2.mutable.Specification
 import org.scalaexercises.types.user.User
 import scalaz.concurrent.Task
 
-class UserQueriesSpec
-    extends Specification
-    with AnalysisSpec
-    with DatabaseInstance {
+class UserQueriesSpec extends Specification with AnalysisSpec with DatabaseInstance {
 
   implicit override val transactor: Transactor[Task] = databaseTransactor
 

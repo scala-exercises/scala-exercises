@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -7,7 +7,7 @@ package org.scalaexercises.exercises.persistence.repositories
 
 import org.scalaexercises.types.user._
 import org.scalaexercises.exercises.persistence.PersistenceModule
-import org.scalaexercises.exercises.persistence.domain.{ UserQueries ⇒ Q }
+import org.scalaexercises.exercises.persistence.domain.{UserQueries ⇒ Q}
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
 
 import doobie.imports._
@@ -57,19 +57,21 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
     } yield Either.fromOption(user, UserCreation.DuplicateName)
   }
 
-  override def delete(id: Long): ConnectionIO[Boolean] = persistence.update[Long](Q.deleteById, id) map (_ > 0)
+  override def delete(id: Long): ConnectionIO[Boolean] =
+    persistence.update[Long](Q.deleteById, id) map (_ > 0)
 
   def deleteAll(): ConnectionIO[Int] = persistence.update(Q.deleteAll)
 
-  def update(user: User): ConnectionIO[Option[User]] = for {
-    _ ← persistence
-      .updateWithGeneratedKeys[UpdateParams, User](
-        Q.update,
-        Q.allFields,
-        (user.name, user.githubId, user.pictureUrl, user.githubUrl, user.email, user.id)
-      )
-    maybeUser ← getById(user.id)
-  } yield maybeUser
+  def update(user: User): ConnectionIO[Option[User]] =
+    for {
+      _ ← persistence
+        .updateWithGeneratedKeys[UpdateParams, User](
+          Q.update,
+          Q.allFields,
+          (user.name, user.githubId, user.pictureUrl, user.githubUrl, user.email, user.id)
+        )
+      maybeUser ← getById(user.id)
+    } yield maybeUser
 }
 
 object UserRepository {
@@ -78,5 +80,6 @@ object UserRepository {
   type UpdateParams = (Option[String], String, String, String, Option[String], Long)
   type InsertParams = (String, Option[String], String, String, String, Option[String])
 
-  implicit def instance(implicit persistence: PersistenceModule): UserRepository = new UserDoobieRepository()
+  implicit def instance(implicit persistence: PersistenceModule): UserRepository =
+    new UserDoobieRepository()
 }

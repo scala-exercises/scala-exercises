@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -17,20 +17,20 @@ class PersistenceModule {
     Query[HNil, K](sql).toQuery0(HNil).to[List]
 
   def fetchList[A: Composite, K: Composite](
-    sql:    String,
-    values: A
+      sql: String,
+      values: A
   ): ConnectionIO[List[K]] =
     Query[A, K](sql).to[List](values)
 
   def fetchOption[A: Composite, K: Composite](
-    sql:    String,
-    values: A
+      sql: String,
+      values: A
   ): ConnectionIO[Option[K]] =
     Query[A, K](sql).option(values)
 
   def fetchUnique[A: Composite, K: Composite](
-    sql:    String,
-    values: A
+      sql: String,
+      values: A
   ): ConnectionIO[K] =
     Query[A, K](sql).unique(values)
 
@@ -38,21 +38,21 @@ class PersistenceModule {
     Update[HNil](sql).run(HNil)
 
   def update[A: Composite](
-    sql:    String,
-    values: A
+      sql: String,
+      values: A
   ): ConnectionIO[Int] =
     Update[A](sql).run(values)
 
   def updateWithGeneratedKeys[A: Composite, K: Composite](
-    sql:    String,
-    fields: List[String],
-    values: A
+      sql: String,
+      fields: List[String],
+      values: A
   ): ConnectionIO[K] =
     Update[A](sql).withUniqueGeneratedKeys[K](fields: _*)(values)
 
   def updateMany[F[_]: Foldable, A: Composite](
-    sql:    String,
-    values: F[A]
+      sql: String,
+      values: F[A]
   ): ConnectionIO[Int] =
     Update[A](sql).updateMany(values)
 

@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -19,9 +19,13 @@ object Routes {
       stringBinder.unbind(key, value.toString)
     }
   }
-  */
-  implicit object bindableChar extends Parsing[Char](
-    _.charAt(0), _.toString, (key: String, e: Exception) ⇒ "Cannot parse parameter %s as Char: %s".format(key, e.getMessage)
-  )
+   */
+  implicit object bindableChar
+      extends Parsing[Char](
+        _.charAt(0),
+        _.toString,
+        (key: String, e: Exception) ⇒
+          "Cannot parse parameter %s as Char: %s".format(key, e.getMessage)
+      )
 
 }

@@ -1,5 +1,5 @@
 /*
- * scala-exercises-server
+ * scala-exercises - scala-exercises
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
@@ -25,16 +25,20 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
 class UserProgressController(
-    implicit
-    exerciseOps:     ExerciseOps[ExercisesApp],
-    userOps:         UserOps[ExercisesApp],
+    implicit exerciseOps: ExerciseOps[ExercisesApp],
+    userOps: UserOps[ExercisesApp],
     userProgressOps: UserProgressOps[ExercisesApp],
-    T:               Transactor[Task]
-) extends Controller with JsonFormats with AuthenticationModule with ProdInterpreters {
+    T: Transactor[Task]
+) extends Controller
+    with JsonFormats
+    with AuthenticationModule
+    with ProdInterpreters {
 
   def fetchUserProgressBySection(libraryName: String, sectionName: String) =
     AuthenticatedUser { user ⇒
-      userProgressOps.fetchUserProgressByLibrarySection(user, libraryName, sectionName).runFuture map {
+      userProgressOps
+        .fetchUserProgressByLibrarySection(user, libraryName, sectionName)
+        .runFuture map {
         case Right(response) ⇒ Ok(Json.toJson(response))
         case Left(error) ⇒
           Logger.error(s"Error while fetching user progress for $libraryName/$sectionName", error)

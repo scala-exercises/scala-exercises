@@ -1,7 +1,7 @@
 import play.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
-
+import webscalajs._
 
 ////////////////////
 // Project Modules:
@@ -10,17 +10,16 @@ import sbt.Project.projectToRef
 // Purely functional core
 
 lazy val core = (crossProject.crossType(CrossType.Pure) in file("core"))
-  .jsConfigure(_ enablePlugins ScalaJSPlay)
+  .jsConfigure(_ enablePlugins ScalaJSWeb)
   .jsSettings(
-    sourceMapsBase := baseDirectory.value / "..",
-    scalaVersion := v('scala)
+    sourceMappings := SourceMappings.fromFiles(Seq(baseDirectory.value / ".."))
   )
   .settings(
     name := "core",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % v('cats),
-      "org.typelevel" %%% "cats-free" % v('cats),
-      compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector))
+      %%("cats-core"),
+      %%("cats-free"),
+      compilerPlugin(%%("kind-projector"))
     )
   )
 
@@ -54,7 +53,6 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-scalatutorial" % version.value changing(),
       "org.scala-exercises" %% "runtime" % version.value changing(),
       "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing(),
-      "org.slf4j" % "slf4j-nop" % v('slf4j),
       "org.postgresql" % "postgresql" % v('postgres),
       "com.vmunier" %% "play-scalajs-scripts" % v('scalajsscripts),
       "com.lihaoyi" %% "upickle" % v('upickle),
@@ -62,30 +60,30 @@ lazy val server = (project in file("server"))
       "org.webjars" % "bootstrap-sass" % v('bootstrap),
       "org.webjars" % "highlightjs" % v('highlightjs),
       "com.tristanhunt" %% "knockoff" % v('knockoff),
-      "com.fortysevendeg" %% "github4s" % v('github4s),
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      "org.scalaz" %% "scalaz-concurrent" % v('scalaz),
-      "org.scalatest" %% "scalatest" % v('scalaTest) % "runtime",
       "com.newrelic.agent.java" % "newrelic-agent" % v('newrelic),
-      "org.tpolecat" %% "doobie-core" % v('doobie) xscalaz,
-      "org.tpolecat" %% "doobie-contrib-hikari" % v('doobie) xscalaz,
-      "org.tpolecat" %% "doobie-contrib-postgresql" % v('doobie) xscalaz,
-      "com.github.mpilquist" %% "simulacrum" % v('simulacrum),
       "commons-io" % "commons-io" % v('commonsio),
+      %%("github4s"),
+      %("slf4j-nop"),
+      %%("scalaz-concurrent"),
+      %%("scalatest") % "runtime",
+      %%("doobie-core"),
+      %%("doobie-hikari"),
+      %%("doobie-postgres"),
+      %%("simulacrum"),
       specs2 xscalaz,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % v('scalacheckshapeless) % "test",
-      "org.tpolecat" %% "doobie-contrib-specs2" % v('doobie) % "test",
-      "org.typelevel" %% "scalaz-specs2" % v('scalazspecs2) % "test",
-      compilerPlugin("org.spire-math" %% "kind-projector" % v('kindprojector)),
-      compilerPlugin("org.scalamacros" % "paradise" % v('paradise) cross CrossVersion.full)))
+      %%("scheckShapeless") % "test",
+      %%("doobie-specs2") % "test",
+      %%("scalazspecs2") % "test",
+      compilerPlugin(%%("kind-projector"))))
+.settings(scalaMacroDependencies: _*)
 
 lazy val client = (project in file("client"))
   .dependsOn(core.js)
-  .enablePlugins(ScalaJSPlugin, ScalaJSPlay)
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .settings(
     persistLauncher := true,
     persistLauncher in Test := false,
-    sourceMapsDirectories += core.js.base / "..",
+    sourceMappings := SourceMappings.fromFiles(Seq(core.js.base / "..")),
     scalaJSOptimizerOptions in(Compile, fullOptJS) ~= {
       _.withParallel(false)
     },
@@ -96,14 +94,14 @@ lazy val client = (project in file("client"))
     skip in packageJSDependencies := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
+      %%%("monix"),
+      %%%("monix-cats"),
+      %%%("cats-core"),
       "com.lihaoyi" %%% "scalatags" % v('scalatags) xscalajs,
-      "io.monix" %%% "monix" % v('monix),
-      "io.monix" %%% "monix-cats" % v('monix),
+      "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
       "be.doeraene" %%% "scalajs-jquery" % v('scalajsjquery) xscalajs,
       "com.lihaoyi" %%% "utest" % v('utest) % "test",
       "com.lihaoyi" %%% "upickle" % v('upickle),
-      "org.typelevel" %%% "cats-core" % v('cats),
       "ch.sidorenko.scoverage" %%% "scalac-scoverage-runtime" % v('scalacscoverage)
     )
   )
@@ -116,10 +114,10 @@ lazy val definitions = (project in file("definitions"))
   .settings(
     name := "definitions",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % v('cats),
-      "org.scalatest" %% "scalatest" % v('scalaTest),
-      "org.scalacheck" %% "scalacheck" % v('scalacheck),
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % v('scalacheckshapeless)
+      %%("cats-core"),
+      %%("scalatest"),
+      %%("scalacheck"),
+      %%("scheckShapeless")
     )
   )
 
@@ -131,10 +129,10 @@ lazy val runtime = (project in file("runtime"))
     libraryDependencies ++= Seq(
       "org.clapper" %% "classutil" % v('classutil),
       "com.twitter" %% "util-eval" % v('utileval),
-      "io.monix" %% "monix" % v('monix),
       "org.scala-exercises" %% "evaluator-shared" % v('evaluator) changing(),
-      "org.typelevel" %%% "cats-core" % v('cats) % "compile",
-      "org.scalatest" %% "scalatest" % v('scalaTest) % "test"
+      %%%("monix"),
+      %%("cats-core") % "compile",
+      %%("scalatest") % "test"
     )
   )
 
@@ -146,11 +144,11 @@ lazy val compiler = (project in file("compiler"))
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scalariform" %% "scalariform" % v('scalariform),
-      "com.fortysevendeg" %% "github4s" % v('github4s),
-      "org.typelevel" %% "cats-core" % v('cats) % "compile",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
-      "org.typelevel" %% "cats-laws" % v('cats) % "test",
-      "org.scalatest" %% "scalatest" % v('scalaTest) % "test"
+      %%("github4s"),
+      %%("cats-core") % "compile",
+      %%("cats-laws") % "test",
+      %%("scalatest") % "test"
     )
   ).dependsOn(definitions, runtime)
 
@@ -162,7 +160,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scalaVersion := "2.10.6",
     sbtPlugin := true,
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % v('cats) % "compile"
+      %%("cats-core") % "compile"
     ),
     // Leverage build info to populate compiler classpath--
     // This allows SBT, which currently requires Scala 2.10.x, to load and run
@@ -207,11 +205,7 @@ parallelExecution in Global := false
 // Disable forking in CI
 fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
-
-// These settings should be global to be able to capture the env var:
-lazy val gpgFolder = sys.env.getOrElse("PGP_FOLDER", ".")
-
-pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
+pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
