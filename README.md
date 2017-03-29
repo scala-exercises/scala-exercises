@@ -80,10 +80,10 @@ Edit the `server/conf/application.dev.conf` configuration file with your databas
 
 #### Running the app
 
-Go into the project's root directory, run `sbt run`
+Go into the project's root directory, run `sbt server/run`
 
 ```sh
-$ sbt run
+$ sbt server/run
 ```
 
 After compilation the application will be running, listening in the 9000 port. Point your browser
@@ -117,7 +117,7 @@ To add additional exercises to your locally running server:
 !Note: The _compile_ task is **mandatory** here otherwise the exercises will not show up in the application.
 * add a dependency to the exersises jar in the `server` project in the `build.sbt` file (~L118).
 
-Now run `sbt run` and the application index will also display the added exercises.
+Now run `sbt server/run` and the application index will also display the added exercises.
 
 ## Troubleshooting
 

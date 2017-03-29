@@ -6,6 +6,7 @@ import wartremover.WartRemover.autoImport._
 import sbtorgpolicies._
 import sbtorgpolicies.model._
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
+import scoverage.ScoverageKeys
 import wartremover.Wart
 
 object ProjectPlugin extends AutoPlugin {
@@ -103,7 +104,8 @@ object ProjectPlugin extends AutoPlugin {
               | */
               |
             |""".stripMargin)
-      )
+      ),
+      ScoverageKeys.coverageFailOnMinimum := false
     ) ++ scalaMacroDependencies ++ shellPromptSettings ++ wartSettings
 
   lazy val wartSettings: Seq[Def.Setting[Seq[Wart]]] = guard(getEnvVar("WARTING").nonEmpty) {
