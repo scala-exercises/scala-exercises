@@ -3,6 +3,12 @@ import sbt.Keys._
 import sbt.Project.projectToRef
 import webscalajs._
 
+lazy val `scala-exercises` = (project in file("."))
+  .settings(moduleName := "scala-exercises")
+  .settings(noPublishSettings: _*)
+  .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler)
+  .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler)
+
 ////////////////////
 // Project Modules:
 ////////////////////
@@ -78,6 +84,7 @@ lazy val server = (project in file("server"))
 lazy val client = (project in file("client"))
   .dependsOn(coreJs)
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  .disablePlugins(ScoverageSbtPlugin)
   .settings(name := "client")
   .settings(noPublishSettings: _*)
   .settings(
@@ -101,9 +108,8 @@ lazy val client = (project in file("client"))
       "com.lihaoyi" %%% "scalatags" % v('scalatags) xscalajs,
       "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
       "be.doeraene" %%% "scalajs-jquery" % v('scalajsjquery) xscalajs,
-      "com.lihaoyi"   %%% "utest"                    % v('utest) % "test",
-      "com.lihaoyi"   %%% "upickle"                  % v('upickle),
-      "org.scoverage" %%% "scalac-scoverage-runtime" % v('scalacscoverage)
+      "com.lihaoyi" %%% "upickle" % v('upickle),
+      "com.lihaoyi" %%% "utest"   % v('utest) % "test"
     )
   )
 
@@ -194,18 +200,9 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   )
   .enablePlugins(BuildInfoPlugin)
 
-// Test coverage
-
-lazy val coverageTests = (project in file("coverageTests"))
-  .settings(noPublishSettings: _*)
-  .aggregate(server, client, runtime, definitions, compiler)
-
 ///////////////////
 // Global settings:
 ///////////////////
-
-// loads the jvm project at sbt startup
-onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
 
 parallelExecution in Global := false
 

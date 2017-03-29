@@ -43,12 +43,11 @@ object ProjectPlugin extends AutoPlugin {
         'webjars        -> "2.5.0-4"
       ) ++ Map(
         // JS Versions
-        'jquery          -> "2.1.3",
-        'scalajsdom      -> "0.9.1",
-        'scalajsjquery   -> "0.9.1",
-        'scalatags       -> "0.6.3",
-        'utest           -> "0.4.5",
-        'scalacscoverage -> "1.3.0"
+        'jquery        -> "2.1.3",
+        'scalajsdom    -> "0.9.1",
+        'scalajsjquery -> "0.9.1",
+        'scalatags     -> "0.6.3",
+        'utest         -> "0.4.5"
       )
 
     implicit class Exclude(module: ModuleID) {

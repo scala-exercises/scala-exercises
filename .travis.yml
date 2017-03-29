@@ -31,9 +31,10 @@ install:
   - nvm use stable
   - npm install jsdom
 script:
+  - sbt test
   - sbt sbt-exercise/publishLocal
-  - sbt testAll
-  - sbt coverageTests/clean coverage coverageTests/test coverageOff coverageTests/coverageReport coverageTests/coverageAggregate
+  - sbt sbt-exercise/scripted
+  - sbt coverage test coverageReport coverageAggregate
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
