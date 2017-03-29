@@ -19,6 +19,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import upickle._
+import upickle.default._
 
 import scalaz.concurrent.Task
 

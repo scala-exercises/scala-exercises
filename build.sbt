@@ -51,7 +51,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises"     %% "evaluator-client"        % v('evaluator) changing (),
       "org.scala-exercises"     %% "runtime"                 % version.value changing (),
       "org.postgresql"          % "postgresql"               % v('postgres),
-      "com.vmunier"             %% "play-scalajs-scripts"    % v('scalajsscripts),
+      "com.vmunier"             %% "scalajs-scripts"         % v('scalajsscripts),
       "com.lihaoyi"             %% "upickle"                 % v('upickle),
       "org.webjars"             %% "webjars-play"            % v('webjars),
       "org.webjars"             % "bootstrap-sass"           % v('bootstrap),
@@ -129,7 +129,6 @@ lazy val runtime = (project in file("runtime"))
   .settings(
     libraryDependencies ++= Seq(
       "org.clapper"         %% "classutil"        % v('classutil),
-      "com.twitter"         %% "util-eval"        % v('utileval),
       "org.scala-exercises" %% "evaluator-shared" % v('evaluator) changing (),
       %%("monix"),
       %%("cats-core") % "compile",

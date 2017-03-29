@@ -10,6 +10,10 @@ scala:
   - 2.11.8
 jdk:
   - oraclejdk8
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
 env:
   global:
     JAVA_OPTS=-Xmx2g
@@ -25,7 +29,6 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install
   - npm install jsdom
 script:
   - sbt sbt-exercise/publishLocal

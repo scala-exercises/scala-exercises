@@ -37,10 +37,9 @@ object ProjectPlugin extends AutoPlugin {
         'knockoff       -> "0.8.3",
         'newrelic       -> "3.29.0",
         'postgres       -> "9.3-1102-jdbc41",
-        'scalajsscripts -> "0.2.1",
+        'scalajsscripts -> "1.0.0",
         'scalariform    -> "0.1.8",
-        'upickle        -> "0.2.8",
-        'utileval       -> "6.34.0",
+        'upickle        -> "0.4.3",
         'webjars        -> "2.5.0-4"
       ) ++ Map(
         // JS Versions
