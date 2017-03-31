@@ -3,7 +3,7 @@
 [![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/scala-exercises/scala-exercises)
 [![codecov.io](http://codecov.io/github/scala-exercises/scala-exercises/coverage.svg?branch=master)](http://codecov.io/github/scala-exercises/scala-exercises?branch=master)
 
-#Scala Exercises
+# Scala Exercises
 
 ------------------------
 
@@ -201,7 +201,7 @@ you find yourself embroiled in a situation that becomes heated, or
 that fails to live up to our expectations, you should disengage and
 contact one of the project maintainers in private.
 
-##License
+## License
 
 Copyright (C) 2015-2016 47 Degrees, LLC.
 Reactive, scalable software solutions.
