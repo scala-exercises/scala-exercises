@@ -129,7 +129,10 @@
     <script src="@routes.Assets.at("lib/highlightjs/languages/scala.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/emojify-cdn.js")"></script>
     <script src="@org.scalaexercises.exercises.controllers.routes.ApplicationController.javascriptRoutes" type="text/javascript"></script>
-    @scalajs.html.scripts("client", _ => "/assets", _ => true)
+    @scalajs.html.scripts(
+    "client",
+    name => routes.Assets.at(name).toString,
+    name => getClass.getResource(s"/public/$name") != null)
     
   </body>
 </html>
