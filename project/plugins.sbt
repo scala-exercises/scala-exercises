@@ -16,6 +16,7 @@ resolvers ++= Seq(
 addSbtPlugin("com.47deg"         % "sbt-org-policies" % "0.3.2")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin"       % "2.4.8")
 addSbtPlugin("com.vmunier"       % "sbt-web-scalajs"  % "1.0.3")
+addSbtPlugin("org.scala-js"      % "sbt-scalajs"      % "0.6.15")
 addSbtPlugin("com.typesafe.sbt"  % "sbt-gzip"         % "1.0.0")
 addSbtPlugin("default"           % "sbt-sass"         % "0.1.9")
 addSbtPlugin("org.wartremover"   % "sbt-wartremover"  % "2.0.2")

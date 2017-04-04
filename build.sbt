@@ -29,17 +29,19 @@ lazy val coreJvm = core.jvm
 lazy val coreJs  = core.js
 
 // Client and Server projects
-
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
   .settings(noPublishSettings: _*)
   .settings(
+    scalaJSProjects := Seq(client),
+    pipelineStages in Assets := Seq(scalaJSPipeline)
+  )
+  .enablePlugins(SbtWeb)
+  .settings(
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
-    scalaJSProjects := clients,
-    pipelineStages := Seq(scalaJSProd, gzip),
     testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
     libraryDependencies ++= Seq(
       filters,
@@ -57,7 +59,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises"     %% "evaluator-client"        % v('evaluator) changing (),
       "org.scala-exercises"     %% "runtime"                 % version.value changing (),
       "org.postgresql"          % "postgresql"               % v('postgres),
-      "com.vmunier"             %% "scalajs-scripts"         % v('scalajsscripts),
+      "com.vmunier"             %% "scalajs-scripts"         % "1.0.0",
       "com.lihaoyi"             %% "upickle"                 % v('upickle),
       "org.webjars"             %% "webjars-play"            % v('webjars),
       "org.webjars"             % "bootstrap-sass"           % v('bootstrap),
@@ -94,12 +96,9 @@ lazy val client = (project in file("client"))
     scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
       _.withParallel(false)
     },
-    jsDependencies ++= Seq(
-      "org.webjars" % "jquery"    % v('jquery) / s"${v('jquery)}/jquery.js" minified "jquery.min.js",
-      "org.webjars" % "bootstrap" % v('bootstrap) / "bootstrap.js" minified "bootstrap.min.js"
-    ),
-    jsDependencies += RuntimeDOM % "test",
+    jsDependencies += "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js",
     skip in packageJSDependencies := false,
+    jsDependencies += RuntimeDOM % "test",
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
       %%%("monix"),
