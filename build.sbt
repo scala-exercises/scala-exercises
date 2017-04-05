@@ -207,7 +207,6 @@ parallelExecution in Global := false
 // Disable forking in CI
 fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
 
-
 // These settings should be global to be able to capture the env var:
 lazy val gpgFolder = sys.env.getOrElse("PGP_FOLDER", ".")
 
