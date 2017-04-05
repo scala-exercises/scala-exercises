@@ -1,3 +1,22 @@
+/*
+ *  scala-exercises
+ *
+ *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.scalaexercises.compiler
 
 import org.scalatest._
@@ -37,20 +56,21 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
     val res = new SourceTextExtraction().extractAll(code :: Nil, List(""), "/")
 
     it("should find all doc comments on classes and objects") {
-      res.comments.map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(Map(
-        "myPackage.Bar.fizz.SubBar" → "/** This is SubBar */",
-        "myPackage.Bar.fizz.SubBar.subbar" → "/** This is SubBar.subbar */",
-        "myPackage.Bar.bar" → "/** This is Bar.bar */",
-        "myPackage.Bar" → "/** This is Bar */",
-        "myPackage.Foo" → "/** This is Foo */"
-      ))
+      res.comments.map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(
+        Map(
+          "myPackage.Bar.fizz.SubBar"        → "/** This is SubBar */",
+          "myPackage.Bar.fizz.SubBar.subbar" → "/** This is SubBar.subbar */",
+          "myPackage.Bar.bar"                → "/** This is Bar.bar */",
+          "myPackage.Bar"                    → "/** This is Bar */",
+          "myPackage.Foo"                    → "/** This is Foo */"
+        ))
     }
   }
 
   describe("source text extraction with multi-level deep package") {
 
     val multiLevelPackage = "com.my.nestedPackage"
-    val code = s"""
+    val code              = s"""
       /** This is a comment that gets ignored */
       import scala.collection.immutable.{ Seq => Seqq }
       package $multiLevelPackage {
@@ -68,13 +88,14 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
         case (k, _) ⇒
           multiLevelPackage.split('.') foreach (k should contain(_))
       }
-      comments map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(Map(
-        s"$multiLevelPackage.Bar.fizz.SubBar" → "/** This is SubBar */",
-        s"$multiLevelPackage.Bar.fizz.SubBar.subbar" → "/** This is SubBar.subbar */",
-        s"$multiLevelPackage.Bar.bar" → "/** This is Bar.bar */",
-        s"$multiLevelPackage.Bar" → "/** This is Bar */",
-        s"$multiLevelPackage.Foo" → "/** This is Foo */"
-      ))
+      comments map { case (k, v) ⇒ k.mkString(".") → v.raw } should equal(
+        Map(
+          s"$multiLevelPackage.Bar.fizz.SubBar"        → "/** This is SubBar */",
+          s"$multiLevelPackage.Bar.fizz.SubBar.subbar" → "/** This is SubBar.subbar */",
+          s"$multiLevelPackage.Bar.bar"                → "/** This is Bar.bar */",
+          s"$multiLevelPackage.Bar"                    → "/** This is Bar */",
+          s"$multiLevelPackage.Foo"                    → "/** This is Foo */"
+        ))
     }
 
     /*
@@ -84,7 +105,7 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
         "" → "scala.collection.immutable.{ Seq => Seqq }"
       ))
     }
-    */
+   */
 
   }
 
@@ -117,7 +138,7 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
         """
 
       val paths = List("", "")
-      val res = new SourceTextExtraction().extractAll(source1 :: source2 :: Nil, paths, "/")
+      val res   = new SourceTextExtraction().extractAll(source1 :: source2 :: Nil, paths, "/")
 
       // Should capture exactly 1 import for Object1.method
       inside(res.methods.get("Object1" :: "method" :: Nil)) {
@@ -141,8 +162,7 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
       case (a, b)           ⇒ s"$a => $b"
     }
 
-  def renderImport(imp: Global#Import): String = {
+  def renderImport(imp: Global#Import): String =
     s"""${imp.expr.toString}.{ ${imp.selectors.map(renderImportSelector).mkString(",")} }"""
-  }
 
 }
