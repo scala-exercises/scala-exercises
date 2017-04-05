@@ -38,6 +38,7 @@ lazy val server = (project in file("server"))
   .settings(
     scalaJSProjects := clients,
     pipelineStages in Assets := Seq(scalaJSPipeline),
+    pipelineStages := Seq(scalaJSProd, gzip),
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
