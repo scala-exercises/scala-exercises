@@ -26,14 +26,17 @@ before_install:
 
 install:
   - gem install sass
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install jsdom
 script:
-  - sbt testAll
-  - sbt coverageTests/clean coverage coverageTests/test coverageOff coverageTests/coverageReport coverageTests/coverageAggregate
+  - sbt test
+  - sbt sbt-exercise/publishLocal
+  - sbt sbt-exercise/scripted
+  - sbt coverage test coverageReport coverageAggregate
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
      sbt publishSignedAll;
-  fi
-- if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
-     echo "Not in master branch, skipping deploy and release";
   fi

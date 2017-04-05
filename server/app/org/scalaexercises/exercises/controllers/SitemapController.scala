@@ -1,6 +1,20 @@
 /*
- * scala-exercises-server
- * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises.controllers
@@ -12,7 +26,7 @@ import cats.free.Free
 
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.types.exercises.{ Contribution, Contributor }
+import org.scalaexercises.types.exercises.{Contribution, Contributor}
 
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
@@ -28,20 +42,24 @@ import scala.concurrent.Future
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
-class SitemapController(
-    implicit
-    exerciseOps: ExerciseOps[ExercisesApp],
-    T:           Transactor[Task]
-) extends Controller with ProdInterpreters {
+import freestyle._
+import freestyle.implicits._
 
-  def sitemap = Secure(Action.async { implicit request ⇒
-    exerciseOps.getLibraries.runFuture map {
-      case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-      case Left(ex) ⇒ {
-        Logger.error("Error rendering sitemap", ex)
-        InternalServerError(ex.getMessage)
+class SitemapController(
+    implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
+    T: Transactor[Task]
+) extends Controller
+    with ProdInterpreters {
+
+  def sitemap =
+    Secure(Action.async { implicit request ⇒
+      exerciseOps.getLibraries.runFuture map {
+        case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
+        case Left(ex) ⇒ {
+          Logger.error("Error rendering sitemap", ex)
+          InternalServerError(ex.getMessage)
+        }
       }
-    }
-  })
+    })
 
 }
