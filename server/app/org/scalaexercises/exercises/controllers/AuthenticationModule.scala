@@ -1,20 +1,6 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ * scala-exercises-server
+ * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
 package org.scalaexercises.exercises.controllers
@@ -39,20 +25,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent._
 
-import freestyle._
-import freestyle.implicits._
-import cats.instances.future._
-
 trait AuthenticationModule { self: ProdInterpreters ⇒
 
-  case class UserRequest[A](val userId: String, request: Request[A])
-      extends WrappedRequest[A](request)
+  case class UserRequest[A](val userId: String, request: Request[A]) extends WrappedRequest[A](request)
 
   object AuthenticationAction extends ActionBuilder[UserRequest] {
 
     override def invokeBlock[A](
-        request: Request[A],
-        thunk: (UserRequest[A]) ⇒ Future[Result]
+      request: Request[A],
+      thunk:   (UserRequest[A]) ⇒ Future[Result]
     ): Future[Result] =
       request.session.get("user") match {
         case Some(userId) ⇒ thunk(UserRequest(userId, request))
@@ -60,9 +41,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
       }
   }
 
-  def AuthenticatedUser(thunk: User ⇒ Future[Result])(
-      implicit userOps: UserOps[ExercisesApp.Op],
-      transactor: Transactor[Task]) =
+  def AuthenticatedUser(thunk: User ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task]) =
     Secure(AuthenticationAction.async { request ⇒
       userOps.getUserByLogin(request.userId).runFuture flatMap {
         case Right(Some(user)) ⇒ thunk(user)
@@ -70,10 +49,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
       }
     })
 
-  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
-      implicit userOps: UserOps[ExercisesApp.Op],
-      transactor: Transactor[Task],
-      format: Reads[T]) =
+  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(implicit userOps: UserOps[ExercisesApp], transactor: Transactor[Task], format: Reads[T]) =
     Secure(AuthenticationAction.async(bodyParser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
