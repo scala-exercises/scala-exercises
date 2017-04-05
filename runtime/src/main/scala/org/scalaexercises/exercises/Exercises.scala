@@ -86,7 +86,7 @@ object Exercises {
   ): (List[String], List[Dependency], String) = {
 
     val extractEvaluatorResolvers: List[String] = {
-      resolvers.filter(!_.isEmpty) map { resolver ⇒
+      resolvers.filter(r => !r.isEmpty && r.contains("http")) map { resolver ⇒
         resolver.substring(resolver.indexOf("http"))
       }
     }

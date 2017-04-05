@@ -62,6 +62,9 @@ object ProjectPlugin extends AutoPlugin {
 
       def xscalajs: ModuleID =
         x("org.scala-js", "scalajs-library") x ("org.scala-js", "scalajs-dom")
+
+      def xscalaExercises: ModuleID =
+        x("org.scala-exercises", "exercise-compiler") x ("org.scala-exercises", "definitions")
     }
 
   }

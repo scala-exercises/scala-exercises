@@ -278,6 +278,7 @@ case class Compiler() {
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)
 
     def generateTree(libraryInfo: LibraryInfo): (TermName, Tree) = {
+
       val (sectionTerms, sectionAndExerciseTrees) =
         libraryInfo.sections.map { sectionInfo ⇒
           val (exerciseTerms, exerciseTrees) =
@@ -321,14 +322,18 @@ case class Compiler() {
           (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
         }.unzip
 
-      val libraryAsDependency =
-        s"${buildMetaInfo.organization}:${buildMetaInfo.name}_2.11:${buildMetaInfo.version}"
+      val allDependencies: List[String] = {
+        val libraryAsDependency =
+          s"${buildMetaInfo.organization}:${buildMetaInfo.name}_${buildMetaInfo.scalaVersion
+            .substring(0, 4)}:${buildMetaInfo.version}"
+        libraryAsDependency :: buildMetaInfo.libraryDependencies.toList
+      }
 
       val (buildInfoTerm, buildInfoTree) =
         treeGen.makeBuildInfo(
           name = libraryInfo.comment.name,
           resolvers = buildMetaInfo.resolvers.toList,
-          libraryDependencies = List(libraryAsDependency)
+          libraryDependencies = allDependencies
         )
 
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(

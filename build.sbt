@@ -33,13 +33,11 @@ lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
+  .enablePlugins(SbtWeb)
   .settings(noPublishSettings: _*)
   .settings(
-    scalaJSProjects := Seq(client),
-    pipelineStages in Assets := Seq(scalaJSPipeline)
-  )
-  .enablePlugins(SbtWeb)
-  .settings(
+    scalaJSProjects := clients,
+    pipelineStages in Assets := Seq(scalaJSPipeline),
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
@@ -49,25 +47,25 @@ lazy val server = (project in file("server"))
       evolutions,
       cache,
       ws,
-      "org.scala-exercises"     %% "exercises-stdlib"        % v('stdlib),
-      "org.scala-exercises"     %% "exercises-cats"          % v('cats),
-      "org.scala-exercises"     %% "exercises-shapeless"     % v('shapeless),
-      "org.scala-exercises"     %% "exercises-doobie"        % v('doobie),
-      "org.scala-exercises"     %% "exercises-scalacheck"    % v('scalacheck),
-      "org.scala-exercises"     %% "exercises-fpinscala"     % v('fpinscala),
-      "org.scala-exercises"     %% "exercises-scalatutorial" % v('scalatutorial),
-      "org.scala-exercises"     %% "evaluator-client"        % v('evaluator) changing (),
-      "org.scala-exercises"     %% "runtime"                 % version.value changing (),
-      "org.postgresql"          % "postgresql"               % v('postgres),
-      "com.vmunier"             %% "scalajs-scripts"         % "1.0.0",
-      "com.lihaoyi"             %% "upickle"                 % v('upickle),
-      "org.webjars"             %% "webjars-play"            % v('webjars),
-      "org.webjars"             % "bootstrap-sass"           % v('bootstrap),
-      "org.webjars"             % "highlightjs"              % v('highlightjs),
-      "com.tristanhunt"         %% "knockoff"                % v('knockoff),
-      "com.newrelic.agent.java" % "newrelic-agent"           % v('newrelic),
-      "commons-io"              % "commons-io"               % v('commonsio),
-      "com.47deg"               %% "freestyle"               % v('freestyle),
+      "org.scala-exercises" %% "exercises-stdlib"        % v('stdlib) xscalaExercises,
+      "org.scala-exercises" %% "exercises-cats"          % v('cats) xscalaExercises,
+      "org.scala-exercises" %% "exercises-shapeless"     % v('shapeless) xscalaExercises,
+      "org.scala-exercises" %% "exercises-doobie"        % v('doobie) xscalaExercises,
+      "org.scala-exercises" %% "exercises-scalacheck"    % v('scalacheck) xscalaExercises,
+      "org.scala-exercises" %% "exercises-fpinscala"     % v('fpinscala) xscalaExercises,
+      "org.scala-exercises" %% "exercises-scalatutorial" % v('scalatutorial) xscalaExercises,
+      "org.scala-exercises"     %% "evaluator-client" % v('evaluator) changing (),
+      "org.scala-exercises"     %% "runtime"          % version.value changing (),
+      "org.postgresql"          % "postgresql"        % v('postgres),
+      "com.vmunier"             %% "scalajs-scripts"  % v('scalajsscripts),
+      "com.lihaoyi"             %% "upickle"          % v('upickle),
+      "org.webjars"             %% "webjars-play"     % v('webjars),
+      "org.webjars"             % "bootstrap-sass"    % v('bootstrap),
+      "org.webjars"             % "highlightjs"       % v('highlightjs),
+      "com.tristanhunt"         %% "knockoff"         % v('knockoff),
+      "com.newrelic.agent.java" % "newrelic-agent"    % v('newrelic),
+      "commons-io"              % "commons-io"        % v('commonsio),
+      "com.47deg"               %% "freestyle"        % v('freestyle),
       %%("github4s"),
       %("slf4j-nop"),
       %%("scalaz-concurrent"),
@@ -134,7 +132,7 @@ lazy val runtime = (project in file("runtime"))
   .settings(
     libraryDependencies ++= Seq(
       "org.clapper"         %% "classutil"        % v('classutil),
-      "org.scala-exercises" %% "evaluator-shared" % v('evaluator) changing (),
+      "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
       %%("monix"),
       %%("cats-core") % "compile",
       %%("scalatest") % "test"
