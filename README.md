@@ -3,7 +3,7 @@
 [![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/scala-exercises/scala-exercises)
 [![codecov.io](http://codecov.io/github/scala-exercises/scala-exercises/coverage.svg?branch=master)](http://codecov.io/github/scala-exercises/scala-exercises?branch=master)
 
-# Scala Exercises
+#Scala Exercises
 
 ------------------------
 
@@ -35,7 +35,6 @@ Scala Exercises is available at [scala-exercises.org](https://scala-exercises.or
 - Install [SBT](http://www.scala-sbt.org/download.html)
 - Install [PostgreSQL 9.4](http://www.postgresql.org/download/)
 - Install the [Sass Ruby gem](http://sass-lang.com/install) and make sure the `sass` program can be run
-- Install [jsdom](https://github.com/tmpvar/jsdom) with `npm install jsdom`
 
 #### Installing the app locally
 
@@ -80,10 +79,10 @@ Edit the `server/conf/application.dev.conf` configuration file with your databas
 
 #### Running the app
 
-Go into the project's root directory, run `sbt server/run`
+Go into the project's root directory, run `sbt run`
 
 ```sh
-$ sbt server/run
+$ sbt run
 ```
 
 After compilation the application will be running, listening in the 9000 port. Point your browser
@@ -117,7 +116,7 @@ To add additional exercises to your locally running server:
 !Note: The _compile_ task is **mandatory** here otherwise the exercises will not show up in the application.
 * add a dependency to the exersises jar in the `server` project in the `build.sbt` file (~L118).
 
-Now run `sbt server/run` and the application index will also display the added exercises.
+Now run `sbt run` and the application index will also display the added exercises.
 
 ## Troubleshooting
 
@@ -201,7 +200,7 @@ you find yourself embroiled in a situation that becomes heated, or
 that fails to live up to our expectations, you should disengage and
 contact one of the project maintainers in private.
 
-## License
+##License
 
 Copyright (C) 2015-2016 47 Degrees, LLC.
 Reactive, scalable software solutions.
