@@ -1,3 +1,22 @@
+/*
+ *  scala-exercises
+ *
+ *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.scalaexercises.compiler
 
 import org.scalatest._
@@ -17,7 +36,7 @@ class CommentZedSpec extends FunSpec {
 
     it("should pass Functor laws") {
       val rs = FunctorTests[Empty].functor[Int, Int, Int]
-      rs.all.check
+      rs.all
     }
 
   }
@@ -29,7 +48,7 @@ class CommentZedSpec extends FunSpec {
 
     it("should pass Functor laws") {
       val rs = FunctorTests[Ignore].functor[Int, Int, Int]
-      rs.all.check
+      rs.all
     }
 
   }
@@ -54,7 +73,7 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
 
   object comments {
 
-    lazy val name = "ThisIsMyName"
+    lazy val name        = "ThisIsMyName"
     lazy val description = "This is some description </br>! _!_"
     lazy val explanation = "This is some explanation </br>! _!_"
 
@@ -76,28 +95,23 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
         |     $name
         |     $name again
         |  */"""
-
     ) map (parse _)
 
     lazy val withoutDescriptions = List(
       """
         |/**  */""",
-
       """
         |/**
         |  */""",
-
       """
         |/**
         |  *
         |  */"""
-
     ) map (parse _)
 
     lazy val withDescriptions = List(
       s"""
         |/** $description */""",
-
       s"""
         |/** $description
         |  */""",
@@ -105,37 +119,30 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
         |/**
         |  * $description
         |  */"""
-
     ) map (parse _)
 
     lazy val withoutExplanations = List(
       """
         |/**  */""",
-
       """
         |/**
         |  */""",
-
       """
         |/**
         |  *
         |  */"""
-
     ) map (parse _)
 
     lazy val withExplanations = List(
       s"""
         |/** @param explanation $explanation */""",
-
       s"""
         |/** @param explanation $explanation
         |  */""",
-
       s"""
         |/** @param explanation
         |  * $explanation
         |  */"""
-
     ) map (parse _)
 
   }
@@ -145,7 +152,6 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
     it("properly handles names") {
 
       comments.withoutNames.foreach { comment ⇒
-
         inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
           case Left(_) ⇒
         }
@@ -161,7 +167,6 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
       }
 
       comments.withNames.foreach { comment ⇒
-
         inside(CommentParsing.parse[Mode.Name[Id]](comment)) {
           case Right(parsed) ⇒
             parsed.name shouldEqual comments.name
@@ -190,14 +195,13 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
           case Left(_) ⇒
         }
       }
-      */
+     */
 
     }
 
     it("properly handles descriptions") {
 
       comments.withoutDescriptions.foreach { comment ⇒
-
         inside(CommentParsing.parse[Mode.Description[Id]](comment)) {
           case Left(_) ⇒
         }
@@ -230,7 +234,6 @@ class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
     it("properly handles explanations") {
 
       comments.withoutExplanations.foreach { comment ⇒
-
         inside(CommentParsing.parse[Mode.Explanation[Id]](comment)) {
           case Left(_) ⇒
         }
