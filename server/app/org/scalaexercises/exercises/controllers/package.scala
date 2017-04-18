@@ -19,20 +19,23 @@
 
 package org.scalaexercises.exercises.controllers
 
+import freestyle._
+import freestyle.implicits._
+import cats.implicits._
 import org.scalaexercises.evaluator.CompilationInfo
 import org.scalaexercises.evaluator.EvalResult._
 import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.JsError
 import play.api.mvc.{Codec, Request}
 import org.scalaexercises.types.evaluator.Dependency
-import org.scalaexercises.evaluator.{Dependency ⇒ EvaluatorDependency}
+import org.scalaexercises.evaluator.{Dependency => EvaluatorDependency}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import org.scalaexercises.exercises.utils._
-
 import org.scalaexercises.evaluator.EvaluatorClient
 import org.scalaexercises.evaluator.EvaluatorClient._
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object `package` {
 
