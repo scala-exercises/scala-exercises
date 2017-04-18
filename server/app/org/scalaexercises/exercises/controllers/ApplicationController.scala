@@ -70,7 +70,7 @@ class ApplicationController(cache: CacheApi)(
   val MainRepoCacheKey = "scala-exercises.repo"
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
-  private[this] val scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] = {
+  private[this] lazy val scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] = {
     cache.get[Repository](MainRepoCacheKey) match {
       case Some(repo) ⇒ FreeS.pure(repo)
       case None ⇒
