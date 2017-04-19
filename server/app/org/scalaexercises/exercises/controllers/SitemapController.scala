@@ -53,12 +53,8 @@ class SitemapController(
 
   def sitemap =
     Secure(Action.async { implicit request ⇒
-      exerciseOps.getLibraries.runFuture map {
-        case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-        case Left(ex) ⇒ {
-          Logger.error("Error rendering sitemap", ex)
-          InternalServerError(ex.getMessage)
-        }
+      exerciseOps.getLibraries map {
+        case libraries ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
       }
     })
 
