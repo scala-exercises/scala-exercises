@@ -44,7 +44,6 @@ import freestyle.implicits._
 import cats.instances.future._
 
 trait AuthenticationModule { self: ProdInterpreters ⇒
-
   case class UserRequest[A](val userId: String, request: Request[A])
       extends WrappedRequest[A](request)
 
@@ -53,24 +52,42 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
     override def invokeBlock[A](
         request: Request[A],
         thunk: (UserRequest[A]) ⇒ Future[Result]
-    ): Future[Result] =
+    ): Future[Result] = {
       request.session.get("user") match {
         case Some(userId) ⇒ thunk(UserRequest(userId, request))
         case None         ⇒ Future.successful(Forbidden)
       }
+    }
   }
 
-  def AuthenticatedUser(thunk: User ⇒ Future[Result])(
+  def AuthenticatedUser(thunk: User ⇒ FreeS[ExercisesApp.Op, Result])(
       implicit userOps: UserOps[ExercisesApp.Op],
       transactor: Transactor[Task]) =
     Secure(AuthenticationAction.async { request ⇒
-      userOps.getUserByLogin(request.userId).runFuture flatMap {
-        case Right(Some(user)) ⇒ thunk(user)
-        case _                 ⇒ Future.successful(BadRequest("User login not found"))
+      userOps.getUserByLogin(request.userId) flatMap {
+        case Some(user) ⇒ thunk(user)
+        case _          ⇒ FreeS.pure(BadRequest("User login not found"))
       }
     })
 
-  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
+  def AuthenticatedUser[T](bodyParser: BodyParser[JsValue])(
+      thunk: (T, User) ⇒ FreeS[ExercisesApp.Op, Result])(
+      implicit userOps: UserOps[ExercisesApp.Op],
+      transactor: Transactor[Task],
+      format: Reads[T]) =
+    Secure(AuthenticationAction.async(bodyParser) { request ⇒
+      request.body.validate[T] match {
+        case JsSuccess(validatedBody, _) ⇒
+          userOps.getUserByLogin(request.userId) flatMap {
+            case Some(user) ⇒ thunk(validatedBody, user)
+            case _          ⇒ FreeS.pure(BadRequest("User login not found"))
+          }
+        case JsError(errors) ⇒
+          FreeS.pure[ExercisesApp.Op, Result](BadRequest(JsError.toJson(errors)))
+      }
+    })
+
+  def AuthenticatedUserF[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
       implicit userOps: UserOps[ExercisesApp.Op],
       transactor: Transactor[Task],
       format: Reads[T]) =

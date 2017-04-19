@@ -62,7 +62,7 @@ class ExercisesController(
     with ProdInterpreters {
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
-    AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
+    AuthenticatedUserF[ExerciseEvaluation](BodyParsers.parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
         def eval(runtimeInfo: Either[Throwable, EvaluationRequest]): Future[
           Either[String, EvalResponse]] =
