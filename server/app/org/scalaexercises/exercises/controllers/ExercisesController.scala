@@ -50,6 +50,7 @@ import scalaz.concurrent.Task
 
 import freestyle._
 import freestyle.implicits._
+import scala.language.postfixOps
 
 class ExercisesController(
     implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
@@ -64,17 +65,18 @@ class ExercisesController(
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
     AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
-        def eval(runtimeInfo: Either[Throwable, EvaluationRequest]): Future[
+        def eval(runtimeInfo: Either[Throwable, EvaluationRequest]): FreeS[
+          ExercisesApp.Op,
           Either[String, EvalResponse]] =
           runtimeInfo match {
             case Left(ex) ⇒
               logError("eval", "Error while building the evaluation request", Some(ex))
-              Future.successful(Either.left(ex.getMessage))
+              FreeS.pure(Either.left(ex.getMessage))
             case Right(evalRequest) ⇒
               evalRequest match {
                 case Left(msg) ⇒
                   logError("eval", "Error before performing the evaluation")
-                  Future.successful(Either.left(msg))
+                  FreeS.pure(Either.left(msg))
                 case Right((resolvers, dependencies, code)) ⇒
                   evalRemote(resolvers, dependencies, code)
               }
@@ -84,7 +86,7 @@ class ExercisesController(
             resolvers: List[String],
             dependencies: List[Dependency],
             code: String
-        ): Future[Either[String, EvalResponse]] = {
+        ): FreeS[ExercisesApp.Op, Either[String, EvalResponse]] = {
           val evalResponse: Free[EvaluatorOp, EvaluationResponse[EvalResponse]] =
             evaluatorClient.api.evaluates(resolvers, dependencies.toEvaluatorDeps, code)
 
@@ -103,8 +105,8 @@ class ExercisesController(
         }
 
         def mkHttpStatusCodeResponse(
-            evaluationResult: Either[String, EvalResponse]): Future[Result] = {
-          Future.successful(evaluationResult match {
+            evaluationResult: Either[String, EvalResponse]): FreeS[ExercisesApp.Op, Result] = {
+          FreeS.pure(evaluationResult match {
             case Left(msg) ⇒
               BadRequest(s"Evaluation failed : $msg")
             case Right(evalResponse) ⇒
@@ -133,12 +135,15 @@ class ExercisesController(
         }
 
         for {
-          runtimeInfo      ← exerciseOps.buildRuntimeInfo(evaluation = evaluation).runFuture
+          runtimeInfo ← exerciseOps
+            .buildRuntimeInfo(evaluation = evaluation)
+            .map(x ⇒ Right(x): Either[Throwable, EvaluationRequest])
+
           evaluationResult ← eval(runtimeInfo)
           httpResponse     ← mkHttpStatusCodeResponse(evaluationResult)
           _ ← userProgressOps
             .saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
-            .runFuture
+
         } yield httpResponse
     }
 }
