@@ -82,6 +82,9 @@ class ApplicationController(cache: CacheApi)(
           case repo ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
             repo
+          case err ⇒
+            Logger.error("Error fetching scala-exercises repository information")
+            err
         }
     }
   }
