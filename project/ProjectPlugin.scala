@@ -1,14 +1,12 @@
-import de.heikoseeberger.sbtheader.{HeaderPattern, HeaderPlugin}
+import de.heikoseeberger.sbtheader.HeaderPlugin
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import de.heikoseeberger.sbtheader.license.{Apache2_0, License}
 import sbt.Keys._
 import sbt._
-import wartremover.WartRemover.autoImport._
 import sbtorgpolicies._
 import sbtorgpolicies.model._
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import scoverage.ScoverageKeys
-import wartremover.Wart
 
 object ProjectPlugin extends AutoPlugin {
 
@@ -29,7 +27,9 @@ object ProjectPlugin extends AutoPlugin {
         'scalacheck    -> "0.4.1-SNAPSHOT",
         'scalatutorial -> "0.4.1-SNAPSHOT",
         'fpinscala     -> "0.4.1-SNAPSHOT",
-        'circe         -> "0.4.1-SNAPSHOT"
+        'circe         -> "0.4.1-SNAPSHOT",
+        'fetch         -> "0.4.1-SNAPSHOT",
+        'monocle       -> "0.4.0-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
         'bootstrap      -> "3.3.7",

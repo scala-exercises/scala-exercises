@@ -56,6 +56,8 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-fpinscala"     % v('fpinscala) xscalaExercises,
       "org.scala-exercises" %% "exercises-scalatutorial" % v('scalatutorial) xscalaExercises,
       "org.scala-exercises" %% "exercises-circe"         % v('circe) xscalaExercises,
+      "org.scala-exercises" %% "exercises-fetch"         % v('fetch) xscalaExercises,
+      "org.scala-exercises" %% "exercises-monocle"       % v('monocle) xscalaExercises,
       "org.scala-exercises"     %% "evaluator-client" % v('evaluator) changing (),
       "org.scala-exercises"     %% "runtime"          % version.value changing (),
       "org.postgresql"          % "postgresql"        % v('postgres),
