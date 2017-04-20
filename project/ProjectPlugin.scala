@@ -29,7 +29,7 @@ object ProjectPlugin extends AutoPlugin {
         'fpinscala     -> "0.4.1-SNAPSHOT",
         'circe         -> "0.4.1-SNAPSHOT",
         'fetch         -> "0.4.1-SNAPSHOT",
-        'monocle       -> "0.4.0-SNAPSHOT"
+        'monocle       -> "0.4.1-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
         'bootstrap      -> "3.3.7",
