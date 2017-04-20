@@ -50,7 +50,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
-
 import freestyle._
 import freestyle.implicits._
 
@@ -71,44 +70,41 @@ class ApplicationController(cache: CacheApi)(
   val MainRepoCacheKey = "scala-exercises.repo"
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
-  private[this] def scalaexercisesRepo: Future[Repository] = {
+  private[this] lazy val scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] = {
     cache.get[Repository](MainRepoCacheKey) match {
-      case Some(repo) ⇒ Future.successful(repo)
+      case Some(repo) ⇒ FreeS.pure(repo)
       case None ⇒
         githubOps
           .getRepository(
             ConfigUtils.githubSiteOwner,
             ConfigUtils.githubSiteRepo
-          )
-          .runFuture flatMap {
-          case Right(repo) ⇒
+          ) match {
+          case repo ⇒
             cache.set(MainRepoCacheKey, repo, 30 minutes)
-            Future.successful(repo)
-          case Left(err) ⇒
-            Logger.error("Error fetching scala-exercises repository information", err)
-            Future.failed[Repository](err)
+            repo
+          case err ⇒
+            Logger.error("Error fetching scala-exercises repository information")
+            err
         }
     }
   }
 
   def index =
     Secure(Action.async { implicit request ⇒
-      val ops = for {
+      for {
+
         authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
         libraries ← exerciseOps.getLibraries.map(
           ExercisesService.reorderLibraries(topLibraries, _))
         user     ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
         progress ← userProgressOps.fetchMaybeUserProgress(user)
-      } yield (libraries, user, request.session.get("oauth-token"), progress, authorize)
-
-      for {
-        repo ← scalaexercisesRepo
-        result ← ops.runFuture map {
-          case Right((libraries, user, Some(token), progress, _)) ⇒
+        repo     ← scalaexercisesRepo
+        result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
+          case (libraries, user, Some(token), progress, _) ⇒
             Ok(
               views.html.templates.home
                 .index(user = user, libraries = libraries, progress = progress, repo = repo))
-          case Right((libraries, None, None, progress, authorize)) ⇒
+          case (libraries, None, None, progress, authorize) ⇒
             Ok(
               views.html.templates.home.index(
                 user = None,
@@ -116,10 +112,7 @@ class ApplicationController(cache: CacheApi)(
                 progress = progress,
                 redirectUrl = Option(authorize.url),
                 repo = repo)).withSession("oauth-state" → authorize.state)
-          case Right((libraries, Some(user), None, _, _)) ⇒ Unauthorized("Session token not found")
-          case Left(ex) ⇒
-            Logger.error("Error rendering index page", ex)
-            InternalServerError(ex.getMessage)
+          case (libraries, Some(user), None, _, _) ⇒ Unauthorized("Session token not found")
         }
       } yield result
     })
@@ -138,16 +131,12 @@ class ApplicationController(cache: CacheApi)(
         )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
       } yield (library, user, section)
 
-      ops.runFuture map {
-        case Right((Some(library), _, Some(sectionName)))
-            if library.sectionNames.contains(sectionName) ⇒
+      ops map {
+        case (Some(library), _, Some(sectionName)) if library.sectionNames.contains(sectionName) ⇒
           Redirect(s"$libraryName/$sectionName")
-        case Right((Some(library), _, _)) if library.sectionNames.nonEmpty ⇒
+        case (Some(library), _, _) if library.sectionNames.nonEmpty ⇒
           Redirect(s"$libraryName/${library.sectionNames.head}")
-        case Right((None, _, _)) ⇒ NotFound("Library not found")
-        case Left(ex) ⇒
-          Logger.error(s"Error rendering library: $libraryName", ex)
-          InternalServerError(ex.getMessage)
+        case (None, _, _) ⇒ NotFound("Library not found")
       }
     })
 
@@ -170,8 +159,8 @@ class ApplicationController(cache: CacheApi)(
           authorize,
           contributors)
 
-      ops.runFuture map {
-        case Right((Some(l), Some(s), user, Some(token), libProgress, _, contributors)) ⇒
+      ops map {
+        case (Some(l), Some(s), user, Some(token), libProgress, _, contributors) ⇒
           Ok(
             views.html.templates.library.index(
               library = l,
@@ -181,7 +170,7 @@ class ApplicationController(cache: CacheApi)(
               contributors = contributors
             )
           )
-        case Right((Some(l), Some(s), user, None, libProgress, authorize, contributors)) ⇒
+        case (Some(l), Some(s), user, None, libProgress, authorize, contributors) ⇒
           Ok(
             views.html.templates.library.index(
               library = l,
@@ -192,12 +181,9 @@ class ApplicationController(cache: CacheApi)(
               contributors = contributors
             )
           ).withSession("oauth-state" → authorize.state)
-        case Right((Some(l), None, _, _, _, _, _)) ⇒ NotFound("Section not found")
-        case Right((None, _, _, _, _, _, _))       ⇒ NotFound("Library not found")
-        case Right((_, _, _, _, _, _, _))          ⇒ NotFound("Library and section not found")
-        case Left(ex) ⇒
-          Logger.error(s"Error rendering section: $libraryName/$sectionName", ex)
-          InternalServerError(ex.getMessage)
+        case (Some(l), None, _, _, _, _, _) ⇒ NotFound("Section not found")
+        case (None, _, _, _, _, _, _)       ⇒ NotFound("Library not found")
+        case (_, _, _, _, _, _, _)          ⇒ NotFound("Library and section not found")
       }
     })
 

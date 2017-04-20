@@ -34,36 +34,29 @@ import org.scalaexercises.exercises.persistence.repositories.{
   UserRepository
 }
 import org.scalaexercises.exercises.services.ExercisesService
-
 import github4s.Github
 import github4s.app.GitHub4s
-import github4s.{IdInstances ⇒ GithubIdInstances}
+import github4s.{IdInstances => GithubIdInstances}
 import Github._
 import github4s.jvm.Implicits._
-import github4s.free.interpreters.{Capture ⇒ GithubCapture, Interpreters ⇒ GithubInterpreters}
-
+import github4s.free.interpreters.{Capture => GithubCapture, Interpreters => GithubInterpreters}
 import github4s.GithubResponses.{GHResponse, GHResult}
-import scalaj.http._
-import org.scalaexercises.evaluator.free.interpreters.{Interpreter ⇒ EvaluatorInterpreter}
-import org.scalaexercises.evaluator.{Dependency ⇒ SharedDependency}
-import org.scalaexercises.evaluator.EvaluatorClient._
 
+import scalaj.http._
+import org.scalaexercises.evaluator.free.interpreters.{Interpreter => EvaluatorInterpreter}
+import org.scalaexercises.evaluator.{Dependency => SharedDependency}
+import org.scalaexercises.evaluator.EvaluatorClient._
 import cats._
 import cats.implicits._
 import cats.free.Free
-
 import doobie.imports._
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.language.higherKinds
-import scalaz.\/
+import scalaz.{-\/, \/, \/-}
 import scalaz.concurrent.Task
 import FreeExtensions._
-
 import simulacrum.typeclass
-
-import scala.concurrent.Future
-
 import freestyle._
 import freestyle.implicits._
 
@@ -205,6 +198,20 @@ trait ProdInterpreters extends Interpreters[Task] with TaskInstances {
 
   implicit val githubInterpreter: GithubInterpreters[Task, HttpResponse[String]] =
     new GithubInterpreters[Task, HttpResponse[String]]
+
+  implicit def freestylePlayFutureConversion[F[_], A](prog: FreeS[F, A])(
+      implicit T: Transactor[Task],
+      I: ParInterpreter[F, Task]
+  ): Future[A] = {
+    val p = Promise[A]
+    prog.exec[Task].unsafePerformAsync { result: Throwable \/ A ⇒
+      result match {
+        case \/-(a) => p.success(a)
+        case -\/(e) => p.failure(e)
+      }
+    }
+    p.future
+  }
 }
 
 /** Test based interpreters lifting ops to their result identity **/
