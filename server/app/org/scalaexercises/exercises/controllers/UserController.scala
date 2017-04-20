@@ -37,11 +37,6 @@ import upickle.default._
 
 import scalaz.concurrent.Task
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
-
-import freestyle._
 import freestyle.implicits._
 
 class UserController(
@@ -54,16 +49,9 @@ class UserController(
 
   def byLogin(login: String) =
     Secure(Action.async { implicit request ⇒
-      userOps.getUserByLogin(login).runFuture map {
-        case Right(user) ⇒
-          user match {
-            case Some(u) ⇒ Ok(write(u))
-            case None    ⇒ NotFound("The user doesn't exist")
-          }
-        case Left(error) ⇒ {
-          Logger.error(s"Error rendering user $login", error)
-          InternalServerError(error.getMessage)
-        }
+      userOps.getUserByLogin(login) map {
+        case Some(u) ⇒ Ok(write(u))
+        case None    ⇒ NotFound("The user doesn't exist")
       }
     })
 }
