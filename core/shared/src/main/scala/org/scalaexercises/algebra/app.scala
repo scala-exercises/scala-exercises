@@ -30,11 +30,11 @@ import freestyle.implicits._
 object app {
 
   @module
-  trait ExercisesApp[F[_]] {
-    val exerciseOps: ExerciseOps[F]
-    val userOps: UserOps[F]
-    val userProgressOps: UserProgressOps[F]
-    val githubOps: GithubOps[F]
+  trait ExercisesApp {
+    val exerciseOps: ExerciseOps
+    val userOps: UserOps
+    val userProgressOps: UserProgressOps
+    val githubOps: GithubOps
   }
 
 }
