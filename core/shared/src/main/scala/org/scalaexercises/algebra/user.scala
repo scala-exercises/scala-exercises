@@ -19,9 +19,9 @@
 
 package org.scalaexercises.algebra.user
 
-import org.scalaexercises.types.user.{ User, UserCreation }
-
+import org.scalaexercises.types.user.{User, UserCreation}
 import cats.Applicative
+import cats.data.OptionT
 import cats.implicits._
 import cats.free._
 import freestyle._
@@ -36,14 +36,10 @@ import freestyle.implicits._
   def createUser(user: UserCreation.Request): FS[UserCreation.Response]
   def updateUser(user: User): FS[Boolean]
   def deleteUser(user: User): FS[Boolean]
-  def getOrCreate(user: UserCreation.Request): FS[UserCreation.Response] = for {
-    maybeUser ← getUserByLogin(user.login)
+  def getOrCreate(user: UserCreation.Request): FS.Seq[UserCreation.Response] = for {
+    maybeUser ← getUserByLogin(user.login).freeS
     theUser ← maybeUser.fold(createUser(user))(
-      (user: User) ⇒ Free.liftF[FreeApplicative[F, ?], UserCreation.Response](
-        FreeApplicative.pure(
-          Either.right(user): UserCreation.Response
-        )
-      )
+      (user: User) ⇒ (Either.right(user): UserCreation.Response).pure[FS.Seq]
     )
   } yield theUser
 }
