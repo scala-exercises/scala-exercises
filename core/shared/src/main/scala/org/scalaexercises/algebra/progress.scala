@@ -47,15 +47,20 @@ trait UserProgressOps {
 
   def getSolvedExerciseCount(user: User, library: String, section: String): FS[Int] =
     getExerciseEvaluations(user, library, section).map(tried ⇒ tried.count(_.succeeded))
+}
 
-  def fetchMaybeUserProgress(user: Option[User])(
-      implicit EO: ExerciseOps): FS[OverallUserProgress] =
+@module trait Temp[F[_]] {
+  val exercise: ExerciseOps[F]
+  val userProg: UserProgressOps[F]
+
+  def fetchMaybeUserProgress(
+    user: Option[User]
+  ): FreeS[F, OverallUserProgress] =
     user.fold(anonymousUserProgress)(fetchUserProgress)
 
-  private[this] def anonymousUserProgress(
-      implicit EO: ExerciseOps): FS[OverallUserProgress] =
+  private[this] def anonymousUserProgress: FreeS[F, OverallUserProgress] =
     for {
-      libraries ← EO.getLibraries
+      libraries ← exercise.getLibraries
       libs = libraries.map(l ⇒ {
         OverallUserProgressItem(
           libraryName = l.name,
@@ -65,9 +70,9 @@ trait UserProgressOps {
       })
     } yield OverallUserProgress(libraries = libs)
 
-  def getCompletedSectionCount(user: User, library: Library): FS[Int] =
+  def getCompletedSectionCount(user: User, library: Library): FreeS[F, Int] =
     library.sections
-      .traverse[FS[?], Boolean](isSectionCompleted(user, library.name, _))
+      .traverse[FreeS[F, ?], Boolean](isSectionCompleted(user, library.name, _))
       .map(
         _.count(identity)
       )
@@ -75,12 +80,12 @@ trait UserProgressOps {
   private[this] def isSectionCompleted(
       user: User,
       libraryName: String,
-      section: Section): FS[Boolean] =
+      section: Section): FreeS[F, Boolean] =
     getSolvedExerciseCount(user, libraryName, section.name).map(solvedExercises ⇒
       solvedExercises == section.exercises.size)
 
-  def fetchUserProgress(user: User)(implicit EO: ExerciseOps): FS[OverallUserProgress] = {
-    def getLibraryProgress(library: Library): FS[OverallUserProgressItem] =
+  def fetchUserProgress(user: User): FreeS[F, OverallUserProgress] = {
+    def getLibraryProgress(library: Library): FreeS[F, OverallUserProgressItem] =
       getCompletedSectionCount(user, library).map { completedSections ⇒
         OverallUserProgressItem(
           libraryName = library.name,
@@ -90,21 +95,19 @@ trait UserProgressOps {
       }
 
     for {
-      allLibraries ← EO.getLibraries
-      libraryProgress ← allLibraries.traverse[FS[?], OverallUserProgressItem](
+      allLibraries ← exercise.getLibraries
+      libraryProgress ← allLibraries.traverse[FreeS[F, ?], OverallUserProgressItem](
         getLibraryProgress)
     } yield OverallUserProgress(libraries = libraryProgress)
   }
 
-  def fetchMaybeUserProgressByLibrary(user: Option[User], libraryName: String)(
-      implicit EO: ExerciseOps): FS[LibraryProgress] =
+  def fetchMaybeUserProgressByLibrary(user: Option[User], libraryName: String): FreeS[F, LibraryProgress] =
     user.fold(anonymousUserProgressByLibrary(libraryName))(
       fetchUserProgressByLibrary(_, libraryName))
 
-  private[this] def anonymousUserProgressByLibrary(libraryName: String)(
-      implicit EO: ExerciseOps): FS[LibraryProgress] = {
+  private[this] def anonymousUserProgressByLibrary(libraryName: String): FreeS[F, LibraryProgress] = {
     for {
-      lib ← EO.getLibrary(libraryName)
+      lib ← exercise.getLibrary(libraryName)
       sections = lib.foldMap(
         _.sections.map(
           s ⇒
@@ -119,10 +122,8 @@ trait UserProgressOps {
       )
   }
 
-  def fetchUserProgressByLibrary(user: User, libraryName: String)(
-      implicit EO: ExerciseOps
-  ): FS[LibraryProgress] = {
-    def getSectionProgress(section: Section): FS[SectionProgress] =
+  def fetchUserProgressByLibrary(user: User, libraryName: String): FreeS[F, LibraryProgress] = {
+    def getSectionProgress(section: Section): FreeS[F, SectionProgress] =
       isSectionCompleted(user, libraryName, section).map { completed ⇒
         SectionProgress(
           sectionName = section.name,
@@ -131,9 +132,9 @@ trait UserProgressOps {
       }
 
     for {
-      maybeLib ← EO.getLibrary(libraryName)
+      maybeLib ← exercise.getLibrary(libraryName)
       libSections = maybeLib.foldMap(_.sections)
-      sectionProgress ← libSections.traverse[FS[?], SectionProgress](getSectionProgress)
+      sectionProgress ← libSections.traverse[FreeS[F, ?], SectionProgress](getSectionProgress)
     } yield
       LibraryProgress(
         libraryName = libraryName,
@@ -145,9 +146,9 @@ trait UserProgressOps {
       user: User,
       libraryName: String,
       sectionName: String
-  )(implicit EO: ExerciseOps): FS[SectionExercises] = {
+  ): FreeS[F, SectionExercises] = {
     for {
-      maybeSection ← EO.getSection(libraryName, sectionName)
+      maybeSection ← exercise.getSection(libraryName, sectionName)
       evaluations  ← getExerciseEvaluations(user, libraryName, sectionName)
       sectionExercises = maybeSection.foldMap(_.exercises)
       exercises = sectionExercises.map(ex ⇒ {
@@ -167,4 +168,5 @@ trait UserProgressOps {
         totalExercises = totalExercises
       )
   }
+
 }
