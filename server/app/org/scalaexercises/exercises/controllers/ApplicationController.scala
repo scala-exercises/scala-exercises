@@ -20,26 +20,21 @@
 package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
-
 import cats.free._
 import cats.instances.future._
-
 import play.api.cache.CacheApi
 import org.scalaexercises.types.exercises.{Contribution, Contributor}
+
 import scala.collection.JavaConverters._
-
 import org.scalaexercises.exercises.utils.ConfigUtils
-
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.progress.{UserExercisesProgress, UserProgressOps}
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.types.github.Repository
 import org.scalaexercises.algebra.github.GithubOps
-
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-
 import doobie.imports._
 import play.api.{Application, Logger, Play}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -50,7 +45,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
 import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
-
 import freestyle._
 import freestyle.implicits._
 
@@ -58,6 +52,7 @@ class ApplicationController(cache: CacheApi)(
     implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
     userOps: UserOps[ExercisesApp.Op],
     userProgressOps: UserProgressOps[ExercisesApp.Op],
+    userExercisesProgress: UserExercisesProgress[ExercisesApp.Op],
     githubOps: GithubOps[ExercisesApp.Op],
     T: Transactor[Task]
 ) extends Controller
@@ -97,7 +92,7 @@ class ApplicationController(cache: CacheApi)(
         libraries ← exerciseOps.getLibraries.map(
           ExercisesService.reorderLibraries(topLibraries, _))
         user     ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        progress ← userProgressOps.fetchMaybeUserProgress(user)
+        progress ← userExercisesProgress.fetchMaybeUserProgress(user)
         repo     ← scalaexercisesRepo
         result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
           case (libraries, user, Some(token), progress, _) ⇒
@@ -149,7 +144,7 @@ class ApplicationController(cache: CacheApi)(
         section   ← exerciseOps.getSection(libraryName, sectionName)
         contributors = toContributors(section.fold(List.empty[Contribution])(s ⇒ s.contributions))
         user        ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        libProgress ← userProgressOps.fetchMaybeUserProgressByLibrary(user, libraryName)
+        libProgress ← userExercisesProgress.fetchMaybeUserProgressByLibrary(user, libraryName)
       } yield
         (
           library,

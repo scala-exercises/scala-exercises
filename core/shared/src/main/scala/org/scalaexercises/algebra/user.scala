@@ -36,10 +36,9 @@ import freestyle.implicits._
   def createUser(user: UserCreation.Request): FS[UserCreation.Response]
   def updateUser(user: User): FS[Boolean]
   def deleteUser(user: User): FS[Boolean]
-  def getOrCreate(user: UserCreation.Request): FS.Seq[UserCreation.Response] = for {
-    maybeUser ← getUserByLogin(user.login).freeS
-    theUser ← maybeUser.fold(createUser(user))(
-      (user: User) ⇒ (Either.right(user): UserCreation.Response).pure[FS.Seq]
-    )
-  } yield theUser
+  def getOrCreate(user: UserCreation.Request): FS.Seq[UserCreation.Response] =
+    getUserByLogin(user.login) flatMap {
+      case None => createUser(user)
+      case Some(user) => (Either.right(user): UserCreation.Response).pure[FS.Seq]
+  }
 }

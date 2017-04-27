@@ -20,14 +20,11 @@
 package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
-
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.user.UserOps
-
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-
 import doobie.imports._
-
+import freestyle.FreeS
 import play.api.Logger
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -36,7 +33,6 @@ import upickle._
 import upickle.default._
 
 import scalaz.concurrent.Task
-
 import freestyle.implicits._
 
 class UserController(
@@ -49,7 +45,7 @@ class UserController(
 
   def byLogin(login: String) =
     Secure(Action.async { implicit request ⇒
-      userOps.getUserByLogin(login) map {
+      FreeS.liftPar(userOps.getUserByLogin(login)) map {
         case Some(u) ⇒ Ok(write(u))
         case None    ⇒ NotFound("The user doesn't exist")
       }

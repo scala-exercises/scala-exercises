@@ -231,11 +231,11 @@ trait TestInterpreters extends Interpreters[Id] with GithubIdInstances {
 
 object FreeExtensions {
 
-  implicit class FreeOps[F[_], A](f: FreeS[F, A]) {
+  implicit class FreeOps[F[_], A](f: FreeS.Par[F, A]) {
     def runFuture(
         implicit T: Transactor[Task],
         M: MonadError[Task, Throwable],
-        I: ParInterpreter[F, Task]
+        I: FSHandler[F, Task]
     ): Future[Either[Throwable, A]] = {
       val p = Promise[Either[Throwable, A]]
       f.exec[Task].unsafePerformAsync { result: Throwable \/ A ⇒

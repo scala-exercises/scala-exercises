@@ -53,8 +53,8 @@ class SitemapController(
 
   def sitemap =
     Secure(Action.async { implicit request ⇒
-      exerciseOps.getLibraries map {
-        case libraries ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
+      FreeS.liftPar(exerciseOps.getLibraries) map { libraries ⇒
+        Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
       }
     })
 

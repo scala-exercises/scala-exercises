@@ -21,9 +21,8 @@ package org.scalaexercises.algebra
 
 import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.progress.{UserExercisesProgress, UserProgressOps}
 import org.scalaexercises.algebra.github.GithubOps
-
 import freestyle._
 import freestyle.implicits._
 
