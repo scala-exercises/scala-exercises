@@ -46,6 +46,7 @@ import cats.instances.future._
 trait AuthenticationModule { self: ProdInterpreters ⇒
   case class UserRequest[A](val userId: String, request: Request[A])
       extends WrappedRequest[A](request)
+  import self._
 
   object AuthenticationAction extends ActionBuilder[UserRequest] {
 
@@ -94,7 +95,7 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
     Secure(AuthenticationAction.async(bodyParser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
-          userOps.getUserByLogin(request.userId).runFuture flatMap {
+          userOps.getUserByLogin(request.userId).freeS.runFuture flatMap {
             case Right(Some(user)) ⇒ thunk(validatedBody, user)
             case _                 ⇒ Future.successful(BadRequest("User login not found"))
           }
