@@ -25,7 +25,7 @@ import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import freestyle._
 
 /** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
-  * Coproduct
+  * Coproduct.
   */
 @free trait ExerciseOps {
   def getLibraries: FS[List[Library]]
