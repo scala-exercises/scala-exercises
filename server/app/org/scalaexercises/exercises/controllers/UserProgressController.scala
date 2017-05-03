@@ -31,10 +31,8 @@ import play.api.mvc.Controller
 
 import scalaz.concurrent.Task
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import freestyle._
 import freestyle.implicits._
-import play.api.mvc.Results.BadRequest
 
 class UserProgressController(
     implicit exerciseOps: ExerciseOps[ExercisesApp.Op],

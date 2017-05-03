@@ -44,7 +44,6 @@ import play.api.routing.JavaScriptReverseRouter
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import freestyle._
 import freestyle.implicits._
 

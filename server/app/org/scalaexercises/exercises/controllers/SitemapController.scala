@@ -40,7 +40,6 @@ import play.api.mvc._
 
 import scala.concurrent.Future
 import scalaz.concurrent.Task
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
 import freestyle._
 import freestyle.implicits._

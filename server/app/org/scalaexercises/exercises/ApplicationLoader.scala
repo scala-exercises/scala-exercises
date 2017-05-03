@@ -36,7 +36,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent.Task
 import scalaz.{-\/, \/-}
-
 import play.api.db.evolutions.{DynamicEvolutions, EvolutionsComponents}
 
 class ExercisesApplicationLoader extends ApplicationLoader {
