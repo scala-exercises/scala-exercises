@@ -36,7 +36,6 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, BodyParsers, Controller, Result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import org.scalaexercises.types.evaluator.Dependency
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import org.scalaexercises.evaluator.EvaluatorClient
@@ -50,6 +49,7 @@ import scalaz.concurrent.Task
 
 import freestyle._
 import freestyle.implicits._
+import cats.instances.future._
 
 class ExercisesController(
     implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
@@ -61,8 +61,10 @@ class ExercisesController(
     with AuthenticationModule
     with ProdInterpreters {
 
+  implicit val interpreter: ParInterpreter[ExercisesApp.Op, Task] = implicitly
+
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
-    AuthenticatedUser[ExerciseEvaluation](BodyParsers.parse.json) {
+    AuthenticatedUserF[ExerciseEvaluation](BodyParsers.parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
         def eval(runtimeInfo: Either[Throwable, EvaluationRequest]): Future[
           Either[String, EvalResponse]] =
@@ -133,11 +135,15 @@ class ExercisesController(
         }
 
         for {
-          runtimeInfo      ← exerciseOps.buildRuntimeInfo(evaluation = evaluation).runFuture
+          runtimeInfo ← FreeS
+            .liftPar(exerciseOps.buildRuntimeInfo(evaluation = evaluation))
+            .runFuture
           evaluationResult ← eval(runtimeInfo)
           httpResponse     ← mkHttpStatusCodeResponse(evaluationResult)
-          _ ← userProgressOps
-            .saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
+          _ ← FreeS
+            .liftPar(
+              userProgressOps
+                .saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight)))
             .runFuture
         } yield httpResponse
     }

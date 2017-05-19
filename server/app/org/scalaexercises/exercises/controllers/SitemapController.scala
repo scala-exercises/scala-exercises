@@ -40,7 +40,6 @@ import play.api.mvc._
 
 import scala.concurrent.Future
 import scalaz.concurrent.Task
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 
 import freestyle._
 import freestyle.implicits._
@@ -53,12 +52,8 @@ class SitemapController(
 
   def sitemap =
     Secure(Action.async { implicit request ⇒
-      exerciseOps.getLibraries.runFuture map {
-        case Right(libraries) ⇒ Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-        case Left(ex) ⇒ {
-          Logger.error("Error rendering sitemap", ex)
-          InternalServerError(ex.getMessage)
-        }
+      FreeS.liftPar(exerciseOps.getLibraries) map { libraries ⇒
+        Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
       }
     })
 

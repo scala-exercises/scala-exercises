@@ -34,36 +34,28 @@ import org.scalaexercises.exercises.persistence.repositories.{
   UserRepository
 }
 import org.scalaexercises.exercises.services.ExercisesService
-
 import github4s.Github
 import github4s.app.GitHub4s
-import github4s.{IdInstances ⇒ GithubIdInstances}
+import github4s.{IdInstances => GithubIdInstances}
 import Github._
 import github4s.jvm.Implicits._
-import github4s.free.interpreters.{Capture ⇒ GithubCapture, Interpreters ⇒ GithubInterpreters}
-
+import github4s.free.interpreters.{Capture => GithubCapture, Interpreters => GithubInterpreters}
 import github4s.GithubResponses.{GHResponse, GHResult}
-import scalaj.http._
-import org.scalaexercises.evaluator.free.interpreters.{Interpreter ⇒ EvaluatorInterpreter}
-import org.scalaexercises.evaluator.{Dependency ⇒ SharedDependency}
-import org.scalaexercises.evaluator.EvaluatorClient._
 
+import scalaj.http._
+import org.scalaexercises.evaluator.free.interpreters.{Interpreter => EvaluatorInterpreter}
+import org.scalaexercises.evaluator.{Dependency => SharedDependency}
+import org.scalaexercises.evaluator.EvaluatorClient._
 import cats._
 import cats.implicits._
 import cats.free.Free
-
 import doobie.imports._
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.language.higherKinds
-import scalaz.\/
+import scalaz.{-\/, \/, \/-}
 import scalaz.concurrent.Task
-import FreeExtensions._
-
 import simulacrum.typeclass
-
-import scala.concurrent.Future
-
 import freestyle._
 import freestyle.implicits._
 
@@ -176,7 +168,7 @@ trait Interpreters[M[_]] {
       ghResponseToEntity(ghResponse)(
         repo ⇒
           Repository(
-            subscribers = repo.status.subscribers_count,
+            subscribers = repo.status.subscribers_count.getOrElse(0),
             stargazers = repo.status.stargazers_count,
             forks = repo.status.forks_count
         ))
@@ -205,6 +197,34 @@ trait ProdInterpreters extends Interpreters[Task] with TaskInstances {
 
   implicit val githubInterpreter: GithubInterpreters[Task, HttpResponse[String]] =
     new GithubInterpreters[Task, HttpResponse[String]]
+
+  implicit def freestylePlayFutureConversion[F[_], A](prog: FreeS[F, A])(
+      implicit T: Transactor[Task],
+      I: FSHandler[F, Task]
+  ): Future[A] = {
+    val p = Promise[A]
+    prog.interpret[Task].unsafePerformAsync { result: Throwable \/ A ⇒
+      result match {
+        case \/-(a) => p.success(a)
+        case -\/(e) => p.failure(e)
+      }
+    }
+    p.future
+  }
+
+  implicit class FreeSFutureOps[F[_], A](f: FreeS[F, A]) {
+    def runFuture(
+        implicit T: Transactor[Task],
+        I: FSHandler[F, Task],
+        M: Monad[Task]
+    ): Future[Either[Throwable, A]] = {
+      val p = Promise[Either[Throwable, A]]
+      f.interpret[Task].unsafePerformAsync { result: Throwable \/ A ⇒
+        p.success(result.toEither)
+      }
+      p.future
+    }
+  }
 }
 
 /** Test based interpreters lifting ops to their result identity **/
@@ -220,24 +240,6 @@ trait TestInterpreters extends Interpreters[Id] with GithubIdInstances {
 
   implicit val githubInterpreter: GithubInterpreters[Id, HttpResponse[String]] =
     new GithubInterpreters[Id, HttpResponse[String]]
-}
-
-object FreeExtensions {
-
-  implicit class FreeOps[F[_], A](f: FreeS[F, A]) {
-    def runFuture(
-        implicit T: Transactor[Task],
-        M: MonadError[Task, Throwable],
-        I: ParInterpreter[F, Task]
-    ): Future[Either[Throwable, A]] = {
-      val p = Promise[Either[Throwable, A]]
-      f.exec[Task].unsafePerformAsync { result: Throwable \/ A ⇒
-        p.success(result.toEither)
-      }
-      p.future
-    }
-  }
-
 }
 
 trait TaskInstances {
@@ -256,7 +258,7 @@ trait TaskInstances {
       Task.fail(e)
 
     override def tailRecM[A, B](a: A)(f: A ⇒ Task[Either[A, B]]): Task[B] =
-      Task.tailrecM((a: A) ⇒ f(a) map (\/.fromEither))(a)
+      Task.tailrecM((a: A) ⇒ f(a) map \/.fromEither)(a)
 
     override def handleErrorWith[A](fa: Task[A])(f: Throwable ⇒ Task[A]): Task[A] =
       fa.handleWith({ case x ⇒ f(x) })

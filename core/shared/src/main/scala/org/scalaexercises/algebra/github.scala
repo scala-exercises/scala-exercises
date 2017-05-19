@@ -27,13 +27,13 @@ import freestyle._
   * Coproduct
   */
 @free
-trait GithubOps[F[_]] {
+trait GithubOps {
 
   def getAuthorizeUrl(
     clientId:    String,
     redirectUri: String,
     scopes:      List[String] = List.empty
-  ): FreeS[F, Authorize]
+  ): FS[ Authorize]
 
   def getAccessToken(
     clientId:     String,
@@ -41,10 +41,10 @@ trait GithubOps[F[_]] {
     code:         String,
     redirectUri:  String,
     state:        String
-  ): FreeS[F, OAuthToken]
+  ): FS[OAuthToken]
 
-  def getAuthUser(accessToken: Option[String] = None): FreeS[F, GithubUser]
+  def getAuthUser(accessToken: Option[String] = None): FS[GithubUser]
 
-  def getRepository(owner: String, repo: String): FreeS[F, Repository]
+  def getRepository(owner: String, repo: String): FS[Repository]
 
 }

@@ -20,29 +20,21 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.implicits._
-
 import org.scalaexercises.exercises.Secure
-
 import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.github.GithubOps
 import org.scalaexercises.algebra.user.UserOps
-
 import org.scalaexercises.types.user.UserCreation
 import org.scalaexercises.types.github.GithubUser
-
-import org.scalaexercises.exercises.services.interpreters.FreeExtensions._
 import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
 import org.scalaexercises.exercises.utils.ConfigUtils._
-
 import doobie.imports._
-
 import play.api.Logger
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, Controller, Result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz.concurrent.Task
-
 import freestyle._
 import freestyle.implicits._
 
@@ -54,20 +46,20 @@ class OAuthController(
     with ProdInterpreters {
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) =
-    Secure(Action.async { implicit request ⇒
-      (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
-        .fold(Future.successful(BadRequest("Missing `code` or `state`"))) {
-          case (code, state, oauthState) ⇒
-            if (state == oauthState) {
-              githubOps
-                .getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state)
-                .runFuture
-                .map {
-                  case Right(a) ⇒ Redirect(successUrl).withSession("oauth-token" → a.accessToken)
-                  case Left(ex) ⇒ Unauthorized(ex.getMessage)
-                }
-            } else Future.successful(BadRequest("Invalid github login"))
-        }
+    Secure(Action.async {
+      implicit request ⇒
+        (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
+          .fold[FreeS[ExercisesApp.Op, Result]](
+            FreeS.pure(BadRequest("Missing `code` or `state`"))) {
+            case (code, state, oauthState) ⇒
+              if (state == oauthState) {
+                githubOps
+                  .getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state)
+                  .map { ot =>
+                    Redirect(successUrl).withSession("oauth-token" → ot.accessToken)
+                  }
+              } else FreeS.pure(BadRequest("Invalid github login"))
+          }
     })
 
   def createUserRequest(githubUser: GithubUser): UserCreation.Request =
@@ -84,26 +76,21 @@ class OAuthController(
     Secure(Action.async { implicit request ⇒
       request.session
         .get("oauth-token")
-        .fold(Future.successful(Unauthorized("Missing OAuth token"))) {
+        .fold[FreeS[ExercisesApp.Op, Result]](FreeS.pure(Unauthorized("Missing OAuth token"))) {
           accessToken ⇒
             val ops = for {
               ghuser ← githubOps.getAuthUser(Some(accessToken))
               user   ← userOps.getOrCreate(createUserRequest(ghuser))
             } yield (ghuser, user)
 
-            ops.runFuture.map {
-              case Right((ghu, u)) ⇒
+            ops.map {
+              case (ghu, u) ⇒
                 Redirect(request.headers.get("referer") match {
                   case Some(url) if !url.contains("github") ⇒ url
                   case _                                    ⇒ "/"
                 }).withSession("oauth-token" → accessToken, "user" → ghu.login)
-              case Left(error) ⇒ {
-                Logger.error("Failed to save GitHub user information", error)
-                InternalServerError("Failed to save user information")
-              }
             }
         }
-
     })
 
   def logout() = Secure(Action(Redirect("/").withNewSession))
