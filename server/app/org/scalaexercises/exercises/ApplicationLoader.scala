@@ -51,6 +51,22 @@ class ExercisesApplicationLoader extends ApplicationLoader {
   }
 }
 
+class DebugErrorHandler extends play.api.http.HttpErrorHandler {
+    def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
+      Future.successful(
+        Status(statusCode)("A client error occurred: " + message)
+      )
+    }
+
+    def onServerError(request: RequestHeader, exception: Throwable) = {
+      exception.printStackTrace()
+      Future.successful(
+        InternalServerError("A server error occurred: " + exception.getMessage)
+      )
+    }
+}
+
+
 class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
@@ -75,25 +91,10 @@ class Components(context: Context)
   val loaderIOController     = new LoaderIOController
   val sitemapController      = new SitemapController
 
-  val debugErrorHandler = new play.api.http.HttpErrorHandler {
-    def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
-      Future.successful(
-        Status(statusCode)("A client error occurred: " + message)
-      )
-    }
-
-    def onServerError(request: RequestHeader, exception: Throwable) = {
-      exception.printStackTrace()
-      Future.successful(
-        InternalServerError("A server error occurred: " + exception.getMessage)
-      )
-    }
-  }
-
-  val assets = new _root_.controllers.Assets(debugErrorHandler)
+  val assets = new _root_.controllers.Assets(httpErrorHandler)
 
   val router = new Routes(
-    debugErrorHandler,
+    httpErrorHandler,
     sitemapController,
     loaderIOController,
     applicationController,
