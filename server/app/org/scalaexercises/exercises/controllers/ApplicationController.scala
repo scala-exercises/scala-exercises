@@ -83,11 +83,16 @@ class ApplicationController(cache: CacheApi)(
     Secure(Action.async { implicit request ⇒
       for {
         authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
+        _ = println("After authorize")
         libraries ← exerciseOps.getLibraries.map(
           ExercisesService.reorderLibraries(topLibraries, _))
+        _ = println("After libraries")
         user     ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        _ = println("After user")
         progress ← userExercisesProgress.fetchMaybeUserProgress(user)
+        _ = println("After progress")
         repo     ← scalaexercisesRepo
+        _ = println("After repo")
         result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
           case (libraries, user, Some(token), progress, _) ⇒
             Ok(
@@ -104,6 +109,7 @@ class ApplicationController(cache: CacheApi)(
           case (libraries, Some(user), None, _, _) ⇒ Unauthorized("Session token not found")
 
         }
+        _ = println("After result")
       } yield result
     })
 
