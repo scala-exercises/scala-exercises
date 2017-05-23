@@ -26,6 +26,8 @@ import doobie.hikari.hikaritransactor.HikariTransactor
 import doobie.util.transactor.{DataSourceTransactor, Transactor}
 import play.api.ApplicationLoader.Context
 import play.api._
+import play.api.mvc._
+import play.api.mvc.Results._
 import play.api.cache.EhCacheComponents
 import play.api.db.{DBComponents, HikariCPComponents}
 import play.api.libs.ws._
