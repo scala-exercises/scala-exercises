@@ -66,18 +66,14 @@ class ApplicationController(cache: CacheApi)(
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
   private[this] def scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] =
-    githubOps
-      .getRepository(
-        ConfigUtils.githubSiteOwner,
-        ConfigUtils.githubSiteRepo
-      ) match {
-      case repo ⇒
-        Logger.info("Info fetched successfully from Github")
-        repo
-      case err ⇒
-        Logger.error("Error fetching scala-exercises repository information")
-        err
-    }
+    // 2017-05-23: Hardcoded value since we're experimenting issues in production:
+    FreeS.pure[ExercisesApp.Op, Repository](
+      Repository(
+        subscribers = 106,
+        stargazers = 1003,
+        forks = 293
+      )
+    )
 
   def index =
     Secure(Action.async { implicit request ⇒
@@ -87,11 +83,11 @@ class ApplicationController(cache: CacheApi)(
         libraries ← exerciseOps.getLibraries.map(
           ExercisesService.reorderLibraries(topLibraries, _))
         _ = println("After libraries")
-        user     ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        user ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
         _ = println("After user")
         progress ← userExercisesProgress.fetchMaybeUserProgress(user)
         _ = println("After progress")
-        repo     ← scalaexercisesRepo
+        repo ← scalaexercisesRepo
         _ = println("After repo")
         result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
           case (libraries, user, Some(token), progress, _) ⇒

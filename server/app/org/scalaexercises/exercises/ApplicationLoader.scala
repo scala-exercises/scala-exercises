@@ -52,20 +52,19 @@ class ExercisesApplicationLoader extends ApplicationLoader {
 }
 
 class DebugErrorHandler extends play.api.http.HttpErrorHandler {
-    def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
-      Future.successful(
-        Status(statusCode)("A client error occurred: " + message)
-      )
-    }
+  def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
+    Future.successful(
+      Status(statusCode)("A client error occurred: " + message)
+    )
+  }
 
-    def onServerError(request: RequestHeader, exception: Throwable) = {
-      exception.printStackTrace()
-      Future.successful(
-        InternalServerError("A server error occurred: " + exception.getMessage)
-      )
-    }
+  def onServerError(request: RequestHeader, exception: Throwable) = {
+    exception.printStackTrace()
+    Future.successful(
+      InternalServerError("A server error occurred: " + exception.getMessage)
+    )
+  }
 }
-
 
 class Components(context: Context)
     extends BuiltInComponentsFromContext(context)
