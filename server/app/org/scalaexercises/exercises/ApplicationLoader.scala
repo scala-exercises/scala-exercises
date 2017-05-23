@@ -73,10 +73,25 @@ class Components(context: Context)
   val loaderIOController     = new LoaderIOController
   val sitemapController      = new SitemapController
 
-  val assets = new _root_.controllers.Assets(httpErrorHandler)
+  val debugErrorHandler = new play.api.http.HttpErrorHandler {
+    def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
+      Future.successful(
+        Status(statusCode)("A client error occurred: " + message)
+      )
+    }
+
+    def onServerError(request: RequestHeader, exception: Throwable) = {
+      exception.printStackTrace()
+      Future.successful(
+        InternalServerError("A server error occurred: " + exception.getMessage)
+      )
+    }
+  }
+
+  val assets = new _root_.controllers.Assets(debugErrorHandler)
 
   val router = new Routes(
-    httpErrorHandler,
+    debugErrorHandler,
     sitemapController,
     loaderIOController,
     applicationController,
