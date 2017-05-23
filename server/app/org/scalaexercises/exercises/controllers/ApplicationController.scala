@@ -65,24 +65,19 @@ class ApplicationController(cache: CacheApi)(
   val MainRepoCacheKey = "scala-exercises.repo"
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
-  private[this] def scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] = {
-    cache.get[Repository](MainRepoCacheKey) match {
-      case Some(repo) ⇒ FreeS.pure(repo)
-      case None ⇒
-        githubOps
-          .getRepository(
-            ConfigUtils.githubSiteOwner,
-            ConfigUtils.githubSiteRepo
-          ) match {
-          case repo ⇒
-            cache.set(MainRepoCacheKey, repo, 30 minutes)
-            repo
-          case err ⇒
-            Logger.error("Error fetching scala-exercises repository information")
-            err
-        }
+  private[this] def scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] =
+    githubOps
+      .getRepository(
+        ConfigUtils.githubSiteOwner,
+        ConfigUtils.githubSiteRepo
+      ) match {
+      case repo ⇒
+        Logger.info("Info fetched successfully from Github")
+        repo
+      case err ⇒
+        Logger.error("Error fetching scala-exercises repository information")
+        err
     }
-  }
 
   def index =
     Secure(Action.async { implicit request ⇒
