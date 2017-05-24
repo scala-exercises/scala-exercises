@@ -72,7 +72,7 @@ lazy val server = (project in file("server"))
       "com.tristanhunt"         %% "knockoff"         % v('knockoff),
       "com.newrelic.agent.java" % "newrelic-agent"    % v('newrelic),
       "commons-io"              % "commons-io"        % v('commonsio),
-      "com.47deg"               %% "freestyle"        % "0.1.0",
+      %%("freestyle"),
       %%("github4s"),
       %("slf4j-nop"),
       %%("scalaz-concurrent"),
