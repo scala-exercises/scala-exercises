@@ -35,7 +35,10 @@ object formatting {
       .split("\n")
       .drop(3)
       .dropRight(2)
-      .map(_.drop(2))
+      .collect {
+        case line if line.startsWith("  ") => line.drop(2)
+        case line                          => line
+      }
       .mkString("\n")
 
   def formatCode(code: String): String = {
