@@ -63,6 +63,34 @@ class CommentRenderingRegressions extends FunSpec with Matchers with Inside {
       }
 
     }
+
+    it("github scala-exercises/exercises-stdlib#50") {
+      val comment = commentFactory.parse(s"""
+        /**
+         * {{{
+         * abstract class Soldier(val firstName: String, val lastName: String) {}
+         *
+         * // if you uncomment this line, it will fail compilation
+         * //val soldier = new Soldier
+         * }}}
+         */""")
+
+      inside(Comments.parseAndRender[Mode.Exercise](comment)) {
+        case Right(parsed) ⇒
+          val description = parsed.description
+            .map(_.replaceAll("\\<.*?\\>", ""))
+            .getOrElse("")
+
+          assert(
+            description.trim ==
+              """abstract class Soldier(val firstName: String, val lastName: String) {}
+                |
+                |// if you uncomment this line, it will fail compilation
+                |//val soldier = new Soldier""".stripMargin,
+            "Issue scala-exercises/exercises-stdlib#50: comment rendering problem"
+          )
+      }
+    }
   }
 
 }
