@@ -80,10 +80,10 @@ Edit the `server/conf/application.dev.conf` configuration file with your databas
 
 #### Running the app
 
-Go into the project's root directory, run `sbt server/run`
+Go into the project's root directory, run `sbt server/run` with `-mem` option to increase the memory
 
 ```sh
-$ sbt server/run
+$ sbt -mem 1500 server/run
 ```
 
 After compilation the application will be running, listening in the 9000 port. Point your browser
