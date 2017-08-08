@@ -83,7 +83,7 @@ object ProjectPlugin extends AutoPlugin {
         organizationEmail = "hello@47deg.com"
       ),
       orgLicenseSetting := ApacheLicense,
-      scalaVersion := "2.11.8",
+      scalaVersion := "2.11.11",
       scalaOrganization := "org.scala-lang",
       crossScalaVersions := Seq("2.11.8"),
       resolvers ++= Seq(
