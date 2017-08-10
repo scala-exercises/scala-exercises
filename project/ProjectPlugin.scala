@@ -20,16 +20,16 @@ object ProjectPlugin extends AutoPlugin {
       // Scala Exercises
       Map(
         'evaluator     -> "0.2.0-SNAPSHOT",
-        'stdlib        -> "0.4.1-SNAPSHOT",
-        'cats          -> "0.4.1-SNAPSHOT",
-        'shapeless     -> "0.4.1-SNAPSHOT",
-        'doobie        -> "0.4.1-SNAPSHOT",
-        'scalacheck    -> "0.4.1-SNAPSHOT",
-        'scalatutorial -> "0.4.1-SNAPSHOT",
-        'fpinscala     -> "0.4.1-SNAPSHOT",
-        'circe         -> "0.4.1-SNAPSHOT",
-        'fetch         -> "0.4.1-SNAPSHOT",
-        'monocle       -> "0.4.1-SNAPSHOT"
+        'stdlib        -> "0.4.2-SNAPSHOT",
+        'cats          -> "0.4.2-SNAPSHOT",
+        'shapeless     -> "0.4.2-SNAPSHOT",
+        'doobie        -> "0.4.2-SNAPSHOT",
+        'scalacheck    -> "0.4.2-SNAPSHOT",
+        'scalatutorial -> "0.4.2-SNAPSHOT",
+        'fpinscala     -> "0.4.2-SNAPSHOT",
+        'circe         -> "0.4.2-SNAPSHOT",
+        'fetch         -> "0.4.2-SNAPSHOT",
+        'monocle       -> "0.4.2-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
         'bootstrap      -> "3.3.7",
@@ -83,7 +83,7 @@ object ProjectPlugin extends AutoPlugin {
         organizationEmail = "hello@47deg.com"
       ),
       orgLicenseSetting := ApacheLicense,
-      scalaVersion := "2.11.8",
+      scalaVersion := "2.11.11",
       scalaOrganization := "org.scala-lang",
       crossScalaVersions := Seq("2.11.8"),
       resolvers ++= Seq(

@@ -13,7 +13,7 @@ resolvers ++= Seq(
 )
 
 // Sbt plugins
-addSbtPlugin("com.47deg"         % "sbt-org-policies" % "0.5.1")
+addSbtPlugin("com.47deg"         % "sbt-org-policies" % "0.5.13")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin"       % "2.4.8")
 addSbtPlugin("com.vmunier"       % "sbt-web-scalajs"  % "1.0.3")
 addSbtPlugin("com.typesafe.sbt"  % "sbt-gzip"         % "1.0.0")
