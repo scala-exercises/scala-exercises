@@ -96,9 +96,9 @@ class ExercisesController(
               Either.left(s"Evaluation failed : $evalException")
             case Right(EvaluationResult(result, statusCode, _)) ⇒
               result match {
-                case EvalResponse(EvalResponse.messages.ok, _, _, _) ⇒
+                case EvalResponse(EvalResponse.messages.ok, _, _, _, _) ⇒
                   Either.right(result)
-                case EvalResponse(msg, value, valueType, compilationInfos) ⇒
+                case EvalResponse(msg, value, valueType, consoleOutput, compilationInfos) ⇒
                   Either.left(formatEvaluationResponse(msg, value, valueType, compilationInfos))
               }
           }
