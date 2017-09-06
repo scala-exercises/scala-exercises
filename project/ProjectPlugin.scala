@@ -19,7 +19,7 @@ object ProjectPlugin extends AutoPlugin {
     val v: Map[Symbol, String] =
       // Scala Exercises
       Map(
-        'evaluator     -> "0.2.0-SNAPSHOT",
+        'evaluator     -> "0.4.0-SNAPSHOT",
         'stdlib        -> "0.4.2-SNAPSHOT",
         'cats          -> "0.4.2-SNAPSHOT",
         'shapeless     -> "0.4.2-SNAPSHOT",
