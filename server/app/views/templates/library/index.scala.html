@@ -33,7 +33,11 @@
           <ul class="nav navbar-nav navbar-right">
           @user match {
             case Some(u) => { @templates.base.userInfo(u) }
-            case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
+            case None => {
+            <script type="text/javascript">
+            alert("You must be logged in to run the exercises")
+            </script>
+            <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
           }
 
           @for(sectionName <- library.sectionNames) {
