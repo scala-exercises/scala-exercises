@@ -96,7 +96,7 @@
                 @section.description.map { d => @Html(d) }
 
                 @for(exercise <- section.exercises) {
-                  @templates.library.exercise(library, section, exercise)
+                  @templates.library.exercise(library, section, exercise, user)
                 }
 
               </div>
@@ -132,13 +132,6 @@
     <script src="@org.scalaexercises.exercises.controllers.routes.ApplicationController.javascriptRoutes" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    @if(user == None) {
-    <script type="text/javascript">
-      window.onload = function() {
-        $("#mustSignUp").modal("show")
-      }
-    </script>
-    }
     @scalajs.html.scripts(
     "client",
     name => routes.Assets.at(name).toString,
