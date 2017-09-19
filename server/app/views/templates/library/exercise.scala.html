@@ -1,5 +1,6 @@
+@import org.scalaexercises.types.user._
 @import org.scalaexercises.types.exercises._
-@(library: Library, section: Section, exercise: Exercise)(implicit request: RequestHeader)
+@(library: Library, section: Section, exercise: Exercise, user: Option[User] = None)(implicit request: RequestHeader)
 
   <div class="exercise unsolved" data-method="@exercise.method">
 
@@ -10,7 +11,16 @@
       <span class="bullet-state"></span>
 
       <div class="compile">
-        <button type="button" tabIndex="-1" class="btn btn-default btn-xs"><i class="fa fa-play"></i> Run</button>
+        @user match {
+        case Some(u) => {
+        <button type="button" tabIndex="-1" class="btn btn-default btn-xs">
+          }
+          case None => {
+          <button type="button" tabIndex="-1" class="btn btn-default btn-xs" data-toggle="modal" data-target="#mustSignUp">
+            }
+            }
+          <i class="fa fa-play"></i> Run
+        </button>
       </div>
       <pre class="exercise-pre scala"><code class="exercise-code scala">@exercise.code</code></pre>
     </div>
