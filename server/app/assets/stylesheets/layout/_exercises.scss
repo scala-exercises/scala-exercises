@@ -60,7 +60,9 @@
         input {
             color: $input-unsolved;
             border-bottom: 1px solid $input-unsolved;
-            -webkit-animation: underliner_unsolved 2s linear infinite;
+            &:focus {
+                -webkit-animation: underliner_unsolved 2s linear infinite;
+            }
         }
         ul.list-sources {
             padding: 0;
@@ -138,7 +140,9 @@
     input {
         color: $input-unsolved;
         border-bottom: 1px solid $input-unsolved;
-        -webkit-animation: underliner_unsolved 2s linear infinite;
+        &:focus {
+            -webkit-animation: underliner_unsolved 2s linear infinite;
+        }
     }
     .bullet-state {
         background: none;
@@ -218,7 +222,9 @@
     input {
         color: $input-errored;
         border-bottom: 1px solid $input-errored;
-        -webkit-animation: underliner_errored 2s linear infinite;
+        &:focus {
+            -webkit-animation: underliner_errored 2s linear infinite;
+        }
     }
     .bullet-state {
         background: url("../images/icon_errored.svg") no-repeat;
