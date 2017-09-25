@@ -25,7 +25,7 @@
         padding: 30px;
         box-shadow: inset 3px 0 rgba(0,0,0, 0.1);
     }
-    
+
     .solved-exercise {
         border: 2px solid #9CCC65;
         box-shadow: none;
@@ -44,12 +44,12 @@
                 button {
                     transition: opacity 0.5s linear;
                 }
-                 
+
                 i {
                     margin-right: 4px;
                     font-size: 10px;
                 }
-                
+
                 button:hover,
                 button:focus,
                 button:active {
@@ -60,7 +60,9 @@
         input {
             color: $input-unsolved;
             border-bottom: 1px solid $input-unsolved;
-            -webkit-animation: underliner_unsolved 2s linear infinite;
+            animation: underliner_unsolved 2s steps(1) infinite;
+            transform: translateZ(0);
+            will-change: transform, border-bottom;
         }
         ul.list-sources {
             padding: 0;
@@ -138,7 +140,9 @@
     input {
         color: $input-unsolved;
         border-bottom: 1px solid $input-unsolved;
-        -webkit-animation: underliner_unsolved 2s linear infinite;
+        animation: underliner_unsolved 2s steps(1) infinite;
+        transform: translateZ(0);
+        will-change: transform, border-bottom;
     }
     .bullet-state {
         background: none;
@@ -198,12 +202,12 @@
         background: url("../images/icon_evaluating.svg") no-repeat;
         -webkit-animation: spin 1s infinite linear;
     }
-    
+
     @-webkit-keyframes spin {
         0%  {-webkit-transform: rotate(0deg);}
-        100% {-webkit-transform: rotate(360deg);}	
+        100% {-webkit-transform: rotate(360deg);}
     }
-    
+
     .log {
         max-height: 0;
     }
@@ -218,7 +222,9 @@
     input {
         color: $input-errored;
         border-bottom: 1px solid $input-errored;
-        -webkit-animation: underliner_errored 2s linear infinite;
+        animation: underliner_errored 2s steps(1) infinite;
+        transform: translateZ(0);
+        will-change: transform, border-bottom;
     }
     .bullet-state {
         background: url("../images/icon_errored.svg") no-repeat;
@@ -237,12 +243,12 @@
     input {
         color: $input-solved;
         border-bottom: none;
-        -webkit-animation: none;
+        animation: none;
     }
     .bullet-state {
         background: url("../images/icon_solved.svg") no-repeat;
     }
-    
+
     .log {
         max-height: 0;
     }
