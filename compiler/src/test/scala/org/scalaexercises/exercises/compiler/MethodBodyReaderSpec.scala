@@ -116,6 +116,21 @@ class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSp
            |println("this is the last line")""".stripMargin
       )
     }
+
+    it("should extract while taking into account syntax sugar") {
+      val code = """
+                   |/** This is an example exercise.
+                   |  * What value returns six?
+                   |  */
+                   |def findSix(value: Int) =
+                   |  (List(2,4,6) compose List(1,2,3)).apply(value)
+                   |
+                 """.stripMargin
+
+      extractSnippet(code) should equal(
+        """(List(2,4,6) compose List(1,2,3)).apply(value)"""
+      )
+    }
   }
 
 }
