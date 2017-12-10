@@ -62,7 +62,10 @@ object MethodBodyReader {
         )
         (start0, end)
       case _ ⇒
-        (tree.pos.start, tree.pos.end)
+        val source      = tree.pos.source
+        val startOffset = source.lineToOffset(source.offsetToLine(tree.pos.start))
+        val endOffset   = endOfLineOffset(g)(tree, tree.pos.end)
+        (startOffset, endOffset)
     }
   }
 
@@ -70,6 +73,12 @@ object MethodBodyReader {
     if (end > start && isWhitespace(str(end - 1)))
       backstepWhitespace(str, start, end - 1)
     else end
+  }
+
+  @tailrec private def endOfLineOffset[G <: Global](g: G)(tree: g.Tree, endOffset: Int): Int = {
+    if (endOffset < tree.pos.source.length && !tree.pos.source.isEndOfLine(endOffset))
+      endOfLineOffset(g)(tree, endOffset + 1)
+    else endOffset
   }
 
   /** This attempts to find all the individual lines in a method body
