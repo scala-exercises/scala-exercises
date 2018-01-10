@@ -44,7 +44,9 @@ object Effects {
       Client
         .fetchProgress(lib, sect)
         .collect({
-          case Some(state) ⇒ Some(SetState(state))
+          case Some(state) ⇒ {
+            Some(SetState(validateState(state)))
+          }
         })
     })
   }
@@ -61,6 +63,21 @@ object Effects {
               Some(CompilationFail(result.method, result.msg))
           })
       case _ ⇒ noop
+    }
+
+  def validateState(state: List[ClientExercise]): List[ClientExercise] =
+    state.foldLeft(List.empty[ClientExercise]) {
+      (acc: List[ClientExercise], exercise: ClientExercise) =>
+        DomHandler
+          .findExerciseByMethod(exercise.method)
+          .map(DomHandler.inputsInExercise)
+          .fold(acc) { inputs =>
+            if (exercise.arguments.size <= inputs.size) {
+              acc :+ exercise
+            } else {
+              acc :+ exercise.copy(arguments = Seq.empty, state = Unsolved)
+            }
+          }
     }
 
 }
