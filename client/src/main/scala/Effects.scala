@@ -72,7 +72,7 @@ object Effects {
           .findExerciseByMethod(exercise.method)
           .map(DomHandler.inputsInExercise)
           .fold(acc) { inputs =>
-            if (exercise.arguments.size <= inputs.size) {
+            if (exercise.arguments.size == inputs.size) {
               acc :+ exercise
             } else {
               acc :+ exercise.copy(arguments = Seq.empty, state = Unsolved)
