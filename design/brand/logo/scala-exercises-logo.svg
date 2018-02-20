@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="289px" height="301px" viewBox="0 0 289 301" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-2.2%" y="-2.2%" width="104.5%" height="109.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="13" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0.105882353   0 0 0 0 0.262745098   0 0 0 0 0.337254902  0 0 0 0.0739356884 0" type="matrix" in="shadowOffsetOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Scala-Exercises-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-323.000000, -189.000000)">
+        <g id="logo" filter="url(#filter-1)" transform="translate(322.000000, 188.000000)">
+            <polygon id="path" fill="#1B4356" points="126.8578 0.9991 0.9988 72.9991 0.9988 216.9991 126.8578 288.9991 252.9988 216.9991 252.9988 144.8941 216.2488 165.8761 216.2488 196.0021 126.8968 246.9991 37.7488 196.0021 37.7488 94.0021 126.8998 42.9991 205.7278 87.9931 242.4928 67.0021"></polygon>
+            <polygon id="path" fill="#118693" points="126.8983 154 78.3943 126.25 60.0283 157.768 126.8593 196 289.7503 103 271.3633 71.518"></polygon>
+            <polygon id="path" fill="#2E566A" points="216.3601 165.8773 216.3601 196.0003 127.0081 246.9973 127.0021 246.9973 127.0021 288.9823 253.1101 217.0003 253.1101 144.8953"></polygon>
+            <polygon id="path" fill="#2E566A" points="127.0009 43.0057 127.0099 42.9997 205.8379 87.9937 242.5999 67.0027 127.0009 1.0177"></polygon>
+            <polygon id="path" fill="#17ACBC" points="127.009 154 127 153.994 127 195.982 289.858 103 271.474 71.518"></polygon>
+        </g>
+    </g>
+</svg>
