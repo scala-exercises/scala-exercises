@@ -9,13 +9,13 @@
 
 ## How it works
 
-"Scala Exercises" brings exercises for the Stdlib, Cats, Shapeless and many other great libraries for Scala to your browser. Offering hundreds of solvable exercises organized into several categories covering the basics of the Scala language and it's most important libraries.
+"Scala Exercises" brings exercises for Stdlib, Cats, Shapeless and many other great libraries for Scala to your browser. It offers hundreds of solvable exercises organized into several categories covering the basics of the Scala language and its most important libraries.
 
 - LEARN: Each category includes an explanation of the basics. Learn the concepts through simple code samples.
 
-- SOLVE: Each exercise is a unit test that must pass successfully, complete the exercise by filling in the blanks. Receive instant feedback as your answers are validated in real-time.
+- SOLVE: Each exercise is an unit test that must pass successfully, complete the exercise by filling in the blanks. Receive instant feedback as your answers are validated in real-time.
 
-- SHARE: The system will consider the category complete when all its exercises are successfully done. Don't forget to share your progress on social networks before moving on to the next category!
+- SHARE: The system will consider the category complete when all of its exercises are successfully done. Don't forget to share your progress on social networks before moving on to the next category!
 
 - EDIT: After completing a category, you'll be able to go back and edit it. Add new exercises or improve existing ones by sending a pull-request.
 
@@ -141,7 +141,7 @@ addSbtPlugin("org.ensime" % "ensime-sbt" % "0.5.1")
 dependencyOverrides in ThisBuild += "org.scalariform" %% "scalariform" % "0.1.8"
 ```
 
-In order to avoid the error related to `Github API rate limit exceeded` during compilation of exercises, we recommend setting locally an environment variable called `GITHUB_TOKEN` with a personal token which you can create [here](https://github.com/settings/tokens/new).
+In order to avoid the error related to `Github API rate limit exceeded` during compilation of exercises, we recommend locally setting an environment variable called `GITHUB_TOKEN` with a personal token which you can create [here](https://github.com/settings/tokens/new).
 
 While creating the PostgreSQL database, you may run into problems following the previous instructions if developing on a MacOS X environment. In that case we recommend using the following alternative ones:
 
@@ -175,7 +175,7 @@ regular Scala which is compiled into an exercise library.
 The `site`, `client` and `shared` directories contain the website. These items depend on components in `compiler` and `runtime`.
 
 At the moment, those subprojects are coupled tightly. Once this project
-is a bit more stable the exercise compiler plugin will be published and it will
+becomes a bit more stable, the exercise compiler plugin will be published and it will
 be easy to create new exercises for existing Scala libraries.
 
 ## Contributing
