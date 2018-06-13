@@ -39,3 +39,8 @@ section {
         margin-bottom: ($line-height-computed * 3);
     }
 }
+
+// Gitter embed chat
+.gitter-chat-embed {
+  top: $navbar-height;
+}

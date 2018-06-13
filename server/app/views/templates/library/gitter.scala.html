@@ -1,0 +1,12 @@
+@import play.api.Play.current
+<div class="comments">
+
+  <script>
+    ((window.gitter = {}).chat = {}).options = {
+      room : '@current.configuration.getString("gitter.room").getOrElse("")'
+    };
+  </script>
+  <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+  <noscript>Please enable JavaScript to access the library room in Gitter.</noscript>
+
+</div>
