@@ -29,7 +29,7 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install jsdom
+  - npm install jsdom@9.12.0
 script:
   - sbt test
   - sbt sbt-exercise/publishLocal
