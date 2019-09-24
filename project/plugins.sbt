@@ -4,21 +4,20 @@ logLevel := Level.Warn
 // Resolvers
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
-  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
-  "Typesafe Maven Releases" at "http://repo.typesafe.com/typesafe/maven-releases/",
-  Resolver.url("GitHub repository", url("http://shaggyyeti.github.io/releases"))(
-    Resolver.ivyStylePatterns),
-  Resolver.url("scoverage-bintray", url("https://dl.bintray.com/sksamuel/sbt-plugins/"))(
-    Resolver.ivyStylePatterns)
+  Resolver.typesafeRepo("http://repo.typesafe.com/typesafe/maven-releases/"),
+  Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/"),
+  Resolver.sbtPluginRepo("http://shaggyyeti.github.io/releases"),
+  Resolver.sbtPluginRepo("https://dl.bintray.com/sksamuel/sbt-plugins/")
 )
 
 // Sbt plugins
-addSbtPlugin("com.47deg"         % "sbt-org-policies" % "0.5.13")
-addSbtPlugin("com.typesafe.play" % "sbt-plugin"       % "2.4.8")
-addSbtPlugin("com.vmunier"       % "sbt-web-scalajs"  % "1.0.3")
-addSbtPlugin("com.typesafe.sbt"  % "sbt-gzip"         % "1.0.0")
-addSbtPlugin("default"           % "sbt-sass"         % "0.1.9")
-addSbtPlugin("org.wartremover"   % "sbt-wartremover"  % "2.0.2")
+addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % "0.6.29")
+addSbtPlugin("com.47deg"          % "sbt-org-policies"         % "0.12.0-M3")
+addSbtPlugin("com.typesafe.play"  % "sbt-plugin"               % "2.8.0-M5")
+addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "0.6.1")
+addSbtPlugin("com.vmunier"        % "sbt-web-scalajs"          % "1.0.9")
+addSbtPlugin("com.typesafe.sbt"   % "sbt-gzip"                 % "1.0.2")
+//addSbtPlugin("org.wartremover"   % "sbt-wartremover"  % "2.4.3")
 
 // Scripted
-libraryDependencies += "org.scala-sbt" % "scripted-plugin" % sbtVersion.value
+libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value

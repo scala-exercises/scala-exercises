@@ -2,11 +2,12 @@ import play.sbt.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
 import webscalajs._
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(noPublishSettings: _*)
-  .disablePlugins(CoursierPlugin)
+  //.disablePlugins(CoursierPlugin)
   .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler)
   .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler)
 
@@ -16,7 +17,7 @@ lazy val `scala-exercises` = (project in file("."))
 
 // Purely functional core
 
-lazy val core = (crossProject in file("core"))
+lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-core"),
@@ -24,7 +25,7 @@ lazy val core = (crossProject in file("core"))
       "com.47deg" %% "freestyle" % v('freestyle)
     )
   )
-  .disablePlugins(CoursierPlugin)
+  //.disablePlugins(CoursierPlugin)
   .jsSettings(sharedJsSettings: _*)
 
 lazy val coreJvm = core.jvm
@@ -32,7 +33,7 @@ lazy val coreJs  = core.js
 
 // Client and Server projects
 lazy val server = (project in file("server"))
-  .disablePlugins(CoursierPlugin)
+//.disablePlugins(CoursierPlugin)
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
@@ -49,7 +50,7 @@ lazy val server = (project in file("server"))
       filters,
       jdbc,
       evolutions,
-      cache,
+      cacheApi,
       ws,
       "org.scala-exercises" %% "exercises-stdlib"        % v('stdlib) xscalaExercises,
       "org.scala-exercises" %% "exercises-cats"          % v('cats) xscalaExercises,
@@ -61,17 +62,17 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-circe"         % v('circe) xscalaExercises,
       "org.scala-exercises" %% "exercises-fetch"         % v('fetch) xscalaExercises,
       "org.scala-exercises" %% "exercises-monocle"       % v('monocle) xscalaExercises,
-      "org.scala-exercises"     %% "evaluator-client" % v('evaluator) changing (),
-      "org.scala-exercises"     %% "runtime"          % version.value changing (),
-      "org.postgresql"          % "postgresql"        % v('postgres),
-      "com.vmunier"             %% "scalajs-scripts"  % v('scalajsscripts),
-      "com.lihaoyi"             %% "upickle"          % v('upickle),
-      "org.webjars"             %% "webjars-play"     % v('webjars),
-      "org.webjars"             % "bootstrap-sass"    % v('bootstrap),
-      "org.webjars"             % "highlightjs"       % v('highlightjs),
-      "com.tristanhunt"         %% "knockoff"         % v('knockoff),
-      "com.newrelic.agent.java" % "newrelic-agent"    % v('newrelic),
-      "commons-io"              % "commons-io"        % v('commonsio),
+      "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
+      "org.scala-exercises" %% "runtime"          % version.value changing (),
+      "org.postgresql"      % "postgresql"        % v('postgres),
+      "com.vmunier"         %% "scalajs-scripts"  % v('scalajsscripts),
+      "com.lihaoyi"         %% "upickle"          % v('upickle),
+      "org.webjars"         %% "webjars-play"     % v('webjars),
+      //"org.webjars"             % "bootstrap-sass"    % v('bootstrap),
+      "org.webjars"             % "highlightjs"    % v('highlightjs),
+      "com.tristanhunt"         %% "knockoff"      % v('knockoff),
+      "com.newrelic.agent.java" % "newrelic-agent" % v('newrelic),
+      "commons-io"              % "commons-io"     % v('commonsio),
       %%("freestyle"),
       %%("github4s"),
       %("slf4j-nop"),
@@ -89,7 +90,7 @@ lazy val server = (project in file("server"))
   )
 
 lazy val client = (project in file("client"))
-  .disablePlugins(CoursierPlugin)
+//.disablePlugins(CoursierPlugin)
   .dependsOn(coreJs)
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
@@ -99,12 +100,12 @@ lazy val client = (project in file("client"))
     scalaJSUseMainModuleInitializer := true,
     scalaJSUseMainModuleInitializer in Test := false,
     sourceMappings := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
-    scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
-      _.withParallel(false)
-    },
-    jsDependencies += "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js",
+    //scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
+    //  _.withParallel(false)
+    //},
+    jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
     skip in packageJSDependencies := false,
-    jsDependencies += RuntimeDOM % "test",
+    //jsDependencies += RuntimeDOM % "test",
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
       %%%("monix"),
@@ -123,7 +124,7 @@ lazy val clients = Seq(client)
 // Definitions
 
 lazy val definitions = (project in file("definitions"))
-  .disablePlugins(CoursierPlugin)
+//.disablePlugins(CoursierPlugin)
   .settings(name := "definitions")
   .settings(
     libraryDependencies ++= Seq(
@@ -137,7 +138,7 @@ lazy val definitions = (project in file("definitions"))
 // Runtime
 
 lazy val runtime = (project in file("runtime"))
-  .disablePlugins(CoursierPlugin)
+//.disablePlugins(CoursierPlugin)
   .settings(name := "runtime")
   .settings(
     libraryDependencies ++= Seq(
@@ -152,7 +153,7 @@ lazy val runtime = (project in file("runtime"))
 // Compiler
 
 lazy val compiler = (project in file("compiler"))
-  .disablePlugins(CoursierPlugin)
+//.disablePlugins(CoursierPlugin)
   .settings(name := "exercise-compiler")
   .settings(
     exportJars := true,
@@ -170,7 +171,7 @@ lazy val compiler = (project in file("compiler"))
 // Compiler plugin
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
-  .disablePlugins(CoursierPlugin)
+//.disablePlugins(CoursierPlugin)
   .settings(name := "sbt-exercise")
   .settings(
     scalaVersion := "2.10.6",
@@ -181,33 +182,33 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     // Leverage build info to populate compiler classpath--
     // This allows SBT, which currently requires Scala 2.10.x, to load and run
     // the compiler, which requires Scala 2.11.x.
-    compilerClasspath := { fullClasspath in (compiler, Compile) }.value,
-    buildInfoObject := "Meta",
-    buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
-    buildInfoKeys := Seq(
-      version,
-      BuildInfoKey.map(compilerClasspath) {
-        case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
-      }
-    )
+    compilerClasspath := { fullClasspath in (compiler, Compile) }.value
+    //buildInfoObject := "Meta",
+    //buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
+    //buildInfoKeys := Seq(
+    //  version,
+    //  BuildInfoKey.map(compilerClasspath) {
+    //    case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
+    //  }
+    //)
   )
-  // scripted plugin
-  .settings(ScriptedPlugin.scriptedSettings: _*)
-  .settings(
-    scriptedLaunchOpts := {
-      scriptedLaunchOpts.value ++
-        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
-    },
-    scriptedBufferLog := false,
-    // Publish definitions before running scripted
-    scriptedDependencies := {
-      val x = (compile in Test).value
-      val y = (publishLocal in definitions).value
-      val z = (publishLocal in runtime).value
-      ()
-    }
-  )
-  .enablePlugins(BuildInfoPlugin)
+// scripted plugin
+//.settings(ScriptedPlugin.scriptedSettings: _*)
+//.settings(
+//  scriptedLaunchOpts := {
+//    scriptedLaunchOpts.value ++
+//      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+//  },
+//  scriptedBufferLog := false,
+//  // Publish definitions before running scripted
+//  scriptedDependencies := {
+//    val x = (compile in Test).value
+//    val y = (publishLocal in definitions).value
+//    val z = (publishLocal in runtime).value
+//    ()
+//  }
+//)
+//.enablePlugins(BuildInfoPlugin)
 
 ///////////////////
 // Global settings:
