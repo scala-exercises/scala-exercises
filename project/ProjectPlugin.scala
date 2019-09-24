@@ -12,7 +12,7 @@ object ProjectPlugin extends AutoPlugin {
 
   override def trigger: PluginTrigger = allRequirements
 
-  override def requires: Plugins = plugins.JvmPlugin /*&& HeaderPlugin*/ && OrgPoliciesPlugin
+  override def requires: Plugins = OrgPoliciesPlugin
 
   object autoImport {
 
