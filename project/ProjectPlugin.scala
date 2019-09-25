@@ -1,6 +1,7 @@
-//import de.heikoseeberger.sbtheader.HeaderPlugin
-//import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
-//import de.heikoseeberger.sbtheader.license.{Apache2_0, License}
+import de.heikoseeberger.sbtheader
+import de.heikoseeberger.sbtheader.HeaderPlugin
+import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
+import de.heikoseeberger.sbtheader.License.{ALv2, Custom}
 import sbt.Keys._
 import sbt._
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
@@ -12,15 +13,15 @@ object ProjectPlugin extends AutoPlugin {
 
   override def trigger: PluginTrigger = allRequirements
 
-  override def requires: Plugins = plugins.JvmPlugin /*&& HeaderPlugin*/ && OrgPoliciesPlugin
+  override def requires: Plugins = plugins.JvmPlugin && HeaderPlugin && OrgPoliciesPlugin
 
   object autoImport {
 
     val v: Map[Symbol, String] =
       // Scala Exercises
       Map(
-        'evaluator     -> "0.4.0-SNAPSHOT",
-        'stdlib        -> "0.4.2-SNAPSHOT",
+        'evaluator     -> "0.5.0-SNAPSHOT",
+        'stdlib        -> "0.5.0-SNAPSHOT",
         'cats          -> "0.4.2-SNAPSHOT",
         'shapeless     -> "0.4.2-SNAPSHOT",
         'doobie        -> "0.4.2-SNAPSHOT",
@@ -35,16 +36,17 @@ object ProjectPlugin extends AutoPlugin {
         'bootstrap      -> "3.3.7",
         'classutil      -> "1.1.2",
         'commonsio      -> "2.6",
-        'freestyle      -> "0.1.0-SNAPSHOT",
+        'freestyle      -> "0.8.2",
         'highlightjs    -> "9.2.0",
-        'knockoff       -> "0.8.3",
+        'knockoff       -> "0.8.12",
         'newrelic       -> "5.6.0",
         'postgres       -> "42.2.8",
         'scalajsscripts -> "1.1.4",
-        'scalariform    -> "0.1.8",
+        'scalariform    -> "1.8.3",
         'upickle        -> "0.7.5",
         'webjars        -> "2.7.3",
-        'scalamacros    -> "2.1.1"
+        'scalamacros    -> "2.1.1",
+        'monix          -> "3.0.0"
       ) ++ Map(
         // JS Versions
         'jquery        -> "3.4.1",
@@ -103,19 +105,21 @@ object ProjectPlugin extends AutoPlugin {
       fork in Test := false,
       parallelExecution in Test := false,
       cancelable in Global := true,
-      //headers := Map(
-      //  "scala" -> ScalaExercisesLicense("2015-2017", "47 Degrees, LLC. <http://www.47deg.com>")
-      //),
+      headerLicense := Some(
+        ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
     ) ++ addCompilerPlugin("org.scalamacros" % "paradise" % v('scalamacros) cross CrossVersion.full) ++ shellPromptSettings
 
-  //object ScalaExercisesLicense extends License {
-  //  override def createLicenseText(yyyy: String, copyrightOwner: String): String = {
-  //    val apache2License = Apache2_0.createLicenseText(yyyy, copyrightOwner)
-  //    s"""| scala-exercises
-  //        |
-  //        | $apache2License
-  //        |""".stripMargin
-  //  }
-  //}
+  object ScalaExercisesLicense {
+
+    def apply(yyyy: String, copyrightOwner: String): sbtheader.License = {
+      val apacheLicenseText = ALv2(yyyy, copyrightOwner).text
+
+      Custom(s"""| scala-exercises
+                 |
+                 | $apacheLicenseText
+                 |""".stripMargin)
+    }
+
+  }
 }

@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.client
@@ -112,10 +109,7 @@ object UI {
             if (exercise.isSolved) "solved-exercise" else ""))
   }
 
-  def setExerciseStyle(
-      method: String,
-      style: ExerciseStyle,
-      codeStyle: String = ""): Coeval[Unit] =
+  def setExerciseStyle(method: String, style: ExerciseStyle, codeStyle: String = ""): Coeval[Unit] =
     (for {
       exercise ← OptionT(Coeval(findExerciseByMethod(method)))
       _        ← OptionT(setExerciseClass(exercise, style.className) map (_.some))
