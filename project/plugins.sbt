@@ -18,7 +18,6 @@ addSbtPlugin("com.typesafe.play"  % "sbt-plugin"               % "2.8.0-M5")
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "0.6.1")
 addSbtPlugin("com.vmunier"        % "sbt-web-scalajs"          % "1.0.9-0.6")
 addSbtPlugin("com.typesafe.sbt"   % "sbt-gzip"                 % "1.0.2")
-//addSbtPlugin("org.wartremover"   % "sbt-wartremover"  % "2.4.3")
 
 // Scripted
 libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value

@@ -1,5 +1,4 @@
 import de.heikoseeberger.sbtheader
-import de.heikoseeberger.sbtheader.HeaderPlugin
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import de.heikoseeberger.sbtheader.License.{ALv2, Custom}
 import sbt.Keys._
