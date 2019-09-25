@@ -8,7 +8,7 @@ import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(noPublishSettings: _*)
-  //.disablePlugins(CoursierPlugin)
+
   .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler)
   .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler)
 
@@ -18,7 +18,8 @@ lazy val `scala-exercises` = (project in file("."))
 
 // Purely functional core
 
-lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
+lazy val core = crossProject(JSPlatform, JVMPlatform)
+  .in(file("core"))
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-core"),
@@ -26,7 +27,7 @@ lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
       "io.frees"                %% "frees-core"    % v('freestyle),
     )
   )
-  //.disablePlugins(CoursierPlugin)
+
   .jsSettings(sharedJsSettings: _*)
 
 lazy val coreJvm = core.jvm
@@ -34,16 +35,16 @@ lazy val coreJs  = core.js
 
 // Client and Server projects
 lazy val server = (project in file("server"))
-//.disablePlugins(CoursierPlugin)
+
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
   .settings(noPublishSettings: _*)
   .settings(
-    scalaJSProjects := clients,
-    pipelineStages in Assets := Seq(scalaJSPipeline),
-    pipelineStages := Seq(scalaJSProd, gzip),
+//    scalaJSProjects := clients,
+//    pipelineStages in Assets := Seq(scalaJSPipeline),
+//    pipelineStages := Seq(scalaJSProd, gzip),
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
@@ -91,9 +92,9 @@ lazy val server = (project in file("server"))
   )
 
 lazy val client = (project in file("client"))
-//.disablePlugins(CoursierPlugin)
+
   .dependsOn(coreJs)
-  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  .enablePlugins(ScalaJSPlugin)//, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
   .settings(name := "client")
   .settings(noPublishSettings: _*)
@@ -125,7 +126,7 @@ lazy val clients = Seq(client)
 // Definitions
 
 lazy val definitions = (project in file("definitions"))
-//.disablePlugins(CoursierPlugin)
+
   .settings(name := "definitions")
   .settings(
     libraryDependencies ++= Seq(
@@ -139,7 +140,7 @@ lazy val definitions = (project in file("definitions"))
 // Runtime
 
 lazy val runtime = (project in file("runtime"))
-//.disablePlugins(CoursierPlugin)
+
   .settings(name := "runtime")
   .settings(
     libraryDependencies ++= Seq(
@@ -154,7 +155,7 @@ lazy val runtime = (project in file("runtime"))
 // Compiler
 
 lazy val compiler = (project in file("compiler"))
-//.disablePlugins(CoursierPlugin)
+
   .settings(name := "exercise-compiler")
   .settings(
     exportJars := true,
@@ -172,7 +173,7 @@ lazy val compiler = (project in file("compiler"))
 // Compiler plugin
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
-//.disablePlugins(CoursierPlugin)
+//
   .settings(name := "sbt-exercise")
   .settings(
     scalaVersion := "2.12.10",
