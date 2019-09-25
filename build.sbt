@@ -18,8 +18,7 @@ lazy val `scala-exercises` = (project in file("."))
 
 // Purely functional core
 
-lazy val core = crossProject(JSPlatform, JVMPlatform)
-  .in(file("core"))
+lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-core"),
@@ -42,9 +41,9 @@ lazy val server = (project in file("server"))
   .enablePlugins(SbtWeb)
   .settings(noPublishSettings: _*)
   .settings(
-//    scalaJSProjects := clients,
-//    pipelineStages in Assets := Seq(scalaJSPipeline),
-//    pipelineStages := Seq(scalaJSProd, gzip),
+    scalaJSProjects := clients,
+    pipelineStages in Assets := Seq(scalaJSPipeline),
+    pipelineStages := Seq(scalaJSProd, gzip),
     routesGenerator := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
@@ -94,7 +93,7 @@ lazy val server = (project in file("server"))
 lazy val client = (project in file("client"))
 
   .dependsOn(coreJs)
-  .enablePlugins(ScalaJSPlugin)//, ScalaJSWeb)
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
   .settings(name := "client")
   .settings(noPublishSettings: _*)
