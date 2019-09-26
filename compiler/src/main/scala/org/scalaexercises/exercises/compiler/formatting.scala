@@ -32,7 +32,7 @@ object formatting {
 
   private[this] def unwrap(code: String): String =
     code
-      .split("\n")
+      .split('\n')
       .drop(3)
       .dropRight(2)
       .collect {

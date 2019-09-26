@@ -89,7 +89,6 @@ object ProjectPlugin extends AutoPlugin {
       orgLicenseSetting := ApacheLicense,
       scalaVersion := "2.12.10",
       scalaOrganization := "org.scala-lang",
-      crossScalaVersions := Seq("2.12.10"),
       resolvers ++= Seq(
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("snapshots"),
