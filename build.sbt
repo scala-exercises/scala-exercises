@@ -25,9 +25,7 @@ lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
       %%("cats-free"),
       "io.frees"                %% "frees-core"    % v('freestyle),
     )
-  )
-
-  .jsSettings(sharedJsSettings: _*)
+  ).jsSettings(sharedJsSettings: _*)
 
 lazy val coreJvm = core.jvm
 lazy val coreJs  = core.js
@@ -113,7 +111,6 @@ lazy val clients = Seq(client)
 // Definitions
 
 lazy val definitions = (project in file("definitions"))
-
   .settings(name := "definitions")
   .settings(
     libraryDependencies ++= Seq(
@@ -127,7 +124,6 @@ lazy val definitions = (project in file("definitions"))
 // Runtime
 
 lazy val runtime = (project in file("runtime"))
-
   .settings(name := "runtime")
   .settings(
     libraryDependencies ++= Seq(

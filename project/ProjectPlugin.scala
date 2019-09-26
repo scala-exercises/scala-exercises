@@ -77,7 +77,7 @@ object ProjectPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       description := "Scala Exercises: The path to enlightenment",
-      startYear := Option(2016),
+      startYear := Option(2015),
       orgGithubSetting := GitHubSettings(
         organization = "scala-exercises",
         project = name.value,
