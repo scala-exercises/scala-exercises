@@ -22,8 +22,6 @@ lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-core"),
-      %%("cats-free"),
-      "io.frees"                %% "frees-core"    % v('freestyle),
     )
   ).jsSettings(sharedJsSettings: _*)
 
