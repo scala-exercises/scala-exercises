@@ -156,7 +156,6 @@ lazy val compiler = (project in file("compiler"))
 // Compiler plugin
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
-//
   .settings(name := "sbt-exercise")
   .settings(
     scalaVersion := "2.12.10",
@@ -185,7 +184,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
   },
   scriptedBufferLog := false,
-//  // Publish definitions before running scripted
+  // Publish definitions before running scripted
   scriptedDependencies := {
     val x = (compile in Test).value
     val y = (publishLocal in definitions).value
