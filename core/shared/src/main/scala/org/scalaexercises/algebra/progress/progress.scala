@@ -42,10 +42,10 @@ trait UserProgressOpsAlgebra[F[_]] {
 }
 
 abstract class UserProgressOps[F[_]: Functor] extends UserProgressOpsAlgebra[F] {
-  override def getSolvedExerciseCount(user: User, library: String, section: String): F[Int] =
+  def getSolvedExerciseCount(user: User, library: String, section: String): F[Int] =
     getExerciseEvaluations(user, library, section).map(tried ⇒ tried.count(_.succeeded))
 
-  override def isSectionCompleted(user: User, libraryName: String, section: Section): F[Boolean] =
+  def isSectionCompleted(user: User, libraryName: String, section: Section): F[Boolean] =
     getSolvedExerciseCount(user, libraryName, section.name).map(solvedExercises ⇒
       solvedExercises == section.exercises.size)
 }

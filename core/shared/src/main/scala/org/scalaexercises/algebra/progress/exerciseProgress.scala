@@ -70,7 +70,7 @@ class UserExercisesProgress[F[_]: Monad](implicit UO: UserProgressOps[F], EO: Ex
     user.fold(anonymousUserProgressByLibrary(libraryName))(
       fetchUserProgressByLibrary(_, libraryName))
 
-  private[this] def anonymousUserProgressByLibrary(libraryName: String): F[LibraryProgress] = {
+  private[this] def anonymousUserProgressByLibrary(libraryName: String): F[LibraryProgress] =
     for {
       lib ← EO.getLibrary(libraryName)
       sections = lib.foldMap(
@@ -81,7 +81,6 @@ class UserExercisesProgress[F[_]: Monad](implicit UO: UserProgressOps[F], EO: Ex
               succeeded = false
           )))
     } yield LibraryProgress(libraryName, sections)
-  }
 
   def fetchUserProgressByLibrary(user: User, libraryName: String): F[LibraryProgress] = {
     def getSectionProgress(section: Section): F[SectionProgress] =
@@ -106,7 +105,7 @@ class UserExercisesProgress[F[_]: Monad](implicit UO: UserProgressOps[F], EO: Ex
   def fetchUserProgressByLibrarySection(
       user: User,
       libraryName: String,
-      sectionName: String): F[SectionExercises] = {
+      sectionName: String): F[SectionExercises] =
     for {
       maybeSection ← EO.getSection(libraryName, sectionName)
       evaluations  ← UO.getExerciseEvaluations(user, libraryName, sectionName)
@@ -121,7 +120,6 @@ class UserExercisesProgress[F[_]: Monad](implicit UO: UserProgressOps[F], EO: Ex
       })
       totalExercises = sectionExercises.size
     } yield SectionExercises(libraryName, sectionName, exercises, totalExercises)
-  }
 
 }
 

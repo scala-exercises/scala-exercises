@@ -40,6 +40,6 @@ trait ExerciseOpsAlgebra[F[_]] {
 }
 
 abstract class ExerciseOps[F[_]: Functor] extends ExerciseOpsAlgebra[F] {
-  override def getLibrary(libraryName: String): F[Option[Library]] =
+  def getLibrary(libraryName: String): F[Option[Library]] =
     getLibraries.map(_.find(_.name == libraryName))
 }

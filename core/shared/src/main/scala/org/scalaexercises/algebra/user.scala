@@ -37,7 +37,7 @@ trait UserOpsAlgebra[F[_]] {
 }
 
 abstract class UserOps[F[_]: Monad] extends UserOpsAlgebra[F] {
-  override def getOrCreate(user: UserCreation.Request): F[Response] =
+  def getOrCreate(user: UserCreation.Request): F[Response] =
     getUserByLogin(user.login) flatMap {
       case None       => createUser(user)
       case Some(user) => (Either.right(user): UserCreation.Response).pure[F]
