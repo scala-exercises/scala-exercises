@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.controllers
@@ -88,11 +85,10 @@ class ApplicationController(cache: CacheApi)(
     Secure(Action.async { implicit request ⇒
       for {
         authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
-        libraries ← exerciseOps.getLibraries.map(
-          ExercisesService.reorderLibraries(topLibraries, _))
-        user     ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        progress ← userExercisesProgress.fetchMaybeUserProgress(user)
-        repo     ← scalaexercisesRepo
+        libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
+        user      ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        progress  ← userExercisesProgress.fetchMaybeUserProgress(user)
+        repo      ← scalaexercisesRepo
         result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
           case (libraries, user, Some(token), progress, _) ⇒
             Ok(

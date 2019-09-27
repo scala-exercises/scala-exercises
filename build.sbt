@@ -1,12 +1,14 @@
 import play.sbt.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
+import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
+import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(noPublishSettings: _*)
-  .disablePlugins(CoursierPlugin)
+
   .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler)
   .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler)
 
@@ -16,23 +18,21 @@ lazy val `scala-exercises` = (project in file("."))
 
 // Purely functional core
 
-lazy val core = (crossProject in file("core"))
+lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-core"),
       %%("cats-free"),
-      "com.47deg" %% "freestyle" % v('freestyle)
+      "io.frees"                %% "frees-core"    % v('freestyle),
     )
-  )
-  .disablePlugins(CoursierPlugin)
-  .jsSettings(sharedJsSettings: _*)
+  ).jsSettings(sharedJsSettings: _*)
 
 lazy val coreJvm = core.jvm
 lazy val coreJs  = core.js
 
 // Client and Server projects
 lazy val server = (project in file("server"))
-  .disablePlugins(CoursierPlugin)
+
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
@@ -49,30 +49,18 @@ lazy val server = (project in file("server"))
       filters,
       jdbc,
       evolutions,
-      cache,
+      cacheApi,
       ws,
-      "org.scala-exercises" %% "exercises-stdlib"        % v('stdlib) xscalaExercises,
-      "org.scala-exercises" %% "exercises-cats"          % v('cats) xscalaExercises,
-      "org.scala-exercises" %% "exercises-shapeless"     % v('shapeless) xscalaExercises,
-      "org.scala-exercises" %% "exercises-doobie"        % v('doobie) xscalaExercises,
-      "org.scala-exercises" %% "exercises-scalacheck"    % v('scalacheck) xscalaExercises,
-      "org.scala-exercises" %% "exercises-fpinscala"     % v('fpinscala) xscalaExercises,
-      "org.scala-exercises" %% "exercises-scalatutorial" % v('scalatutorial) xscalaExercises,
-      "org.scala-exercises" %% "exercises-circe"         % v('circe) xscalaExercises,
-      "org.scala-exercises" %% "exercises-fetch"         % v('fetch) xscalaExercises,
-      "org.scala-exercises" %% "exercises-monocle"       % v('monocle) xscalaExercises,
-      "org.scala-exercises"     %% "evaluator-client" % v('evaluator) changing (),
-      "org.scala-exercises"     %% "runtime"          % version.value changing (),
-      "org.postgresql"          % "postgresql"        % v('postgres),
-      "com.vmunier"             %% "scalajs-scripts"  % v('scalajsscripts),
-      "com.lihaoyi"             %% "upickle"          % v('upickle),
-      "org.webjars"             %% "webjars-play"     % v('webjars),
-      "org.webjars"             % "bootstrap-sass"    % v('bootstrap),
-      "org.webjars"             % "highlightjs"       % v('highlightjs),
-      "com.tristanhunt"         %% "knockoff"         % v('knockoff),
-      "com.newrelic.agent.java" % "newrelic-agent"    % v('newrelic),
-      "commons-io"              % "commons-io"        % v('commonsio),
-      %%("freestyle"),
+      "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
+      "org.postgresql"      % "postgresql"        % v('postgres),
+      "com.vmunier"         %% "scalajs-scripts"  % v('scalajsscripts),
+      "com.lihaoyi"         %% "upickle"          % v('upickle),
+      "org.webjars"         %% "webjars-play"     % v('webjars),
+      "org.webjars"             % "highlightjs"    % v('highlightjs),
+      "org.foundweekends"       %% "knockoff"      % v('knockoff),
+      "com.newrelic.agent.java" % "newrelic-agent" % v('newrelic),
+      "commons-io"              % "commons-io"     % v('commonsio),
+      "io.frees"                %% "frees-core"    % v('freestyle),
       %%("github4s"),
       %("slf4j-nop"),
       %%("scalaz-concurrent"),
@@ -89,7 +77,7 @@ lazy val server = (project in file("server"))
   )
 
 lazy val client = (project in file("client"))
-  .disablePlugins(CoursierPlugin)
+
   .dependsOn(coreJs)
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
@@ -102,13 +90,13 @@ lazy val client = (project in file("client"))
     scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
       _.withParallel(false)
     },
-    jsDependencies += "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js",
+    jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
     skip in packageJSDependencies := false,
-    jsDependencies += RuntimeDOM % "test",
+    jsEnv := new JSDOMNodeJSEnv(),
+    //jsDependencies += RuntimeDOM % "test",
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
-      %%%("monix"),
-      %%%("monix-cats"),
+      "io.monix" %%% "monix" % v('monix),
       %%%("cats-core"),
       "com.lihaoyi" %%% "scalatags" % v('scalatags) xscalajs,
       "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
@@ -123,7 +111,6 @@ lazy val clients = Seq(client)
 // Definitions
 
 lazy val definitions = (project in file("definitions"))
-  .disablePlugins(CoursierPlugin)
   .settings(name := "definitions")
   .settings(
     libraryDependencies ++= Seq(
@@ -137,43 +124,41 @@ lazy val definitions = (project in file("definitions"))
 // Runtime
 
 lazy val runtime = (project in file("runtime"))
-  .disablePlugins(CoursierPlugin)
   .settings(name := "runtime")
   .settings(
     libraryDependencies ++= Seq(
-      "org.clapper"         %% "classutil"        % v('classutil),
+      "org.clapper"         %% "classutil" % v('classutil),
       "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
-      %%("monix"),
-      %%("cats-core") % "compile",
-      %%("scalatest") % "test"
+      "io.monix"            %% "monix" % v('monix),
+      %%("cats-core")       % "compile",
+      %%("scalatest")       % "test"
     )
   )
 
 // Compiler
 
 lazy val compiler = (project in file("compiler"))
-  .disablePlugins(CoursierPlugin)
+
   .settings(name := "exercise-compiler")
   .settings(
     exportJars := true,
     libraryDependencies ++= Seq(
-      "org.scalariform" %% "scalariform"   % v('scalariform),
-      "org.scala-lang"  % "scala-compiler" % scalaVersion.value % "compile",
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       %%("github4s"),
       %%("cats-core") % "compile",
       %%("cats-laws") % "test",
       %%("scalatest") % "test"
-    )
+    ),
+    addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
   )
   .dependsOn(definitions, runtime)
 
 // Compiler plugin
 
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
-  .disablePlugins(CoursierPlugin)
   .settings(name := "sbt-exercise")
   .settings(
-    scalaVersion := "2.10.6",
+    scalaVersion := "2.12.10",
     sbtPlugin := true,
     libraryDependencies ++= Seq(
       %%("cats-core") % "compile"
@@ -191,23 +176,23 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       }
     )
   )
-  // scripted plugin
-  .settings(ScriptedPlugin.scriptedSettings: _*)
-  .settings(
-    scriptedLaunchOpts := {
-      scriptedLaunchOpts.value ++
-        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
-    },
-    scriptedBufferLog := false,
-    // Publish definitions before running scripted
-    scriptedDependencies := {
-      val x = (compile in Test).value
-      val y = (publishLocal in definitions).value
-      val z = (publishLocal in runtime).value
-      ()
-    }
-  )
-  .enablePlugins(BuildInfoPlugin)
+// scripted plugin
+.enablePlugins(SbtPlugin)
+.settings(
+  scriptedLaunchOpts := {
+    scriptedLaunchOpts.value ++
+      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+  },
+  scriptedBufferLog := false,
+  // Publish definitions before running scripted
+  scriptedDependencies := {
+    val x = (compile in Test).value
+    val y = (publishLocal in definitions).value
+    val z = (publishLocal in runtime).value
+    ()
+  }
+)
+.enablePlugins(BuildInfoPlugin)
 
 ///////////////////
 // Global settings:

@@ -7,7 +7,7 @@ services:
 before_script:
   - ./scripts/create_test_db
 scala:
-  - 2.11.11
+  - 2.12.10
 jdk:
   - openjdk8
 cache:
