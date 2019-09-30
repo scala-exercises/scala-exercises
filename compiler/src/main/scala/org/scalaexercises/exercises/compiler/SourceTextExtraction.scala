@@ -29,7 +29,7 @@ import scala.tools.nsc.doc.{Settings ⇒ _, _}
 import scala.tools.nsc.doc.base.CommentFactoryBase
 import scala.tools.nsc.doc.base.MemberLookupBase
 import scala.tools.nsc.doc.base.LinkTo
-import scala.tools.nsc.doc.base.LinkToExternal
+import scala.tools.nsc.doc.base.LinkToExternalTpl
 import scala.tools.nsc.doc.base.comment.Comment
 
 class SourceTextExtraction {
@@ -284,7 +284,7 @@ class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettin
   override def newUnitParser(unit: CompilationUnit) =
     new syntaxAnalyzer.ScaladocUnitParser(unit, Nil)
 
-  override protected def computeInternalPhases() {
+  override protected def computeInternalPhases() = {
     phasesSet += syntaxAnalyzer
     phasesSet += analyzer.namerFactory
   }

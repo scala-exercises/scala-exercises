@@ -124,18 +124,20 @@ case class Compiler() {
     def enhanceDocError(path: List[String])(error: String) =
       s"""$error in ${path.mkString(".")}"""
 
-    def maybeMakeLibraryInfo(
-        library: Library
-    ) =
+    def maybeMakeLibraryInfo(library: Library) =
       for {
         symbol ← internal.instanceToClassSymbol(library)
         symbolPath = internal.symbolToPath(symbol)
-        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
-          .leftMap(enhanceDocError(symbolPath) _)
-        sections ← checkEmptySectionList(symbol, library) >>= {
+        comment ← (internal
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Library]))
+          .leftMap(enhanceDocError(symbolPath))
+        sections ← checkEmptySectionList(symbol, library).flatMap {
           _.sections
-            .traverseU(internal.instanceToClassSymbol(_) >>= (symbol ⇒
-              maybeMakeSectionInfo(library, symbol)))
+            .traverse(
+              internal
+                .instanceToClassSymbol(_)
+                .flatMap(symbol ⇒ maybeMakeSectionInfo(library, symbol)))
         }
       } yield
         LibraryInfo(
@@ -160,7 +162,7 @@ case class Compiler() {
         repository: String,
         path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
-      val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos
+      val contribs = Github(sys.env.get("GITHUB_TOKEN")).repos
         .listCommits(owner, repository, None, Option(path))
 
       import github4s.implicits._
@@ -182,15 +184,14 @@ case class Compiler() {
       }
     }
 
-    def maybeMakeSectionInfo(
-        library: Library,
-        symbol: ClassSymbol
-    ) = {
+    def maybeMakeSectionInfo(library: Library, symbol: ClassSymbol) = {
       val symbolPath = internal.symbolToPath(symbol)
       val filePath   = extracted.symbolPaths.get(symbol.toString).filterNot(_.isEmpty)
       for {
-        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
-          .leftMap(enhanceDocError(symbolPath) _)
+        comment ← internal
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Section])
+          .leftMap(enhanceDocError(symbolPath))
 
         contributions = (if (fetchContributors) filePath else None).fold(
           List.empty[ContributionInfo]
@@ -202,7 +203,7 @@ case class Compiler() {
               symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
           .map(_.asMethod)
           .filterNot(_.isGetter)
-          .traverseU(maybeMakeExerciseInfo)
+          .traverse(maybeMakeExerciseInfo)
       } yield
         SectionInfo(
           symbol = symbol,
@@ -213,15 +214,16 @@ case class Compiler() {
           contributions = contributions
         )
     }
-
     def maybeMakeExerciseInfo(
         symbol: MethodSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)
       val pkgName    = symbolPath.headOption.fold("defaultPkg")(pkg ⇒ pkg)
       for {
-        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Exercise])
-          .leftMap(enhanceDocError(symbolPath) _)
+        comment ← internal
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Exercise])
+          .leftMap(enhanceDocError(symbolPath))
         method ← internal.resolveMethod(symbolPath)
       } yield
         ExerciseInfo(
@@ -242,7 +244,7 @@ case class Compiler() {
       else s"${msg0.take(97)}${Console.BLUE}...${Console.RESET}"
     }
 
-    def dump(libraryInfo: LibraryInfo) {
+    def dump(libraryInfo: LibraryInfo) = {
       println(s"Found library ${libraryInfo.comment.name}")
       println(s" description: ${oneline(libraryInfo.comment.description)}")
       libraryInfo.sections.foreach { sectionInfo ⇒
@@ -257,7 +259,7 @@ case class Compiler() {
     }
 
     // leaving this around, for debugging
-    def debugDump(libraryInfo: LibraryInfo) {
+    def debugDump(libraryInfo: LibraryInfo) = {
       println("~ library")
       println(s" • symbol        ${libraryInfo.symbol}")
       println(s" - name          ${libraryInfo.comment.name}")
@@ -310,13 +312,13 @@ case class Compiler() {
 
           val (sectionTerm, sectionTree) =
             treeGen.makeSection(
-              libraryName = libraryInfo.comment.name,
-              name = sectionInfo.comment.name,
-              description = sectionInfo.comment.description,
-              exerciseTerms = exerciseTerms,
-              imports = sectionInfo.imports,
-              path = sectionInfo.path,
-              contributionTerms = contributionTerms
+              libraryInfo.comment.name,
+              sectionInfo.comment.name,
+              sectionInfo.comment.description,
+              exerciseTerms,
+              sectionInfo.imports,
+              sectionInfo.path,
+              contributionTerms
             )
 
           (sectionTerm, sectionTree :: exerciseTrees ++ contributionTrees)
@@ -337,16 +339,16 @@ case class Compiler() {
         )
 
       val (libraryTerm, libraryTree) = treeGen.makeLibrary(
-        name = libraryInfo.comment.name,
-        description = libraryInfo.comment.description,
-        color = libraryInfo.color,
-        logoPath = libraryInfo.logoPath,
-        logoData = libraryInfo.logoData,
-        sectionTerms = sectionTerms,
-        owner = libraryInfo.owner,
-        repository = libraryInfo.repository,
-        timestamp = compilationTimestamp,
-        buildInfoT = buildInfoTerm
+        libraryInfo.comment.name,
+        libraryInfo.comment.description,
+        libraryInfo.color,
+        libraryInfo.logoPath,
+        libraryInfo.logoData,
+        sectionTerms,
+        libraryInfo.owner,
+        libraryInfo.repository,
+        compilationTimestamp,
+        buildInfoTerm
       )
 
       libraryTerm → treeGen.makePackage(

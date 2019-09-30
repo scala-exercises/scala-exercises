@@ -135,7 +135,6 @@ lazy val runtime = (project in file("runtime"))
 // Compiler
 
 lazy val compiler = (project in file("compiler"))
-
   .settings(name := "exercise-compiler")
   .settings(
     exportJars := true,

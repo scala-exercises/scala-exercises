@@ -20,20 +20,13 @@
 package org.scalaexercises.compiler
 
 import scala.language.higherKinds
-
 import scala.tools.nsc._
-import scala.tools.nsc.doc.base.CommentFactoryBase
-import scala.tools.nsc.doc.base.MemberLookupBase
-import scala.tools.nsc.doc.base.LinkTo
-import scala.tools.nsc.doc.base.LinkToExternal
+import scala.tools.nsc.doc.base.{CommentFactoryBase, LinkTo, LinkToExternalTpl, MemberLookupBase}
 import scala.tools.nsc.doc.base.comment._
-
 import scala.xml.NodeSeq
 import scala.xml.Xhtml
-
 import cats.{Eq, Functor, Id}
 import cats.implicits._
-
 import org.scalaexercises.compiler.formatting._
 
 /** Facade for the different layers of comment processing. */
@@ -113,12 +106,12 @@ private[compiler] object CommentFactory {
         try parseAtSymbol(comment.raw, comment.raw, comment.pos)
         finally settings.nowarn.value = nowarnings
       }
-      override def parse(comment: String)                                              = parse(DocComment(comment))
-      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo]             = None
-      override def chooseLink(links: List[LinkTo]): LinkTo                             = links.headOption.orNull
-      override def toString(link: LinkTo): String                                      = "No link"
-      override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternal] = None
-      override def warnNoLink: Boolean                                                 = false
+      override def parse(comment: String)                                                 = parse(DocComment(comment))
+      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo]                = None
+      override def chooseLink(links: List[LinkTo]): LinkTo                                = links.headOption.orNull
+      override def toString(link: LinkTo): String                                         = "No link"
+      override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternalTpl] = None
+      override def warnNoLink: Boolean                                                    = false
     }
   }
 

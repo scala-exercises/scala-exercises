@@ -98,7 +98,7 @@ object ProjectPlugin extends AutoPlugin {
         Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/"),
         Resolver.typesafeRepo("http://repo.typesafe.com/typesafe/maven-releases/")
       ),
-      scalacOptions += "-Xplugin-require:macroparadise",
+      scalacOptions ++= Seq("-Xplugin-require:macroparadise", "-Ypartial-unification"),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
       fork in Test := false,
       parallelExecution in Test := false,
