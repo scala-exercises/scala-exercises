@@ -19,26 +19,27 @@
 
 package org.scalaexercises.algebra.user
 
-import org.scalaexercises.types.user.{User, UserCreation}
-import cats.Applicative
-import cats.data.OptionT
+import cats.Monad
 import cats.implicits._
-import cats.free._
-import freestyle._
-import freestyle.implicits._
+import org.scalaexercises.types.user.UserCreation.Response
+import org.scalaexercises.types.user.{User, UserCreation}
 
 /** Exposes User operations as a Free monadic algebra that may be combined with other Algebras via
-  * Coproduct
-  */
-@free trait UserOps {
-  def getUsers: FS[List[User]]
-  def getUserByLogin(login: String): FS[Option[User]]
-  def createUser(user: UserCreation.Request): FS[UserCreation.Response]
-  def updateUser(user: User): FS[Boolean]
-  def deleteUser(user: User): FS[Boolean]
-  def getOrCreate(user: UserCreation.Request): FS.Seq[UserCreation.Response] =
+ * Coproduct
+ */
+trait UserOpsAlgebra[F[_]] {
+  def getUsers: F[List[User]]
+  def getUserByLogin(login: String): F[Option[User]]
+  def createUser(user: UserCreation.Request): F[UserCreation.Response]
+  def updateUser(user: User): F[Boolean]
+  def deleteUser(user: User): F[Boolean]
+  def getOrCreate(user: UserCreation.Request): F[UserCreation.Response]
+}
+
+abstract class UserOps[F[_]: Monad] extends UserOpsAlgebra[F] {
+  def getOrCreate(user: UserCreation.Request): F[Response] =
     getUserByLogin(user.login) flatMap {
-      case None => createUser(user)
-      case Some(user) => (Either.right(user): UserCreation.Response).pure[FS.Seq]
-  }
+      case None       => createUser(user)
+      case Some(user) => (Either.right(user): UserCreation.Response).pure[F]
+    }
 }

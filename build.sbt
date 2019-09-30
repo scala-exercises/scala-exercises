@@ -22,8 +22,6 @@ lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
     libraryDependencies ++= Seq(
       %%("cats-core"),
-      %%("cats-free"),
-      "io.frees"                %% "frees-core"    % v('freestyle),
     )
   ).jsSettings(sharedJsSettings: _*)
 
@@ -77,7 +75,6 @@ lazy val server = (project in file("server"))
   )
 
 lazy val client = (project in file("client"))
-
   .dependsOn(coreJs)
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)

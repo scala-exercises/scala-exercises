@@ -19,21 +19,27 @@
 
 package org.scalaexercises.algebra.exercises
 
+import cats.Functor
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
-import freestyle.free.free
+import cats.implicits._
 
 /** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct.
  */
-@free trait ExerciseOps {
-  def getLibraries: FS[List[Library]]
+trait ExerciseOpsAlgebra[F[_]] {
 
-  def getLibrary(libraryName: String): FS[Option[Library]] =
-    getLibraries map (_.find(_.name == libraryName))
+  def getLibraries: F[List[Library]]
 
-  def getSection(libraryName: String, sectionName: String): FS[Option[Section]]
+  def getLibrary(libraryName: String): F[Option[Library]]
 
-  def buildRuntimeInfo(evaluation: ExerciseEvaluation): FS[EvaluationRequest]
+  def getSection(libraryName: String, sectionName: String): F[Option[Section]]
 
+  def buildRuntimeInfo(evaluation: ExerciseEvaluation): F[EvaluationRequest]
+
+}
+
+abstract class ExerciseOps[F[_]: Functor] extends ExerciseOpsAlgebra[F] {
+  def getLibrary(libraryName: String): F[Option[Library]] =
+    getLibraries.map(_.find(_.name == libraryName))
 }
