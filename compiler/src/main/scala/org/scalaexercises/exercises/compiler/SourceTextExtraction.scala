@@ -20,16 +20,11 @@
 package org.scalaexercises.compiler
 
 import scala.annotation.tailrec
-import scala.language.postfixOps
 
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc._
 import scala.tools.nsc.doc.{Settings ⇒ _, _}
 
-import scala.tools.nsc.doc.base.CommentFactoryBase
-import scala.tools.nsc.doc.base.MemberLookupBase
-import scala.tools.nsc.doc.base.LinkTo
-import scala.tools.nsc.doc.base.LinkToExternalTpl
 import scala.tools.nsc.doc.base.comment.Comment
 
 class SourceTextExtraction {

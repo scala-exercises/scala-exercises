@@ -79,12 +79,12 @@ object ProjectPlugin extends AutoPlugin {
       description := "Scala Exercises: The path to enlightenment",
       startYear := Option(2015),
       orgGithubSetting := GitHubSettings(
-        organization = "scala-exercises",
-        project = name.value,
-        organizationName = "Scala Exercises",
-        groupId = "org.scala-exercises",
-        organizationHomePage = url("https://www.scala-exercises.org"),
-        organizationEmail = "hello@47deg.com"
+        "scala-exercises",
+        name.value,
+        "Scala Exercises",
+        "org.scala-exercises",
+        url("https://www.scala-exercises.org"),
+        "hello@47deg.com"
       ),
       orgLicenseSetting := ApacheLicense,
       scalaVersion := "2.12.10",

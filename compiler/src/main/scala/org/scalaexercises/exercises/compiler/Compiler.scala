@@ -28,7 +28,6 @@ import cats.implicits._
 import github4s.Github
 import Github._
 import github4s.GithubResponses.GHResult
-import github4s.free.interpreters.Interpreters
 import github4s.free.domain.Commit
 import github4s.jvm.Implicits._
 import Comments.Mode
