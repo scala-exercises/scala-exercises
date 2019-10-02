@@ -110,10 +110,10 @@ class TreeGenSpec extends FunSpec with Matchers {
 
   def evalLibrary(tree: Tree) = {
     val evalableTree = (tree match {
-      case q"package $name { ..$stats }" ⇒
+      case q"package $name { ..$stats }" =>
         stats
-          .collectFirst { case ModuleDef(_, libraryTerm, _) ⇒ q"..$stats;$libraryTerm" }
-      case _ ⇒ None
+          .collectFirst { case ModuleDef(_, libraryTerm, _) => q"..$stats;$libraryTerm" }
+      case _ => None
     }).getOrElse(EmptyTree)
 
     toolbox.eval(evalableTree).asInstanceOf[Library]

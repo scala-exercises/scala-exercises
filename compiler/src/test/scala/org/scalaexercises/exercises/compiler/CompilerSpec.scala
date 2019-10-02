@@ -111,7 +111,7 @@ class CompilerSpec extends FunSpec with Matchers {
         "/",
         "sample",
         fetchContributors = false)
-      assert(res.isRight, s"""; ${res.fold(identity, _ ⇒ "")}""")
+      assert(res.isRight, s"""; ${res.fold(identity, _ => "")}""")
     }
 
     it("fails if sections list is empty") {
@@ -143,7 +143,7 @@ class CompilerSpec extends FunSpec with Matchers {
         "/",
         "sample",
         fetchContributors = false)
-      assert(res.isLeft, s"""; ${res.fold(identity, _ ⇒ "")}""")
+      assert(res.isLeft, s"""; ${res.fold(identity, _ => "")}""")
     }
   }
 

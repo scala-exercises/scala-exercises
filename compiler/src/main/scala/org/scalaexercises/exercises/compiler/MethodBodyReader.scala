@@ -35,7 +35,7 @@ object MethodBodyReader {
     val lineRanges = normalizedLineRanges(content, bodyStart, bodyEnd)
 
     lineRanges
-      .map { lineRange ⇒
+      .map { lineRange =>
         content.slice(lineRange._1, lineRange._2).mkString
       }
       .mkString("\n")
@@ -50,7 +50,7 @@ object MethodBodyReader {
   def bodyRange[G <: Global](g: G)(tree: g.Tree): (Int, Int) = {
     import g._
     tree match {
-      case Block(stats, expr) ⇒
+      case Block(stats, expr) =>
         val firstTree = if (stats.nonEmpty) stats.head else expr
         val lastTree  = expr
         val start     = firstTree.pos.start
@@ -61,7 +61,7 @@ object MethodBodyReader {
           start
         )
         (start0, end)
-      case _ ⇒
+      case _ =>
         val source      = tree.pos.source
         val startOffset = source.lineToOffset(source.offsetToLine(tree.pos.start))
         val endOffset   = endOfLineOffset(g)(tree, tree.pos.end)
@@ -96,7 +96,7 @@ object MethodBodyReader {
 
     type Acc = List[(Int, Int)]
     @tailrec def loop(i: Int, minSpace: Int, acc: Acc): (Int, Acc) = {
-      if (i >= end) minSpace → acc
+      if (i >= end) minSpace -> acc
       else {
         val lineStart = skipWhitespace(i)
         val lineEnd   = skipToEol(lineStart)
@@ -117,8 +117,8 @@ object MethodBodyReader {
     }
 
     val (minSpace, offsets) = loop(start, Int.MaxValue, Nil)
-    offsets.map { kv ⇒
-      (kv._1 + minSpace) → kv._2
+    offsets.map { kv =>
+      (kv._1 + minSpace) -> kv._2
     }.reverse
   }
 

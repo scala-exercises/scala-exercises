@@ -143,16 +143,16 @@ trait MethodBodyReaderSpecUtilities {
   import global._
 
   def unwrapBody(tree: Tree): Tree = tree match {
-    case q"def $tname(...$paramss): $tpt = $expr" ⇒ expr
-    case DocDef(comment, defTree)                 ⇒ unwrapBody(defTree)
-    case _                                        ⇒ EmptyTree
+    case q"def $tname(...$paramss): $tpt = $expr" => expr
+    case DocDef(comment, defTree)                 => unwrapBody(defTree)
+    case _                                        => EmptyTree
   }
 
   def compileMethod(code: String): Tree = {
     def wrap(code: String): String = s"""package Code { object Code { $code }}"""
     def unwrap(tree: Tree): Tree = tree match {
-      case q"package Code { object Code { $statements }}" ⇒ statements
-      case _                                              ⇒ EmptyTree
+      case q"package Code { object Code { $statements }}" => statements
+      case _                                              => EmptyTree
     }
     unwrap(
       global
