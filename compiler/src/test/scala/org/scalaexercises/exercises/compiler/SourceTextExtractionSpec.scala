@@ -98,15 +98,6 @@ class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
         ))
     }
 
-    /*
-    it("should capture imports at static scopes") {
-      res.imports.map { case (k, v) => k.mkString(".") -> v.imports.map(renderImport).mkString(";") } should equal(Map(
-        "myPackage.Bar" -> "Seqq.{ empty }",
-        "" -> "scala.collection.immutable.{ Seq => Seqq }"
-      ))
-    }
-   */
-
   }
 
   describe("capturing imports") {

@@ -239,14 +239,12 @@ object SourceTextExtraction {
           comments = (path, (acc.position, comment)) :: acc.comments,
           position = acc.position + 1
         )
-      //RawAcc(comments = (path -> comment) :: Nil)
       },
       visitMethodExpr = { (path, expr, acc) =>
         acc.copy(
           methods = (path, (acc.position, expr)) :: acc.methods,
           position = acc.position + 1
         )
-      //RawAcc(methods = (path -> expr) :: Nil)
       },
       visitImport = { (path, imp, acc) =>
         val newElement: List[(Path[g.type], (RunId, g.Import))] = List((path, (acc.position, imp)))
