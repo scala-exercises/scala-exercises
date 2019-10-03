@@ -5,7 +5,8 @@ lazy val content = (project in file("content"))
   .settings(
     scalaVersion := "2.12.10",
     resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots")
+      Resolver.sonatypeRepo("snapshots"),
+      Resolver.defaultLocal
     ),
     libraryDependencies ++= Seq(
       "org.scala-exercises" %% "runtime"           % pluginVersion changing (),
@@ -19,7 +20,8 @@ lazy val contentInPackages = (project in file("contentinpackages"))
   .settings(
     scalaVersion := "2.12.10",
     resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots")
+      Resolver.sonatypeRepo("snapshots"),
+      Resolver.defaultLocal
     ),
     libraryDependencies ++= Seq(
       "org.scala-exercises" %% "runtime"           % pluginVersion changing (),
@@ -33,6 +35,7 @@ lazy val check = (project in file("check"))
   .settings(
     scalaVersion := "2.12.10",
     resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots")
+      Resolver.sonatypeRepo("snapshots"),
+      Resolver.defaultLocal
     )
   )
