@@ -43,8 +43,8 @@ object formatting {
 
   def formatCode(code: String): String = {
     Either.catchNonFatal(ScalaFormatter.format(wrap(code))) match {
-      case Right(result) ⇒ unwrap(result)
-      case _             ⇒ code
+      case Right(result) => unwrap(result)
+      case _             => code
     }
   }
 }

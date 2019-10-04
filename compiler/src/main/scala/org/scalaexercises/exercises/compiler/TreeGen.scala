@@ -43,7 +43,7 @@ case class TreeGen[U <: Universe](
       packageName: String
   ) = {
     val term = makeTermName(s"Exercise_${libraryName}_", name)
-    term → q"""
+    term -> q"""
         object $term extends Exercise {
           override val name             = $name
           override val description      = $description
@@ -65,7 +65,7 @@ case class TreeGen[U <: Universe](
       avatarUrl: String
   ) = {
     val term = makeTermName("Contribution", sha)
-    term → q"""
+    term -> q"""
     object $term extends Contribution {
       override def sha = $sha
       override def message = $message
@@ -88,7 +88,7 @@ case class TreeGen[U <: Universe](
       contributionTerms: List[TermName]
   ) = {
     val term = makeTermName(s"Section_${libraryName}_", name)
-    term → q"""
+    term -> q"""
         object $term extends Section {
           override val name         = $name
           override val description  = $description
@@ -105,7 +105,7 @@ case class TreeGen[U <: Universe](
       libraryDependencies: List[String]
   ) = {
     val term = makeTermName("BuildInfo", name)
-    term → q"""
+    term -> q"""
         object $term extends BuildInfo {
           override val resolvers            = $resolvers
           override val libraryDependencies  = $libraryDependencies
@@ -125,7 +125,7 @@ case class TreeGen[U <: Universe](
       buildInfoT: TermName
   ) = {
     val term = makeTermName("Library", name)
-    term → q"""
+    term -> q"""
         object $term extends Library {
           override val name           = $name
           override val description    = $description
@@ -161,9 +161,9 @@ case class TreeGen[U <: Universe](
 
   private def makeRefTree(path: String): RefTree = {
     def go(rem: List[String]): RefTree = rem match {
-      case head :: Nil  ⇒ Ident(TermName(head))
-      case head :: tail ⇒ Select(go(tail), TermName(head))
-      case Nil          ⇒
+      case head :: Nil  => Ident(TermName(head))
+      case head :: tail => Select(go(tail), TermName(head))
+      case Nil          =>
         // This situation should never occur, and definitely not during
         // recursion of this method. Assume we got here because path.split
         // below resulted in an empty list.

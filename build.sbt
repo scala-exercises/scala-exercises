@@ -8,7 +8,6 @@ import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(noPublishSettings: _*)
-
   .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler)
   .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler)
 
@@ -30,7 +29,6 @@ lazy val coreJs  = core.js
 
 // Client and Server projects
 lazy val server = (project in file("server"))
-
   .aggregate(clients.map(projectToRef): _*)
   .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
@@ -135,7 +133,6 @@ lazy val runtime = (project in file("runtime"))
 // Compiler
 
 lazy val compiler = (project in file("compiler"))
-
   .settings(name := "exercise-compiler")
   .settings(
     exportJars := true,

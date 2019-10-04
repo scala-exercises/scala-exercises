@@ -20,20 +20,13 @@
 package org.scalaexercises.compiler
 
 import scala.language.higherKinds
-
 import scala.tools.nsc._
-import scala.tools.nsc.doc.base.CommentFactoryBase
-import scala.tools.nsc.doc.base.MemberLookupBase
-import scala.tools.nsc.doc.base.LinkTo
-import scala.tools.nsc.doc.base.LinkToExternal
+import scala.tools.nsc.doc.base._
 import scala.tools.nsc.doc.base.comment._
-
 import scala.xml.NodeSeq
 import scala.xml.Xhtml
-
 import cats.{Eq, Functor, Id}
 import cats.implicits._
-
 import org.scalaexercises.compiler.formatting._
 
 /** Facade for the different layers of comment processing. */
@@ -113,12 +106,12 @@ private[compiler] object CommentFactory {
         try parseAtSymbol(comment.raw, comment.raw, comment.pos)
         finally settings.nowarn.value = nowarnings
       }
-      override def parse(comment: String)                                              = parse(DocComment(comment))
-      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo]             = None
-      override def chooseLink(links: List[LinkTo]): LinkTo                             = links.headOption.orNull
-      override def toString(link: LinkTo): String                                      = "No link"
-      override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternal] = None
-      override def warnNoLink: Boolean                                                 = false
+      override def parse(comment: String)                                                 = parse(DocComment(comment))
+      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo]                = None
+      override def chooseLink(links: List[LinkTo]): LinkTo                                = links.headOption.orNull
+      override def toString(link: LinkTo): String                                         = "No link"
+      override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternalTpl] = None
+      override def warnNoLink: Boolean                                                    = false
     }
   }
 
@@ -140,12 +133,12 @@ private[compiler] object CommentZed {
   object Ignore extends SingletonFunctor[Ignore] with Ignore[Nothing]
 
   /** Functor, for a singleton type. */
-  sealed trait SingletonFunctor[F[+ _]] { instance: F[Nothing] ⇒
+  sealed trait SingletonFunctor[F[+ _]] { instance: F[Nothing] =>
     implicit def singletonEq[A]: Eq[F[A]] = new Eq[F[A]] {
       def eqv(a1: F[A], a2: F[A]): Boolean = a1 == a2 // always true?
     }
     implicit val singletonFunctor = new Functor[F] {
-      def map[A, B](fa: F[A])(f: A ⇒ B) = instance
+      def map[A, B](fa: F[A])(f: A => B) = instance
     }
   }
 }
@@ -193,8 +186,8 @@ private[compiler] object CommentParsing {
     implicit val emptyParseK = new ParseK[Empty] {
       override def fromEither[T](value: Either[String, T]) =
         value.swap.bimap(
-          _ ⇒ "Unexpected value",
-          _ ⇒ Empty
+          _ => "Unexpected value",
+          _ => Empty
         )
     }
 
@@ -231,7 +224,7 @@ private[compiler] object CommentParsing {
 
     lazy val nameEither = {
       val name1 = params.get("name").collect {
-        case Body(List(Paragraph(Chain(List(Summary(Text(value))))))) ⇒ value.trim
+        case Body(List(Paragraph(Chain(List(Summary(Text(value))))))) => value.trim
       }
       val name2 = name1.filter(_.lines.length == 1)
       Either.fromOption(
@@ -241,8 +234,8 @@ private[compiler] object CommentParsing {
     }
 
     lazy val descriptionEither = comment.body match {
-      case Body(Nil) ⇒ Either.left("Unable to parse comment body")
-      case body      ⇒ Either.right(body)
+      case Body(Nil) => Either.left("Unable to parse comment body")
+      case body      => Either.right(body)
     }
 
     lazy val explanationEither = Either.fromOption(
@@ -251,9 +244,9 @@ private[compiler] object CommentParsing {
     )
 
     for {
-      name        ← ParseK[N].fromEither(nameEither)
-      description ← ParseK[D].fromEither(descriptionEither)
-      explanation ← ParseK[E].fromEither(explanationEither)
+      name        <- ParseK[N].fromEither(nameEither)
+      description <- ParseK[D].fromEither(descriptionEither)
+      explanation <- ParseK[E].fromEither(explanationEither)
     } yield
       ParsedComment(
         name = name,
@@ -294,49 +287,49 @@ private[compiler] object CommentRendering {
     Xhtml.toXhtml(body.blocks flatMap (renderBlock(_)))
 
   private[this] def renderBlock(block: Block): NodeSeq = block match {
-    case Title(in, 1)  ⇒ <h3>{ renderInline(in) }</h3>
-    case Title(in, 2)  ⇒ <h4>{ renderInline(in) }</h4>
-    case Title(in, 3)  ⇒ <h5>{ renderInline(in) }</h5>
-    case Title(in, _)  ⇒ <h6>{ renderInline(in) }</h6>
-    case Paragraph(in) ⇒ <p>{ renderInline(in) }</p>
-    case Code(data) ⇒
+    case Title(in, 1)  => <h3>{ renderInline(in) }</h3>
+    case Title(in, 2)  => <h4>{ renderInline(in) }</h4>
+    case Title(in, 3)  => <h5>{ renderInline(in) }</h5>
+    case Title(in, _)  => <h6>{ renderInline(in) }</h6>
+    case Paragraph(in) => <p>{ renderInline(in) }</p>
+    case Code(data) =>
       <pre class={ "scala" }><code class={ "scala" }>{ formatCode(data) }</code></pre>
-    case UnorderedList(items) ⇒
+    case UnorderedList(items) =>
       <ul>{ renderListItems(items) }</ul>
-    case OrderedList(items, listStyle) ⇒
+    case OrderedList(items, listStyle) =>
       <ol class={ listStyle }>{ renderListItems(items) }</ol>
-    case DefinitionList(items) ⇒
-      <dl>{ items map { case (t, d) ⇒ <dt>{ renderInline(t) }</dt><dd>{ renderBlock(d) }</dd> } }</dl>
-    case HorizontalRule() ⇒
+    case DefinitionList(items) =>
+      <dl>{ items map { case (t, d) => <dt>{ renderInline(t) }</dt><dd>{ renderBlock(d) }</dd> } }</dl>
+    case HorizontalRule() =>
       <hr/>
   }
 
   private[this] def renderListItems(items: Seq[Block]) =
-    items.foldLeft(xml.NodeSeq.Empty) { (xmlList, item) ⇒
+    items.foldLeft(xml.NodeSeq.Empty) { (xmlList, item) =>
       item match {
         case OrderedList(_, _) |
-            UnorderedList(_) ⇒ // html requires sub ULs to be put into the last LI
+            UnorderedList(_) => // html requires sub ULs to be put into the last LI
           xmlList.init ++ <li>{ xmlList.last.child ++ renderBlock(item) }</li>
-        case Paragraph(inline) ⇒
+        case Paragraph(inline) =>
           xmlList :+ <li>{ renderInline(inline) }</li> // LIs are blocks, no need to use Ps
-        case block ⇒
+        case block =>
           xmlList :+ <li>{ renderBlock(block) }</li>
       }
     }
 
   private[this] def renderInline(inl: Inline): NodeSeq = inl match {
-    case Chain(items)             ⇒ items flatMap (renderInline(_))
-    case Italic(in)               ⇒ <i>{ renderInline(in) }</i>
-    case Bold(in)                 ⇒ <b>{ renderInline(in) }</b>
-    case Underline(in)            ⇒ <u>{ renderInline(in) }</u>
-    case Superscript(in)          ⇒ <sup>{ renderInline(in) }</sup>
-    case Subscript(in)            ⇒ <sub>{ renderInline(in) }</sub>
-    case Link(raw, title)         ⇒ <a href={ raw } target="_blank">{ renderInline(title) }</a>
-    case Monospace(in)            ⇒ <code>{ renderInline(in) }</code>
-    case Text(text)               ⇒ scala.xml.Text(text)
-    case Summary(in)              ⇒ renderInline(in)
-    case HtmlTag(tag)             ⇒ scala.xml.Unparsed(tag)
-    case EntityLink(target, link) ⇒ renderLink(target, link, hasLinks = true)
+    case Chain(items)             => items flatMap (renderInline(_))
+    case Italic(in)               => <i>{ renderInline(in) }</i>
+    case Bold(in)                 => <b>{ renderInline(in) }</b>
+    case Underline(in)            => <u>{ renderInline(in) }</u>
+    case Superscript(in)          => <sup>{ renderInline(in) }</sup>
+    case Subscript(in)            => <sub>{ renderInline(in) }</sub>
+    case Link(raw, title)         => <a href={ raw } target="_blank">{ renderInline(title) }</a>
+    case Monospace(in)            => <code>{ renderInline(in) }</code>
+    case Text(text)               => scala.xml.Text(text)
+    case Summary(in)              => renderInline(in)
+    case HtmlTag(tag)             => scala.xml.Unparsed(tag)
+    case EntityLink(target, link) => renderLink(target, link, hasLinks = true)
   }
 
   private[this] def renderLink(text: Inline, link: LinkTo, hasLinks: Boolean) = renderInline(text)

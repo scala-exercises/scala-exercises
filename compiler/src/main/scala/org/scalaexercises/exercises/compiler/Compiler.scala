@@ -22,13 +22,12 @@ package org.scalaexercises.compiler
 import org.scalaexercises.definitions.{BuildInfo, Library}
 import org.scalaexercises.runtime.Timestamp
 
-import scala.reflect.runtime.{universe ⇒ ru}
+import scala.reflect.runtime.{universe => ru}
 import cats.Eval
 import cats.implicits._
 import github4s.Github
 import Github._
 import github4s.GithubResponses.GHResult
-import github4s.free.interpreters.Interpreters
 import github4s.free.domain.Commit
 import github4s.jvm.Implicits._
 import Comments.Mode
@@ -57,7 +56,7 @@ class CompilerJava {
         targetPackage,
         fetchContributors
       )
-      .fold(`🍺` ⇒ throw new Exception(`🍺`), out ⇒ Array(out._1, out._2))
+      .fold(`🍺` => throw new Exception(`🍺`), out => Array(out._1, out._2))
   }
 }
 
@@ -124,18 +123,20 @@ case class Compiler() {
     def enhanceDocError(path: List[String])(error: String) =
       s"""$error in ${path.mkString(".")}"""
 
-    def maybeMakeLibraryInfo(
-        library: Library
-    ) =
+    def maybeMakeLibraryInfo(library: Library) =
       for {
-        symbol ← internal.instanceToClassSymbol(library)
+        symbol <- internal.instanceToClassSymbol(library)
         symbolPath = internal.symbolToPath(symbol)
-        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Library])
-          .leftMap(enhanceDocError(symbolPath) _)
-        sections ← checkEmptySectionList(symbol, library) >>= {
+        comment <- (internal
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Library]))
+          .leftMap(enhanceDocError(symbolPath))
+        sections <- checkEmptySectionList(symbol, library).flatMap {
           _.sections
-            .traverseU(internal.instanceToClassSymbol(_) >>= (symbol ⇒
-              maybeMakeSectionInfo(library, symbol)))
+            .traverse(
+              internal
+                .instanceToClassSymbol(_)
+                .flatMap(symbol ⇒ maybeMakeSectionInfo(library, symbol)))
         }
       } yield
         LibraryInfo(
@@ -160,14 +161,14 @@ case class Compiler() {
         repository: String,
         path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
-      val contribs = Github(sys.env.lift("GITHUB_TOKEN")).repos
+      val contribs = Github(sys.env.get("GITHUB_TOKEN")).repos
         .listCommits(owner, repository, None, Option(path))
 
       import github4s.implicits._
       contribs.exec[Eval, HttpResponse[String]](Map.empty).value match {
-        case Right(GHResult(result, _, _)) ⇒
+        case Right(GHResult(result, _, _)) =>
           result.collect({
-            case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) ⇒
+            case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) =>
               ContributionInfo(
                 sha = sha,
                 message = message,
@@ -178,31 +179,30 @@ case class Compiler() {
                 authorUrl = author_url
               )
           })
-        case Left(ex) ⇒ throw ex
+        case Left(ex) => throw ex
       }
     }
 
-    def maybeMakeSectionInfo(
-        library: Library,
-        symbol: ClassSymbol
-    ) = {
+    def maybeMakeSectionInfo(library: Library, symbol: ClassSymbol) = {
       val symbolPath = internal.symbolToPath(symbol)
       val filePath   = extracted.symbolPaths.get(symbol.toString).filterNot(_.isEmpty)
       for {
-        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Section])
-          .leftMap(enhanceDocError(symbolPath) _)
+        comment <- internal
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Section])
+          .leftMap(enhanceDocError(symbolPath))
 
         contributions = (if (fetchContributors) filePath else None).fold(
           List.empty[ContributionInfo]
-        )(path ⇒ fetchContributions(library.owner, library.repository, path))
+        )(path => fetchContributions(library.owner, library.repository, path))
 
-        exercises ← symbol.toType.decls.toList
-          .filter(symbol ⇒
+        exercises <- symbol.toType.decls.toList
+          .filter(symbol =>
             symbol.isPublic && !symbol.isSynthetic &&
               symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
           .map(_.asMethod)
           .filterNot(_.isGetter)
-          .traverseU(maybeMakeExerciseInfo)
+          .traverse(maybeMakeExerciseInfo)
       } yield
         SectionInfo(
           symbol = symbol,
@@ -213,16 +213,17 @@ case class Compiler() {
           contributions = contributions
         )
     }
-
     def maybeMakeExerciseInfo(
         symbol: MethodSymbol
     ) = {
       val symbolPath = internal.symbolToPath(symbol)
-      val pkgName    = symbolPath.headOption.fold("defaultPkg")(pkg ⇒ pkg)
+      val pkgName    = symbolPath.headOption.fold("defaultPkg")(identity)
       for {
-        comment ← (internal.resolveComment(symbolPath) >>= Comments.parseAndRender[Mode.Exercise])
-          .leftMap(enhanceDocError(symbolPath) _)
-        method ← internal.resolveMethod(symbolPath)
+        comment <- internal
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Exercise])
+          .leftMap(enhanceDocError(symbolPath))
+        method <- internal.resolveMethod(symbolPath)
       } yield
         ExerciseInfo(
           symbol = symbol,
@@ -242,14 +243,14 @@ case class Compiler() {
       else s"${msg0.take(97)}${Console.BLUE}...${Console.RESET}"
     }
 
-    def dump(libraryInfo: LibraryInfo) {
+    def dump(libraryInfo: LibraryInfo) = {
       println(s"Found library ${libraryInfo.comment.name}")
       println(s" description: ${oneline(libraryInfo.comment.description)}")
-      libraryInfo.sections.foreach { sectionInfo ⇒
+      libraryInfo.sections.foreach { sectionInfo =>
         println(s" with section ${sectionInfo.comment.name}")
         println(s"  path: ${sectionInfo.path}")
         println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
-        sectionInfo.exercises.foreach { exerciseInfo ⇒
+        sectionInfo.exercises.foreach { exerciseInfo =>
           println(s"  with exercise ${exerciseInfo.symbol}")
           println(s"   description: ${exerciseInfo.comment.description.map(oneline)}")
         }
@@ -257,17 +258,17 @@ case class Compiler() {
     }
 
     // leaving this around, for debugging
-    def debugDump(libraryInfo: LibraryInfo) {
+    def debugDump(libraryInfo: LibraryInfo) = {
       println("~ library")
       println(s" • symbol        ${libraryInfo.symbol}")
       println(s" - name          ${libraryInfo.comment.name}")
       println(s" - description   ${oneline(libraryInfo.comment.description)}")
-      libraryInfo.sections.foreach { sectionInfo ⇒
+      libraryInfo.sections.foreach { sectionInfo =>
         println(" ~ section")
         println(s"  • symbol        ${sectionInfo.symbol}")
         println(s"  - name          ${sectionInfo.comment.name}")
         println(s"  - description   ${sectionInfo.comment.description.map(oneline)}")
-        sectionInfo.exercises.foreach { exerciseInfo ⇒
+        sectionInfo.exercises.foreach { exerciseInfo =>
           println("  ~ exercise")
           println(s"   • symbol        ${exerciseInfo.symbol}")
           println(s"   - description   ${exerciseInfo.comment.description.map(oneline)}")
@@ -280,9 +281,9 @@ case class Compiler() {
     def generateTree(libraryInfo: LibraryInfo): (TermName, Tree) = {
 
       val (sectionTerms, sectionAndExerciseTrees) =
-        libraryInfo.sections.map { sectionInfo ⇒
+        libraryInfo.sections.map { sectionInfo =>
           val (exerciseTerms, exerciseTrees) =
-            sectionInfo.exercises.map { exerciseInfo ⇒
+            sectionInfo.exercises.map { exerciseInfo =>
               treeGen.makeExercise(
                 libraryName = libraryInfo.comment.name,
                 name = internal.unapplyRawName(exerciseInfo.symbol.name),
@@ -296,7 +297,7 @@ case class Compiler() {
             }.unzip
 
           val (contributionTerms, contributionTrees) =
-            sectionInfo.contributions.map { contributionInfo ⇒
+            sectionInfo.contributions.map { contributionInfo =>
               treeGen.makeContribution(
                 sha = contributionInfo.sha,
                 message = contributionInfo.message,
@@ -349,7 +350,7 @@ case class Compiler() {
         buildInfoT = buildInfoTerm
       )
 
-      libraryTerm → treeGen.makePackage(
+      libraryTerm -> treeGen.makePackage(
         packageName = targetPackage,
         trees = libraryTree :: (sectionAndExerciseTrees.flatten :+ buildInfoTree)
       )
@@ -358,7 +359,7 @@ case class Compiler() {
 
     maybeMakeLibraryInfo(library)
       .map(generateTree)
-      .map { case (TermName(kname), v) ⇒ s"$targetPackage.$kname" → showCode(v) }
+      .map { case (TermName(kname), v) => s"$targetPackage.$kname" -> showCode(v) }
 
   }
 
@@ -389,19 +390,19 @@ case class Compiler() {
       def process(symbol: Symbol): List[String] = {
         lazy val owner = symbol.owner
         unapplyRawName(symbol.name) match {
-          case `ROOT`                      ⇒ Nil
-          case `EMPTY_PACKAGE_NAME_STRING` ⇒ Nil
-          case `ROOTPKG_STRING`            ⇒ Nil
-          case value if symbol != owner    ⇒ value :: process(owner)
-          case _                           ⇒ Nil
+          case `ROOT`                      => Nil
+          case `EMPTY_PACKAGE_NAME_STRING` => Nil
+          case `ROOTPKG_STRING`            => Nil
+          case value if symbol != owner    => value :: process(owner)
+          case _                           => Nil
         }
       }
       process(symbol).reverse
     }
 
     private[compiler] def unapplyRawName(name: Name): String = name match {
-      case TermName(value) ⇒ value
-      case TypeName(value) ⇒ value
+      case TermName(value) => value
+      case TypeName(value) => value
     }
 
     private lazy val EMPTY_PACKAGE_NAME_STRING = unapplyRawName(termNames.EMPTY_PACKAGE_NAME)
