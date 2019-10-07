@@ -25,7 +25,6 @@ import org.scalajs.dom.raw.{HTMLElement}
 import cats.data.OptionT
 import cats.implicits._
 
-import monix.cats._
 import monix.eval.Coeval
 
 import actions._
