@@ -33,6 +33,7 @@ import messages.{EvaluationRequest, EvaluationResult}
 import upickle._
 import upickle.default._
 import common.ExtAjax._
+import org.scalaexercises.client.utils.Implicits._
 
 import org.scalajs.dom.ext.{Ajax, AjaxException}
 

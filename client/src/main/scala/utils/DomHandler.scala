@@ -27,7 +27,6 @@ import org.scalajs.dom.raw.{HTMLDivElement, HTMLElement, HTMLInputElement}
 import org.scalajs.jquery.{jQuery ⇒ $, JQuery}
 import scala.scalajs.js.timers._
 
-import monix.cats._
 import monix.eval.Coeval
 
 import cats.data.OptionT

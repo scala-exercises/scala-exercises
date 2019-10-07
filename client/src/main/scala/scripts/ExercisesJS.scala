@@ -25,7 +25,6 @@ import utils.DomHandler._
 import scala.scalajs.js
 import scala.concurrent.Future
 
-import monix.cats._
 import monix.eval.Coeval
 
 import model._

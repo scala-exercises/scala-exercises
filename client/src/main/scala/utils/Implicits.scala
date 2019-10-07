@@ -18,27 +18,20 @@
  */
 
 package org.scalaexercises.client
-package programspec
+package utils
 
-import utest._
+import org.scalaexercises.client.messages.EvaluationRequest
+import org.scalaexercises.types.progress.{ExerciseProgress, SectionExercises}
+import upickle.default.{macroRW, ReadWriter}
 
-import actions._
-import state.{State}
-import factories.Factories._
+trait ImplicitsTrait {
 
-object StateSpec extends TestSuite {
-  def tests = TestSuite {
-    'SetState {
-      val newState = List(clientExercise(method = "foo", args = Seq("", "")))
-      val action   = SetState(newState)
-      val state    = List()
-      assert(State.update(state, action) == newState)
-    }
-    'UpdateExercise {
-      val action   = UpdateExercise("foo", Seq("one", "two"))
-      val state    = List(clientExercise(method = "foo", args = Seq("", "")))
-      val newState = State.update(state, action)
-      assert(newState(0).arguments == Seq("one", "two"))
-    }
-  }
+  implicit val sectionExercisesRW: ReadWriter[SectionExercises] = macroRW
+
+  implicit val exerciseProgressRW: ReadWriter[ExerciseProgress] = macroRW
+
+  implicit val evaluationRequestRW: ReadWriter[EvaluationRequest] = macroRW
+
 }
+
+object Implicits extends ImplicitsTrait
