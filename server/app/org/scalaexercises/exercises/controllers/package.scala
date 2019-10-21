@@ -1,5 +1,7 @@
 /*
- * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,34 +14,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises.controllers
 
-import freestyle._
-import freestyle.implicits._
-import cats.implicits._
-import org.scalaexercises.evaluator.CompilationInfo
+import akka.util.ByteString
 import org.scalaexercises.evaluator.EvalResult._
+import org.scalaexercises.evaluator.{CompilationInfo, Dependency => EvaluatorDependency}
+import org.scalaexercises.types.evaluator.Dependency
 import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.JsError
 import play.api.mvc.{Codec, Request}
-import org.scalaexercises.types.evaluator.Dependency
-import org.scalaexercises.evaluator.{Dependency => EvaluatorDependency}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalaexercises.exercises.utils._
-import org.scalaexercises.evaluator.EvaluatorClient
-import org.scalaexercises.evaluator.EvaluatorClient._
-
-import scala.concurrent.{ExecutionContext, Future}
 
 object `package` {
-
-  lazy val evaluatorClient: EvaluatorClient = new EvaluatorClient(
-    ConfigUtils.evaluatorUrl,
-    ConfigUtils.evaluatorAuthKey
-  )
 
   def isAjax[A](implicit request: Request[A]) =
     request.headers.get("X-Requested-With").contains("XMLHttpRequest")
@@ -48,13 +36,13 @@ object `package` {
     ContentTypeOf[Throwable](Some(ContentTypes.TEXT))
 
   implicit def writeableOf_Throwable(implicit codec: Codec): Writeable[Throwable] =
-    Writeable(e ⇒ e.getMessage.getBytes("utf-8"))
+    Writeable(e ⇒ ByteString(e.getMessage.getBytes("utf-8")))
 
   implicit def contentTypeOf_JsError(implicit codec: Codec): ContentTypeOf[JsError] =
     ContentTypeOf[JsError](Some(ContentTypes.JSON))
 
   implicit def writeableOf_JsError(implicit codec: Codec): Writeable[JsError] =
-    Writeable(e ⇒ JsError.toJson(e).toString.getBytes("utf-8"))
+    Writeable(e ⇒ ByteString(JsError.toJson(e).toString.getBytes("utf-8")))
 
   implicit class EvaluatorDependenciesConverter(deps: List[Dependency]) {
     def toEvaluatorDeps = deps map (d ⇒ EvaluatorDependency(d.groupId, d.artifactId, d.version))

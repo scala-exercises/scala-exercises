@@ -1,5 +1,7 @@
 /*
- * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,131 +14,124 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises.controllers
 
-import org.scalaexercises.exercises.Secure
-import cats.free._
-import cats.instances.future._
-import play.api.cache.CacheApi
-import org.scalaexercises.types.exercises.{Contribution, Contributor}
-
-import scala.collection.JavaConverters._
-import org.scalaexercises.exercises.utils.ConfigUtils
-import org.scalaexercises.algebra.app._
-import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.algebra.progress.{UserExercisesProgress, UserProgressOps}
+import cats.effect.IO
+import cats.implicits._
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.types.github.Repository
 import org.scalaexercises.algebra.github.GithubOps
+import org.scalaexercises.algebra.progress.{UserExercisesProgress, UserProgressOps}
+import org.scalaexercises.algebra.user.UserOps
+import org.scalaexercises.exercises.Secure
 import org.scalaexercises.exercises.services.ExercisesService
-import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import doobie.imports._
-import play.api.{Application, Logger, Play}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import org.scalaexercises.exercises.utils.ConfigUtils
+import org.scalaexercises.types.exercises.{Contribution, Contributor}
+import org.scalaexercises.types.github.Repository
+import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+import play.api.{Application, Logger}
 
-import scala.concurrent.Future
-import scala.concurrent.duration._
-import scalaz.concurrent.Task
-import freestyle._
-import freestyle.implicits._
-
-class ApplicationController(cache: CacheApi)(
-    implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
-    userOps: UserOps[ExercisesApp.Op],
-    userProgressOps: UserProgressOps[ExercisesApp.Op],
-    userExercisesProgress: UserExercisesProgress[ExercisesApp.Op],
-    githubOps: GithubOps[ExercisesApp.Op],
-    T: Transactor[Task]
-) extends Controller
-    with AuthenticationModule
-    with ProdInterpreters {
-  implicit def application: Application = Play.current
-
-  lazy val topLibraries: List[String] = application.configuration.getStringList(
-    "exercises.top_libraries") map (_.asScala.toList) getOrElse Nil
+class ApplicationController(app: Application, components: ControllerComponents)(
+    cache: AsyncCacheApi)(
+    implicit exerciseOps: ExerciseOps[IO],
+    userOps: UserOps[IO],
+    userProgressOps: UserProgressOps[IO],
+    userExercisesProgress: UserExercisesProgress[IO],
+    githubOps: GithubOps[IO])
+    extends BaseController
+    with AuthenticationModule {
+  lazy val topLibraries: List[String] = app.configuration
+    .getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
 
   val MainRepoCacheKey = "scala-exercises.repo"
 
+  val configUtils = ConfigUtils(app.configuration)
+
+  private val service = ExercisesService(app)
+
+  private implicit val cs = IO.contextShift(defaultExecutionContext)
+
   /** cache the main repo stars, forks and watchers info for 30 mins */
-  private[this] def scalaexercisesRepo: FreeS[ExercisesApp.Op, Repository] = {
-    cache.get[Repository](MainRepoCacheKey) match {
-      case Some(repo) ⇒ FreeS.pure(repo)
+  private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
+    IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey)))(cs).flatMap {
+      case repo ⇒ IO.pure(repo)
       case None ⇒
         githubOps
           .getRepository(
-            ConfigUtils.githubSiteOwner,
-            ConfigUtils.githubSiteRepo
-          ) match {
-          case repo ⇒
-            cache.set(MainRepoCacheKey, repo, 30 minutes)
-            repo
-          case err ⇒
-            Logger.error("Error fetching scala-exercises repository information")
-            err
-        }
+            configUtils.githubSiteOwner,
+            configUtils.githubSiteRepo
+          )
+          .redeem({ _ =>
+            Logger(this.getClass).error("Error fetching scala-exercises repository information")
+            None
+          }, repo => Some(repo))
     }
   }
 
   def index =
-    Secure(Action.async { implicit request ⇒
-      for {
-        authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
-        libraries ← exerciseOps.getLibraries.map(ExercisesService.reorderLibraries(topLibraries, _))
+    Secure(app.mode)(Action.async { implicit request =>
+      (for {
+        authorize ← githubOps
+          .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
+        libraries ← exerciseOps.getLibraries.map(service.reorderLibraries(topLibraries, _))
         user      ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
         progress  ← userExercisesProgress.fetchMaybeUserProgress(user)
         repo      ← scalaexercisesRepo
         result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
-          case (libraries, user, Some(token), progress, _) ⇒
+          case (libraries, user, Some(_), progress, _) ⇒
             Ok(
               views.html.templates.home
-                .index(user = user, libraries = libraries, progress = progress, repo = repo))
+                .index(
+                  user = user,
+                  libraries = libraries,
+                  progress = progress,
+                  repo = repo.getOrElse(Repository(0, 0, 0)),
+                  current = app))
           case (libraries, None, None, progress, authorize) ⇒
             Ok(
-              views.html.templates.home.index(
-                user = None,
-                libraries = libraries,
-                progress = progress,
-                redirectUrl = Option(authorize.url),
-                repo = repo)).withSession("oauth-state" → authorize.state)
+              views.html.templates.home
+                .index(
+                  user = None,
+                  libraries = libraries,
+                  progress = progress,
+                  redirectUrl = Option(authorize.url),
+                  repo = repo.getOrElse(Repository(0, 0, 0)),
+                  current = app))
+              .withSession("oauth-state" → authorize.state)
           case (libraries, Some(user), None, _, _) ⇒ Unauthorized("Session token not found")
-
         }
-      } yield result
+      } yield result).unsafeToFuture()
+
     })
 
   def library(libraryName: String) =
-    Secure(Action.async { implicit request ⇒
+    Secure(app.mode)(Action.async { implicit request ⇒
       val ops = for {
         library ← exerciseOps.getLibrary(libraryName)
         user    ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        section ← user.fold(
-          Free.liftF[FreeApplicative[ExercisesApp.Op, ?], Option[String]](
-            FreeApplicative.pure(
-              None: Option[String]
-            ): FreeApplicative[ExercisesApp.Op, Option[String]]
-          )
-        )(usr ⇒ userProgressOps.getLastSeenSection(usr, libraryName))
+        section ← user.flatTraverse(userProgressOps.getLastSeenSection(_, libraryName))
       } yield (library, user, section)
 
-      ops map {
+      (ops map {
         case (Some(library), _, Some(sectionName)) if library.sectionNames.contains(sectionName) ⇒
           Redirect(s"$libraryName/$sectionName")
         case (Some(library), _, _) if library.sectionNames.nonEmpty ⇒
           Redirect(s"$libraryName/${library.sectionNames.head}")
         case (None, _, _) ⇒ NotFound("Library not found")
-      }
+      }).unsafeToFuture()
     })
 
   def section(libraryName: String, sectionName: String) =
-    Secure(Action.async { implicit request ⇒
+    Secure(app.mode)(Action.async { implicit request ⇒
       val ops = for {
-        authorize ← githubOps.getAuthorizeUrl(ConfigUtils.githubAuthId, ConfigUtils.callbackUrl)
-        library   ← exerciseOps.getLibrary(libraryName)
-        section   ← exerciseOps.getSection(libraryName, sectionName)
+        authorize ← githubOps
+          .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
+        library ← exerciseOps.getLibrary(libraryName)
+        section ← exerciseOps.getSection(libraryName, sectionName)
         contributors = toContributors(section.fold(List.empty[Contribution])(s ⇒ s.contributions))
         user        ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
         libProgress ← userExercisesProgress.fetchMaybeUserProgressByLibrary(user, libraryName)
@@ -150,7 +145,7 @@ class ApplicationController(cache: CacheApi)(
           authorize,
           contributors)
 
-      ops map {
+      (ops map {
         case (Some(l), Some(s), user, Some(token), libProgress, _, contributors) ⇒
           Ok(
             views.html.templates.library.index(
@@ -158,7 +153,8 @@ class ApplicationController(cache: CacheApi)(
               section = s,
               user = user,
               progress = libProgress,
-              contributors = contributors
+              contributors = contributors,
+              current = app
             )
           )
         case (Some(l), Some(s), user, None, libProgress, authorize, contributors) ⇒
@@ -169,18 +165,19 @@ class ApplicationController(cache: CacheApi)(
               user = user,
               progress = libProgress,
               redirectUrl = Option(authorize.url),
-              contributors = contributors
+              contributors = contributors,
+              current = app
             )
           ).withSession("oauth-state" → authorize.state)
         case (Some(l), None, _, _, _, _, _) ⇒ NotFound("Section not found")
         case (None, _, _, _, _, _, _)       ⇒ NotFound("Library not found")
         case (_, _, _, _, _, _, _)          ⇒ NotFound("Library and section not found")
 
-      }
+      }).unsafeToFuture()
     })
 
   def javascriptRoutes =
-    Secure(Action { implicit request ⇒
+    Secure(app.mode)(Action { implicit request ⇒
       import routes.javascript._
       Ok(
         JavaScriptReverseRouter("jsRoutes")(
@@ -200,4 +197,6 @@ class ApplicationController(cache: CacheApi)(
       NotFound
     }
   }
+
+  override protected def controllerComponents: ControllerComponents = components
 }

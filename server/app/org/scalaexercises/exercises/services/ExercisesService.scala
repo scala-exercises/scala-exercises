@@ -1,5 +1,7 @@
 /*
- * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,42 +14,41 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises
 package services
 
-import org.scalaexercises.runtime.{Exercises, Timestamp}
-import org.scalaexercises.runtime.model.{
-  DefaultLibrary,
-  BuildInfo ⇒ RuntimeBuildInfo,
-  Contribution ⇒ RuntimeContribution,
-  Exercise ⇒ RuntimeExercise,
-  Library ⇒ RuntimeLibrary,
-  Section ⇒ RuntimeSection
-}
-import org.scalaexercises.types.exercises._
-import play.api.Play
-import play.api.Logger
 import cats.data.State
 import cats.implicits._
-import org.scalaexercises.types.evaluator.Dependency
+import javax.inject.Singleton
 import org.apache.commons.io.IOUtils
+import org.scalaexercises.runtime.model.{
+  DefaultLibrary,
+  BuildInfo => RuntimeBuildInfo,
+  Contribution => RuntimeContribution,
+  Exercise => RuntimeExercise,
+  Library => RuntimeLibrary,
+  Section => RuntimeSection
+}
+import org.scalaexercises.runtime.{Exercises, Timestamp}
+import org.scalaexercises.types.evaluator.Dependency
+import org.scalaexercises.types.exercises._
+import play.api.{Application, Logger}
 import sun.misc.BASE64Encoder
 
-object ExercisesService extends RuntimeSharedConversions {
+@Singleton
+case class ExercisesService(app: Application) extends RuntimeSharedConversions {
 
-  def classLoader =
-    Play.maybeApplication.fold(ExercisesService.getClass.getClassLoader)(_.classloader)
+  def classLoader                     = app.classloader
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
-    errors.foreach(error ⇒ Logger.warn(s"$error")) // TODO: handle errors better?
+    errors.foreach(error ⇒ Logger(this.getClass).warn(s"$error")) // TODO: handle errors better?
     (libraries1, libraries1.map(lib ⇒ lib.name → lib.sections).toMap)
   }
-
-  lazy val base64Encoder = new BASE64Encoder()
 
   def section(libraryName: String, name: String): Option[Section] =
     librarySections.get(libraryName) >>= (_.find(_.name == name))
@@ -124,7 +125,7 @@ sealed trait RuntimeSharedConversions {
     )
 
     libraries
-      .traverseU { library ⇒
+      .traverse { library ⇒
         if (library.color.isEmpty) {
           State[Colors, RuntimeLibrary] { colors ⇒
             val (color, colors0) = colors match {
@@ -153,6 +154,8 @@ sealed trait RuntimeSharedConversions {
       .value
   }
 
+  lazy val base64Encoder = new BASE64Encoder()
+
   def convertLibrary(library: RuntimeLibrary): Library =
     Library(
       owner = library.owner,
@@ -172,8 +175,8 @@ sealed trait RuntimeSharedConversions {
       Option(getClass.getClassLoader.getResource(logoPath + ".svg")).isDefined
 
     def logoData(path: String): Option[String] =
-      Option(getClass().getClassLoader.getResourceAsStream(path))
-        .map(stream ⇒ ExercisesService.base64Encoder.encode(IOUtils.toByteArray(stream)))
+      Option(getClass.getClassLoader.getResourceAsStream(path))
+        .map(stream ⇒ base64Encoder.encode(IOUtils.toByteArray(stream)))
 
     val logoPathOrDefault =
       if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"

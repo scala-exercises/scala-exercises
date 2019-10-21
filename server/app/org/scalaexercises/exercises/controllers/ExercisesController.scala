@@ -1,5 +1,7 @@
 /*
- * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,86 +14,77 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises.controllers
 
-import cats.free.Free
+import cats.effect.{ConcurrentEffect, IO}
 import cats.implicits._
-import org.scalaexercises.types.user.User
-import org.scalaexercises.types.exercises.ExerciseEvaluation
-import org.scalaexercises.types.progress.SaveUserProgress
-import org.scalaexercises.algebra.app._
-import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.algebra.progress.UserProgressOps
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import doobie.imports._
-import org.scalaexercises.evaluator.EvalResponse
-import play.api.Logger
-import play.api.libs.json.JsValue
-import play.api.mvc.{Action, BodyParsers, Controller, Result}
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.user.UserOps
+import org.scalaexercises.evaluator._
+import org.scalaexercises.exercises.utils.ConfigUtils
 import org.scalaexercises.types.evaluator.Dependency
+import org.scalaexercises.types.exercises.ExerciseEvaluation
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
-import org.scalaexercises.evaluator.EvaluatorClient
-import org.scalaexercises.evaluator.EvaluatorClient._
-import org.scalaexercises.evaluator.EvaluatorResponses.{EvaluationResponse, EvaluationResult}
-import org.scalaexercises.evaluator.free.algebra.EvaluatorOp
-import org.scalaexercises.evaluator.implicits._
+import org.scalaexercises.types.progress.SaveUserProgress
+import org.scalaexercises.types.user.User
+import play.api.libs.json.JsValue
+import play.api.mvc._
+import play.api.{Application, Logger}
 
-import scala.concurrent.Future
-import scalaz.concurrent.Task
-
-import freestyle._
-import freestyle.implicits._
-import cats.instances.future._
-
-class ExercisesController(
-    implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
-    userOps: UserOps[ExercisesApp.Op],
-    userProgressOps: UserProgressOps[ExercisesApp.Op],
-    T: Transactor[Task]
-) extends Controller
+class ExercisesController(app: Application, components: ControllerComponents)(
+    implicit exerciseOps: ExerciseOps[IO],
+    userOps: UserOps[IO],
+    userProgressOps: UserProgressOps[IO])
+    extends BaseController
     with JsonFormats
-    with AuthenticationModule
-    with ProdInterpreters {
+    with AuthenticationModule {
 
-  implicit val interpreter: ParInterpreter[ExercisesApp.Op, Task] = implicitly
+  private implicit val ce: ConcurrentEffect[IO] =
+    IO.ioConcurrentEffect(IO.contextShift(controllerComponents.executionContext))
+
+  private implicit val mode = app.mode
+
+  private val configUtils = ConfigUtils(app.configuration)
+
+  private val evaluatorClient =
+    EvaluatorClient[IO](configUtils.evaluatorUrl, configUtils.evaluatorAuthKey)
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
-    AuthenticatedUserF[ExerciseEvaluation](BodyParsers.parse.json) {
+    AuthenticatedUserF[ExerciseEvaluation](parse.json) {
       (evaluation: ExerciseEvaluation, user: User) ⇒
-        def eval(runtimeInfo: Either[Throwable, EvaluationRequest]): Future[
-          Either[String, EvalResponse]] =
-          runtimeInfo match {
-            case Left(ex) ⇒
-              logError("eval", "Error while building the evaluation request", Some(ex))
-              Future.successful(Either.left(ex.getMessage))
-            case Right(evalRequest) ⇒
-              evalRequest match {
-                case Left(msg) ⇒
-                  logError("eval", "Error before performing the evaluation")
-                  Future.successful(Either.left(msg))
-                case Right((resolvers, dependencies, code)) ⇒
-                  evalRemote(resolvers, dependencies, code)
-              }
-          }
+        def eval(
+            runtimeInfo: Either[Throwable, EvaluationRequest]
+        ): IO[Either[String, EvalResponse]] = runtimeInfo match {
+          case Left(ex) ⇒
+            logError("eval", "Error while building the evaluation request", Some(ex))
+            IO(Either.left(ex.getMessage))
+          case Right(evalRequest) ⇒
+            evalRequest match {
+              case Left(msg) ⇒
+                logError("eval", "Error before performing the evaluation")
+                IO(Either.left(msg))
+              case Right((resolvers, dependencies, code)) ⇒
+                evalRemote(resolvers, dependencies, code)
+            }
+        }
 
         def evalRemote(
             resolvers: List[String],
             dependencies: List[Dependency],
             code: String
-        ): Future[Either[String, EvalResponse]] = {
-          val evalResponse: Free[EvaluatorOp, EvaluationResponse[EvalResponse]] =
-            evaluatorClient.api.evaluates(resolvers, dependencies.toEvaluatorDeps, code)
+        ): IO[Either[String, EvalResponse]] = {
+          val evalResponse: IO[EvalResponse] =
+            evaluatorClient.evaluates(EvalRequest(resolvers, dependencies.toEvaluatorDeps, code))
 
-          evalResponse.exec map {
+          evalResponse.attempt map {
             case Left(evalException) ⇒
               logError("evalRemote", "Error while evaluating", Some(evalException))
               Either.left(s"Evaluation failed : $evalException")
-            case Right(EvaluationResult(result, statusCode, _)) ⇒
+            case Right(result) ⇒
               result match {
                 case EvalResponse(EvalResponse.messages.ok, _, _, _, _) ⇒
                   Either.right(result)
@@ -101,9 +94,8 @@ class ExercisesController(
           }
         }
 
-        def mkHttpStatusCodeResponse(
-            evaluationResult: Either[String, EvalResponse]): Future[Result] = {
-          Future.successful(evaluationResult match {
+        def mkHttpStatusCodeResponse(evaluationResult: Either[String, EvalResponse]): IO[Result] = {
+          IO(evaluationResult match {
             case Left(msg) ⇒
               BadRequest(s"Evaluation failed : $msg")
             case Right(evalResponse) ⇒
@@ -126,22 +118,19 @@ class ExercisesController(
         def logError(method: String, mainMsg: String, ex: Option[Throwable] = None) = {
           val msg = s"[$method] $mainMsg. ExerciseEvaluation: $evaluation with user $user"
           ex match {
-            case Some(e) ⇒ Logger.error(msg, e)
-            case None    ⇒ Logger.error(msg)
+            case Some(e) ⇒ Logger(this.getClass).error(msg, e)
+            case None    ⇒ Logger(this.getClass).error(msg)
           }
         }
 
-        for {
-          runtimeInfo ← FreeS
-            .liftPar(exerciseOps.buildRuntimeInfo(evaluation = evaluation))
-            .runFuture
+        (for {
+          runtimeInfo      ← exerciseOps.buildRuntimeInfo(evaluation).attempt
           evaluationResult ← eval(runtimeInfo)
           httpResponse     ← mkHttpStatusCodeResponse(evaluationResult)
-          _ ← FreeS
-            .liftPar(
-              userProgressOps
-                .saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight)))
-            .runFuture
-        } yield httpResponse
+          _                ← userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
+        } yield httpResponse).unsafeToFuture()
+
     }
+
+  override protected def controllerComponents: ControllerComponents = components
 }

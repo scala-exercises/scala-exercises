@@ -43,6 +43,7 @@ object ProjectPlugin extends AutoPlugin {
         'scalajsscripts -> "1.1.4",
         'scalariform    -> "1.8.3",
         'upickle        -> "0.7.5",
+        'slf4j          -> "1.7.28",
         'webjars        -> "2.7.3",
         'scalamacros    -> "2.1.1",
         'monix          -> "3.0.0"
@@ -106,7 +107,8 @@ object ProjectPlugin extends AutoPlugin {
       headerLicense := Some(
         ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
-    ) ++ addCompilerPlugin("org.scalamacros" % "paradise" % v('scalamacros) cross CrossVersion.full) ++ shellPromptSettings
+    ) ++ addCompilerPlugin("org.scalamacros" % "paradise"            % v('scalamacros) cross CrossVersion.full) ++
+      addCompilerPlugin("com.olegpy"         %% "better-monadic-for" % "0.3.1") ++ shellPromptSettings
 
   object ScalaExercisesLicense {
 
