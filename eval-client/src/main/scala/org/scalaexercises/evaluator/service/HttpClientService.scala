@@ -17,12 +17,12 @@
  *
  */
 
-package org.scalaexercises.exercises.persistence
+package org.scalaexercises.evaluator.service
 
-package object domain {
+import org.scalaexercises.evaluator.types._
 
-  /** Get the field names of a case class */
-  private[domain] def fieldNames[CC]: FieldNamesPartlyApplied[CC] =
-    new FieldNamesPartlyApplied[CC]
+trait HttpClientService[F[_]] {
+
+  def evaluates(evalRequest: EvalRequest): F[EvalResponse]
 
 }

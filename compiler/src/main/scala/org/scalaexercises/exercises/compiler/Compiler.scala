@@ -235,8 +235,9 @@ case class Compiler() {
         )
     }
 
-    def oneline(msg: String) = {
-      val msg0 = msg.lines.mkString(s"${Console.BLUE}\\n${Console.RESET}")
+    // TODO: Not being used anywhere. Can this be removed?
+    /*def oneline(msg: String) = {
+      val msg0 = msg.linesIterator.mkString(s"${Console.BLUE}\\n${Console.RESET}")
       // there's a chance that we could put elipses over part of the escaped
       // newline sequence... but oh well
       if (msg0.length <= 100) msg0
@@ -274,7 +275,7 @@ case class Compiler() {
           println(s"   - description   ${exerciseInfo.comment.description.map(oneline)}")
         }
       }
-    }
+    }*/
 
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)
 
@@ -327,7 +328,7 @@ case class Compiler() {
         val libraryAsDependency =
           s"${buildMetaInfo.organization}:${buildMetaInfo.name}_${buildMetaInfo.scalaVersion
             .substring(0, 4)}:${buildMetaInfo.version}"
-        libraryAsDependency :: buildMetaInfo.libraryDependencies.toList
+        List(libraryAsDependency) // :: buildMetaInfo.libraryDependencies.toList
       }
 
       val (buildInfoTerm, buildInfoTree) =

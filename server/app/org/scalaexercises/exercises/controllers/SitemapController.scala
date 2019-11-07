@@ -30,7 +30,7 @@ class SitemapController(mode: Mode, components: ControllerComponents)(
 ) extends BaseController {
 
   def sitemap =
-    Secure(mode)(Action.async { implicit request ⇒
+    Secure(mode)(Action.async { _ ⇒
       (exerciseOps.getLibraries map { libraries ⇒
         Ok(views.xml.templates.sitemap.sitemap(libraries))
       }).unsafeToFuture()

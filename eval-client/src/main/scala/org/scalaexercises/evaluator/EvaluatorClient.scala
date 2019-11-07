@@ -17,12 +17,21 @@
  *
  */
 
-package org.scalaexercises.exercises.persistence
+package org.scalaexercises.evaluator
 
-package object domain {
+import cats.effect.{ConcurrentEffect, Resource}
+import org.http4s.client.Client
+import org.http4s.client.blaze.BlazeClientBuilder
+import org.scalaexercises.evaluator.service.{HttpClientHandler, HttpClientService}
 
-  /** Get the field names of a case class */
-  private[domain] def fieldNames[CC]: FieldNamesPartlyApplied[CC] =
-    new FieldNamesPartlyApplied[CC]
+import scala.concurrent.ExecutionContext
+
+object EvaluatorClient {
+
+  private def clientResource[F[_]: ConcurrentEffect]: Resource[F, Client[F]] =
+    BlazeClientBuilder[F](ExecutionContext.global).resource
+
+  def apply[F[_]: ConcurrentEffect](url: String, authKey: String): HttpClientService[F] =
+    HttpClientHandler[F](url, authKey, clientResource[F])
 
 }

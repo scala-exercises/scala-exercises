@@ -35,11 +35,9 @@ import play.api._
 import play.api.cache.caffeine.CaffeineCacheComponents
 import play.api.db.evolutions.{DynamicEvolutions, EvolutionsComponents}
 import play.api.db.{DBComponents, HikariCPComponents}
-import play.api.http.DefaultFileMimeTypes
 import play.api.libs.ws._
 import play.api.libs.ws.ahc.AhcWSClient
 import play.api.mvc.EssentialFilter
-import play.http.DefaultHttpFilters
 import router.Routes
 
 import scala.concurrent.Future
@@ -66,7 +64,7 @@ class Components(context: Context)
 
   override lazy val dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
 
-  val trans = (for {
+  lazy val aa = (for {
     ec <- ExecutionContexts.fixedThreadPool[IO](32)
     cs = IO.contextShift(ec)
     blocker <- Blocker[IO]
@@ -76,28 +74,32 @@ class Components(context: Context)
       ec,
       blocker.blockingContext)(implicitly, cs)).allocated
 
+  lazy implicit val trans: Transactor[IO] = aa.map(_._1).unsafeRunSync
+
   implicit val wsClient: WSClient = AhcWSClient()
 
   implicit val components = controllerComponents
 
-  implicit val mode = application.mode
+  implicit val mode = environment.mode
 
-  def generateRoutes(implicit T: Transactor[IO]): Routes = {
-    implicit val exerciseOps: ExerciseOps[IO]            = new ExerciseOpsHandler[IO](application)
+  implicit val classloader = environment.classLoader
+
+  lazy val generateRoutes: Routes = {
     implicit val userOps: UserOps[IO]                    = new UserOpsHandler[IO]
     implicit val userProgressOps: UserProgressOps[IO]    = new UserProgressOpsHandler[IO]
     implicit val githubOps: GithubOps[IO]                = new GithubOpsHandler[IO]
+    implicit val exerciseOps: ExerciseOps[IO]            = new ExerciseOpsHandler[IO]()
     implicit val userProgress: UserExercisesProgress[IO] = new UserExercisesProgress[IO]
 
-    val applicationController = new ApplicationController(application, components)(defaultCacheApi)
-    val exercisesController   = new ExercisesController(application, components)
-    val userController        = new UserController(application.mode, components)
-    val oauthController =
-      new OAuthController(application.mode, application.configuration, components)
+    val applicationController =
+      new ApplicationController(configuration, mode, classloader, components)(defaultCacheApi)
+    val exercisesController    = new ExercisesController(configuration, mode, components)
+    val userController         = new UserController(mode, components)
+    val oauthController        = new OAuthController(mode, configuration, components)
     val userProgressController = new UserProgressController(components)
     val loaderIOController =
-      new LoaderIOController(application.mode, application.configuration, components)
-    val sitemapController = new SitemapController(application.mode, components)
+      new LoaderIOController(mode, configuration, components)
+    val sitemapController = new SitemapController(mode, components)
 
     new Routes(
       httpErrorHandler,
@@ -112,19 +114,19 @@ class Components(context: Context)
     )
   }
 
-  val assets = new _root_.controllers.Assets(
+  lazy val assets = new _root_.controllers.Assets(
     httpErrorHandler,
     new DefaultAssetsMetadata(
-      AssetsConfiguration.fromConfiguration(configuration, application.mode),
+      AssetsConfiguration.fromConfiguration(configuration, mode),
       environment.resource(_),
-      new DefaultFileMimeTypes(httpConfiguration.fileMimeTypes)
+      fileMimeTypes
     )
   )
 
-  lazy val router = trans.map(tran => generateRoutes(tran._1)).unsafeRunSync()
+  override lazy val router = generateRoutes
 
   applicationLifecycle.addStopHook({ () ⇒
-    trans.flatMap(_._2).unsafeRunSync()
+    aa.flatMap(_._2).unsafeRunSync()
     Future(wsClient.close())
   })
 

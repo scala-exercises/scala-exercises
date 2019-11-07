@@ -20,6 +20,8 @@
 package org.scalaexercises.exercises
 package services
 
+import java.util.Base64
+
 import cats.data.State
 import cats.implicits._
 import javax.inject.Singleton
@@ -35,14 +37,12 @@ import org.scalaexercises.runtime.model.{
 import org.scalaexercises.runtime.{Exercises, Timestamp}
 import org.scalaexercises.types.evaluator.Dependency
 import org.scalaexercises.types.exercises._
-import play.api.{Application, Logger}
-import sun.misc.BASE64Encoder
+import play.api.Logger
 
 @Singleton
-case class ExercisesService(app: Application) extends RuntimeSharedConversions {
+class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
-  def classLoader                     = app.classloader
-  lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl = classLoader)
+  lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl)
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
@@ -154,8 +154,6 @@ sealed trait RuntimeSharedConversions {
       .value
   }
 
-  lazy val base64Encoder = new BASE64Encoder()
-
   def convertLibrary(library: RuntimeLibrary): Library =
     Library(
       owner = library.owner,
@@ -176,7 +174,7 @@ sealed trait RuntimeSharedConversions {
 
     def logoData(path: String): Option[String] =
       Option(getClass.getClassLoader.getResourceAsStream(path))
-        .map(stream ⇒ base64Encoder.encode(IOUtils.toByteArray(stream)))
+        .map(stream ⇒ Base64.getMimeEncoder.encodeToString(IOUtils.toByteArray(stream)))
 
     val logoPathOrDefault =
       if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"

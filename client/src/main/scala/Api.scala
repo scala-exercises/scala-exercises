@@ -25,12 +25,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import model._
 import config.Routes
-import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 
 import messages.{EvaluationRequest, EvaluationResult}
 
-import upickle._
 import upickle.default._
 import common.ExtAjax._
 import org.scalaexercises.client.utils.Implicits._

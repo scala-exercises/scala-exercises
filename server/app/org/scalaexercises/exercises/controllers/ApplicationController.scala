@@ -33,10 +33,13 @@ import org.scalaexercises.types.github.Repository
 import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{Application, Logger}
+import play.api.{Configuration, Logger, Mode}
 
-class ApplicationController(app: Application, components: ControllerComponents)(
-    cache: AsyncCacheApi)(
+class ApplicationController(
+    config: Configuration,
+    mode: Mode,
+    cl: ClassLoader,
+    components: ControllerComponents)(cache: AsyncCacheApi)(
     implicit exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
@@ -44,21 +47,20 @@ class ApplicationController(app: Application, components: ControllerComponents)(
     githubOps: GithubOps[IO])
     extends BaseController
     with AuthenticationModule {
-  lazy val topLibraries: List[String] = app.configuration
-    .getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
+  lazy val topLibraries: List[String] = config.getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
 
   val MainRepoCacheKey = "scala-exercises.repo"
 
-  val configUtils = ConfigUtils(app.configuration)
+  val configUtils = ConfigUtils(config)
 
-  private val service = ExercisesService(app)
+  private val service = new ExercisesService(cl)
 
   private implicit val cs = IO.contextShift(defaultExecutionContext)
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
   private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
     IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey)))(cs).flatMap {
-      case repo ⇒ IO.pure(repo)
+      case repo if repo.nonEmpty ⇒ IO.pure(repo)
       case None ⇒
         githubOps
           .getRepository(
@@ -73,7 +75,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
   }
 
   def index =
-    Secure(app.mode)(Action.async { implicit request =>
+    Secure(mode)(Action.async { implicit request =>
       (for {
         authorize ← githubOps
           .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
@@ -90,7 +92,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
                   libraries = libraries,
                   progress = progress,
                   repo = repo.getOrElse(Repository(0, 0, 0)),
-                  current = app))
+                  config = config))
           case (libraries, None, None, progress, authorize) ⇒
             Ok(
               views.html.templates.home
@@ -100,7 +102,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
                   progress = progress,
                   redirectUrl = Option(authorize.url),
                   repo = repo.getOrElse(Repository(0, 0, 0)),
-                  current = app))
+                  config = config))
               .withSession("oauth-state" → authorize.state)
           case (libraries, Some(user), None, _, _) ⇒ Unauthorized("Session token not found")
         }
@@ -109,7 +111,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
     })
 
   def library(libraryName: String) =
-    Secure(app.mode)(Action.async { implicit request ⇒
+    Secure(mode)(Action.async { implicit request ⇒
       val ops = for {
         library ← exerciseOps.getLibrary(libraryName)
         user    ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
@@ -126,7 +128,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
     })
 
   def section(libraryName: String, sectionName: String) =
-    Secure(app.mode)(Action.async { implicit request ⇒
+    Secure(mode)(Action.async { implicit request ⇒
       val ops = for {
         authorize ← githubOps
           .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
@@ -154,7 +156,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
               user = user,
               progress = libProgress,
               contributors = contributors,
-              current = app
+              config = config
             )
           )
         case (Some(l), Some(s), user, None, libProgress, authorize, contributors) ⇒
@@ -166,7 +168,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
               progress = libProgress,
               redirectUrl = Option(authorize.url),
               contributors = contributors,
-              current = app
+              config = config
             )
           ).withSession("oauth-state" → authorize.state)
         case (Some(l), None, _, _, _, _, _) ⇒ NotFound("Section not found")
@@ -177,7 +179,7 @@ class ApplicationController(app: Application, components: ControllerComponents)(
     })
 
   def javascriptRoutes =
-    Secure(app.mode)(Action { implicit request ⇒
+    Secure(mode)(Action { implicit request ⇒
       import routes.javascript._
       Ok(
         JavaScriptReverseRouter("jsRoutes")(

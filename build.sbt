@@ -1,9 +1,10 @@
+import org.scalajs.core.tools.linker.ModuleInitializer
+import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 import play.sbt.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
-import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
@@ -50,6 +51,8 @@ lazy val server = (project in file("server"))
       caffeine,
       "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
       "org.scala-exercises" %% "runtime" % v('evaluator) changing (),
+      // TODO: Just for testng
+      //"org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
       "org.postgresql"      % "postgresql"        % v('postgres),
       "com.vmunier"         %% "scalajs-scripts"  % v('scalajsscripts),
       "com.lihaoyi"         %% "upickle"          % v('upickle),
@@ -61,7 +64,6 @@ lazy val server = (project in file("server"))
       "io.frees"                %% "frees-core"    % v('freestyle),
       "org.webjars.bower" % "bootstrap-sass" % v('bootstrap),
       %%("github4s"),
-      %%("scalaz-concurrent"),
       %%("scalatest") % "runtime",
       %%("doobie-core"),
       %%("doobie-hikari"),
@@ -69,8 +71,7 @@ lazy val server = (project in file("server"))
       %%("simulacrum"),
       specs2 xscalaz,
       %%("scheckShapeless") % "test",
-      %%("doobie-specs2")   % "test",
-      %%("scalazspecs2")    % "test"
+      %%("doobie-specs2")   % "test"
     )
   )
 
@@ -82,6 +83,7 @@ lazy val client = (project in file("client"))
   .settings(noPublishSettings: _*)
   .settings(
     scalaJSUseMainModuleInitializer := true,
+    scalaJSMainModuleInitializer := Some(ModuleInitializer.mainMethod("org.scalaexercises.client.scripts.ExercisesJS", "main")),
     scalaJSUseMainModuleInitializer in Test := false,
     sourceMappings := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
     scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
@@ -101,6 +103,21 @@ lazy val client = (project in file("client"))
       "com.lihaoyi" %%% "upickle" % v('upickle),
       "com.lihaoyi" %%% "utest"   % v('utest) % "test"
     )
+  )
+
+lazy val `evaluator-client` = (project in file("eval-client"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(
+    name := "evaluator-client",
+    libraryDependencies ++= Seq(
+    %%("http4s-blaze-client", v('http4s)),
+    %%("http4s-circe",  v('http4s)),
+    %%("circe-core", v('circe)),
+    %%("circe-generic", v('circe)),
+    %%("circe-parser", v('circe)),
+    %("slf4j-simple", v('slf4j)),
+    %%("scalatest", v('scalatest)) % "test"
+  )
   )
 
 lazy val clients = Seq(client)
@@ -212,7 +229,7 @@ addCommandAlias(
   ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
 addCommandAlias(
   "publishAll",
-  ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
+  ";definitions/publishLocal;evaluator-client/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
 addCommandAlias(
   "publishSignedAll",
   ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")

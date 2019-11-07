@@ -1,7 +1,7 @@
 @import org.scalaexercises.exercises.utils.StringUtils._
-@(title: String, description: String, current: play.api.Application)(implicit request: RequestHeader)
+@(title: String, description: String, config: play.api.Configuration)(implicit request: RequestHeader)
 
-@baseUrl = @{ current.configuration.getOptional[String]("application.url").getOrElse("https://www.scala-exercises.org") }
+@baseUrl = @{ config.getOptional[String]("application.url").getOrElse("https://www.scala-exercises.org") }
 
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -14,13 +14,13 @@
 <meta name="author" content="47 Degrees">
 <meta property="og:image" content="@baseUrl@routes.Assets.at("images/poster.png")"/>
 <meta property="og:title" content="@title.humanizeUnderscore"/>
-<meta property="og:site_name" content="@current.configuration.getOptional[String]("application.name").getOrElse("Scala Exercises")"/>
+<meta property="og:site_name" content="@config.getOptional[String]("application.name").getOrElse("Scala Exercises")"/>
 <meta property="og:url" content="@baseUrl@request.path"/>
 <meta property="og:type" content="website" />
 <meta property="og:description" content="@description.humanizeUnderscore"/>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="@baseUrl@routes.Assets.at("images/poster.png")" />
-<meta name="twitter:site" content="@current.configuration.getOptional[String]("application.twitter").getOrElse("@scala-exercises")">
+<meta name="twitter:site" content="@config.getOptional[String]("application.twitter").getOrElse("@scala-exercises")">
 
   <!-- CSS -->
 <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")" />

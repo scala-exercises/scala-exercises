@@ -19,8 +19,6 @@
 
 package org.scalaexercises.runtime
 
-import org.scalaexercises.runtime.model._
-
 import scala.collection.immutable.List
 import scala.reflect.ClassTag
 import java.net.URLClassLoader
@@ -28,16 +26,30 @@ import java.io.File
 
 import cats.implicits._
 import org.clapper.classutil.ClassFinder
-import org.scalaexercises.evaluator.Dependency
+import org.objectweb.asm.Opcodes
+import org.scalaexercises.evaluator.types.Dependency
+import org.scalaexercises.runtime.model._
+
+import scala.util.{Failure, Success, Try}
 
 object Exercises {
   val LIBRARIES_PACKAGE = "org.scalaexercises.content"
 
   private[this] def classMap(cl: ClassLoader) = {
-    val files       = cl.asInstanceOf[URLClassLoader].getURLs map (_.getFile)
-    val classFinder = ClassFinder(files map (new File(_)) filter (f ⇒ f.exists()))
-    val classes     = classFinder.getClasses.toIterator
-    ClassFinder.classInfoMap(classes)
+    val files = cl
+      .asInstanceOf[URLClassLoader]
+      .getURLs
+      .map(url => new File(url.getFile)) filter (f ⇒ f.exists())
+    val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
+    val classes = classFinder.getClasses
+      .filter(ci =>
+        Try(ci.name
+          .startsWith(LIBRARIES_PACKAGE) || ci.name == "org.scalaexercises.runtime.model.Library") match {
+          case Success(value) => value
+          case Failure(_)     => false
+      })
+      .toList
+    ClassFinder.classInfoMap(classes.iterator)
   }
 
   private[this] def subclassesOf[A: ClassTag](cl: ClassLoader): List[String] = {
@@ -46,9 +58,11 @@ object Exercises {
         case None ⇒ acc
         case Some(cll: URLClassLoader) ⇒
           val cn = ClassFinder
-            .concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
-            .filter(_.name.startsWith(LIBRARIES_PACKAGE))
-            .map(_.name)
+            .concreteSubclasses("org.scalaexercises.runtime.model.Library", classMap(cll))
+            .map { classInfo =>
+              println(classInfo)
+              classInfo.name
+            }
             .toList
           loop(currentClassLoader.getParent, acc ++ cn)
         case Some(o) ⇒ loop(o.getParent, acc)

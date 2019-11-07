@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,24 @@
 
 package org.scalaexercises.exercises.persistence.queries
 
+import cats.effect.IO
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries => Q}
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
 import org.scalaexercises.exercises.support.DatabaseInstance
-import doobie.specs2.analysisspec.AnalysisSpec
+import doobie.specs2.analysisspec.IOChecker
 import doobie.util.query.Query
 import doobie.util.update.Update
 import org.specs2.mutable.Specification
 import shapeless.HNil
-import doobie.postgres.pgtypes._
-import doobie.util.iolite.IOLite
 import doobie.util.transactor.Transactor
 
-class UserProgressQueriesSpec extends Specification with AnalysisSpec with DatabaseInstance {
+class UserProgressQueriesSpec extends Specification with IOChecker with DatabaseInstance {
 
   import Q.Implicits._
 
-  override def transactor: Transactor[IOLite] = databaseTransactor
+  override def transactor: Transactor[IO] = databaseTransactor
 
   check(Update[InsertParams](Q.insert))
   check(Update[UpdateParams](Q.update))

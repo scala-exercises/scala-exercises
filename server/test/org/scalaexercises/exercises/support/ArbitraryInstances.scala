@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,17 @@
 
 package org.scalaexercises.exercises.support
 
+import cats.effect.IO
 import org.scalaexercises.types.user.UserCreation._
 import org.scalaexercises.types.progress.SaveUserProgress
-
 import org.scalaexercises.exercises.persistence.repositories.UserRepository
-import doobie.imports._
+import doobie.implicits._
+import doobie._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Shapeless._
+import org.scalacheck.ScalacheckShapeless._
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.Assertions
 import org.scalaexercises.types.user.User
-
-import scalaz.concurrent.Task
 
 trait ArbitraryInstances extends Assertions {
 
@@ -59,12 +58,12 @@ trait ArbitraryInstances extends Assertions {
         ))
 
   def persistentUserArbitrary(
-      implicit transactor: Transactor[Task],
+      implicit transactor: Transactor[IO],
       UR: UserRepository): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request ⇒
-      UR.create(request).transact(transactor).unsafePerformSync match {
+      UR.create(request).transact(transactor).unsafeRunSync match {
         case Right(user) ⇒ user
-        case Left(error) ⇒ fail("Failed generating persistent users : $error")
+        case Left(error) ⇒ fail(s"Failed generating persistent users : $error")
       }
     })
   }
@@ -72,7 +71,7 @@ trait ArbitraryInstances extends Assertions {
   case class UserProgressPair(request: SaveUserProgress.Request, user: User)
 
   implicit def saveUserProgressArbitrary(
-      implicit transactor: Transactor[Task]): Arbitrary[UserProgressPair] = {
+      implicit transactor: Transactor[IO]): Arbitrary[UserProgressPair] = {
 
     Arbitrary(for {
       user ← persistentUserArbitrary.arbitrary

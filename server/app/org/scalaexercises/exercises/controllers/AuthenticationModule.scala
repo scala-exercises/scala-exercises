@@ -34,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 trait AuthenticationModule {
   case class UserRequest[A](userId: String, request: Request[A]) extends WrappedRequest[A](request)
 
-  object AuthenticationAction extends ActionBuilder[UserRequest, AnyContent] {
+  class AuthenticationAction(implicit bodyParser: BodyParser[AnyContent])
+      extends ActionBuilder[UserRequest, AnyContent] {
 
     override def invokeBlock[A](
         request: Request[A],
@@ -46,24 +47,28 @@ trait AuthenticationModule {
       }
     }
 
-    override def parser: BodyParser[AnyContent] = ???
+    override def parser: BodyParser[AnyContent] = bodyParser
 
-    override protected def executionContext: ExecutionContext = ???
+    override protected def executionContext: ExecutionContext = global
   }
 
-  def AuthenticatedUser(thunk: User ⇒ IO[Result])(implicit userOps: UserOps[IO], mode: Mode) =
-    Secure(mode)(AuthenticationAction.async { request ⇒
+  def AuthenticatedUser(thunk: User ⇒ IO[Result])(
+      implicit userOps: UserOps[IO],
+      mode: Mode,
+      bodyParser: BodyParser[AnyContent]) =
+    Secure(mode)(new AuthenticationAction().async { request ⇒
       (userOps.getUserByLogin(request.userId) flatMap {
         case Some(user) ⇒ thunk(user)
         case _          ⇒ IO.pure(BadRequest("User login not found"))
       }).unsafeToFuture()
     })
 
-  def AuthenticatedUserF[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
+  def AuthenticatedUserF[T](parser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
       implicit userOps: UserOps[IO],
       mode: Mode,
+      bodyParser: BodyParser[AnyContent],
       format: Reads[T]) =
-    Secure(mode)(AuthenticationAction.async(bodyParser) { request ⇒
+    Secure(mode)(new AuthenticationAction().async(parser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
           userOps.getUserByLogin(request.userId).unsafeToFuture() flatMap {

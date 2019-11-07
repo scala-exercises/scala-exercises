@@ -24,7 +24,6 @@ import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 
 import org.scalaexercises.exercises.persistence.PersistenceModule
-import org.scalaexercises.exercises.persistence.domain._
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
 import doobie._
 import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries ⇒ Q}

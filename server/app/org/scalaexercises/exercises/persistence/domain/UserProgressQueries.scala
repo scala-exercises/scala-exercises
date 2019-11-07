@@ -22,6 +22,7 @@ package org.scalaexercises.exercises.persistence.domain
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 import doobie._
+import doobie.postgres.implicits._
 
 object UserProgressQueries {
 
@@ -31,9 +32,7 @@ object UserProgressQueries {
     implicit val ExerciseTypeMeta: Meta[ExerciseType] =
       Meta[String].imap(ExerciseType.fromString)(ExerciseType.toString)
 
-    implicit val ListMeta: Meta[List[String]] =
-      Meta[String].timap(str => str.substring(1, str.size - 1).split(", ").toList)(lst =>
-        String.format("{%s}", lst.mkString(", ")))
+    implicit val ListMeta: Meta[List[String]] = Meta[Array[String]].timap(_.toList)(_.toArray)
   }
 
   private[this] val commonFindBy =

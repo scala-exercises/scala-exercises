@@ -24,10 +24,8 @@ import org.scalaexercises.exercises.persistence.PersistenceModule
 import org.scalaexercises.exercises.persistence.domain.{UserQueries ⇒ Q}
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
 
-import doobie.imports._
+import doobie._
 import cats.implicits._
-
-import scalaz.syntax.applicative._
 
 trait UserRepository {
 

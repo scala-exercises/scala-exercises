@@ -37,7 +37,7 @@ class UserController(mode: Mode, components: ControllerComponents)(implicit user
   implicit val userWriter: Writer[User] = macroW
 
   def byLogin(login: String) =
-    Secure(mode)(Action.async { implicit request ⇒
+    Secure(mode)(Action.async { _ ⇒
       (userOps.getUserByLogin(login) map {
         case Some(u) ⇒ Ok(write(u))
         case None    ⇒ NotFound("The user doesn't exist")

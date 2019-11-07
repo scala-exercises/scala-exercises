@@ -20,8 +20,8 @@
 package org.scalaexercises.exercises.controllers
 
 import akka.util.ByteString
-import org.scalaexercises.evaluator.EvalResult._
-import org.scalaexercises.evaluator.{CompilationInfo, Dependency => EvaluatorDependency}
+import org.scalaexercises.evaluator.types.EvalResult._
+import org.scalaexercises.evaluator.types.{CompilationInfo, Dependency => EvaluatorDependency}
 import org.scalaexercises.types.evaluator.Dependency
 import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.JsError
@@ -38,10 +38,10 @@ object `package` {
   implicit def writeableOf_Throwable(implicit codec: Codec): Writeable[Throwable] =
     Writeable(e ⇒ ByteString(e.getMessage.getBytes("utf-8")))
 
-  implicit def contentTypeOf_JsError(implicit codec: Codec): ContentTypeOf[JsError] =
+  implicit def contentTypeOf_JsError: ContentTypeOf[JsError] =
     ContentTypeOf[JsError](Some(ContentTypes.JSON))
 
-  implicit def writeableOf_JsError(implicit codec: Codec): Writeable[JsError] =
+  implicit def writeableOf_JsError: Writeable[JsError] =
     Writeable(e ⇒ ByteString(JsError.toJson(e).toString.getBytes("utf-8")))
 
   implicit class EvaluatorDependenciesConverter(deps: List[Dependency]) {

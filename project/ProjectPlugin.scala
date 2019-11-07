@@ -33,7 +33,7 @@ object ProjectPlugin extends AutoPlugin {
       ) ++ Map(
         // JVM Versions
         'bootstrap      -> "3.3.7",
-        'classutil      -> "1.1.2",
+        'classutil      -> "1.5.1",
         'commonsio      -> "2.6",
         'freestyle      -> "0.8.2",
         'highlightjs    -> "9.2.0",
@@ -42,11 +42,14 @@ object ProjectPlugin extends AutoPlugin {
         'postgres       -> "42.2.8",
         'scalajsscripts -> "1.1.4",
         'scalariform    -> "1.8.3",
+        'scalatest      -> "3.0.5",
         'upickle        -> "0.7.5",
         'slf4j          -> "1.7.28",
         'webjars        -> "2.7.3",
         'scalamacros    -> "2.1.1",
-        'monix          -> "3.0.0"
+        'monix          -> "3.0.0",
+        'http4s         -> "0.20.10",
+        'circe          -> "0.11.1"
       ) ++ Map(
         // JS Versions
         'jquery        -> "3.4.1",

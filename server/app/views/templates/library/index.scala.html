@@ -2,13 +2,13 @@
 @import org.scalaexercises.types.progress._
 @import org.scalaexercises.types.exercises._
 @import org.scalaexercises.exercises.utils.StringUtils._
-@(library: Library, section: Section, progress: LibraryProgress, user: Option[User] = None, redirectUrl: Option[String] = Some("#"), contributors: List[Contributor], current: play.api.Application)(implicit request: RequestHeader)
+@(library: Library, section: Section, progress: LibraryProgress, user: Option[User] = None, redirectUrl: Option[String] = Some("#"), contributors: List[Contributor], config: play.api.Configuration)(implicit request: RequestHeader)
 
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    @templates.base.head(s"${library.name} | ${section.name}", library.description, current)
+    @templates.base.head(s"${library.name} | ${section.name}", library.description, config)
     <!-- CSS -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("lib/highlightjs/styles/atelier-savanna-dark.css")" />
   </head>
@@ -110,7 +110,7 @@
                 </ul>
               </div>
 
-              @templates.library.gitter(current)
+              @templates.library.gitter(config)
 
             </div>
           </div>

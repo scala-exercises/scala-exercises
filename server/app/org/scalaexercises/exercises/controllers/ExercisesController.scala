@@ -24,18 +24,19 @@ import cats.implicits._
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.algebra.progress.UserProgressOps
 import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.evaluator._
+import org.scalaexercises.evaluator.EvaluatorClient
 import org.scalaexercises.exercises.utils.ConfigUtils
-import org.scalaexercises.types.evaluator.Dependency
+import org.scalaexercises.evaluator.types._
 import org.scalaexercises.types.exercises.ExerciseEvaluation
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import org.scalaexercises.types.progress.SaveUserProgress
+import org.scalaexercises.types.evaluator.{Dependency => CoreDependency}
 import org.scalaexercises.types.user.User
 import play.api.libs.json.JsValue
 import play.api.mvc._
-import play.api.{Application, Logger}
+import play.api.{Configuration, Logger, Mode}
 
-class ExercisesController(app: Application, components: ControllerComponents)(
+class ExercisesController(config: Configuration, mode: Mode, components: ControllerComponents)(
     implicit exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO])
@@ -46,9 +47,7 @@ class ExercisesController(app: Application, components: ControllerComponents)(
   private implicit val ce: ConcurrentEffect[IO] =
     IO.ioConcurrentEffect(IO.contextShift(controllerComponents.executionContext))
 
-  private implicit val mode = app.mode
-
-  private val configUtils = ConfigUtils(app.configuration)
+  private val configUtils = ConfigUtils(config)
 
   private val evaluatorClient =
     EvaluatorClient[IO](configUtils.evaluatorUrl, configUtils.evaluatorAuthKey)
@@ -74,7 +73,7 @@ class ExercisesController(app: Application, components: ControllerComponents)(
 
         def evalRemote(
             resolvers: List[String],
-            dependencies: List[Dependency],
+            dependencies: List[CoreDependency],
             code: String
         ): IO[Either[String, EvalResponse]] = {
           val evalResponse: IO[EvalResponse] =
@@ -130,7 +129,7 @@ class ExercisesController(app: Application, components: ControllerComponents)(
           _                ← userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
         } yield httpResponse).unsafeToFuture()
 
-    }
+    }(implicitly, mode, controllerComponents.parsers.anyContent, implicitly)
 
   override protected def controllerComponents: ControllerComponents = components
 }

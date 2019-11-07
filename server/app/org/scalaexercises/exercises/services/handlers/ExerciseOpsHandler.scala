@@ -24,14 +24,13 @@ import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import org.scalaexercises.types.exercises.{ExerciseEvaluation, Library, Section}
-import play.api.Application
 
-class ExerciseOpsHandler[F[_]](app: Application)(implicit F: Sync[F]) extends ExerciseOps[F] {
-  override def getLibraries: F[List[Library]] = F.delay(ExercisesService(app).libraries)
+class ExerciseOpsHandler[F[_]: Sync](implicit F: Sync[F], cl: ClassLoader) extends ExerciseOps[F] {
+  override def getLibraries: F[List[Library]] = F.delay(new ExercisesService(cl).libraries)
 
   override def getSection(libraryName: String, sectionName: String): F[Option[Section]] =
-    F.delay(ExercisesService(app).section(libraryName, sectionName))
+    F.delay(new ExercisesService(cl).section(libraryName, sectionName))
 
   override def buildRuntimeInfo(evaluation: ExerciseEvaluation): F[EvaluationRequest] =
-    F.delay(ExercisesService(app).buildRuntimeInfo(evaluation))
+    F.delay(new ExercisesService(cl).buildRuntimeInfo(evaluation))
 }

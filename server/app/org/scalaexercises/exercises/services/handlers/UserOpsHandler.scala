@@ -23,7 +23,6 @@ import cats.effect.Sync
 import doobie.implicits._
 import doobie.util.transactor.Transactor
 import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.exercises.persistence.PersistenceModule
 import org.scalaexercises.exercises.persistence.repositories.UserRepository
 import org.scalaexercises.types.user.UserCreation.Response
 import org.scalaexercises.types.user.{User, UserCreation}
