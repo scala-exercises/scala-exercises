@@ -9,8 +9,8 @@ import webscalajs._
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(noPublishSettings: _*)
-  .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler)
-  .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler)
+  .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
+  .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
 
 ////////////////////
 // Project Modules:
@@ -109,14 +109,14 @@ lazy val `evaluator-client` = (project in file("eval-client"))
   .settings(
     name := "evaluator-client",
     libraryDependencies ++= Seq(
-    %%("http4s-blaze-client", v('http4s)),
-    %%("http4s-circe",  v('http4s)),
-    %%("circe-core", v('circe)),
-    %%("circe-generic", v('circe)),
-    %%("circe-parser", v('circe)),
-    %("slf4j-simple", v('slf4j)),
-    %%("scalatest", v('scalatest)) % "test"
-  )
+      %%("http4s-blaze-client", v('http4s)),
+      %%("http4s-circe", v('http4s)),
+      %%("circe-core", v('circe)),
+      %%("circe-generic", v('circe)),
+      %%("circe-parser", v('circe)),
+      %("slf4j-simple", v('slf4j)),
+      %%("scalatest", v('scalatest)) % "test"
+    )
   )
 
 lazy val clients = Seq(client)
@@ -231,4 +231,4 @@ addCommandAlias(
   ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
 addCommandAlias(
   "publishSignedAll",
-  ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")
+  ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned;evaluator-client/publishSigned")
