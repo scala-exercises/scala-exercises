@@ -31,7 +31,7 @@ lazy val coreJs  = core.js
 // Client and Server projects
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(coreJvm)
+  .dependsOn(coreJvm, `evaluator-client`)
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
   .settings(noPublishSettings: _*)
@@ -49,8 +49,7 @@ lazy val server = (project in file("server"))
       cacheApi,
       ws,
       caffeine,
-      "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
-      "org.scala-exercises" %% "runtime" % v('evaluator) changing (),
+      "org.scala-exercises" %% "runtime" % version.value changing (),
       // TODO: Just for testng
       //"org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
       "org.postgresql"      % "postgresql"        % v('postgres),
@@ -138,11 +137,11 @@ lazy val definitions = (project in file("definitions"))
 // Runtime
 
 lazy val runtime = (project in file("runtime"))
+  .dependsOn(`evaluator-client`)
   .settings(name := "runtime")
   .settings(
     libraryDependencies ++= Seq(
       "org.clapper"         %% "classutil" % v('classutil),
-      "org.scala-exercises" %% "evaluator-client" % v('evaluator) changing (),
       "io.monix"            %% "monix" % v('monix),
       %%("cats-core")       % "compile",
       %%("scalatest")       % "test"
@@ -229,7 +228,7 @@ addCommandAlias(
   ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
 addCommandAlias(
   "publishAll",
-  ";definitions/publishLocal;evaluator-client/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
+  ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
 addCommandAlias(
   "publishSignedAll",
   ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned")
