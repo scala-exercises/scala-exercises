@@ -21,7 +21,7 @@ lazy val `scala-exercises` = (project in file("."))
 lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
     libraryDependencies ++= Seq(
-      %%("cats-core"),
+      "org.typelevel" %%% "cats-core" % v('catsversion)
     )
   ).jsSettings(sharedJsSettings: _*)
 
@@ -49,9 +49,10 @@ lazy val server = (project in file("server"))
       cacheApi,
       ws,
       caffeine,
+      specs2 xscalaz,
       "org.scala-exercises" %% "runtime" % version.value changing (),
       // TODO: Just for testng
-      "org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
+      //"org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
       "org.postgresql"      % "postgresql"        % v('postgres),
       "com.vmunier"         %% "scalajs-scripts"  % v('scalajsscripts),
       "com.lihaoyi"         %% "upickle"          % v('upickle),
@@ -59,17 +60,16 @@ lazy val server = (project in file("server"))
       "org.webjars"             % "highlightjs"    % v('highlightjs),
       "org.foundweekends"       %% "knockoff"      % v('knockoff),
       "com.newrelic.agent.java" % "newrelic-agent" % v('newrelic),
-      "org.typelevel" %% "cats-effect" % v('catseffect),
+      "org.typelevel" %% "cats-effect" % v('catsversion),
       "commons-io"              % "commons-io"     % v('commonsio),
       "org.webjars.bower" % "bootstrap-sass" % v('bootstrap),
-      %%("github4s"),
-      %%("scalatest") % "runtime",
-      %%("doobie-core"),
-      %%("doobie-hikari"),
-      %%("doobie-postgres"),
-      specs2 xscalaz,
-      %%("scheckShapeless") % "test",
-      %%("doobie-specs2")   % "test"
+      "com.47deg" %% "github4s" % v('github4s),
+      "org.scalatest" %% "scalatest" % v('scalatest) % "runtime",
+      "org.tpolecat" %% "doobie-core"      % v('doobieversion),
+      "org.tpolecat" %% "doobie-hikari"    % v('doobieversion),
+      "org.tpolecat" %% "doobie-postgres"  % v('doobieversion),
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v('scalacheckshapeless) % "test",
+      "org.tpolecat" %% "doobie-specs2"    % v('doobieversion) % "test"
     )
   )
 
@@ -94,7 +94,7 @@ lazy val client = (project in file("client"))
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
       "io.monix" %%% "monix" % v('monix),
-      %%%("cats-core"),
+      "org.typelevel" %%% "cats-core" % v('catsversion),
       "com.lihaoyi" %%% "scalatags" % v('scalatags) xscalajs,
       "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
       "be.doeraene" %%% "scalajs-jquery" % v('scalajsjquery) xscalajs,
@@ -108,11 +108,11 @@ lazy val `evaluator-client` = (project in file("eval-client"))
   .settings(
     name := "evaluator-client",
     libraryDependencies ++= Seq(
-      %%("http4s-blaze-client", v('http4s)),
-      %%("http4s-circe", v('http4s)),
-      %%("circe-core", v('circe)),
-      %%("circe-generic", v('circe)),
-      %%("scalatest", v('scalatest)) % "test"
+      "org.http4s" %% "http4s-blaze-client" % v('http4s),
+      "org.http4s" %% "http4s-circe" % v('http4s),
+      "io.circe" %% "circe-core" % v('circe),
+      "io.circe" %% "circe-generic" % v('circe),
+      "org.scalatest" %% "scalatest" % v('scalatest) % "test"
     )
   )
 
@@ -124,10 +124,10 @@ lazy val definitions = (project in file("definitions"))
   .settings(name := "definitions")
   .settings(
     libraryDependencies ++= Seq(
-      %%("cats-core"),
-      %%("scalatest"),
-      %%("scalacheck"),
-      %%("scheckShapeless")
+      "org.typelevel" %% "cats-core" % v('catsversion),
+      "org.scalatest" %% "scalatest" % v('scalatest),
+      "org.scalacheck" %% "scalacheck" % v('scalacheck),
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v('scalacheckshapeless)
     )
   )
 
@@ -140,8 +140,8 @@ lazy val runtime = (project in file("runtime"))
     libraryDependencies ++= Seq(
       "org.clapper"         %% "classutil" % v('classutil),
       "io.monix"            %% "monix" % v('monix),
-      %%("cats-core")       % "compile",
-      %%("scalatest")       % "test"
+      "org.typelevel" %% "cats-core" % v('catsversion)       % "compile",
+      "org.scalatest" %% "scalatest" % v('scalatest)       % "test"
     )
   )
 
@@ -153,10 +153,10 @@ lazy val compiler = (project in file("compiler"))
     exportJars := true,
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
-      %%("github4s"),
-      %%("cats-core") % "compile",
-      %%("cats-laws") % "test",
-      %%("scalatest") % "test"
+      "org.typelevel" %% "cats-core" % v('catsversion) % "compile",
+      "com.47deg" %% "github4s" % v('github4s),
+      "org.typelevel" %% "cats-laws" % v('catsversion) % "test",
+      "org.scalatest" %% "scalatest" % v('scalatest) % "test"
     ),
     addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
   )
@@ -170,7 +170,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scalaVersion := "2.12.10",
     sbtPlugin := true,
     libraryDependencies ++= Seq(
-      %%("cats-core") % "compile"
+      "org.typelevel" %% "cats-core" % v('catsversion) % "compile"
     ),
     // Leverage build info to populate compiler classpath--
     // This allows SBT, which currently requires Scala 2.10.x, to load and run

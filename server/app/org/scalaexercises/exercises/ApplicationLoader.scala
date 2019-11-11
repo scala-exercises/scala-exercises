@@ -69,10 +69,9 @@ class Components(context: Context)
     cs = IO.contextShift(ec)
     blocker <- Blocker[IO]
   } yield
-    Transactor.fromDataSource[IO](
-      dbApi.database("default").dataSource,
-      ec,
-      blocker.blockingContext)(implicitly, cs)).allocated
+    Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
+      implicitly,
+      cs)).allocated
 
   lazy implicit val trans: Transactor[IO] = aa.map(_._1).unsafeRunSync
 
