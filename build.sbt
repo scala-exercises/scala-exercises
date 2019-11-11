@@ -51,8 +51,7 @@ lazy val server = (project in file("server"))
       caffeine,
       specs2 xscalaz,
       "org.scala-exercises" %% "runtime" % version.value changing (),
-      // TODO: Just for testng
-      //"org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
+      "org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
       "org.postgresql"      % "postgresql"        % v('postgres),
       "com.vmunier"         %% "scalajs-scripts"  % v('scalajsscripts),
       "com.lihaoyi"         %% "upickle"          % v('upickle),
