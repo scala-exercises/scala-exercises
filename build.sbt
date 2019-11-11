@@ -51,7 +51,7 @@ lazy val server = (project in file("server"))
       caffeine,
       "org.scala-exercises" %% "runtime" % version.value changing (),
       // TODO: Just for testng
-      //"org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
+      "org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
       "org.postgresql"      % "postgresql"        % v('postgres),
       "com.vmunier"         %% "scalajs-scripts"  % v('scalajsscripts),
       "com.lihaoyi"         %% "upickle"          % v('upickle),
@@ -59,15 +59,14 @@ lazy val server = (project in file("server"))
       "org.webjars"             % "highlightjs"    % v('highlightjs),
       "org.foundweekends"       %% "knockoff"      % v('knockoff),
       "com.newrelic.agent.java" % "newrelic-agent" % v('newrelic),
+      "org.typelevel" %% "cats-effect" % v('catseffect),
       "commons-io"              % "commons-io"     % v('commonsio),
-      "io.frees"                %% "frees-core"    % v('freestyle),
       "org.webjars.bower" % "bootstrap-sass" % v('bootstrap),
       %%("github4s"),
       %%("scalatest") % "runtime",
       %%("doobie-core"),
       %%("doobie-hikari"),
       %%("doobie-postgres"),
-      %%("simulacrum"),
       specs2 xscalaz,
       %%("scheckShapeless") % "test",
       %%("doobie-specs2")   % "test"
@@ -113,8 +112,6 @@ lazy val `evaluator-client` = (project in file("eval-client"))
       %%("http4s-circe", v('http4s)),
       %%("circe-core", v('circe)),
       %%("circe-generic", v('circe)),
-      %%("circe-parser", v('circe)),
-      %("slf4j-simple", v('slf4j)),
       %%("scalatest", v('scalatest)) % "test"
     )
   )
