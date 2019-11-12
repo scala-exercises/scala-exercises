@@ -38,9 +38,9 @@ object ProjectPlugin extends AutoPlugin {
         'github4s            -> "0.20.1",
         'classutil           -> "1.5.1",
         'commonsio           -> "2.6",
-        'highlightjs         -> "9.2.0",
+        'highlightjs         -> "9.15.10",
         'knockoff            -> "0.8.12",
-        'newrelic            -> "5.6.0",
+        'newrelic            -> "5.8.0",
         'postgres            -> "42.2.8",
         'scalajsscripts      -> "1.1.4",
         'scalariform         -> "1.8.3",
@@ -50,8 +50,8 @@ object ProjectPlugin extends AutoPlugin {
         'upickle             -> "0.7.5",
         'webjars             -> "2.7.3",
         'scalamacros         -> "2.1.1",
-        'monix               -> "3.0.0",
-        'http4s              -> "0.20.10",
+        'monix               -> "3.1.0",
+        'http4s              -> "0.20.11",
         'circe               -> "0.11.1"
       ) ++ Map(
         // JS Versions
@@ -100,10 +100,10 @@ object ProjectPlugin extends AutoPlugin {
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("snapshots"),
         Resolver.sonatypeRepo("releases"),
-        Resolver.bintrayIvyRepo("sbt-plugins", "https://dl.bintray.com/ssidorenko/sbt-plugins/"),
-        Resolver.bintrayIvyRepo("scalaz-bintray", "http://dl.bintray.com/scalaz/releases"),
-        Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/"),
-        Resolver.typesafeRepo("http://repo.typesafe.com/typesafe/maven-releases/")
+        Resolver.bintrayIvyRepo("ssidorenko", "sbt-plugins"),
+        //Resolver.bintrayIvyRepo("scalaz-bintray", "http://dl.bintray.com/scalaz/releases"),
+        Resolver.typesafeIvyRepo("releases"),
+        Resolver.typesafeRepo("releases")
       ),
       scalacOptions ++= Seq("-Xplugin-require:macroparadise", "-Ypartial-unification"),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
