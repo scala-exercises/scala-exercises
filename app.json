@@ -13,6 +13,9 @@
         "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
         "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
         "JAVA_TOOL_OPTIONS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
+        "APPLICATION_SECRET": {
+          "required": true
+        },
         "EVALUATOR_AUTH_KEY": {
             "required": true
         },
