@@ -5,6 +5,7 @@
     "addons": [
         "heroku-postgresql:hobby-dev"
     ],
+    "stack": "heroku-18",
     "success_url": "\/",
     "env": {
         "WARTING": "false",
@@ -26,5 +27,13 @@
             "quantity": 1,
             "size": "performance-m"
         }
-    }
+    },
+    "buildpacks": [
+      {
+        "url": "heroku/jvm"
+      },
+      {
+        "url": "heroku/ruby"
+      }
+    ]
 }
