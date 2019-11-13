@@ -2,6 +2,7 @@ import org.scalajs.core.tools.linker.ModuleInitializer
 import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 import play.sbt.PlayImport._
 import sbt.Keys._
+import NativePackagerKeys._
 import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
@@ -35,6 +36,7 @@ lazy val server = (project in file("server"))
   .dependsOn(coreJvm, `evaluator-client`)
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
+  .enablePlugins(JavaAppPackaging)
   .settings(noPublishSettings: _*)
   .settings(
     scalaJSProjects := clients,
