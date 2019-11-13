@@ -26,11 +26,14 @@ import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import org.scalaexercises.types.exercises.{ExerciseEvaluation, Library, Section}
 
 class ExerciseOpsHandler[F[_]: Sync](implicit F: Sync[F], cl: ClassLoader) extends ExerciseOps[F] {
-  override def getLibraries: F[List[Library]] = F.delay(new ExercisesService(cl).libraries)
+
+  private val service = new ExercisesService(cl)
+
+  override def getLibraries: F[List[Library]] = F.delay(service.libraries)
 
   override def getSection(libraryName: String, sectionName: String): F[Option[Section]] =
-    F.delay(new ExercisesService(cl).section(libraryName, sectionName))
+    F.delay(service.section(libraryName, sectionName))
 
   override def buildRuntimeInfo(evaluation: ExerciseEvaluation): F[EvaluationRequest] =
-    F.delay(new ExercisesService(cl).buildRuntimeInfo(evaluation))
+    F.delay(service.buildRuntimeInfo(evaluation))
 }
