@@ -21,7 +21,7 @@ object ProjectPlugin extends AutoPlugin {
       Map(
         'evaluator     -> "0.5.0-SNAPSHOT",
         'stdlib        -> "0.5.0-SNAPSHOT",
-        'cats          -> "0.4.2-SNAPSHOT",
+        'cats          -> "0.5.0-SNAPSHOT",
         'shapeless     -> "0.4.2-SNAPSHOT",
         'doobie        -> "0.4.2-SNAPSHOT",
         'scalacheck    -> "0.4.2-SNAPSHOT",
@@ -51,8 +51,8 @@ object ProjectPlugin extends AutoPlugin {
         'webjars             -> "2.7.3",
         'scalamacros         -> "2.1.1",
         'monix               -> "3.1.0",
-        'http4s              -> "0.20.11",
-        'circe               -> "0.11.1"
+        'http4s              -> "0.20.13",
+        'circe               -> "0.12.3"
       ) ++ Map(
         // JS Versions
         'jquery        -> "3.4.1",
