@@ -54,8 +54,7 @@ lazy val server = (project in file("server"))
       specs2 xscalaz,
       "org.scala-exercises" %% "runtime" % version.value changing (),
       "org.scala-exercises" %% "exercises-stdlib" % v('stdlib) xscalaExercises,
-      // TODO: Just for testing
-      //"org.scala-exercises" %% "exercises-cats"   % v('cats) xscalaExercises,
+      "org.scala-exercises" %% "exercises-cats"   % v('cats) xscalaExercises,
       "com.vmunier"                %% "scalajs-scripts"           % v('scalajsscripts),
       "com.lihaoyi"                %% "upickle"                   % v('upickle),
       "org.webjars"                %% "webjars-play"              % v('webjars),
