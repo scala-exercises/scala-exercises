@@ -22,7 +22,7 @@ object ProjectPlugin extends AutoPlugin {
         'evaluator     -> "0.5.0-SNAPSHOT",
         'stdlib        -> "0.5.0-SNAPSHOT",
         'cats          -> "0.5.0-SNAPSHOT",
-        'shapeless     -> "0.4.2-SNAPSHOT",
+        'shapeless     -> "0.5.0-SNAPSHOT",
         'doobie        -> "0.4.2-SNAPSHOT",
         'scalacheck    -> "0.4.2-SNAPSHOT",
         'scalatutorial -> "0.4.2-SNAPSHOT",
