@@ -26,7 +26,7 @@ object ProjectPlugin extends AutoPlugin {
         'doobie        -> "0.4.2-SNAPSHOT",
         'scalacheck    -> "0.4.2-SNAPSHOT",
         'scalatutorial -> "0.5.0-SNAPSHOT",
-        'fpinscala     -> "0.4.2-SNAPSHOT",
+        'fpinscala     -> "0.5.0-SNAPSHOT",
         'circe         -> "0.4.2-SNAPSHOT",
         'fetch         -> "0.4.2-SNAPSHOT",
         'monocle       -> "0.4.2-SNAPSHOT"
