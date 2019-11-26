@@ -58,6 +58,8 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-shapeless"     % v('shapeless) xscalaExercises,
       "org.scala-exercises" %% "exercises-scalatutorial" % v('scalatutorial) xscalaExercises,
       "org.scala-exercises" %% "exercises-fpinscala"     % v('fpinscala) xscalaExercises,
+      //"org.scala-exercises" %% "exercises-doobie"        % v('doobie) xscalaExercises,
+      "org.scala-exercises" %% "exercises-scalacheck"    % v('scalacheck) xscalaExercises,
       "com.vmunier"                %% "scalajs-scripts"           % v('scalajsscripts),
       "com.lihaoyi"                %% "upickle"                   % v('upickle),
       "org.webjars"                %% "webjars-play"              % v('webjars),
@@ -131,7 +133,7 @@ lazy val definitions = (project in file("definitions"))
     libraryDependencies ++= Seq(
       "org.typelevel"              %% "cats-core"                 % v('catsversion),
       "org.scalatest"              %% "scalatest"                 % v('scalatest),
-      "org.scalacheck"             %% "scalacheck"                % v('scalacheck),
+      "org.scalacheck"             %% "scalacheck"                % v('scalacheckversion),
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v('scalacheckshapeless)
     )
   )

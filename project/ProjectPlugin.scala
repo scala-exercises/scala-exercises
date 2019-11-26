@@ -23,8 +23,8 @@ object ProjectPlugin extends AutoPlugin {
         'stdlib        -> "0.5.0-SNAPSHOT",
         'cats          -> "0.5.0-SNAPSHOT",
         'shapeless     -> "0.5.0-SNAPSHOT",
-        'doobie        -> "0.4.2-SNAPSHOT",
-        'scalacheck    -> "0.4.2-SNAPSHOT",
+        'doobie        -> "0.5.0-SNAPSHOT",
+        'scalacheck    -> "0.5.0-SNAPSHOT",
         'scalatutorial -> "0.5.0-SNAPSHOT",
         'fpinscala     -> "0.5.0-SNAPSHOT",
         'circe         -> "0.4.2-SNAPSHOT",
@@ -33,7 +33,7 @@ object ProjectPlugin extends AutoPlugin {
       ) ++ Map(
         // JVM Versions
         'catsversion         -> "2.0.0",
-        'doobieversion       -> "0.8.4",
+        'doobieversion       -> "0.8.6",
         'bootstrap           -> "3.3.7",
         'github4s            -> "0.20.1",
         'classutil           -> "1.5.1",
@@ -45,7 +45,7 @@ object ProjectPlugin extends AutoPlugin {
         'scalajsscripts      -> "1.1.4",
         'scalariform         -> "1.8.3",
         'scalatest           -> "3.0.8",
-        'scalacheck          -> "1.14.2",
+        'scalacheckversion   -> "1.14.2",
         'scalacheckshapeless -> "1.2.3",
         'upickle             -> "0.7.5",
         'webjars             -> "2.7.3",
