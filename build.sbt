@@ -58,7 +58,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-shapeless"     % v('shapeless) xscalaExercises,
       "org.scala-exercises" %% "exercises-scalatutorial" % v('scalatutorial) xscalaExercises,
       "org.scala-exercises" %% "exercises-fpinscala"     % v('fpinscala) xscalaExercises,
-      //"org.scala-exercises" %% "exercises-doobie"        % v('doobie) xscalaExercises,
+      "org.scala-exercises" %% "exercises-doobie"        % v('doobie) xscalaExercises,
       "org.scala-exercises" %% "exercises-scalacheck"    % v('scalacheck) xscalaExercises,
       "com.vmunier"                %% "scalajs-scripts"           % v('scalajsscripts),
       "com.lihaoyi"                %% "upickle"                   % v('upickle),
