@@ -60,6 +60,9 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-fpinscala"     % v('fpinscala) xscalaExercises,
       "org.scala-exercises" %% "exercises-doobie"        % v('doobie) xscalaExercises,
       "org.scala-exercises" %% "exercises-scalacheck"    % v('scalacheck) xscalaExercises,
+      "org.scala-exercises" %% "exercises-fetch"         % v('fetch) xscalaExercises,
+      "org.scala-exercises" %% "exercises-monocle"       % v('monocle) xscalaExercises,
+      "org.scala-exercises" %% "exercises-circe"         % v('circe) xscalaExercises,
       "com.vmunier"                %% "scalajs-scripts"           % v('scalajsscripts),
       "com.lihaoyi"                %% "upickle"                   % v('upickle),
       "org.webjars"                %% "webjars-play"              % v('webjars),
@@ -117,8 +120,8 @@ lazy val `evaluator-client` = (project in file("eval-client"))
     libraryDependencies ++= Seq(
       "org.http4s"    %% "http4s-blaze-client" % v('http4s),
       "org.http4s"    %% "http4s-circe"        % v('http4s),
-      "io.circe"      %% "circe-core"          % v('circe),
-      "io.circe"      %% "circe-generic"       % v('circe),
+      "io.circe"      %% "circe-core"          % v('circeversion),
+      "io.circe"      %% "circe-generic"       % v('circeversion),
       "org.scalatest" %% "scalatest"           % v('scalatest) % "test"
     )
   )

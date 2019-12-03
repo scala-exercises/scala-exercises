@@ -27,9 +27,9 @@ object ProjectPlugin extends AutoPlugin {
         'scalacheck    -> "0.5.0-SNAPSHOT",
         'scalatutorial -> "0.5.0-SNAPSHOT",
         'fpinscala     -> "0.5.0-SNAPSHOT",
-        'circe         -> "0.4.2-SNAPSHOT",
-        'fetch         -> "0.4.2-SNAPSHOT",
-        'monocle       -> "0.4.2-SNAPSHOT"
+        'circe         -> "0.5.0-SNAPSHOT",
+        'fetch         -> "0.5.0-SNAPSHOT",
+        'monocle       -> "0.5.0-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
         'catsversion         -> "2.0.0",
@@ -52,7 +52,7 @@ object ProjectPlugin extends AutoPlugin {
         'scalamacros         -> "2.1.1",
         'monix               -> "3.1.0",
         'http4s              -> "0.20.13",
-        'circe               -> "0.12.3"
+        'circeversion        -> "0.12.3"
       ) ++ Map(
         // JS Versions
         'jquery        -> "3.4.1",
