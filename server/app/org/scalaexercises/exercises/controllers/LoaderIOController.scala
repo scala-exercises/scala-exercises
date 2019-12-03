@@ -23,11 +23,11 @@ import org.scalaexercises.exercises.Secure
 import play.api.{Configuration, Mode}
 import play.api.mvc._
 
-class LoaderIOController(mode: Mode, conf: Configuration, components: ControllerComponents)
+class LoaderIOController(conf: Configuration, components: ControllerComponents)(implicit mode: Mode)
     extends BaseController {
 
   def verificationToken(token: String) =
-    Secure(mode)(Action {
+    Secure(Action {
       val maybeConf = conf.getOptional[String]("loaderio.verificationToken")
       maybeConf.filter(_ == s"loaderio-$token").fold[Result](NotFound)(Ok(_))
     })

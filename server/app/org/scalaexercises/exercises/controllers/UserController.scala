@@ -29,7 +29,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import upickle.default._
 
-class UserController(mode: Mode, components: ControllerComponents)(implicit userOps: UserOps[IO])
+class UserController(components: ControllerComponents)(implicit userOps: UserOps[IO], mode: Mode)
     extends BaseController {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
@@ -37,7 +37,7 @@ class UserController(mode: Mode, components: ControllerComponents)(implicit user
   implicit val userWriter: Writer[User] = macroW
 
   def byLogin(login: String) =
-    Secure(mode)(Action.async { _ ⇒
+    Secure(Action.async { _ ⇒
       (userOps.getUserByLogin(login) map {
         case Some(u) ⇒ Ok(write(u))
         case None    ⇒ NotFound("The user doesn't exist")

@@ -77,8 +77,6 @@ class Components(context: Context)
 
   implicit val wsClient: WSClient = AhcWSClient()
 
-  implicit val components = controllerComponents
-
   implicit val mode = environment.mode
 
   implicit val classloader = environment.classLoader
@@ -91,14 +89,13 @@ class Components(context: Context)
     implicit val userProgress: UserExercisesProgress[IO] = new UserExercisesProgress[IO]
 
     val applicationController =
-      new ApplicationController(configuration, mode, classloader, components)(defaultCacheApi)
-    val exercisesController    = new ExercisesController(configuration, mode, components)
-    val userController         = new UserController(mode, components)
-    val oauthController        = new OAuthController(mode, configuration, components)
-    val userProgressController = new UserProgressController(components)
-    val loaderIOController =
-      new LoaderIOController(mode, configuration, components)
-    val sitemapController = new SitemapController(mode, components)
+      new ApplicationController(configuration, classloader, controllerComponents)(defaultCacheApi)
+    val exercisesController    = new ExercisesController(configuration, controllerComponents)
+    val userController         = new UserController(controllerComponents)
+    val oauthController        = new OAuthController(configuration, controllerComponents)
+    val userProgressController = new UserProgressController(controllerComponents)
+    val loaderIOController     = new LoaderIOController(configuration, controllerComponents)
+    val sitemapController      = new SitemapController(controllerComponents)
 
     new Routes(
       httpErrorHandler,

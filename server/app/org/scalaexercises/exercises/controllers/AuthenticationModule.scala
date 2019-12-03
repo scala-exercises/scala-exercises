@@ -56,7 +56,7 @@ trait AuthenticationModule {
       implicit userOps: UserOps[IO],
       mode: Mode,
       bodyParser: BodyParser[AnyContent]) =
-    Secure(mode)(new AuthenticationAction().async { request ⇒
+    Secure(new AuthenticationAction().async { request ⇒
       (userOps.getUserByLogin(request.userId) flatMap {
         case Some(user) ⇒ thunk(user)
         case _          ⇒ IO.pure(BadRequest("User login not found"))
@@ -68,7 +68,7 @@ trait AuthenticationModule {
       mode: Mode,
       bodyParser: BodyParser[AnyContent],
       format: Reads[T]) =
-    Secure(mode)(new AuthenticationAction().async(parser) { request ⇒
+    Secure(new AuthenticationAction().async(parser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
           userOps.getUserByLogin(request.userId).unsafeToFuture() flatMap {

@@ -37,14 +37,14 @@ import play.api.{Configuration, Logger, Mode}
 
 class ApplicationController(
     config: Configuration,
-    mode: Mode,
     cl: ClassLoader,
     components: ControllerComponents)(cache: AsyncCacheApi)(
     implicit exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
     userExercisesProgress: UserExercisesProgress[IO],
-    githubOps: GithubOps[IO])
+    githubOps: GithubOps[IO],
+    mode: Mode)
     extends BaseController
     with AuthenticationModule {
   lazy val topLibraries: List[String] = config.getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
@@ -75,7 +75,7 @@ class ApplicationController(
   }
 
   def index =
-    Secure(mode)(Action.async { implicit request =>
+    Secure(Action.async { implicit request =>
       (for {
         authorize ← githubOps
           .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
@@ -111,7 +111,7 @@ class ApplicationController(
     })
 
   def library(libraryName: String) =
-    Secure(mode)(Action.async { implicit request ⇒
+    Secure(Action.async { implicit request ⇒
       val ops = for {
         library ← exerciseOps.getLibrary(libraryName)
         user    ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
@@ -128,7 +128,7 @@ class ApplicationController(
     })
 
   def section(libraryName: String, sectionName: String) =
-    Secure(mode)(Action.async { implicit request ⇒
+    Secure(Action.async { implicit request ⇒
       val ops = for {
         authorize ← githubOps
           .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
@@ -179,7 +179,7 @@ class ApplicationController(
     })
 
   def javascriptRoutes =
-    Secure(mode)(Action { implicit request ⇒
+    Secure(Action { implicit request ⇒
       import routes.javascript._
       Ok(
         JavaScriptReverseRouter("jsRoutes")(

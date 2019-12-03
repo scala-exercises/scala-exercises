@@ -19,13 +19,12 @@
 
 package org.scalaexercises.exercises
 
-import javax.inject.Inject
 import play.api.Mode
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class Secure[A] @Inject()(mode: Mode)(action: Action[A]) extends Action[A] {
+case class Secure[A](action: Action[A])(implicit mode: Mode) extends Action[A] {
   def apply(request: Request[A]): Future[Result] = {
 
     println("Request from domain: " + request.domain)

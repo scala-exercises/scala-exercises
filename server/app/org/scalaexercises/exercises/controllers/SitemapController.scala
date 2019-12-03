@@ -25,12 +25,13 @@ import org.scalaexercises.exercises.Secure
 import play.api.Mode
 import play.api.mvc._
 
-class SitemapController(mode: Mode, components: ControllerComponents)(
-    implicit exerciseOps: ExerciseOps[IO]
+class SitemapController(components: ControllerComponents)(
+    implicit exerciseOps: ExerciseOps[IO],
+    mode: Mode
 ) extends BaseController {
 
   def sitemap =
-    Secure(mode)(Action.async { _ ⇒
+    Secure(Action.async { _ ⇒
       (exerciseOps.getLibraries map { libraries ⇒
         Ok(views.xml.templates.sitemap.sitemap(libraries))
       }).unsafeToFuture()

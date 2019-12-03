@@ -30,15 +30,16 @@ import org.scalaexercises.types.user.UserCreation
 import play.api.mvc.{BaseController, ControllerComponents}
 import play.api.{Configuration, Mode}
 
-class OAuthController(mode: Mode, conf: Configuration, components: ControllerComponents)(
+class OAuthController(conf: Configuration, components: ControllerComponents)(
     implicit userOps: UserOps[IO],
-    githubOps: GithubOps[IO])
+    githubOps: GithubOps[IO],
+    mode: Mode)
     extends BaseController {
 
   private val configUtils = ConfigUtils(conf)
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) =
-    Secure(mode)(Action.async { implicit request ⇒
+    Secure(Action.async { implicit request ⇒
       (codeOpt, stateOpt, request.session.get("oauth-state")).tupled
         .fold(IO.pure(BadRequest("Missing `code` or `state`"))) {
           case (code, state, oauthState) ⇒
@@ -69,7 +70,7 @@ class OAuthController(mode: Mode, conf: Configuration, components: ControllerCom
     )
 
   def success() =
-    Secure(mode)(Action.async {
+    Secure(Action.async {
       implicit request ⇒
         request.session
           .get("oauth-token")
@@ -90,7 +91,7 @@ class OAuthController(mode: Mode, conf: Configuration, components: ControllerCom
           .unsafeToFuture()
     })
 
-  def logout() = Secure(mode)(Action(Redirect("/").withNewSession))
+  def logout() = Secure(Action(Redirect("/").withNewSession))
 
   override protected def controllerComponents: ControllerComponents = components
 }

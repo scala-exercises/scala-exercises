@@ -26,11 +26,10 @@ import java.io.File
 
 import cats.implicits._
 import org.clapper.classutil.ClassFinder
-import org.objectweb.asm.Opcodes
 import org.scalaexercises.evaluator.types.Dependency
 import org.scalaexercises.runtime.model._
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 object Exercises {
   val LIBRARIES_PACKAGE = "org.scalaexercises.content"
@@ -40,14 +39,9 @@ object Exercises {
       .asInstanceOf[URLClassLoader]
       .getURLs
       .map(url => new File(url.getFile)) filter (f ⇒ f.exists())
-    val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
+    val classFinder = ClassFinder(files)
     val classes = classFinder.getClasses
-      .filter(ci =>
-        Try(ci.name
-          .startsWith(LIBRARIES_PACKAGE) || ci.name == "org.scalaexercises.runtime.model.Library") match {
-          case Success(value) => value
-          case Failure(_)     => false
-      })
+      .filter(Try(_).isSuccess)
       .toList
     ClassFinder.classInfoMap(classes.iterator)
   }
@@ -58,11 +52,9 @@ object Exercises {
         case None ⇒ acc
         case Some(cll: URLClassLoader) ⇒
           val cn = ClassFinder
-            .concreteSubclasses("org.scalaexercises.runtime.model.Library", classMap(cll))
-            .map { classInfo =>
-              println(classInfo)
-              classInfo.name
-            }
+            .concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
+            .filter(_.name.startsWith(LIBRARIES_PACKAGE))
+            .map(_.name)
             .toList
           loop(currentClassLoader.getParent, acc ++ cn)
         case Some(o) ⇒ loop(o.getParent, acc)

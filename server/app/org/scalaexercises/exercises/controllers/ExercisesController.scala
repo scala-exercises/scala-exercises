@@ -36,16 +36,19 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.{Configuration, Logger, Mode}
 
-class ExercisesController(config: Configuration, mode: Mode, components: ControllerComponents)(
+class ExercisesController(config: Configuration, components: ControllerComponents)(
     implicit exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
-    userProgressOps: UserProgressOps[IO])
+    userProgressOps: UserProgressOps[IO],
+    mode: Mode)
     extends BaseController
     with JsonFormats
     with AuthenticationModule {
 
   private implicit val ce: ConcurrentEffect[IO] =
     IO.ioConcurrentEffect(IO.contextShift(controllerComponents.executionContext))
+
+  private implicit val bodyParserAnyContent = components.parsers.anyContent
 
   private val configUtils = ConfigUtils(config)
 
@@ -129,7 +132,7 @@ class ExercisesController(config: Configuration, mode: Mode, components: Control
           _                ← userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
         } yield httpResponse).unsafeToFuture()
 
-    }(implicitly, mode, controllerComponents.parsers.anyContent, implicitly)
+    }
 
   override protected def controllerComponents: ControllerComponents = components
 }
