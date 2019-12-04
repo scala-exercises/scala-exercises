@@ -26,6 +26,7 @@ import java.io.File
 
 import cats.implicits._
 import org.clapper.classutil.ClassFinder
+import org.objectweb.asm.Opcodes
 import org.scalaexercises.evaluator.types.Dependency
 import org.scalaexercises.runtime.model._
 
@@ -39,7 +40,7 @@ object Exercises {
       .asInstanceOf[URLClassLoader]
       .getURLs
       .map(url => new File(url.getFile)) filter (f ⇒ f.exists())
-    val classFinder = ClassFinder(files)
+    val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
     val classes = classFinder.getClasses
       .filter(Try(_).isSuccess)
       .toList
