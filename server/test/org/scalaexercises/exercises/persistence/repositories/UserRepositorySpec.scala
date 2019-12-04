@@ -28,12 +28,14 @@ import doobie.implicits._
 import doobie._
 import org.scalacheck.Arbitrary
 import org.scalacheck.ScalacheckShapeless._
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 class UserRepositorySpec
-    extends PropSpec
-    with GeneratorDrivenPropertyChecks
+    extends AnyPropSpec
+    with ScalaCheckDrivenPropertyChecks
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance

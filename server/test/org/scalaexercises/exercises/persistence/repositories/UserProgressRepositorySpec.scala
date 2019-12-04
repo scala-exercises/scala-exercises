@@ -31,14 +31,16 @@ import org.scalaexercises.exercises.support.{ArbitraryInstances, DatabaseInstanc
 import doobie._
 import doobie.implicits._
 import org.scalacheck.ScalacheckShapeless._
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalaexercises.types.user.User
 import cats.implicits._
 
 class UserProgressRepositorySpec
-    extends PropSpec
-    with GeneratorDrivenPropertyChecks
+    extends AnyPropSpec
+    with ScalaCheckDrivenPropertyChecks
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance

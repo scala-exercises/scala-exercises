@@ -74,6 +74,7 @@ lazy val server = (project in file("server"))
       "org.webjars.bower"          % "bootstrap-sass"             % v('bootstrap),
       "com.47deg"                  %% "github4s"                  % v('github4s),
       "org.scalatest"              %% "scalatest"                 % v('scalatest) % "runtime",
+      "org.scalatestplus"          %% "scalatestplus-scalacheck"  % v('scalatestplusScheck) % "test",
       "org.tpolecat"               %% "doobie-core"               % v('doobieversion),
       "org.tpolecat"               %% "doobie-hikari"             % v('doobieversion),
       "org.tpolecat"               %% "doobie-postgres"           % v('doobieversion),
@@ -149,7 +150,6 @@ lazy val runtime = (project in file("runtime"))
   .settings(
     libraryDependencies ++= Seq(
       "org.clapper"   %% "classutil" % v('classutil),
-      "io.monix"      %% "monix"     % v('monix),
       "org.typelevel" %% "cats-core" % v('catsversion) % "compile",
       "org.scalatest" %% "scalatest" % v('scalatest) % "test"
     )

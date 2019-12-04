@@ -19,7 +19,6 @@ object ProjectPlugin extends AutoPlugin {
     val v: Map[Symbol, String] =
       // Scala Exercises
       Map(
-        'evaluator     -> "0.5.0-SNAPSHOT",
         'stdlib        -> "0.5.0-SNAPSHOT",
         'cats          -> "0.5.0-SNAPSHOT",
         'shapeless     -> "0.5.0-SNAPSHOT",
@@ -44,7 +43,8 @@ object ProjectPlugin extends AutoPlugin {
         'postgres            -> "42.2.8",
         'scalajsscripts      -> "1.1.4",
         'scalariform         -> "1.8.3",
-        'scalatest           -> "3.0.8",
+        'scalatest           -> "3.1.0",
+        'scalatestplusScheck -> "3.1.0.0-RC2",
         'scalacheckversion   -> "1.14.2",
         'scalacheckshapeless -> "1.2.3",
         'upickle             -> "0.7.5",

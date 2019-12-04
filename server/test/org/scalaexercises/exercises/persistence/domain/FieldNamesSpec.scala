@@ -19,9 +19,10 @@
 
 package org.scalaexercises.exercises.persistence.domain
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class FieldNamesSpec extends WordSpec with Matchers {
+class FieldNamesSpec extends AnyWordSpec with Matchers {
 
   "persistence domain fieldNames" should {
     "return a lisf with the field names for a case class" in {

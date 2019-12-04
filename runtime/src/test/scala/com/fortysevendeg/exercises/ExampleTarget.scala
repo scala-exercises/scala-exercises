@@ -19,9 +19,10 @@
 
 package org.scalaexercises.runtime
 
-import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-object ExampleTarget extends FlatSpec with Matchers {
+object ExampleTarget extends AnyFlatSpec with Matchers {
   def intStringMethod(a: Int, b: String): String =
     s"$a$b"
 

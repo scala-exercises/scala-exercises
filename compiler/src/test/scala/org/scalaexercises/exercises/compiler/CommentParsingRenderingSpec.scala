@@ -19,14 +19,16 @@
 
 package org.scalaexercises.compiler
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.Inside
 
 import org.scalacheck.Arbitrary
 
 import cats.Id
 import cats.laws.discipline.FunctorTests
 
-class CommentZedSpec extends FunSpec {
+class CommentZedSpec extends AnyFunSpec {
   import CommentZed._
 
   describe("Empty comment algebra") {
@@ -55,7 +57,7 @@ class CommentZedSpec extends FunSpec {
 
 }
 
-class CommentParsingRenderingSpec extends FunSpec with Matchers with Inside {
+class CommentParsingRenderingSpec extends AnyFunSpec with Matchers with Inside {
   import CommentZed._
   import Comments.Mode
 

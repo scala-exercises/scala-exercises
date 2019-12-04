@@ -19,9 +19,10 @@
 
 package org.scalaexercises.runtime
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class TimestampSpec extends FunSpec with Matchers {
+class TimestampSpec extends AnyFunSpec with Matchers {
   describe("Timestamp") {
     it("works in both directions") {
       val date = new java.util.Date()

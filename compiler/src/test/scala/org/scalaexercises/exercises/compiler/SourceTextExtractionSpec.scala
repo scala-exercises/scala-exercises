@@ -19,10 +19,12 @@
 
 package org.scalaexercises.compiler
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.Inside
 import scala.tools.nsc.Global
 
-class SourceTextExtractionSpec extends FunSpec with Matchers with Inside {
+class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
 
   private val innerClassCode: String =
     """/** This is Foo */

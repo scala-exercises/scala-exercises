@@ -24,8 +24,10 @@ import doobie.implicits._
 import doobie._
 import org.scalacheck.ScalacheckShapeless._
 import org.scalacheck.Gen
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import shapeless.HNil
 import cats.effect.IO
 import cats.implicits._
@@ -98,8 +100,8 @@ trait DatabaseContext extends DatabaseInstance {
 }
 
 class PersistenceModuleSpec
-    extends WordSpec
-    with GeneratorDrivenPropertyChecks
+    extends AnyWordSpec
+    with ScalaCheckDrivenPropertyChecks
     with Matchers
     with BeforeAndAfterEach
     with DatabaseContext

@@ -19,11 +19,12 @@
 
 package org.scalaexercises.exercises.services
 
-import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import org.scalaexercises.types.exercises._
 
-class ExercisesServiceSpec extends FlatSpec with Matchers {
+class ExercisesServiceSpec extends AnyFlatSpec with Matchers {
 
   val expectedLibrary        = "stdlib"
   val expectedTestSection    = "Extractors"

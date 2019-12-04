@@ -12,7 +12,7 @@ resolvers ++= Seq(
 
 // Sbt plugins
 addSbtPlugin("org.irundaia.sbt"   % "sbt-sassify"               % "1.4.13")
-addSbtPlugin("org.scala-js"       % "sbt-scalajs"               % "0.6.29")
+addSbtPlugin("org.scala-js"       % "sbt-scalajs"               % "0.6.31")
 addSbtPlugin("com.eed3si9n"       % "sbt-buildinfo"             % "0.9.0")
 addSbtPlugin("com.47deg"          % "sbt-org-policies"          % "0.12.0-M3")
 addSbtPlugin("com.typesafe.play"  % "sbt-plugin"                % "2.8.0-M5")
@@ -21,4 +21,3 @@ addSbtPlugin("com.vmunier"        % "sbt-web-scalajs"           % "1.0.9-0.6")
 addSbtPlugin("com.typesafe.sbt"   % "sbt-gzip"                  % "1.0.2")
 addSbtPlugin("com.typesafe.sbt"   % "sbt-native-packager"       % "1.4.1")
 addSbtPlugin("com.github.cb372"   % "sbt-explicit-dependencies" % "0.2.11")
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.4.1")

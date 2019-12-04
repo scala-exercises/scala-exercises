@@ -21,9 +21,10 @@ package org.scalaexercises.runtime
 
 import org.scalaexercises.runtime.model.Exercise
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class LibraryDiscoverySpec extends FunSpec with Matchers {
+class LibraryDiscoverySpec extends AnyFunSpec with Matchers {
 
   import org.scalaexercises.content._
 

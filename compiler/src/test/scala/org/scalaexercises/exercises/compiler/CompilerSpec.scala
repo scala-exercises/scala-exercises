@@ -20,13 +20,14 @@
 package org.scalaexercises.compiler
 
 import org.scalaexercises.definitions.{BuildInfo, Library}
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.reflect.internal.util.{AbstractFileClassLoader, BatchSourceFile}
 import scala.tools.nsc.io.VirtualDirectory
 import scala.tools.nsc.{Global, Settings}
 
-class CompilerSpec extends FunSpec with Matchers {
+class CompilerSpec extends AnyFunSpec with Matchers {
 
   val metaInfoCode =
     """
