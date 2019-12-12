@@ -26,7 +26,6 @@ import scala.collection.mutable.ArrayBuffer
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
-import scala.language.reflectiveCalls
 import sbt.{`package` => _, _}
 import sbt.Keys._
 import xsbt.api.Discovery

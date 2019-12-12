@@ -47,8 +47,8 @@ class ExercisesApplicationLoader extends ApplicationLoader {
     val mode = context.environment.mode.toString.toLowerCase
     new Components(
       context.copy(
-        initialConfiguration = context.initialConfiguration
-          ++ Configuration(ConfigFactory.load(s"application.$mode.conf"))
+        initialConfiguration = context.initialConfiguration.withFallback(
+          Configuration(ConfigFactory.load(s"application.$mode.conf")))
       )).application
   }
 }

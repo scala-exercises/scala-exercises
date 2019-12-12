@@ -74,12 +74,12 @@ lazy val server = (project in file("server"))
       "org.webjars.bower"          % "bootstrap-sass"             % v('bootstrap),
       "com.47deg"                  %% "github4s"                  % v('github4s),
       "org.scalatest"              %% "scalatest"                 % v('scalatest) % "runtime",
-      "org.scalatestplus"          %% "scalatestplus-scalacheck"  % v('scalatestplusScheck) % "test",
+      "org.scalatestplus"          %% "scalatestplus-scalacheck"  % v('scalatestplusScheck) % Test,
       "org.tpolecat"               %% "doobie-core"               % v('doobieversion),
       "org.tpolecat"               %% "doobie-hikari"             % v('doobieversion),
       "org.tpolecat"               %% "doobie-postgres"           % v('doobieversion),
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v('scalacheckshapeless) % "test",
-      "org.tpolecat"               %% "doobie-specs2"             % v('doobieversion) % "test"
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v('scalacheckshapeless) % Test,
+      "org.tpolecat"               %% "doobie-specs2"             % v('doobieversion) % Test
     )
   )
 
@@ -101,7 +101,7 @@ lazy val client = (project in file("client"))
     jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
     skip in packageJSDependencies := false,
     jsEnv := new JSDOMNodeJSEnv(),
-    //jsDependencies += RuntimeDOM % "test",
+    //jsDependencies += RuntimeDOM % Test,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     libraryDependencies ++= Seq(
       "io.monix"      %%% "monix"     % v('monix),
@@ -110,7 +110,7 @@ lazy val client = (project in file("client"))
       "org.scala-js" %%% "scalajs-dom" % v('scalajsdom),
       "be.doeraene" %%% "scalajs-jquery" % v('scalajsjquery) xscalajs,
       "com.lihaoyi" %%% "upickle" % v('upickle),
-      "com.lihaoyi" %%% "utest"   % v('utest) % "test"
+      "com.lihaoyi" %%% "utest"   % v('utest) % Test
     )
   )
 
@@ -123,7 +123,7 @@ lazy val `evaluator-client` = (project in file("eval-client"))
       "org.http4s"    %% "http4s-circe"        % v('http4s),
       "io.circe"      %% "circe-core"          % v('circeversion),
       "io.circe"      %% "circe-generic"       % v('circeversion),
-      "org.scalatest" %% "scalatest"           % v('scalatest) % "test"
+      "org.scalatest" %% "scalatest"           % v('scalatest) % Test
     )
   )
 
@@ -151,7 +151,7 @@ lazy val runtime = (project in file("runtime"))
     libraryDependencies ++= Seq(
       "org.clapper"   %% "classutil" % v('classutil),
       "org.typelevel" %% "cats-core" % v('catsversion) % "compile",
-      "org.scalatest" %% "scalatest" % v('scalatest) % "test"
+      "org.scalatest" %% "scalatest" % v('scalatest) % Test
     )
   )
 
@@ -165,8 +165,8 @@ lazy val compiler = (project in file("compiler"))
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % "compile",
       "org.typelevel"  %% "cats-core"     % v('catsversion) % "compile",
       "com.47deg"      %% "github4s"      % v('github4s),
-      "org.typelevel"  %% "cats-laws"     % v('catsversion) % "test",
-      "org.scalatest"  %% "scalatest"     % v('scalatest) % "test"
+      "org.typelevel"  %% "cats-laws"     % v('catsversion) % Test,
+      "org.scalatest"  %% "scalatest"     % v('scalatest) % Test
     ),
     addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
   )

@@ -51,7 +51,7 @@ object ProjectPlugin extends AutoPlugin {
         'webjars             -> "2.7.3",
         'scalamacros         -> "2.1.1",
         'monix               -> "3.1.0",
-        'http4s              -> "0.20.13",
+        'http4s              -> "0.20.15",
         'circeversion        -> "0.12.3"
       ) ++ Map(
         // JS Versions
@@ -101,7 +101,6 @@ object ProjectPlugin extends AutoPlugin {
         Resolver.sonatypeRepo("snapshots"),
         Resolver.sonatypeRepo("releases"),
         Resolver.bintrayIvyRepo("ssidorenko", "sbt-plugins"),
-        //Resolver.bintrayIvyRepo("scalaz-bintray", "http://dl.bintray.com/scalaz/releases"),
         Resolver.typesafeIvyRepo("releases"),
         Resolver.typesafeRepo("releases")
       ),

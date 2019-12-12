@@ -235,48 +235,6 @@ case class Compiler() {
         )
     }
 
-    // TODO: Not being used anywhere. Can this be removed?
-    /*def oneline(msg: String) = {
-      val msg0 = msg.linesIterator.mkString(s"${Console.BLUE}\\n${Console.RESET}")
-      // there's a chance that we could put elipses over part of the escaped
-      // newline sequence... but oh well
-      if (msg0.length <= 100) msg0
-      else s"${msg0.take(97)}${Console.BLUE}...${Console.RESET}"
-    }
-
-    def dump(libraryInfo: LibraryInfo) = {
-      println(s"Found library ${libraryInfo.comment.name}")
-      println(s" description: ${oneline(libraryInfo.comment.description)}")
-      libraryInfo.sections.foreach { sectionInfo =>
-        println(s" with section ${sectionInfo.comment.name}")
-        println(s"  path: ${sectionInfo.path}")
-        println(s"  description: ${sectionInfo.comment.description.map(oneline)}")
-        sectionInfo.exercises.foreach { exerciseInfo =>
-          println(s"  with exercise ${exerciseInfo.symbol}")
-          println(s"   description: ${exerciseInfo.comment.description.map(oneline)}")
-        }
-      }
-    }
-
-    // leaving this around, for debugging
-    def debugDump(libraryInfo: LibraryInfo) = {
-      println("~ library")
-      println(s" • symbol        ${libraryInfo.symbol}")
-      println(s" - name          ${libraryInfo.comment.name}")
-      println(s" - description   ${oneline(libraryInfo.comment.description)}")
-      libraryInfo.sections.foreach { sectionInfo =>
-        println(" ~ section")
-        println(s"  • symbol        ${sectionInfo.symbol}")
-        println(s"  - name          ${sectionInfo.comment.name}")
-        println(s"  - description   ${sectionInfo.comment.description.map(oneline)}")
-        sectionInfo.exercises.foreach { exerciseInfo =>
-          println("  ~ exercise")
-          println(s"   • symbol        ${exerciseInfo.symbol}")
-          println(s"   - description   ${exerciseInfo.comment.description.map(oneline)}")
-        }
-      }
-    }*/
-
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)
 
     def generateTree(libraryInfo: LibraryInfo): (TermName, Tree) = {
@@ -329,6 +287,7 @@ case class Compiler() {
           s"${buildMetaInfo.organization}:${buildMetaInfo.name}_${buildMetaInfo.scalaVersion
             .substring(0, 4)}:${buildMetaInfo.version}"
         List(libraryAsDependency) // :: buildMetaInfo.libraryDependencies.toList
+        // Evaluator can resolve transitive dependencies, the reason of only passing the library as a dependency
       }
 
       val (buildInfoTerm, buildInfoTree) =

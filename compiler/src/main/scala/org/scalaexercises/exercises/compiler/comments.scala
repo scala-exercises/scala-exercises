@@ -226,7 +226,7 @@ private[compiler] object CommentParsing {
       val name1 = params.get("name").collect {
         case Body(List(Paragraph(Chain(List(Summary(Text(value))))))) => value.trim
       }
-      val name2 = name1.filter(n => n.linesIterator.length == 1)
+      val name2 = name1.filter(_.linesIterator.length == 1)
       Either.fromOption(
         name2,
         "Expected single name value defined as '@param name <value>'"
