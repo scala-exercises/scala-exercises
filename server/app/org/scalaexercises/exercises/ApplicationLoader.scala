@@ -20,7 +20,7 @@
 package org.scalaexercises.exercises
 
 import _root_.controllers._
-import cats.effect.{Blocker, IO}
+import cats.effect.{Blocker, ConcurrentEffect, IO}
 import com.typesafe.config.ConfigFactory
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
@@ -64,8 +64,11 @@ class Components(context: Context)
 
   override lazy val dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
 
-  lazy val aa = (for {
-    ec <- ExecutionContexts.fixedThreadPool[IO](32)
+  private lazy val threadPool =
+    configuration.getOptional[Int]("play.db.prototype.hikaricp.maximumPoolSize").getOrElse(32)
+
+  lazy val transactorResource = (for {
+    ec <- ExecutionContexts.fixedThreadPool[IO](threadPool)
     cs = IO.contextShift(ec)
     blocker <- Blocker[IO]
   } yield
@@ -73,13 +76,18 @@ class Components(context: Context)
       implicitly,
       cs)).allocated
 
-  lazy implicit val trans: Transactor[IO] = aa.map(_._1).unsafeRunSync
+  lazy implicit val trans: Transactor[IO] = transactorResource.map(_._1).unsafeRunSync
 
   implicit val wsClient: WSClient = AhcWSClient()
 
   implicit val mode = environment.mode
 
   implicit val classloader = environment.classLoader
+
+  private implicit val ce: ConcurrentEffect[IO] =
+    IO.ioConcurrentEffect(IO.contextShift(controllerComponents.executionContext))
+
+  private implicit val bodyParserAnyContent = controllerComponents.parsers.anyContent
 
   lazy val generateRoutes: Routes = {
     implicit val userOps: UserOps[IO]                    = new UserOpsHandler[IO]
@@ -122,7 +130,7 @@ class Components(context: Context)
   override lazy val router = generateRoutes
 
   applicationLifecycle.addStopHook({ () ⇒
-    aa.flatMap(_._2).unsafeRunSync()
+    transactorResource.flatMap(_._2).unsafeRunSync()
     Future(wsClient.close())
   })
 

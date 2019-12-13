@@ -52,7 +52,8 @@ object ProjectPlugin extends AutoPlugin {
         'scalamacros         -> "2.1.1",
         'monix               -> "3.1.0",
         'http4s              -> "0.20.15",
-        'circeversion        -> "0.12.3"
+        'circeversion        -> "0.12.3",
+        'bettermonadicfor    -> "0.3.1"
       ) ++ Map(
         // JS Versions
         'jquery        -> "3.4.1",
@@ -113,7 +114,7 @@ object ProjectPlugin extends AutoPlugin {
         ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
     ) ++ addCompilerPlugin("org.scalamacros" % "paradise"            % v('scalamacros) cross CrossVersion.full) ++
-      addCompilerPlugin("com.olegpy"         %% "better-monadic-for" % "0.3.1") ++ shellPromptSettings
+      addCompilerPlugin("com.olegpy"         %% "better-monadic-for" % v('bettermonadicfor)) ++ shellPromptSettings
 
   object ScalaExercisesLicense {
 

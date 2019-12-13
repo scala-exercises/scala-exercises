@@ -40,15 +40,12 @@ class ExercisesController(config: Configuration, components: ControllerComponent
     implicit exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
+    ce: ConcurrentEffect[IO],
+    BPAnyContent: BodyParser[AnyContent],
     mode: Mode)
     extends BaseController
     with JsonFormats
     with AuthenticationModule {
-
-  private implicit val ce: ConcurrentEffect[IO] =
-    IO.ioConcurrentEffect(IO.contextShift(controllerComponents.executionContext))
-
-  private implicit val bodyParserAnyContent = components.parsers.anyContent
 
   private val configUtils = ConfigUtils(config)
 

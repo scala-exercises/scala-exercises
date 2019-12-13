@@ -39,7 +39,7 @@ object Exercises {
     val files = cl
       .asInstanceOf[URLClassLoader]
       .getURLs
-      .map(url => new File(url.getFile)) filter (f ⇒ f.exists())
+      .map(url => new File(url.getFile)) filter (_.exists)
     val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
     val classes = classFinder.getClasses
       .filter(Try(_).isSuccess)
