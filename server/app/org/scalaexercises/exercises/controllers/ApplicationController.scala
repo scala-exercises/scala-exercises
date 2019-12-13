@@ -19,7 +19,7 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.effect.IO
+import cats.effect.{ContextShift, IO}
 import cats.implicits._
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.algebra.github.GithubOps
@@ -35,27 +35,25 @@ import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.{Configuration, Logger, Mode}
 
-class ApplicationController(
-    config: Configuration,
-    cl: ClassLoader,
-    components: ControllerComponents)(cache: AsyncCacheApi)(
+class ApplicationController(config: Configuration, components: ControllerComponents)(
+    cache: AsyncCacheApi)(
     implicit exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
     userExercisesProgress: UserExercisesProgress[IO],
     githubOps: GithubOps[IO],
+    cs: ContextShift[IO],
+    service: ExercisesService,
+    configUtils: ConfigUtils,
     mode: Mode)
     extends BaseController
     with AuthenticationModule {
+
   lazy val topLibraries: List[String] = config.getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
 
   val MainRepoCacheKey = "scala-exercises.repo"
 
-  val configUtils = ConfigUtils(config)
-
-  private val service = new ExercisesService(cl)
-
-  private implicit val cs = IO.contextShift(defaultExecutionContext)
+  private lazy val logger = Logger(this.getClass)
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
   private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
@@ -68,7 +66,7 @@ class ApplicationController(
             configUtils.githubSiteRepo
           )
           .redeem({ _ =>
-            Logger(this.getClass).error("Error fetching scala-exercises repository information")
+            logger.error("Error fetching scala-exercises repository information")
             None
           }, repo => Some(repo))
     }

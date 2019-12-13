@@ -41,13 +41,14 @@ class ExercisesController(config: Configuration, components: ControllerComponent
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
     ce: ConcurrentEffect[IO],
+    configUtils: ConfigUtils,
     BPAnyContent: BodyParser[AnyContent],
     mode: Mode)
     extends BaseController
     with JsonFormats
     with AuthenticationModule {
 
-  private val configUtils = ConfigUtils(config)
+  private lazy val logger = Logger(this.getClass)
 
   private val evaluatorClient =
     EvaluatorClient[IO](configUtils.evaluatorUrl, configUtils.evaluatorAuthKey)
@@ -117,8 +118,8 @@ class ExercisesController(config: Configuration, components: ControllerComponent
         def logError(method: String, mainMsg: String, ex: Option[Throwable] = None) = {
           val msg = s"[$method] $mainMsg. ExerciseEvaluation: $evaluation with user $user"
           ex match {
-            case Some(e) ⇒ Logger(this.getClass).error(msg, e)
-            case None    ⇒ Logger(this.getClass).error(msg)
+            case Some(e) ⇒ logger.error(msg, e)
+            case None    ⇒ logger.error(msg)
           }
         }
 

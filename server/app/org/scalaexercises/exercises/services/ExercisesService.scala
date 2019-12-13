@@ -42,11 +42,13 @@ import play.api.Logger
 @Singleton
 class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
+  private lazy val logger = Logger(this.getClass)
+
   lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl)
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
-    errors.foreach(error ⇒ Logger(this.getClass).warn(s"$error")) // TODO: handle errors better?
+    errors.foreach(error ⇒ logger.warn(s"$error")) // TODO: handle errors better?
     (libraries1, libraries1.map(lib ⇒ lib.name → lib.sections).toMap)
   }
 

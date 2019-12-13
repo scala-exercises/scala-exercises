@@ -25,9 +25,8 @@ import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import org.scalaexercises.types.exercises.{ExerciseEvaluation, Library, Section}
 
-class ExerciseOpsHandler[F[_]: Sync](implicit F: Sync[F], cl: ClassLoader) extends ExerciseOps[F] {
-
-  private val service = new ExercisesService(cl)
+class ExerciseOpsHandler[F[_]: Sync](implicit F: Sync[F], service: ExercisesService)
+    extends ExerciseOps[F] {
 
   override def getLibraries: F[List[Library]] = F.delay(service.libraries)
 

@@ -24,17 +24,16 @@ import org.scalaexercises.algebra.progress.UserExercisesProgress
 import org.scalaexercises.algebra.user.UserOps
 import play.api.Mode
 import play.api.libs.json.Json
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc._
 
 class UserProgressController(components: ControllerComponents)(
     implicit userOps: UserOps[IO],
     exercisesProgress: UserExercisesProgress[IO],
+    bodyParser: BodyParser[AnyContent],
     mode: Mode
 ) extends BaseController
     with JsonFormats
     with AuthenticationModule {
-
-  private implicit val bodyParser = controllerComponents.parsers.anyContent
 
   def fetchUserProgressBySection(libraryName: String, sectionName: String) =
     AuthenticatedUser { user ⇒

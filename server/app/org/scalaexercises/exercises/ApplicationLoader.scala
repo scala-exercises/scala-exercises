@@ -20,7 +20,7 @@
 package org.scalaexercises.exercises
 
 import _root_.controllers._
-import cats.effect.{Blocker, ConcurrentEffect, IO}
+import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO}
 import com.typesafe.config.ConfigFactory
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
@@ -29,7 +29,9 @@ import org.scalaexercises.algebra.github.GithubOps
 import org.scalaexercises.algebra.progress._
 import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.exercises.controllers._
+import org.scalaexercises.exercises.services.ExercisesService
 import org.scalaexercises.exercises.services.handlers._
+import org.scalaexercises.exercises.utils.ConfigUtils
 import play.api.ApplicationLoader.Context
 import play.api._
 import play.api.cache.caffeine.CaffeineCacheComponents
@@ -82,12 +84,15 @@ class Components(context: Context)
 
   implicit val mode = environment.mode
 
-  implicit val classloader = environment.classLoader
+  implicit def cs: ContextShift[IO] = IO.contextShift(controllerComponents.executionContext)
 
-  private implicit val ce: ConcurrentEffect[IO] =
-    IO.ioConcurrentEffect(IO.contextShift(controllerComponents.executionContext))
+  implicit def ce: ConcurrentEffect[IO] = IO.ioConcurrentEffect(cs)
 
-  private implicit val bodyParserAnyContent = controllerComponents.parsers.anyContent
+  implicit val bodyParserAnyContent = controllerComponents.parsers.anyContent
+
+  implicit lazy val configUtils = ConfigUtils(configuration)
+
+  implicit lazy val service = new ExercisesService(environment.classLoader)
 
   lazy val generateRoutes: Routes = {
     implicit val userOps: UserOps[IO]                    = new UserOpsHandler[IO]
@@ -97,7 +102,7 @@ class Components(context: Context)
     implicit val userProgress: UserExercisesProgress[IO] = new UserExercisesProgress[IO]
 
     val applicationController =
-      new ApplicationController(configuration, classloader, controllerComponents)(defaultCacheApi)
+      new ApplicationController(configuration, controllerComponents)(defaultCacheApi)
     val exercisesController    = new ExercisesController(configuration, controllerComponents)
     val userController         = new UserController(controllerComponents)
     val oauthController        = new OAuthController(configuration, controllerComponents)

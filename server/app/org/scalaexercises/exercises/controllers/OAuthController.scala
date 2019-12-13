@@ -33,10 +33,9 @@ import play.api.{Configuration, Mode}
 class OAuthController(conf: Configuration, components: ControllerComponents)(
     implicit userOps: UserOps[IO],
     githubOps: GithubOps[IO],
+    configUtils: ConfigUtils,
     mode: Mode)
     extends BaseController {
-
-  private val configUtils = ConfigUtils(conf)
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) =
     Secure(Action.async { implicit request ⇒
