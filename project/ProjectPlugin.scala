@@ -34,7 +34,7 @@ object ProjectPlugin extends AutoPlugin {
         'catsversion         -> "2.0.0",
         'doobieversion       -> "0.8.6",
         'bootstrap           -> "3.3.7",
-        'github4s            -> "0.20.2-SNAPSHOT",
+        'github4s            -> "0.21.0",
         'classutil           -> "1.5.1",
         'commonsio           -> "2.6",
         'highlightjs         -> "9.15.10",
