@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,12 @@
 
 package org.scalaexercises.exercises.services
 
-import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import org.scalaexercises.types.exercises._
 
-class ExercisesServiceSpec extends FlatSpec with Matchers {
+class ExercisesServiceSpec extends AnyFlatSpec with Matchers {
 
   val expectedLibrary        = "stdlib"
   val expectedTestSection    = "Extractors"
@@ -68,7 +69,9 @@ class ExercisesServiceSpec extends FlatSpec with Matchers {
     )
     val topLibraries = List()
 
-    val reordered = ExercisesService.reorderLibraries(topLibraries, libraries).map(_.name)
+    val reordered = new ExercisesService(this.getClass.getClassLoader)
+      .reorderLibraries(topLibraries, libraries)
+      .map(_.name)
 
     assert(reordered == libraries.map(_.name))
   }
@@ -85,7 +88,9 @@ class ExercisesServiceSpec extends FlatSpec with Matchers {
       "Another lib"
     )
 
-    val reordered = ExercisesService.reorderLibraries(topLibraries, libraries).map(_.name)
+    val reordered = new ExercisesService(this.getClass.getClassLoader)
+      .reorderLibraries(topLibraries, libraries)
+      .map(_.name)
 
     assert(reordered == List("Yet another lib", "A lib", "Another lib"))
   }

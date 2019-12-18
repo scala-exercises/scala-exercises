@@ -226,7 +226,7 @@ private[compiler] object CommentParsing {
       val name1 = params.get("name").collect {
         case Body(List(Paragraph(Chain(List(Summary(Text(value))))))) => value.trim
       }
-      val name2 = name1.filter(_.lines.length == 1)
+      val name2 = name1.filter(_.linesIterator.length == 1)
       Either.fromOption(
         name2,
         "Expected single name value defined as '@param name <value>'"
@@ -284,7 +284,7 @@ private[compiler] object CommentRendering {
     )
 
   def renderBody(body: Body): String =
-    Xhtml.toXhtml(body.blocks flatMap (renderBlock(_)))
+    Xhtml.toXhtml(body.blocks flatMap renderBlock)
 
   private[this] def renderBlock(block: Block): NodeSeq = block match {
     case Title(in, 1)  => <h3>{ renderInline(in) }</h3>
@@ -318,7 +318,7 @@ private[compiler] object CommentRendering {
     }
 
   private[this] def renderInline(inl: Inline): NodeSeq = inl match {
-    case Chain(items)             => items flatMap (renderInline(_))
+    case Chain(items)             => items flatMap renderInline
     case Italic(in)               => <i>{ renderInline(in) }</i>
     case Bold(in)                 => <b>{ renderInline(in) }</b>
     case Underline(in)            => <u>{ renderInline(in) }</u>

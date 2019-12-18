@@ -19,33 +19,41 @@ object ProjectPlugin extends AutoPlugin {
     val v: Map[Symbol, String] =
       // Scala Exercises
       Map(
-        'evaluator     -> "0.5.0-SNAPSHOT",
         'stdlib        -> "0.5.0-SNAPSHOT",
-        'cats          -> "0.4.2-SNAPSHOT",
-        'shapeless     -> "0.4.2-SNAPSHOT",
-        'doobie        -> "0.4.2-SNAPSHOT",
-        'scalacheck    -> "0.4.2-SNAPSHOT",
-        'scalatutorial -> "0.4.2-SNAPSHOT",
-        'fpinscala     -> "0.4.2-SNAPSHOT",
-        'circe         -> "0.4.2-SNAPSHOT",
-        'fetch         -> "0.4.2-SNAPSHOT",
-        'monocle       -> "0.4.2-SNAPSHOT"
+        'cats          -> "0.5.0-SNAPSHOT",
+        'shapeless     -> "0.5.0-SNAPSHOT",
+        'doobie        -> "0.5.0-SNAPSHOT",
+        'scalacheck    -> "0.5.0-SNAPSHOT",
+        'scalatutorial -> "0.5.0-SNAPSHOT",
+        'fpinscala     -> "0.5.0-SNAPSHOT",
+        'circe         -> "0.5.0-SNAPSHOT",
+        'fetch         -> "0.5.0-SNAPSHOT",
+        'monocle       -> "0.5.0-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
-        'bootstrap      -> "3.3.7",
-        'classutil      -> "1.1.2",
-        'commonsio      -> "2.6",
-        'freestyle      -> "0.8.2",
-        'highlightjs    -> "9.2.0",
-        'knockoff       -> "0.8.12",
-        'newrelic       -> "5.6.0",
-        'postgres       -> "42.2.8",
-        'scalajsscripts -> "1.1.4",
-        'scalariform    -> "1.8.3",
-        'upickle        -> "0.7.5",
-        'webjars        -> "2.7.3",
-        'scalamacros    -> "2.1.1",
-        'monix          -> "3.0.0"
+        'catsversion         -> "2.0.0",
+        'doobieversion       -> "0.8.6",
+        'bootstrap           -> "3.3.7",
+        'github4s            -> "0.21.0",
+        'classutil           -> "1.5.1",
+        'commonsio           -> "2.6",
+        'highlightjs         -> "9.15.10",
+        'knockoff            -> "0.8.12",
+        'newrelic            -> "5.8.0",
+        'postgres            -> "42.2.8",
+        'scalajsscripts      -> "1.1.4",
+        'scalariform         -> "1.8.3",
+        'scalatest           -> "3.1.0",
+        'scalatestplusScheck -> "3.1.0.0-RC2",
+        'scalacheckversion   -> "1.14.2",
+        'scalacheckshapeless -> "1.2.3",
+        'upickle             -> "0.7.5",
+        'webjars             -> "2.7.3",
+        'scalamacros         -> "2.1.1",
+        'monix               -> "3.1.0",
+        'http4s              -> "0.20.15",
+        'circeversion        -> "0.12.3",
+        'bettermonadicfor    -> "0.3.1"
       ) ++ Map(
         // JS Versions
         'jquery        -> "3.4.1",
@@ -93,10 +101,9 @@ object ProjectPlugin extends AutoPlugin {
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("snapshots"),
         Resolver.sonatypeRepo("releases"),
-        Resolver.bintrayIvyRepo("sbt-plugins", "https://dl.bintray.com/ssidorenko/sbt-plugins/"),
-        Resolver.bintrayIvyRepo("scalaz-bintray", "http://dl.bintray.com/scalaz/releases"),
-        Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/"),
-        Resolver.typesafeRepo("http://repo.typesafe.com/typesafe/maven-releases/")
+        Resolver.bintrayIvyRepo("ssidorenko", "sbt-plugins"),
+        Resolver.typesafeIvyRepo("releases"),
+        Resolver.typesafeRepo("releases")
       ),
       scalacOptions ++= Seq("-Xplugin-require:macroparadise", "-Ypartial-unification"),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
@@ -106,7 +113,8 @@ object ProjectPlugin extends AutoPlugin {
       headerLicense := Some(
         ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
-    ) ++ addCompilerPlugin("org.scalamacros" % "paradise" % v('scalamacros) cross CrossVersion.full) ++ shellPromptSettings
+    ) ++ addCompilerPlugin("org.scalamacros" % "paradise"            % v('scalamacros) cross CrossVersion.full) ++
+      addCompilerPlugin("com.olegpy"         %% "better-monadic-for" % v('bettermonadicfor)) ++ shellPromptSettings
 
   object ScalaExercisesLicense {
 

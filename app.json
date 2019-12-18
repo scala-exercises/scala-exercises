@@ -5,6 +5,7 @@
     "addons": [
         "heroku-postgresql:hobby-dev"
     ],
+    "stack": "heroku-18",
     "success_url": "\/",
     "env": {
         "WARTING": "false",
@@ -12,6 +13,9 @@
         "BUILDPACK_URL": "https:\/\/github.com\/heroku\/heroku-buildpack-multi",
         "JAVA_OPTS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
         "JAVA_TOOL_OPTIONS": "-Xmx768m -Xss512k -XX:+UseCompressedOops",
+        "APPLICATION_SECRET": {
+          "required": true
+        },
         "EVALUATOR_AUTH_KEY": {
             "required": true
         },
@@ -26,5 +30,13 @@
             "quantity": 1,
             "size": "performance-m"
         }
-    }
+    },
+    "buildpacks": [
+      {
+        "url": "heroku/jvm"
+      },
+      {
+        "url": "heroku/ruby"
+      }
+    ]
 }

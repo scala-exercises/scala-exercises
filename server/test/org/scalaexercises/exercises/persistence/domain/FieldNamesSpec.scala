@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@
 
 package org.scalaexercises.exercises.persistence.domain
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class FieldNamesSpec extends WordSpec with Matchers {
+class FieldNamesSpec extends AnyWordSpec with Matchers {
 
   "persistence domain fieldNames" should {
     "return a lisf with the field names for a case class" in {

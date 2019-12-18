@@ -1,5 +1,7 @@
 /*
- * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,49 +14,48 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises.controllers
 
+import cats.effect.IO
 import cats.implicits._
-import org.scalaexercises.exercises.Secure
-import org.scalaexercises.algebra.app._
 import org.scalaexercises.algebra.github.GithubOps
 import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.types.user.UserCreation
+import org.scalaexercises.exercises.Secure
+import org.scalaexercises.exercises.utils.ConfigUtils
 import org.scalaexercises.types.github.GithubUser
-import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import org.scalaexercises.exercises.utils.ConfigUtils._
-import doobie.imports._
-import play.api.Logger
-import play.api.mvc.{Action, Controller, Result}
+import org.scalaexercises.types.user.UserCreation
+import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.{Configuration, Mode}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scalaz.concurrent.Task
-import freestyle._
-import freestyle.implicits._
-
-class OAuthController(
-    implicit userOps: UserOps[ExercisesApp.Op],
-    githubOps: GithubOps[ExercisesApp.Op],
-    T: Transactor[Task]
-) extends Controller
-    with ProdInterpreters {
+class OAuthController(conf: Configuration, components: ControllerComponents)(
+    implicit userOps: UserOps[IO],
+    githubOps: GithubOps[IO],
+    configUtils: ConfigUtils,
+    mode: Mode)
+    extends BaseController {
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) =
     Secure(Action.async { implicit request ⇒
-      (codeOpt |@| stateOpt |@| request.session.get("oauth-state")).tupled
-        .fold[FreeS[ExercisesApp.Op, Result]](FreeS.pure(BadRequest("Missing `code` or `state`"))) {
+      (codeOpt, stateOpt, request.session.get("oauth-state")).tupled
+        .fold(IO.pure(BadRequest("Missing `code` or `state`"))) {
           case (code, state, oauthState) ⇒
             if (state == oauthState) {
               githubOps
-                .getAccessToken(githubAuthId, githubAuthSecret, code, callbackUrl, state)
+                .getAccessToken(
+                  configUtils.githubAuthId,
+                  configUtils.githubAuthSecret,
+                  code,
+                  configUtils.callbackUrl,
+                  state)
                 .map { ot =>
-                  Redirect(successUrl).withSession("oauth-token" → ot.accessToken)
+                  Redirect(configUtils.successUrl).withSession("oauth-token" → ot.accessToken)
                 }
-            } else FreeS.pure(BadRequest("Invalid github login"))
+            } else IO.pure(BadRequest("Invalid github login"))
         }
+        .unsafeToFuture()
     })
 
   def createUserRequest(githubUser: GithubUser): UserCreation.Request =
@@ -68,11 +69,11 @@ class OAuthController(
     )
 
   def success() =
-    Secure(Action.async { implicit request ⇒
-      request.session
-        .get("oauth-token")
-        .fold[FreeS[ExercisesApp.Op, Result]](FreeS.pure(Unauthorized("Missing OAuth token"))) {
-          accessToken ⇒
+    Secure(Action.async {
+      implicit request ⇒
+        request.session
+          .get("oauth-token")
+          .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken ⇒
             val ops = for {
               ghuser ← githubOps.getAuthUser(Some(accessToken))
               user   ← userOps.getOrCreate(createUserRequest(ghuser))
@@ -85,9 +86,11 @@ class OAuthController(
                   case _                                    ⇒ "/"
                 }).withSession("oauth-token" → accessToken, "user" → ghu.login)
             }
-        }
+          }
+          .unsafeToFuture()
     })
 
   def logout() = Secure(Action(Redirect("/").withNewSession))
 
+  override protected def controllerComponents: ControllerComponents = components
 }

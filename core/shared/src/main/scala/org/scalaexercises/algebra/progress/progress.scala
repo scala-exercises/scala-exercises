@@ -28,24 +28,20 @@ import org.scalaexercises.types.user._
 /** Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
-trait UserProgressOpsAlgebra[F[_]] {
+trait UserProgressOps[F[_]] {
   def saveUserProgress(userProgress: SaveUserProgress.Request): F[UserProgress]
 
   def getExerciseEvaluations(user: User, library: String, section: String): F[List[UserProgress]]
 
   def getLastSeenSection(user: User, library: String): F[Option[String]]
 
-  def getSolvedExerciseCount(user: User, library: String, section: String): F[Int]
-
-  def isSectionCompleted(user: User, libraryName: String, section: Section): F[Boolean]
-
-}
-
-abstract class UserProgressOps[F[_]: Functor] extends UserProgressOpsAlgebra[F] {
-  def getSolvedExerciseCount(user: User, library: String, section: String): F[Int] =
+  def getSolvedExerciseCount(user: User, library: String, section: String)(
+      implicit F: Functor[F]): F[Int] =
     getExerciseEvaluations(user, library, section).map(tried ⇒ tried.count(_.succeeded))
 
-  def isSectionCompleted(user: User, libraryName: String, section: Section): F[Boolean] =
-    getSolvedExerciseCount(user, libraryName, section.name).map(solvedExercises ⇒
+  def isSectionCompleted(user: User, libraryName: String, section: Section)(
+      implicit F: Functor[F]): F[Boolean] =
+    getSolvedExerciseCount(user, libraryName, section.name).map(solvedExercises =>
       solvedExercises == section.exercises.size)
+
 }

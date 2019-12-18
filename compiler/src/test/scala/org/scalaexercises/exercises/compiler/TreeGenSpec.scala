@@ -23,9 +23,10 @@ import scala.tools.reflect.ToolBox
 
 import org.scalaexercises.runtime.model.Library
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class TreeGenSpec extends FunSpec with Matchers {
+class TreeGenSpec extends AnyFunSpec with Matchers {
 
   val toolbox = scala.reflect.runtime.currentMirror.mkToolBox()
   import toolbox.u._

@@ -9,7 +9,7 @@ before_script:
 scala:
   - 2.12.10
 jdk:
-  - openjdk8
+  - openjdk11
 cache:
   directories:
     - $HOME/.ivy2/cache
@@ -31,8 +31,8 @@ install:
   - nvm use stable
   - npm install jsdom@9.12.0
 script:
+  - sbt publishAll
   - sbt test
-  - sbt sbt-exercise/publishLocal
   - sbt sbt-exercise/scripted
   - sbt coverage test coverageReport coverageAggregate
 after_success:

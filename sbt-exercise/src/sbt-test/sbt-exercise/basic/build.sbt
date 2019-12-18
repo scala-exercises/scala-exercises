@@ -1,3 +1,5 @@
+import org.scalaexercises.plugin.sbtexercise.ExerciseCompilerPlugin
+
 val pluginVersion = System.getProperty("plugin.version")
 
 lazy val content = (project in file("content"))

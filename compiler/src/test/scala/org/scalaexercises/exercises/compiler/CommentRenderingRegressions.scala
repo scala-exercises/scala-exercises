@@ -19,11 +19,13 @@
 
 package org.scalaexercises.compiler
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.Inside
 
 import cats.implicits._
 
-class CommentRenderingRegressions extends FunSpec with Matchers with Inside {
+class CommentRenderingRegressions extends AnyFunSpec with Matchers with Inside {
   import Comments.Mode
 
   private[this] val global = new DocExtractionGlobal() {

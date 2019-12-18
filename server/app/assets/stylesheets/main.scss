@@ -4,7 +4,7 @@
 @import "libraries/mixin";
 
 // Webjars libs
-@import "lib/bootstrap-sass/stylesheets/bootstrap";
+@import "../../../target/web/web-modules/main/webjars/lib/bootstrap-sass/assets/stylesheets/bootstrap";
 
 // Layout
 @import "layout/global";

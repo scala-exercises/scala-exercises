@@ -1,5 +1,7 @@
 /*
- * Copyright 2016-2019 47 Degrees, LLC. <http://www.47deg.com>
+ *  scala-exercises
+ *
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,46 +14,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.scalaexercises.exercises.controllers
 
-import org.scalaexercises.exercises.Secure
-
-import java.util.UUID
-import cats.free.Free
-
-import org.scalaexercises.algebra.app._
+import cats.effect.IO
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.types.exercises.{Contribution, Contributor}
-
-import org.scalaexercises.exercises.services.ExercisesService
-import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import org.scalaexercises.exercises.utils.ConfigUtils
-
-import doobie.imports._
-
-import play.api.Logger
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import org.scalaexercises.exercises.Secure
+import play.api.Mode
 import play.api.mvc._
 
-import scala.concurrent.Future
-import scalaz.concurrent.Task
-
-import freestyle._
-import freestyle.implicits._
-
-class SitemapController(
-    implicit exerciseOps: ExerciseOps[ExercisesApp.Op],
-    T: Transactor[Task]
-) extends Controller
-    with ProdInterpreters {
+class SitemapController(components: ControllerComponents)(
+    implicit exerciseOps: ExerciseOps[IO],
+    mode: Mode
+) extends BaseController {
 
   def sitemap =
-    Secure(Action.async { implicit request ⇒
-      FreeS.liftPar(exerciseOps.getLibraries) map { libraries ⇒
-        Ok(views.xml.templates.sitemap.sitemap(libraries = libraries))
-      }
+    Secure(Action.async { _ ⇒
+      (exerciseOps.getLibraries map { libraries ⇒
+        Ok(views.xml.templates.sitemap.sitemap(libraries))
+      }).unsafeToFuture()
     })
 
+  override protected def controllerComponents: ControllerComponents = components
 }

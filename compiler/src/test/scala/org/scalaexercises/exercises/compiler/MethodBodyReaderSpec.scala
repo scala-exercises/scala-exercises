@@ -19,9 +19,10 @@
 
 package org.scalaexercises.compiler
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class MethodBodyReaderSpec extends FunSpec with Matchers with MethodBodyReaderSpecUtilities {
+class MethodBodyReaderSpec extends AnyFunSpec with Matchers with MethodBodyReaderSpecUtilities {
 
   describe("code snippet extraction") {
     it("should extract a one line snippet and trim all whitespace") {

@@ -27,19 +27,15 @@ import cats.implicits._
 /** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct.
  */
-trait ExerciseOpsAlgebra[F[_]] {
+trait ExerciseOps[F[_]] {
 
   def getLibraries: F[List[Library]]
 
-  def getLibrary(libraryName: String): F[Option[Library]]
+  def getLibrary(libraryName: String)(implicit FU: Functor[F]): F[Option[Library]] =
+    getLibraries.map(_.find(_.name == libraryName))
 
   def getSection(libraryName: String, sectionName: String): F[Option[Section]]
 
   def buildRuntimeInfo(evaluation: ExerciseEvaluation): F[EvaluationRequest]
 
-}
-
-abstract class ExerciseOps[F[_]: Functor] extends ExerciseOpsAlgebra[F] {
-  def getLibrary(libraryName: String): F[Option[Library]] =
-    getLibraries.map(_.find(_.name == libraryName))
 }
