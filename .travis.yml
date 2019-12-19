@@ -25,7 +25,8 @@ before_install:
   fi
 
 install:
-  - gem install sass
+  - gem install bundler -v 2.1.1
+  - gem install sassc -v 2.2.1
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
