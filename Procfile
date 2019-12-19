@@ -1,1 +1,1 @@
-web: server/target/universal/stage/bin/server -Dhttp.port=${PORT} -Dplay.http.secret.key=${APPLICATION_SECRET} -J-javaagent:/app/target/universal/stage/lib/com.newrelic.agent.java.newrelic-agent-5.9.0.jar -J-Dnewrelic.config.file=conf/newrelic.yml
+web: server/target/universal/stage/bin/server -Dhttp.port=${PORT} -Dplay.http.secret.key=${APPLICATION_SECRET}
