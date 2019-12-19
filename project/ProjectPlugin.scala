@@ -39,7 +39,7 @@ object ProjectPlugin extends AutoPlugin {
         'commonsio           -> "2.6",
         'highlightjs         -> "9.15.10",
         'knockoff            -> "0.8.12",
-        'newrelic            -> "5.8.0",
+        'newrelic            -> "5.9.0",
         'postgres            -> "42.2.8",
         'scalajsscripts      -> "1.1.4",
         'scalariform         -> "1.8.3",
