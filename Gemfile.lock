@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ffi (1.11.3)
+    sassc (2.2.1)
+      ffi (~> 1.9)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  sassc (= 2.2.1)
+
+BUNDLED WITH
+   2.1.1
