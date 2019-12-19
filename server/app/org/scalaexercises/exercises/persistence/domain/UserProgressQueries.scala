@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,8 @@ package org.scalaexercises.exercises.persistence.domain
 
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
-import doobie.imports._
+import doobie._
+import doobie.postgres.implicits._
 
 object UserProgressQueries {
 
@@ -29,10 +30,9 @@ object UserProgressQueries {
 
   object Implicits {
     implicit val ExerciseTypeMeta: Meta[ExerciseType] =
-      Meta[String].nxmap(
-        ExerciseType.fromString,
-        ExerciseType.toString
-      )
+      Meta[String].imap(ExerciseType.fromString)(ExerciseType.toString)
+
+    implicit val ListMeta: Meta[List[String]] = Meta[Array[String]].timap(_.toList)(_.toArray)
   }
 
   private[this] val commonFindBy =

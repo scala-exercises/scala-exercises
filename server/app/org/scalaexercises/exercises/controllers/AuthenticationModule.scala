@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,23 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.MonadError
-import org.scalaexercises.exercises.Secure
-import org.scalaexercises.algebra.app._
-import org.scalaexercises.types.user.User
+import cats.effect.IO
 import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import doobie.imports._
+import org.scalaexercises.exercises.Secure
+import org.scalaexercises.types.user.User
+import play.api.Mode
 import play.api.libs.json._
 import play.api.mvc.Results._
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scalaz.concurrent._
-import freestyle._
-import freestyle.implicits._
-import cats.instances.future._
+import scala.concurrent.{ExecutionContext, Future}
 
-trait AuthenticationModule { self: ProdInterpreters ⇒
-  case class UserRequest[A](val userId: String, request: Request[A])
-      extends WrappedRequest[A](request)
+trait AuthenticationModule {
+  case class UserRequest[A](userId: String, request: Request[A]) extends WrappedRequest[A](request)
 
-  object AuthenticationAction extends ActionBuilder[UserRequest] {
+  class AuthenticationAction(implicit bodyParser: BodyParser[AnyContent])
+      extends ActionBuilder[UserRequest, AnyContent] {
 
     override def invokeBlock[A](
         request: Request[A],
@@ -52,29 +46,34 @@ trait AuthenticationModule { self: ProdInterpreters ⇒
         case None         ⇒ Future.successful(Forbidden)
       }
     }
+
+    override def parser: BodyParser[AnyContent] = bodyParser
+
+    override protected def executionContext: ExecutionContext = global
   }
 
-  def AuthenticatedUser(thunk: User ⇒ FreeS[ExercisesApp.Op, Result])(
-      implicit userOps: UserOps[ExercisesApp.Op],
-      transactor: Transactor[Task]) =
-    Secure(AuthenticationAction.async { request ⇒
-      FreeS.liftPar(userOps.getUserByLogin(request.userId)) flatMap {
+  def AuthenticatedUser(thunk: User ⇒ IO[Result])(
+      implicit userOps: UserOps[IO],
+      mode: Mode,
+      bodyParser: BodyParser[AnyContent]) =
+    Secure(new AuthenticationAction().async { request ⇒
+      (userOps.getUserByLogin(request.userId) flatMap {
         case Some(user) ⇒ thunk(user)
-        case _          ⇒ FreeS.pure(BadRequest("User login not found"))
-      }
+        case _          ⇒ IO.pure(BadRequest("User login not found"))
+      }).unsafeToFuture()
     })
 
-  def AuthenticatedUserF[T](bodyParser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
-      implicit userOps: UserOps[ExercisesApp.Op],
-      transactor: Transactor[Task],
-      I: ParInterpreter[ExercisesApp.Op, Task],
+  def AuthenticatedUserF[T](parser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
+      implicit userOps: UserOps[IO],
+      mode: Mode,
+      bodyParser: BodyParser[AnyContent],
       format: Reads[T]) =
-    Secure(AuthenticationAction.async(bodyParser) { request ⇒
+    Secure(new AuthenticationAction().async(parser) { request ⇒
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) ⇒
-          FreeS.liftPar(userOps.getUserByLogin(request.userId)).runFuture flatMap {
-            case Right(Some(user)) ⇒ thunk(validatedBody, user)
-            case _                 ⇒ Future.successful(BadRequest("User login not found"))
+          userOps.getUserByLogin(request.userId).unsafeToFuture() flatMap {
+            case Some(user) ⇒ thunk(validatedBody, user)
+            case _          ⇒ Future.successful(BadRequest("User login not found"))
           }
         case JsError(errors) ⇒
           Future.successful(BadRequest(JsError.toJson(errors)))

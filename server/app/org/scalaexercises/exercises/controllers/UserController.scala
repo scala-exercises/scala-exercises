@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,35 +19,30 @@
 
 package org.scalaexercises.exercises.controllers
 
-import org.scalaexercises.exercises.Secure
-import org.scalaexercises.algebra.app._
+import cats.effect.IO
 import org.scalaexercises.algebra.user.UserOps
-import org.scalaexercises.exercises.services.interpreters.ProdInterpreters
-import doobie.imports._
-import freestyle.FreeS
-import play.api.Logger
+import org.scalaexercises.exercises.Secure
+import org.scalaexercises.types.user.User
+import play.api.Mode
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
-import upickle._
 import upickle.default._
 
-import scalaz.concurrent.Task
-import freestyle.implicits._
-
-class UserController(
-    implicit userOps: UserOps[ExercisesApp.Op],
-    T: Transactor[Task]
-) extends Controller
-    with ProdInterpreters {
+class UserController(components: ControllerComponents)(implicit userOps: UserOps[IO], mode: Mode)
+    extends BaseController {
 
   implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
 
+  implicit val userWriter: Writer[User] = macroW
+
   def byLogin(login: String) =
-    Secure(Action.async { implicit request ⇒
-      FreeS.liftPar(userOps.getUserByLogin(login)) map {
+    Secure(Action.async { _ ⇒
+      (userOps.getUserByLogin(login) map {
         case Some(u) ⇒ Ok(write(u))
         case None    ⇒ NotFound("The user doesn't exist")
-      }
+      }).unsafeToFuture()
     })
+
+  override protected def controllerComponents: ControllerComponents = components
 }

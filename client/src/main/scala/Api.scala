@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import model._
 import config.Routes
-import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 
 import messages.{EvaluationRequest, EvaluationResult}
 
-import upickle._
 import upickle.default._
 import common.ExtAjax._
+import org.scalaexercises.client.utils.Implicits._
 
 import org.scalajs.dom.ext.{Ajax, AjaxException}
 

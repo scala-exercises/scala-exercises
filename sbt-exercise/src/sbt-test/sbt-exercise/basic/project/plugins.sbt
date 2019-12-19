@@ -1,3 +1,7 @@
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots")
+)
+
 {
   val pluginVersion = System.getProperty("plugin.version")
   if (pluginVersion == null)

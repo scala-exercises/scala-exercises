@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ package org.scalaexercises.client
 package utils
 
 import org.scalajs.dom.ext.KeyCode
+
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLDivElement, HTMLElement, HTMLInputElement}
-import org.scalajs.jquery.{jQuery ⇒ $, JQuery}
+import org.scalajs.jquery.{JQuery, jQuery => $}
+
 import scala.scalajs.js.timers._
-
-import monix.cats._
 import monix.eval.Coeval
-
-import cats.data.OptionT
 import cats.implicits._
+
+import scala.scalajs.js.Any.iterableOps
 
 object DomHandler {
 
@@ -43,37 +43,42 @@ object DomHandler {
 
   /** Highlights every preformatted code block.
    */
-  def highlightCodeBlocks: Coeval[Unit] = Coeval {
-    $("pre").each((_: Any, code: dom.Element) ⇒ {
-      js.Dynamic.global.hljs.highlightBlock(code)
-    })
-  }
+  def highlightCodeBlocks: Coeval[Unit] =
+    Coeval {
+      $("pre").each((_: Any, code: dom.Element) ⇒ {
+        js.Dynamic.global.hljs.highlightBlock(code)
+      })
+    }.void
 
   /** Converts emoji markup into inline emoji images.
    */
-  def emojify: Coeval[Unit] = Coeval {
-    $(".modal-body").each((_: Any, el: dom.Element) ⇒ {
-      js.Dynamic.global.emojify.run(el)
-    })
-  }
+  def emojify: Coeval[Unit] =
+    Coeval {
+      $(".modal-body").each((_: Any, el: dom.Element) ⇒ {
+        js.Dynamic.global.emojify.run(el)
+      })
+    }.void
 
   /** Set the class attribute to an exercise node
    */
-  def setExerciseClass(e: HTMLElement, style: String): Coeval[Unit] = Coeval {
-    $(e).attr("class", s"exercise $style")
-  }
+  def setExerciseClass(e: HTMLElement, style: String): Coeval[Unit] =
+    Coeval {
+      $(e).attr("class", s"exercise $style")
+    }.void
 
   /** Set the class attribute to an exercise code node
    */
-  def setCodeClass(e: HTMLElement, style: String): Coeval[Unit] = Coeval {
-    $(e).attr("class", s"exercise-pre $style")
-  }
+  def setCodeClass(e: HTMLElement, style: String): Coeval[Unit] =
+    Coeval {
+      $(e).attr("class", s"exercise-pre $style")
+    }.void
 
   /** Write a message in the log of an exercise
    */
-  def writeLog(e: HTMLElement, msg: String): Coeval[Unit] = Coeval {
-    $(e).find(".log").text(msg)
-  }
+  def writeLog(e: HTMLElement, msg: String): Coeval[Unit] =
+    Coeval {
+      $(e).find(".log").text(msg)
+    }.void
 
   /** Assigns behaviors to the keyup event for inputs elements.
    */
@@ -104,7 +109,7 @@ object DomHandler {
 
   /** Shows modal for signing up
    */
-  def showSignUpModal: Coeval[Unit] = Coeval($("#mustSignUp").modal("show"))
+  def showSignUpModal: Coeval[Unit] = Coeval($("#mustSignUp").modal("show")).map(_ => ())
 
   def updateExerciseInput(
       input: HTMLInputElement,
@@ -125,53 +130,55 @@ object DomHandler {
       input: HTMLInputElement,
       onkeyup: (String, Seq[String]) ⇒ Coeval[Unit],
       onEnterPressed: String ⇒ Coeval[Unit]
-  ): Coeval[Unit] = Coeval {
-    $(input).keyup((e: dom.KeyboardEvent) ⇒ {
-      updateExerciseInput(
-        input,
-        (info: (String, Seq[String])) ⇒ {
-          val (method, params) = info
-          e.keyCode match {
-            case KeyCode.Enter ⇒ onEnterPressed(method).value
-            case _             ⇒ onkeyup(method, params).value
+  ): Coeval[Unit] =
+    Coeval {
+      $(input).keyup((e: dom.KeyboardEvent) ⇒ {
+        updateExerciseInput(
+          input,
+          (info: (String, Seq[String])) ⇒ {
+            val (method, params) = info
+            e.keyCode match {
+              case KeyCode.Enter ⇒ onEnterPressed(method).value
+              case _             ⇒ onkeyup(method, params).value
+            }
+            ()
           }
-          ()
-        }
-      )
-    })
-  }
+        )
+      })
+    }.void
 
   /** Provides support for input changes related to events like drag-and-drop and others (not pasting)
    */
   def attachOnInputChange(
       input: HTMLInputElement,
       onchange: (String, Seq[String]) ⇒ Coeval[Unit]
-  ): Coeval[Unit] = Coeval {
-    $(input).change((e: dom.Event) ⇒ {
-      updateExerciseInput(
-        input,
-        (info: (String, Seq[String])) ⇒ ()
-      )
-    })
-  }
+  ): Coeval[Unit] =
+    Coeval {
+      $(input).change((e: dom.Event) ⇒ {
+        updateExerciseInput(
+          input,
+          (info: (String, Seq[String])) ⇒ ()
+        )
+      })
+    }.void
 
   /** Provides support for input changes related to a pasting event
    */
   def attachOnInputPaste(
       input: HTMLInputElement,
       onchange: (String, Seq[String]) ⇒ Coeval[Unit]
-  ): Coeval[Unit] = Coeval {
-    $(input).bind("paste", (e: dom.Event) ⇒ {
+  ): Coeval[Unit] =
+    Coeval {
+      $(input).bind("paste", (e: dom.Event) ⇒ {
 
-      setTimeout(100.0) {
-        updateExerciseInput(
-          input,
-          (info: (String, Seq[String])) ⇒ ()
-        )
-      }
-
-    })
-  }
+        setTimeout(100.0) {
+          updateExerciseInput(
+            input,
+            (info: (String, Seq[String])) ⇒ ()
+          )
+        }
+      })
+    }.void
 
   def onButtonClick(onClick: String ⇒ Coeval[Unit]): Coeval[Unit] =
     allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ ⇒ ())
@@ -183,7 +190,7 @@ object DomHandler {
         .click((e: dom.Event) ⇒ {
           onClick(getMethodAttr(exercise)).value
         })
-    }
+    }.void
 
   def setInputWidth(input: HTMLInputElement): Coeval[JQuery] =
     Coeval($(input).width(inputSize(getInputLength(input))))
@@ -268,7 +275,7 @@ object DomHandler {
 
     def getDiv: HTMLDivElement = get[HTMLDivElement]
 
-    def all[A <: dom.Element]: Seq[A] = j.toArray().collect { case d: A ⇒ d }
+    def all[A <: dom.Element]: Seq[A] = j.toArray().collect { case d: A @unchecked ⇒ d }.toSeq
 
     def get[A <: dom.Element]: A = j.get().asInstanceOf[A]
 

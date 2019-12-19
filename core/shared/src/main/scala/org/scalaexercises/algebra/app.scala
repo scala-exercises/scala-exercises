@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,18 @@
 
 package org.scalaexercises.algebra
 
-import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.algebra.progress.{UserExercisesProgress, UserProgressOps}
 import org.scalaexercises.algebra.github.GithubOps
-import freestyle._
-import freestyle.implicits._
+import org.scalaexercises.algebra.progress.UserProgressOps
+import org.scalaexercises.algebra.user.UserOps
 
 object app {
 
-  @module
-  trait ExercisesApp {
-    val exerciseOps: ExerciseOps
-    val userOps: UserOps
-    val userProgressOps: UserProgressOps
-    val githubOps: GithubOps
+  trait ExercisesApp[F[_]] {
+    val exerciseOps: ExerciseOps[F]
+    val userOps: UserOps[F]
+    val userProgressOps: UserProgressOps[F]
+    val githubOps: GithubOps[F]
   }
 
 }

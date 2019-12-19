@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ object formatting {
 
   private[this] def unwrap(code: String): String =
     code
-      .split("\n")
+      .split('\n')
       .drop(3)
       .dropRight(2)
       .collect {
@@ -43,8 +43,8 @@ object formatting {
 
   def formatCode(code: String): String = {
     Either.catchNonFatal(ScalaFormatter.format(wrap(code))) match {
-      case Right(result) ⇒ unwrap(result)
-      case _             ⇒ code
+      case Right(result) => unwrap(result)
+      case _             => code
     }
   }
 }

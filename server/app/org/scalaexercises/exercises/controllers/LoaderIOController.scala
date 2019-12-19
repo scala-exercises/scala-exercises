@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@
 package org.scalaexercises.exercises.controllers
 
 import org.scalaexercises.exercises.Secure
-import play.api.{Application, Play}
+import play.api.{Configuration, Mode}
 import play.api.mvc._
 
-class LoaderIOController extends Controller {
-
-  implicit def application: Application = Play.current
+class LoaderIOController(conf: Configuration, components: ControllerComponents)(implicit mode: Mode)
+    extends BaseController {
 
   def verificationToken(token: String) =
     Secure(Action {
-      val maybeConf = application.configuration
-        .getString("loaderio.verificationToken", None)
+      val maybeConf = conf.getOptional[String]("loaderio.verificationToken")
       maybeConf.filter(_ == s"loaderio-$token").fold[Result](NotFound)(Ok(_))
     })
+
+  override protected def controllerComponents: ControllerComponents = components
 }

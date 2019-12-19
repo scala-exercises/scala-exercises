@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,10 @@ import scala.tools.reflect.ToolBox
 
 import org.scalaexercises.runtime.model.Library
 
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class TreeGenSpec extends FunSpec with Matchers {
+class TreeGenSpec extends AnyFunSpec with Matchers {
 
   val toolbox = scala.reflect.runtime.currentMirror.mkToolBox()
   import toolbox.u._
@@ -110,10 +111,10 @@ class TreeGenSpec extends FunSpec with Matchers {
 
   def evalLibrary(tree: Tree) = {
     val evalableTree = (tree match {
-      case q"package $name { ..$stats }" ⇒
+      case q"package $name { ..$stats }" =>
         stats
-          .collectFirst { case ModuleDef(_, libraryTerm, _) ⇒ q"..$stats;$libraryTerm" }
-      case _ ⇒ None
+          .collectFirst { case ModuleDef(_, libraryTerm, _) => q"..$stats;$libraryTerm" }
+      case _ => None
     }).getOrElse(EmptyTree)
 
     toolbox.eval(evalableTree).asInstanceOf[Library]

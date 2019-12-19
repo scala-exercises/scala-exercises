@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
 
 package org.scalaexercises.exercises.persistence.queries
 
-import doobie.specs2.analysisspec.AnalysisSpec
-import doobie.util.iolite.IOLite
+import cats.effect.IO
+import doobie.specs2.analysisspec.IOChecker
 import doobie.util.query.Query
 import doobie.util.transactor.Transactor
 import doobie.util.update.Update
@@ -30,9 +30,9 @@ import org.scalaexercises.exercises.support.DatabaseInstance
 import org.scalaexercises.types.user.User
 import org.specs2.mutable.Specification
 
-class UserQueriesSpec extends Specification with AnalysisSpec with DatabaseInstance {
+class UserQueriesSpec extends Specification with IOChecker with DatabaseInstance {
 
-  override def transactor: Transactor[IOLite] = databaseTransactor
+  override def transactor: Transactor[IO] = databaseTransactor
 
   check(Query[Unit, User](Q.all))
   check(Query[Long, User](Q.findById))

@@ -1,9 +1,9 @@
-@import play.api.Play.current
+@(config: play.api.Configuration)
 <div class="comments">
 
   <script>
     ((window.gitter = {}).chat = {}).options = {
-      room : '@current.configuration.getString("gitter.room").getOrElse("")'
+      room : '@config.getOptional[String]("gitter.room").getOrElse("")'
     };
   </script>
   <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>

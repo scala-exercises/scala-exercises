@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,23 @@
 
 package org.scalaexercises.algebra.exercises
 
+import cats.Functor
 import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
-
-import freestyle._
+import cats.implicits._
 
 /** Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
-  * Coproduct.
-  */
-@free trait ExerciseOps {
-  def getLibraries: FS[List[Library]]
+ * Coproduct.
+ */
+trait ExerciseOps[F[_]] {
 
-  def getLibrary(libraryName: String): FS[Option[Library]] =
-    getLibraries map (_.find(_.name == libraryName))
+  def getLibraries: F[List[Library]]
 
-  def getSection(libraryName: String, sectionName: String): FS[Option[Section]]
+  def getLibrary(libraryName: String)(implicit FU: Functor[F]): F[Option[Library]] =
+    getLibraries.map(_.find(_.name == libraryName))
 
-  def buildRuntimeInfo(evaluation: ExerciseEvaluation): FS[EvaluationRequest]
+  def getSection(libraryName: String, sectionName: String): F[Option[Section]]
+
+  def buildRuntimeInfo(evaluation: ExerciseEvaluation): F[EvaluationRequest]
 
 }

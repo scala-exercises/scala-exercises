@@ -1,56 +1,66 @@
-import de.heikoseeberger.sbtheader.HeaderPlugin
+import de.heikoseeberger.sbtheader
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
-import de.heikoseeberger.sbtheader.license.{Apache2_0, License}
+import de.heikoseeberger.sbtheader.License.{ALv2, Custom}
 import sbt.Keys._
 import sbt._
+import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies._
 import sbtorgpolicies.model._
-import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import scoverage.ScoverageKeys
 
 object ProjectPlugin extends AutoPlugin {
 
   override def trigger: PluginTrigger = allRequirements
 
-  override def requires: Plugins = plugins.JvmPlugin && HeaderPlugin && OrgPoliciesPlugin
+  override def requires: Plugins = OrgPoliciesPlugin
 
   object autoImport {
 
     val v: Map[Symbol, String] =
       // Scala Exercises
       Map(
-        'evaluator     -> "0.4.0-SNAPSHOT",
-        'stdlib        -> "0.4.2-SNAPSHOT",
-        'cats          -> "0.4.2-SNAPSHOT",
-        'shapeless     -> "0.4.2-SNAPSHOT",
-        'doobie        -> "0.4.2-SNAPSHOT",
-        'scalacheck    -> "0.4.2-SNAPSHOT",
-        'scalatutorial -> "0.4.2-SNAPSHOT",
-        'fpinscala     -> "0.4.2-SNAPSHOT",
-        'circe         -> "0.4.2-SNAPSHOT",
-        'fetch         -> "0.4.2-SNAPSHOT",
-        'monocle       -> "0.4.2-SNAPSHOT"
+        'stdlib        -> "0.5.0-SNAPSHOT",
+        'cats          -> "0.5.0-SNAPSHOT",
+        'shapeless     -> "0.5.0-SNAPSHOT",
+        'doobie        -> "0.5.0-SNAPSHOT",
+        'scalacheck    -> "0.5.0-SNAPSHOT",
+        'scalatutorial -> "0.5.0-SNAPSHOT",
+        'fpinscala     -> "0.5.0-SNAPSHOT",
+        'circe         -> "0.5.0-SNAPSHOT",
+        'fetch         -> "0.5.0-SNAPSHOT",
+        'monocle       -> "0.5.0-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
-        'bootstrap      -> "3.3.7",
-        'classutil      -> "1.1.2",
-        'commonsio      -> "2.5",
-        'freestyle      -> "0.1.0-SNAPSHOT",
-        'highlightjs    -> "9.2.0",
-        'knockoff       -> "0.8.3",
-        'newrelic       -> "3.29.0",
-        'postgres       -> "9.3-1102-jdbc41",
-        'scalajsscripts -> "1.0.0",
-        'scalariform    -> "0.1.8",
-        'upickle        -> "0.4.3",
-        'webjars        -> "2.5.0-4"
+        'catsversion         -> "2.0.0",
+        'doobieversion       -> "0.8.6",
+        'bootstrap           -> "3.3.7",
+        'github4s            -> "0.21.0",
+        'classutil           -> "1.5.1",
+        'commonsio           -> "2.6",
+        'highlightjs         -> "9.15.10",
+        'knockoff            -> "0.8.12",
+        'newrelic            -> "5.8.0",
+        'postgres            -> "42.2.8",
+        'scalajsscripts      -> "1.1.4",
+        'scalariform         -> "1.8.3",
+        'scalatest           -> "3.1.0",
+        'scalatestplusScheck -> "3.1.0.0-RC2",
+        'scalacheckversion   -> "1.14.2",
+        'scalacheckshapeless -> "1.2.3",
+        'upickle             -> "0.7.5",
+        'webjars             -> "2.7.3",
+        'scalamacros         -> "2.1.1",
+        'monix               -> "3.1.0",
+        'http4s              -> "0.20.15",
+        'circeversion        -> "0.12.3",
+        'bettermonadicfor    -> "0.3.1"
       ) ++ Map(
         // JS Versions
-        'jquery        -> "2.1.3",
-        'scalajsdom    -> "0.9.1",
-        'scalajsjquery -> "0.9.1",
-        'scalatags     -> "0.6.3",
-        'utest         -> "0.4.5"
+        'jquery        -> "3.4.1",
+        'scalajsdom    -> "0.9.7",
+        'scalajsjquery -> "0.9.5",
+        'scalatags     -> "0.7.0",
+        'utest         -> "0.7.1"
       )
 
     implicit class Exclude(module: ModuleID) {
@@ -70,10 +80,12 @@ object ProjectPlugin extends AutoPlugin {
 
   }
 
+  import autoImport._
+
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
       description := "Scala Exercises: The path to enlightenment",
-      startYear := Option(2016),
+      startYear := Option(2015),
       orgGithubSetting := GitHubSettings(
         organization = "scala-exercises",
         project = name.value,
@@ -83,37 +95,37 @@ object ProjectPlugin extends AutoPlugin {
         organizationEmail = "hello@47deg.com"
       ),
       orgLicenseSetting := ApacheLicense,
-      scalaVersion := "2.11.11",
+      scalaVersion := "2.12.10",
       scalaOrganization := "org.scala-lang",
-      crossScalaVersions := Seq("2.11.8"),
       resolvers ++= Seq(
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("snapshots"),
         Resolver.sonatypeRepo("releases"),
-        "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
-        "Typesafe Maven Releases" at "http://repo.typesafe.com/typesafe/maven-releases/",
-        "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-        Resolver.url("sbt-plugins", url("https://dl.bintray.com/ssidorenko/sbt-plugins/"))(
-          Resolver.ivyStylePatterns)
+        Resolver.bintrayIvyRepo("ssidorenko", "sbt-plugins"),
+        Resolver.typesafeIvyRepo("releases"),
+        Resolver.typesafeRepo("releases")
       ),
-      scalacOptions += "-Xplugin-require:macroparadise",
+      scalacOptions ++= Seq("-Xplugin-require:macroparadise", "-Ypartial-unification"),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
       fork in Test := false,
       parallelExecution in Test := false,
       cancelable in Global := true,
-      headers := Map(
-        "scala" -> ScalaExercisesLicense("2015-2017", "47 Degrees, LLC. <http://www.47deg.com>")
-      ),
+      headerLicense := Some(
+        ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
-    ) ++ scalaMacroDependencies ++ shellPromptSettings
+    ) ++ addCompilerPlugin("org.scalamacros" % "paradise"            % v('scalamacros) cross CrossVersion.full) ++
+      addCompilerPlugin("com.olegpy"         %% "better-monadic-for" % v('bettermonadicfor)) ++ shellPromptSettings
 
-  object ScalaExercisesLicense extends License {
-    override def createLicenseText(yyyy: String, copyrightOwner: String): String = {
-      val apache2License = Apache2_0.createLicenseText(yyyy, copyrightOwner)
-      s"""| scala-exercises
-          |
-          | $apache2License
-          |""".stripMargin
+  object ScalaExercisesLicense {
+
+    def apply(yyyy: String, copyrightOwner: String): sbtheader.License = {
+      val apacheLicenseText = ALv2(yyyy, copyrightOwner).text
+
+      Custom(s"""| scala-exercises
+                 |
+                 | $apacheLicenseText
+                 |""".stripMargin)
     }
+
   }
 }

@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,10 @@ import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 
 import org.scalaexercises.exercises.persistence.PersistenceModule
-import org.scalaexercises.exercises.persistence.domain._
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
-import doobie.imports._
+import doobie._
 import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries ⇒ Q}
 import Q.Implicits._
-import doobie.postgres.pgtypes._
 
 trait UserProgressRepository {
   def create(request: SaveUserProgress.Request): ConnectionIO[UserProgress]
@@ -156,18 +154,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
 }
 
 object UserProgressRepository {
-  type UpdateParams = (
-      String,
-      String,
-      String,
-      Int,
-      ExerciseType,
-      List[String],
-      Boolean,
-      Long,
-      String,
-      String,
-      String)
+  type UpdateParams =
+    (String, String, String, Int, ExerciseType, List[String], Boolean, Long, String, String, String)
   type InsertParams                   = (Long, String, String, String, Int, ExerciseType, List[String], Boolean)
   type FindEvaluationByVersionParams  = (Long, String, String, String, Int)
   type FindEvaluationsBySectionParams = (Long, String, String)

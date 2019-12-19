@@ -1,3 +1,8 @@
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots"),
+  Resolver.typesafeRepo("releases")
+)
+
 {
   val pluginVersion = System.getProperty("plugin.version")
   if (pluginVersion == null)
@@ -5,6 +10,4 @@
                                   |Specify this property using the scriptedLaunchOpts -D.""".stripMargin)
   else addSbtPlugin("org.scala-exercises" % "sbt-exercise" % pluginVersion)
 }
-
-resolvers += Resolver.typesafeRepo("releases")
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
+addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")

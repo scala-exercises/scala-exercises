@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@
 
 package org.scalaexercises.exercises
 
-import scala.concurrent.Future
-import play.api.Play
-import play.api.Play.current
+import play.api.Mode
 import play.api.mvc._
-import play.api.Logger
 
-case class Secure[A](action: Action[A]) extends Action[A] {
+import scala.concurrent.{ExecutionContext, Future}
+
+case class Secure[A](action: Action[A])(implicit mode: Mode) extends Action[A] {
   def apply(request: Request[A]): Future[Result] = {
 
     println("Request from domain: " + request.domain)
@@ -39,8 +38,7 @@ case class Secure[A](action: Action[A]) extends Action[A] {
       .getOrElse("")
       .contains("https") || request.secure
 
-    val redirect =
-      (!previewApp && Play.isProd && (!isSecure || !inWWW))
+    val redirect = !previewApp && mode == Mode.Prod && (!isSecure || !inWWW)
 
     if (redirect) {
       val secureUrl =
@@ -60,4 +58,6 @@ case class Secure[A](action: Action[A]) extends Action[A] {
   }
 
   lazy val parser = action.parser
+
+  override def executionContext: ExecutionContext = ExecutionContext.Implicits.global
 }

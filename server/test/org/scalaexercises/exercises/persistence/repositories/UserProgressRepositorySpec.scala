@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,40 +24,38 @@ package org.scalaexercises.exercises.persistence.repositories
  * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
  */
 
+import cats.effect.IO
 import org.scalaexercises.types.user.UserCreation
 import org.scalaexercises.types.progress.SaveUserProgress
 import org.scalaexercises.exercises.support.{ArbitraryInstances, DatabaseInstance}
-import doobie.imports._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Shapeless._
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-
-import scalaz.concurrent.Task
+import doobie._
+import doobie.implicits._
+import org.scalacheck.ScalacheckShapeless._
+import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalaexercises.types.user.User
 import cats.implicits._
-import doobie.util.iolite
-
-import scalaz.syntax.apply._
 
 class UserProgressRepositorySpec
-    extends PropSpec
-    with GeneratorDrivenPropertyChecks
+    extends AnyPropSpec
+    with ScalaCheckDrivenPropertyChecks
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance
     with BeforeAndAfterAll {
 
-  implicit val trx: Transactor[iolite.IOLite] = databaseTransactor
+  implicit val trx: Transactor[IO] = databaseTransactor
 
   val repository: UserProgressRepository = implicitly[UserProgressRepository]
   val userRepository: UserRepository     = implicitly[UserRepository]
 
   def assertConnectionIO(cio: ConnectionIO[Boolean]): Assertion =
-    assert(cio.transact(trx).unsafePerformIO)
+    assert(cio.transact(trx).unsafeRunSync())
 
   override def beforeAll(): Unit =
-    (repository.deleteAll() *> userRepository.deleteAll()).transact(trx).unsafePerformIO
+    (repository.deleteAll() *> userRepository.deleteAll()).transact(trx).unsafeRunSync()
 
   def newUser(usr: UserCreation.Request): ConnectionIO[User] =
     for {

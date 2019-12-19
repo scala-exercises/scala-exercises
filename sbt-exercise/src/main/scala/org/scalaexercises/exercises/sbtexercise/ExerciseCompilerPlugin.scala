@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,17 +26,17 @@ import scala.collection.mutable.ArrayBuffer
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
-import scala.language.reflectiveCalls
-
-import sbt.{`package` ⇒ _, _}
+import sbt.{`package` => _, _}
 import sbt.Keys._
-import sbt.classpath.ClasspathUtilities
 import xsbt.api.Discovery
-import cats.{`package` ⇒ _}
+import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
+import sbt.internal.inc.Analysis
+import sbt.internal.inc.classpath.ClasspathUtilities
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
+import xsbti.compile.CompileAnalysis
 
 /** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
@@ -71,17 +71,15 @@ object ExerciseCompilerPlugin extends AutoPlugin {
         (products in Compile).value
       },
 
-      sourceGenerators   <+= generateExerciseSourcesTask,
-      generateExercises  <<= generateExercisesTask
+      sourceGenerators   += generateExerciseSourcesTask,
+      generateExercises  := generateExercisesTask.value
     )) ++
     Seq(
       compile        := (compile in CompileGeneratedExercises).value,
       copyResources  := (copyResources in CompileGeneratedExercises).value,
       `package`      := (`package` in CompileGeneratedExercises).value,
-      artifacts    <++= Classpaths.artifactDefs(Seq(packageBin in CompileGeneratedExercises)),
-      artifact in (CompileGeneratedExercises, packageBin) ~= { (art: Artifact) =>
-        art.copy(classifier = None)
-      },
+      artifacts    ++= Classpaths.artifactDefs(Seq(packageBin in CompileGeneratedExercises)).value,
+      artifact in (CompileGeneratedExercises, packageBin) ~= { _.withClassifier(None)},
       ivyConfigurations   :=
         overrideConfigs(CompileGeneratedExercises, CustomCompile)(ivyConfigurations.value),
       classDirectory in CompileGeneratedExercises := (classDirectory in Compile).value,
@@ -103,9 +101,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
   def redirSettings = Seq(
     // v0.13.9/main/src/main/scala/sbt/Defaults.scala
-    sourceDirectory <<= reconfigureSub(sourceDirectory),
-    sourceManaged <<= reconfigureSub(sourceManaged),
-    resourceManaged <<= reconfigureSub(resourceManaged)
+    sourceDirectory := reconfigureSub(sourceDirectory).value,
+    sourceManaged := reconfigureSub(sourceManaged).value,
+    resourceManaged := reconfigureSub(resourceManaged).value
   )
 
   /** Helper to facilitate changing the directories. By default, a configuration
@@ -114,9 +112,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
    * back to `src/main/[scala|test|...]`.
    */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
-    (key in ThisScope.copy(config = Global), configuration) { (src, conf) ⇒
-      src / "main"
-    }
+    Def.setting { (ThisScope.copy(config = Global.config) / key).value / "main" }
 
   // for most of the work below, a captured error is an error message and/or a
   // throwable value
@@ -124,23 +120,23 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private implicit def errFromString(message: String)         = Ior.left(message)
   private implicit def errFromThrowable(throwable: Throwable) = Ior.right(throwable)
 
-  private def catching[A](f: ⇒ A)(msg: ⇒ String) =
-    Either.catchNonFatal(f).leftMap(e ⇒ Ior.both(msg, e))
+  private def catching[A](f: => A)(msg: => String) =
+    Either.catchNonFatal(f).leftMap(e => Ior.both(msg, e))
 
   /** Given an Analysis output from a compile run, this will
    * identify all modules implementing `exercise.Library`.
    */
-  private def discoverLibraries(analysis: inc.Analysis): Seq[String] =
+  private def discoverLibraries(analysis: CompileAnalysis): Seq[String] =
     Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(Tests.allDefs(analysis))
       .collect({
-        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
+        case (definition, discovered) if !discovered.isEmpty => definition.name
       })
       .sorted
 
-  private def discoverSections(analysis: inc.Analysis): Seq[String] =
+  private def discoverSections(analysis: CompileAnalysis): Seq[String] =
     Discovery(Set("org.scalaexercises.definitions.Section"), Set.empty)(Tests.allDefs(analysis))
       .collect({
-        case (definition, discovered) if !discovered.isEmpty ⇒ definition.name
+        case (definition, discovered) if !discovered.isEmpty => definition.name
       })
       .sorted
 
@@ -162,7 +158,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   def generateExercisesTask = Def.task {
     val log             = streams.value.log
     val baseDir         = (baseDirectory in Compile).value
-    lazy val analysisIn = (compile in Compile).value
+    lazy val analysisIn = (Compile / compile).value
 
     lazy val libraryNames = discoverLibraries(analysisIn)
     lazy val sectionNames = discoverSections(analysisIn)
@@ -174,7 +170,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       null,
       ClasspathUtilities.createClasspathResources(
         appPaths = Meta.compilerClasspath,
-        bootPaths = scalaInstance.value.jars
+        bootPaths = scalaInstance.value.allJars
       )
     )
 
@@ -183,9 +179,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
         .loadClass("org.scalaexercises.content.LibMetaInfo$")
     )("Unable to find LibMetaInfo class")
       .fold({
-        case Ior.Left(message) ⇒ throw new Exception(message)
-        case Ior.Right(error)  ⇒ throw error
-        case Ior.Both(message, error) ⇒
+        case Ior.Left(message) => throw new Exception(message)
+        case Ior.Right(error)  => throw error
+        case Ior.Both(message, error) =>
           log.error(message)
           throw error
       }, identity)
@@ -196,8 +192,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
     def loadLibraryModule(name: String) =
       for {
-        loadedClass ← catching(loader.loadClass(name + "$"))(s"$name not found")
-        loadedModule ← catching(loadedClass.getField("MODULE$").get(null))(
+        loadedClass <- catching(loader.loadClass(name + "$"))(s"$name not found")
+        loadedModule <- catching(loadedClass.getField("MODULE$").get(null))(
           s"$name must be defined as an object"
         )
       } yield loadedModule
@@ -208,8 +204,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     ): Either[Err, (String, String)] =
       Either.catchNonFatal {
         val sourceCodes = (libraryNames ++ sectionNames).distinct
-          .flatMap(analysisIn.relations.definesClass)
-          .map(file ⇒ (file.getPath, IO.read(file)))
+          .flatMap(analysisIn match {
+            case analysis: Analysis => analysis.relations.definesClass
+          })
+          .map(file => (file.getPath, IO.read(file)))
 
         captureStdStreams(
           fOut = log.info(_: String),
@@ -227,28 +225,28 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             )
             .toList
         }
-      } leftMap (e ⇒ e: Err) >>= {
-        case mn :: moduleSource :: Nil ⇒
-          Right(mn → moduleSource)
-        case _ ⇒
+      } leftMap (e => e: Err) >>= {
+        case mn :: moduleSource :: Nil =>
+          Right(mn -> moduleSource)
+        case _ =>
           Left("Unexpected return value from exercise compiler": Err)
       }
 
     val result = for {
-      compilerClass ← catching(loader.loadClass(COMPILER_CLASS))(
+      compilerClass <- catching(loader.loadClass(COMPILER_CLASS))(
         "Unable to find exercise compiler class"
       )
-      compiler ← catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
+      compiler <- catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
         "Unable to create instance of exercise compiler"
       )
-      libraries ← libraryNames.toList.traverseU(loadLibraryModule)
-      result    ← libraries.traverseU(invokeCompiler(compiler, _))
+      libraries <- libraryNames.toList.traverse(loadLibraryModule)
+      result    <- libraries.traverse(invokeCompiler(compiler, _))
     } yield result
 
     result.fold({
-      case Ior.Left(message) ⇒ throw new Exception(message)
-      case Ior.Right(error)  ⇒ throw error
-      case Ior.Both(message, error) ⇒
+      case Ior.Left(message) => throw new Exception(message)
+      case Ior.Right(error)  => throw error
+      case Ior.Both(message, error) =>
         log.error(message)
         throw error
     }, identity)
@@ -262,7 +260,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
     val dir = (sourceManaged in Compile).value
     generated.map {
-      case (n, code) ⇒
+      case (n, code) =>
         val file = dir / (n.replace(".", "/") + ".scala")
         IO.write(file, code)
         log.info(s"Generated library at $file")
@@ -271,9 +269,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   }
 
   private[this] def captureStdStreams[T](
-      fOut: (String) ⇒ Unit,
-      fErr: (String) ⇒ Unit
-  )(thunk: ⇒ T): T = {
+      fOut: (String) => Unit,
+      fErr: (String) => Unit
+  )(thunk: => T): T = {
     val originalOut = System.out
     val originalErr = System.err
     System.setOut(new PrintStream(new LineByLineOutputStream(fOut), true))
@@ -289,7 +287,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
    * @param f the function to invoke with each line
    */
   private[this] class LineByLineOutputStream(
-      f: (String) ⇒ Unit
+      f: (String) => Unit
   ) extends OutputStream {
     val ls                     = System.getProperty("line.separator")
     val buf                    = new ArrayBuffer[Byte](200)

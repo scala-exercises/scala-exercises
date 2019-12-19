@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,14 @@
 package org.scalaexercises.compiler
 
 import org.scalaexercises.definitions.{BuildInfo, Library}
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.reflect.internal.util.{AbstractFileClassLoader, BatchSourceFile}
 import scala.tools.nsc.io.VirtualDirectory
 import scala.tools.nsc.{Global, Settings}
 
-class CompilerSpec extends FunSpec with Matchers {
+class CompilerSpec extends AnyFunSpec with Matchers {
 
   val metaInfoCode =
     """
@@ -111,7 +112,7 @@ class CompilerSpec extends FunSpec with Matchers {
         "/",
         "sample",
         fetchContributors = false)
-      assert(res.isRight, s"""; ${res.fold(identity, _ ⇒ "")}""")
+      assert(res.isRight, s"""; ${res.fold(identity, _ => "")}""")
     }
 
     it("fails if sections list is empty") {
@@ -143,7 +144,7 @@ class CompilerSpec extends FunSpec with Matchers {
         "/",
         "sample",
         fetchContributors = false)
-      assert(res.isLeft, s"""; ${res.fold(identity, _ ⇒ "")}""")
+      assert(res.isLeft, s"""; ${res.fold(identity, _ => "")}""")
     }
   }
 

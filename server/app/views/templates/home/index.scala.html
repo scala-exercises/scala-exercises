@@ -2,15 +2,15 @@
 @import org.scalaexercises.types.progress._
 @import org.scalaexercises.types.exercises._
 @import org.scalaexercises.types.github.Repository
-@import play.api.Play.current
-@(user: Option[User] = None, libraries: List[Library] = Nil, progress: OverallUserProgress, redirectUrl: Option[String] = Some("#"), repo: Repository)(implicit request: RequestHeader)
+@(user: Option[User] = None, libraries: List[Library] = Nil, progress: OverallUserProgress, redirectUrl: Option[String] = Some("#"), repo: Repository, config: play.api.Configuration)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     @templates.base.head(
-      current.configuration.getString("application.name").getOrElse("Scala Exercises"),
-      current.configuration.getString("application.description").getOrElse(""))
+      config.getOptional[String]("application.name").getOrElse("Scala Exercises"),
+      config.getOptional[String]("application.description").getOrElse(""),
+      config)
   </head>
   <body>
     <header class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -43,8 +43,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-8 col-md-offset-2">
-            <h1>@current.configuration.getString("application.tagline").getOrElse("")</h1>
-            <p>@current.configuration.getString("application.description").getOrElse("")</p>
+            <h1>@config.getOptional[String]("application.tagline").getOrElse("")</h1>
+            <p>@config.getOptional[String]("application.description").getOrElse("")</p>
 
             <div class="github-details">
 

@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,45 +19,40 @@
 
 package org.scalaexercises.exercises.persistence.repositories
 
-/*
- * scala-exercises-server
- * Copyright (C) 2015-2016 47 Degrees, LLC. <http://www.47deg.com>
- */
-
+import cats.effect.IO
+import cats.implicits._
 import org.scalaexercises.types.user.UserCreation
 import org.scalaexercises.types.user.UserCreation.Request
 import org.scalaexercises.exercises.support.{ArbitraryInstances, DatabaseInstance}
-import doobie.imports._
+import doobie.implicits._
+import doobie._
 import org.scalacheck.Arbitrary
-import org.scalacheck.Shapeless._
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-
-import scalaz.concurrent.Task
-import scalaz.syntax.applicative._
-import cats.syntax.either._
-import doobie.util.iolite
+import org.scalacheck.ScalacheckShapeless._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 class UserRepositorySpec
-    extends PropSpec
-    with GeneratorDrivenPropertyChecks
+    extends AnyPropSpec
+    with ScalaCheckDrivenPropertyChecks
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance
     with BeforeAndAfterAll {
 
-  implicit val trx: Transactor[iolite.IOLite] = databaseTransactor
+  implicit val trx: Transactor[IO] = databaseTransactor
 
   val repository: UserRepository = implicitly[UserRepository]
 
   override def beforeAll(): Unit =
-    repository.deleteAll.transact(trx).unsafePerformIO
+    repository.deleteAll().transact(trx).unsafeRunSync()
 
   // Generators
   implicitly[Arbitrary[UserCreation.Request]]
 
   def assertConnectionIO(cio: ConnectionIO[Boolean]): Assertion =
-    assert(cio.transact(trx).unsafePerformIO)
+    assert(cio.transact(trx).unsafeRunSync())
 
   // Properties
   property("new users can be created") {
@@ -76,7 +71,7 @@ class UserRepositorySpec
       val get    = repository.getByLogin(newUser.login)
 
       val tx: ConnectionIO[Boolean] =
-        (create *> get).map { storedUser ⇒
+        create *> get map { storedUser ⇒
           storedUser.forall(u ⇒ u == newUser.asUser(u.id))
         }
 

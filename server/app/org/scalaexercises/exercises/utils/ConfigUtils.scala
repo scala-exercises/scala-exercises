@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,26 @@
 
 package org.scalaexercises.exercises.utils
 
-import play.api.{Application, Play}
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 
-import scala.concurrent.duration._
+@Singleton
+case class ConfigUtils @Inject()(conf: Configuration) {
 
-object ConfigUtils {
+  lazy val githubAuthId: String     = getConfigString("github.client.id")
+  lazy val githubAuthSecret: String = getConfigString("github.client.secret")
+  lazy val githubSiteOwner: String  = getConfigString("github.site.owner")
+  lazy val githubSiteRepo: String   = getConfigString("github.site.repo")
 
-  implicit def application: Application = Play.current
-
-  lazy val githubAuthId     = getConfigString("github.client.id")
-  lazy val githubAuthSecret = getConfigString("github.client.secret")
-  lazy val githubSiteOwner  = getConfigString("github.site.owner")
-  lazy val githubSiteRepo   = getConfigString("github.site.repo")
-
-  lazy val evaluatorUrl     = getConfigString("evaluator.url")
-  lazy val evaluatorAuthKey = getConfigString("evaluator.authKey")
+  lazy val evaluatorUrl: String     = getConfigString("evaluator.url")
+  lazy val evaluatorAuthKey: String = getConfigString("evaluator.authKey")
 
   private[this] def getConfigString(key: String): String =
-    application.configuration.getString(key).getOrElse("")
+    conf.getOptional[String](key).getOrElse("")
 
-  def callbackUrl = {
-    val rootUrl = application.configuration
-      .getString("application.url")
+  def callbackUrl: String = {
+    val rootUrl = conf
+      .getOptional[String]("application.url")
       .getOrElse(
         throw new IllegalStateException(
           "The `application.url` setting must be present for computing the Oauth callback URL"

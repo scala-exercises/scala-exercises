@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,57 +20,55 @@
 package org.scalaexercises.client
 package scripts
 
-import utils.DomHandler._
-
-import scala.scalajs.js
-import scala.concurrent.Future
-
-import monix.cats._
 import monix.eval.Coeval
-
-import model._
-import model.Exercises._
-import actions._
-import ui.UI
-import state.State
-import effects.Effects
-
+import monix.execution.Scheduler.Implicits.{global => scheduler}
 import monix.reactive._
 import monix.reactive.subjects._
-import monix.execution.Scheduler.Implicits.{global ⇒ scheduler}
+import org.scalaexercises.client.actions._
+import org.scalaexercises.client.effects.Effects
+import org.scalaexercises.client.model.Exercises._
+import org.scalaexercises.client.state.State
+import org.scalaexercises.client.ui.UI
+import org.scalaexercises.client.utils.DomHandler._
 
-object ExercisesJS extends js.JSApp {
-  def main(): Unit = {
+import scala.concurrent.Future
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+
+@JSExportTopLevel("ExercisesJS")
+object ExercisesJS {
+  @JSExport
+  def main(args: Array[String]): Unit = {
 
     // A subject where every program action is published
     val actions = BehaviorSubject[Action](Start)
 
     // State is the reduction of the initial state and the stream of actions
     val state: Observable[State] = actions.scan(Nil: State)(State.update)
-    // A stream of (State, Action) pairs that emits a value each time the state is affected
-    // by an action
-    val stateAndAction: Observable[(State, Action)] = state.zip(actions)
     // UI modifications
-    val ui: Observable[Coeval[Unit]] = Observable.zipMap2(state, actions)(UI.update _)
+    val ui: Observable[Coeval[Unit]] = Observable.zipMap2(state, actions)(UI.update)
 
     // Effects that can trigger further actions
     val effects: Observable[Future[Option[Action]]] =
-      Observable.zipMap2(state, actions)(Effects.perform _)
+      Observable.zipMap2(state, actions)(Effects.perform)
 
-    def triggerAction(action: Action): Coeval[Unit] = Coeval {
-      actions.onNext(action)
-    }
+    def triggerAction(action: Action): Coeval[Unit] =
+      Coeval {
+        actions.onNext(action)
+      }.void
 
-    def wireObservables: Coeval[Unit] = Coeval {
-      ui.foreach(ioAction ⇒ {
-        ioAction.value
-      })
-      effects.foreach((f: Future[Option[Action]]) ⇒ {
-        f.foreach(m ⇒ {
-          m.foreach(a ⇒ actions.onNext(a))
+    def wireObservables: Coeval[Unit] =
+      Coeval {
+        ui.foreach(ioAction ⇒ {
+          ioAction.value
         })
-      })
-    }
+        effects.foreach((f: Future[Option[Action]]) ⇒ {
+          f.foreach(m ⇒ {
+            m.foreach { a ⇒
+              actions.onNext(a)
+            }
+          })
+        })
+      }.void
 
     def startInteraction: Coeval[Unit] = {
       for {

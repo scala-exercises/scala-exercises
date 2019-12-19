@@ -1,7 +1,7 @@
 /*
  *  scala-exercises
  *
- *  Copyright 2015-2017 47 Degrees, LLC. <http://www.47deg.com>
+ *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 
 package org.scalaexercises.runtime
 
-import org.scalaexercises.runtime.model._
-
 import scala.collection.immutable.List
 import scala.reflect.ClassTag
 import java.net.URLClassLoader
@@ -28,16 +26,25 @@ import java.io.File
 
 import cats.implicits._
 import org.clapper.classutil.ClassFinder
-import org.scalaexercises.evaluator.Dependency
+import org.objectweb.asm.Opcodes
+import org.scalaexercises.evaluator.types.Dependency
+import org.scalaexercises.runtime.model._
+
+import scala.util.Try
 
 object Exercises {
   val LIBRARIES_PACKAGE = "org.scalaexercises.content"
 
   private[this] def classMap(cl: ClassLoader) = {
-    val files       = cl.asInstanceOf[URLClassLoader].getURLs map (_.getFile)
-    val classFinder = ClassFinder(files map (new File(_)) filter (f ⇒ f.exists()))
-    val classes     = classFinder.getClasses.toIterator
-    ClassFinder.classInfoMap(classes)
+    val files = cl
+      .asInstanceOf[URLClassLoader]
+      .getURLs
+      .map(url => new File(url.getFile)) filter (_.exists)
+    val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
+    val classes = classFinder.getClasses
+      .filter(Try(_).isSuccess)
+      .toList
+    ClassFinder.classInfoMap(classes.iterator)
   }
 
   private[this] def subclassesOf[A: ClassTag](cl: ClassLoader): List[String] = {
