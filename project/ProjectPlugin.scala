@@ -45,7 +45,7 @@ object ProjectPlugin extends AutoPlugin {
         'scalariform         -> "1.8.3",
         'scalatest           -> "3.1.0",
         'scalatestplusScheck -> "3.1.0.0-RC2",
-        'scalacheckversion   -> "1.14.2",
+        'scalacheckversion   -> "1.14.3",
         'scalacheckshapeless -> "1.2.3",
         'upickle             -> "0.7.5",
         'webjars             -> "2.7.3",
