@@ -134,7 +134,7 @@ class Components(context: Context)
 
   override lazy val router = generateRoutes
 
-  applicationLifecycle.addStopHook({ () ⇒
+  applicationLifecycle.addStopHook({ () =>
     transactorResource.flatMap(_._2).unsafeRunSync()
     Future(wsClient.close())
   })

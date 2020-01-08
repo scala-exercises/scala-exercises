@@ -44,7 +44,7 @@ object Codecs {
         ("code", Json.fromString(req.code))
     ))
 
-  implicit val encodeDependency: Encoder[Dependency] = Encoder.instance(
+  implicit val encodeDependency: Encoder[EvaluatorDependency] = Encoder.instance(
     dep =>
       Json.obj(
         ("groupId", Json.fromString(dep.groupId)),

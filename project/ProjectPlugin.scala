@@ -16,10 +16,13 @@ object ProjectPlugin extends AutoPlugin {
 
   object autoImport {
 
+    val scala_212 = "2.12.10"
+    val scala_213 = "2.13.1"
+
     val v: Map[Symbol, String] =
       // Scala Exercises
       Map(
-        'stdlib        -> "0.5.0-SNAPSHOT",
+        'stdlib        -> "0.6.0-SNAPSHOT",
         'cats          -> "0.5.0-SNAPSHOT",
         'shapeless     -> "0.5.0-SNAPSHOT",
         'doobie        -> "0.5.0-SNAPSHOT",
@@ -51,7 +54,7 @@ object ProjectPlugin extends AutoPlugin {
         'webjars             -> "2.7.3",
         'scalamacros         -> "2.1.1",
         'monix               -> "3.1.0",
-        'http4s              -> "0.20.15",
+        'http4s              -> "0.21.0-M6",
         'circeversion        -> "0.12.3",
         'bettermonadicfor    -> "0.3.1"
       ) ++ Map(
@@ -95,17 +98,17 @@ object ProjectPlugin extends AutoPlugin {
         organizationEmail = "hello@47deg.com"
       ),
       orgLicenseSetting := ApacheLicense,
-      scalaVersion := "2.12.10",
+      scalaVersion := scala_213,
       scalaOrganization := "org.scala-lang",
       resolvers ++= Seq(
         Resolver.mavenLocal,
         Resolver.sonatypeRepo("snapshots"),
         Resolver.sonatypeRepo("releases"),
         Resolver.bintrayIvyRepo("ssidorenko", "sbt-plugins"),
+        Resolver.bintrayRepo("eed3si9n", "sbt-plugins"),
         Resolver.typesafeIvyRepo("releases"),
         Resolver.typesafeRepo("releases")
       ),
-      scalacOptions ++= Seq("-Xplugin-require:macroparadise", "-Ypartial-unification"),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
       fork in Test := false,
       parallelExecution in Test := false,
@@ -113,8 +116,7 @@ object ProjectPlugin extends AutoPlugin {
       headerLicense := Some(
         ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
-    ) ++ addCompilerPlugin("org.scalamacros" % "paradise"            % v('scalamacros) cross CrossVersion.full) ++
-      addCompilerPlugin("com.olegpy"         %% "better-monadic-for" % v('bettermonadicfor)) ++ shellPromptSettings
+    ) ++ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % v('bettermonadicfor)) ++ shellPromptSettings
 
   object ScalaExercisesLicense {
 

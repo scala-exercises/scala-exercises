@@ -90,7 +90,7 @@ object ExercisesSpec extends TestSuite {
 
       val exercise = clientExercise(method = "foo", args = Seq("one", "two"))
       assert(
-        Exercises.findByMethod(List(exercise), "foo").fold(false)(e ⇒ e == exercise)
+        Exercises.findByMethod(List(exercise), "foo").fold(false)(e => e == exercise)
       )
     }
 
@@ -100,7 +100,7 @@ object ExercisesSpec extends TestSuite {
       val newState         = Exercises.updateByMethod(state, "foo", updatedArguments)
       val newExercise      = Exercises.findByMethod(newState, "foo")
       assert(newExercise != None)
-      newExercise.foreach { ex ⇒
+      newExercise.foreach { ex =>
         assert(ex.arguments == updatedArguments)
       }
     }

@@ -19,7 +19,7 @@
 
 package org.scalaexercises.exercises.persistence.domain
 
-import github4s.free.domain.{User ⇒ GHUser}
+import github4s.free.domain.{User => GHUser}
 import org.scalaexercises.types.user.User
 
 object UserCreation {

@@ -136,7 +136,7 @@ case class Compiler() {
             .traverse(
               internal
                 .instanceToClassSymbol(_)
-                .flatMap(symbol ⇒ maybeMakeSectionInfo(library, symbol)))
+                .flatMap(symbol => maybeMakeSectionInfo(library, symbol)))
         }
       } yield
         LibraryInfo(
@@ -332,7 +332,7 @@ case class Compiler() {
     def instanceToClassSymbol(instance: AnyRef) =
       Either
         .catchNonFatal(mirror.classSymbol(instance.getClass))
-        .leftMap(e ⇒ s"Unable to get module symbol for $instance due to: $e")
+        .leftMap(e => s"Unable to get module symbol for $instance due to: $e")
 
     def resolveComment(path: List[String]) /*: Either[String, Comment] */ =
       Either.fromOption(

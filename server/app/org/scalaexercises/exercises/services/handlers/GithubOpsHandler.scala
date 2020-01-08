@@ -33,7 +33,7 @@ import scalaj.http.HttpResponse
 class GithubOpsHandler[F[_]](implicit F: Sync[F]) extends GithubOps[F] {
 
   implicit val gitHubTaskCaptureInstance = new GithubCapture[F] {
-    override def capture[A](a: ⇒ A): F[A] = F.delay(a)
+    override def capture[A](a: => A): F[A] = F.delay(a)
   }
 
   implicit val githubInterpreter: GithubInterpreters[F, HttpResponse[String]] =
@@ -45,7 +45,7 @@ class GithubOpsHandler[F[_]](implicit F: Sync[F]) extends GithubOps[F] {
       scopes: List[String]): F[Authorize] = {
     val ghResponse =
       Github().auth.authorizeUrl(clientId, redirectUri, scopes).exec[F, HttpResponse[String]]()
-    ghResponseToEntity(ghResponse)(auth ⇒ Authorize(auth.url, auth.state))
+    ghResponseToEntity(ghResponse)(auth => Authorize(auth.url, auth.state))
   }
 
   override def getAccessToken(
@@ -57,13 +57,13 @@ class GithubOpsHandler[F[_]](implicit F: Sync[F]) extends GithubOps[F] {
     val ghResponse = Github().auth
       .getAccessToken(clientId, clientSecret, code, redirectUri, state)
       .exec[F, HttpResponse[String]]()
-    ghResponseToEntity(ghResponse)(token ⇒ OAuthToken(token.access_token))
+    ghResponseToEntity(ghResponse)(token => OAuthToken(token.access_token))
   }
 
   override def getAuthUser(accessToken: Option[String]): F[GithubUser] = {
     val ghResponse = Github(accessToken).users.getAuth.exec[F, HttpResponse[String]]()
     ghResponseToEntity(ghResponse)(
-      user ⇒
+      user =>
         GithubUser(
           login = user.login,
           name = user.name,
@@ -77,7 +77,7 @@ class GithubOpsHandler[F[_]](implicit F: Sync[F]) extends GithubOps[F] {
     val ghResponse =
       Github(sys.env.get("GITHUB_TOKEN")).repos.get(owner, repo).exec[F, HttpResponse[String]]()
     ghResponseToEntity(ghResponse)(
-      repo ⇒
+      repo =>
         Repository(
           subscribers = repo.status.subscribers_count.getOrElse(0),
           stargazers = repo.status.stargazers_count,
@@ -85,9 +85,9 @@ class GithubOpsHandler[F[_]](implicit F: Sync[F]) extends GithubOps[F] {
       ))
   }
 
-  private def ghResponseToEntity[A, B](response: F[GHResponse[A]])(f: A ⇒ B): F[B] =
+  private def ghResponseToEntity[A, B](response: F[GHResponse[A]])(f: A => B): F[B] =
     response.flatMap {
-      case Right(GHResult(result, _, _)) ⇒ F.pure(f(result))
-      case Left(e)                       ⇒ F.raiseError[B](e)
+      case Right(GHResult(result, _, _)) => F.pure(f(result))
+      case Left(e)                       => F.raiseError[B](e)
     }
 }

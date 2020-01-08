@@ -35,13 +35,14 @@ trait UserProgressOps[F[_]] {
 
   def getLastSeenSection(user: User, library: String): F[Option[String]]
 
-  def getSolvedExerciseCount(user: User, library: String, section: String)(
+  def getSolvedExerciseCount(user: User, library: String, section: Section)(
       implicit F: Functor[F]): F[Int] =
-    getExerciseEvaluations(user, library, section).map(tried ⇒ tried.count(_.succeeded))
+    getExerciseEvaluations(user, library, section.name).map(tried =>
+      tried.count(UP => UP.succeeded && section.exercises.exists(_.method == UP.method)))
 
   def isSectionCompleted(user: User, libraryName: String, section: Section)(
       implicit F: Functor[F]): F[Boolean] =
-    getSolvedExerciseCount(user, libraryName, section.name).map(solvedExercises =>
+    getSolvedExerciseCount(user, libraryName, section).map(solvedExercises =>
       solvedExercises == section.exercises.size)
 
 }

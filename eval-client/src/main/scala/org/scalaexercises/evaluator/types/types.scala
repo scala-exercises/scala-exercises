@@ -34,7 +34,7 @@ object EvalResult {
 import org.scalaexercises.evaluator.types.EvalResult._
 
 final case class Exclusion(organization: String, moduleName: String)
-final case class Dependency(
+final case class EvaluatorDependency(
     groupId: String,
     artifactId: String,
     version: String,
@@ -42,7 +42,7 @@ final case class Dependency(
 
 final case class EvalRequest(
     resolvers: List[String] = Nil,
-    dependencies: List[Dependency] = Nil,
+    dependencies: List[EvaluatorDependency] = Nil,
     code: String)
 
 final case class EvalResponse(

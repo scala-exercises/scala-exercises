@@ -38,10 +38,10 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
     extends BaseController {
 
   def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) =
-    Secure(Action.async { implicit request ⇒
+    Secure(Action.async { implicit request =>
       (codeOpt, stateOpt, request.session.get("oauth-state")).tupled
         .fold(IO.pure(BadRequest("Missing `code` or `state`"))) {
-          case (code, state, oauthState) ⇒
+          case (code, state, oauthState) =>
             if (state == oauthState) {
               githubOps
                 .getAccessToken(
@@ -51,7 +51,7 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
                   configUtils.callbackUrl,
                   state)
                 .map { ot =>
-                  Redirect(configUtils.successUrl).withSession("oauth-token" → ot.accessToken)
+                  Redirect(configUtils.successUrl).withSession("oauth-token" -> ot.accessToken)
                 }
             } else IO.pure(BadRequest("Invalid github login"))
         }
@@ -70,21 +70,21 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
 
   def success() =
     Secure(Action.async {
-      implicit request ⇒
+      implicit request =>
         request.session
           .get("oauth-token")
-          .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken ⇒
+          .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken =>
             val ops = for {
-              ghuser ← githubOps.getAuthUser(Some(accessToken))
-              user   ← userOps.getOrCreate(createUserRequest(ghuser))
+              ghuser <- githubOps.getAuthUser(Some(accessToken))
+              user   <- userOps.getOrCreate(createUserRequest(ghuser))
             } yield (ghuser, user)
 
             ops.map {
-              case (ghu, u) ⇒
+              case (ghu, u) =>
                 Redirect(request.headers.get("referer") match {
-                  case Some(url) if !url.contains("github") ⇒ url
-                  case _                                    ⇒ "/"
-                }).withSession("oauth-token" → accessToken, "user" → ghu.login)
+                  case Some(url) if !url.contains("github") => url
+                  case _                                    => "/"
+                }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
             }
           }
           .unsafeToFuture()

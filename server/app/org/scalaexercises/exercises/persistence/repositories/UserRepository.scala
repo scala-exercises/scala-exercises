@@ -21,7 +21,7 @@ package org.scalaexercises.exercises.persistence.repositories
 
 import org.scalaexercises.types.user._
 import org.scalaexercises.exercises.persistence.PersistenceModule
-import org.scalaexercises.exercises.persistence.domain.{UserQueries ⇒ Q}
+import org.scalaexercises.exercises.persistence.domain.{UserQueries => Q}
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
 
 import doobie._
@@ -59,13 +59,13 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
     val UserCreation.Request(login, name, githubId, pictureUrl, githubUrl, email) = request
 
     for {
-      _ ← persistence
+      _ <- persistence
         .updateWithGeneratedKeys[InsertParams, User](
           Q.insert,
           Q.allFields,
           (login, name, githubId, pictureUrl, githubUrl, email)
         )
-      user ← getByLogin(login)
+      user <- getByLogin(login)
     } yield Either.fromOption(user, UserCreation.DuplicateName)
   }
 
@@ -76,13 +76,13 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
 
   def update(user: User): ConnectionIO[Option[User]] =
     for {
-      _ ← persistence
+      _ <- persistence
         .updateWithGeneratedKeys[UpdateParams, User](
           Q.update,
           Q.allFields,
           (user.name, user.githubId, user.pictureUrl, user.githubUrl, user.email, user.id)
         )
-      maybeUser ← getById(user.id)
+      maybeUser <- getById(user.id)
     } yield maybeUser
 }
 

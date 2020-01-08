@@ -38,7 +38,7 @@ import org.scalajs.dom.ext.{Ajax, AjaxException}
 object Client {
   def readProgress(library: String, section: String, raw: String): List[ClientExercise] = {
     val parsedBody = read[SectionExercises](raw)
-    parsedBody.exercises.map(e ⇒ {
+    parsedBody.exercises.map(e => {
       ClientExercise(
         library = library,
         section = section,
@@ -54,9 +54,9 @@ object Client {
     Ajax
       .get(url)
       .collect({
-        case r if r.ok ⇒ Some(readProgress(library, section, r.responseText))
+        case r if r.ok => Some(readProgress(library, section, r.responseText))
       })
-      .recover({ case exc: AjaxException ⇒ None })
+      .recover({ case exc: AjaxException => None })
   }
 
   val SERVER_ERROR = "There was a problem evaluating your answer, please try again later."
@@ -70,11 +70,11 @@ object Client {
     val request = EvaluationRequest(e.library, e.section, e.method, 1, "Koans", e.arguments)
     Ajax
       .postAsJson(url, write(request))
-      .map(r ⇒ {
+      .map(r => {
         EvaluationResult(true, e.method)
       })
       .recover({
-        case exc: AjaxException ⇒ {
+        case exc: AjaxException => {
           EvaluationResult(
             false,
             e.method,

@@ -33,18 +33,18 @@ object Effects {
   def noop: Future[Option[Action]] = Future(None)
 
   def perform(s: State, a: Action): Future[Option[Action]] = a match {
-    case Start                   ⇒ loadInitialData
-    case CompileExercise(method) ⇒ compileExercise(s, method)
-    case _                       ⇒ noop
+    case Start                   => loadInitialData
+    case CompileExercise(method) => compileExercise(s, method)
+    case _                       => noop
   }
 
   def loadInitialData: Future[Option[Action]] = {
-    DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection ⇒ {
+    DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection => {
       val (lib, sect) = libAndSection
       Client
         .fetchProgress(lib, sect)
         .collect({
-          case Some(state) ⇒ {
+          case Some(state) => {
             Some(SetState(validateState(state)))
           }
         })
@@ -53,16 +53,16 @@ object Effects {
 
   def compileExercise(s: State, method: String): Future[Option[Action]] =
     findByMethod(s, method) match {
-      case Some(exercise) if exercise.isFilled ⇒
+      case Some(exercise) if exercise.isFilled =>
         Client
           .compileExercise(exercise)
-          .map(result ⇒ {
+          .map(result => {
             if (result.ok)
               Some(CompilationOk(result.method))
             else
               Some(CompilationFail(result.method, result.msg))
           })
-      case _ ⇒ noop
+      case _ => noop
     }
 
   def validateState(state: List[ClientExercise]): List[ClientExercise] =

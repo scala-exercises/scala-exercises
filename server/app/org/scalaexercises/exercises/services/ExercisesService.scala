@@ -35,7 +35,7 @@ import org.scalaexercises.runtime.model.{
   Section => RuntimeSection
 }
 import org.scalaexercises.runtime.{Exercises, Timestamp}
-import org.scalaexercises.types.evaluator.Dependency
+import org.scalaexercises.types.evaluator.CoreDependency
 import org.scalaexercises.types.exercises._
 import play.api.Logger
 
@@ -44,12 +44,12 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
   private lazy val logger = Logger(this.getClass)
 
-  lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries(cl)
+  lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries()
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
-    errors.foreach(error ⇒ logger.warn(s"$error")) // TODO: handle errors better?
-    (libraries1, libraries1.map(lib ⇒ lib.name → lib.sections).toMap)
+    errors.foreach(error => logger.warn(s"$error")) // TODO: handle errors better?
+    (libraries1, libraries1.map(lib => lib.name -> lib.sections).toMap)
   }
 
   def section(libraryName: String, name: String): Option[Section] =
@@ -59,19 +59,19 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
     val runtimeInfo: Either[String, (RuntimeBuildInfo, String, List[String])] = for {
 
-      runtimeLibrary ← Either.fromOption(
+      runtimeLibrary <- Either.fromOption(
         runtimeLibraries.find(_.name == evaluation.libraryName),
         s"Unable to find library ${evaluation.libraryName} when " +
           s"attempting to evaluate method ${evaluation.method}"
       )
 
-      runtimeSection ← Either.fromOption(
+      runtimeSection <- Either.fromOption(
         runtimeLibrary.sections.find(_.name == evaluation.sectionName),
         s"Unable to find section ${evaluation.sectionName} when " +
           s"attempting to evaluate method ${evaluation.method}"
       )
 
-      runtimeExercise ← Either.fromOption(
+      runtimeExercise <- Either.fromOption(
         runtimeSection.exercises.find(_.qualifiedMethod == evaluation.method),
         s"Unable to find exercise for method ${evaluation.method}"
       )
@@ -79,7 +79,7 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
     } yield (runtimeLibrary.buildMetaInfo, runtimeExercise.packageName, runtimeExercise.imports)
 
     runtimeInfo map {
-      case (b: RuntimeBuildInfo, pckgName: String, importList: List[String]) ⇒
+      case (b: RuntimeBuildInfo, pckgName: String, importList: List[String]) =>
         val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
           pckgName,
           evaluation.method,
@@ -91,7 +91,7 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
         (
           resolvers,
-          dependencies map (d ⇒ Dependency(d.groupId, d.artifactId, d.version)),
+          dependencies map (d => CoreDependency(d.groupId, d.artifactId, d.version)),
           code
         )
 
@@ -100,7 +100,7 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
   def reorderLibraries(topLibNames: List[String], libraries: List[Library]): List[Library] = {
     val topLibIndex = topLibNames.zipWithIndex.toMap
-    libraries.sortBy(lib ⇒ topLibIndex.getOrElse(lib.name, Integer.MAX_VALUE))
+    libraries.sortBy(lib => topLibIndex.getOrElse(lib.name, Integer.MAX_VALUE))
   }
 }
 
@@ -127,12 +127,12 @@ sealed trait RuntimeSharedConversions {
     )
 
     libraries
-      .traverse { library ⇒
+      .traverse { library =>
         if (library.color.isEmpty) {
-          State[Colors, RuntimeLibrary] { colors ⇒
+          State[Colors, RuntimeLibrary] { colors =>
             val (color, colors0) = colors match {
-              case head :: tail ⇒ Some(head) → tail
-              case Nil          ⇒ None       → Nil
+              case head :: tail => Some(head) -> tail
+              case Nil          => None       -> Nil
             }
             val library0 = DefaultLibrary(
               owner = library.owner,
@@ -176,7 +176,7 @@ sealed trait RuntimeSharedConversions {
 
     def logoData(path: String): Option[String] =
       Option(getClass.getClassLoader.getResourceAsStream(path))
-        .map(stream ⇒ Base64.getMimeEncoder.encodeToString(IOUtils.toByteArray(stream)))
+        .map(stream => Base64.getMimeEncoder.encodeToString(IOUtils.toByteArray(stream)))
 
     val logoPathOrDefault =
       if (checkLogoPath()) logoPath + ".svg" else "public/images/library_default_logo.svg"

@@ -91,9 +91,7 @@ class SourceTextExtraction {
       val rawImports = extraction.imports
       val paths      = rawImports.map(expandPath)
 
-      val imports = paths
-        .groupBy(_._1)
-        .mapValues(_.map(_._2))
+      val imports = paths.groupBy(_._1).mapValues(_.map(_._2))
 
       val methods = extraction.methods.map(expandPath).map {
         case (k, v) =>

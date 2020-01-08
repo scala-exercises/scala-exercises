@@ -5,7 +5,8 @@ logLevel := Level.Warn
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
   Resolver.typesafeRepo("http://repo.typesafe.com/typesafe/maven-releases/"),
-  Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/")
+  Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/"),
+  Resolver.bintrayRepo("eed3si9n", "sbt-plugins")
 )
 
 // Sbt plugins
