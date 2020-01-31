@@ -21,6 +21,7 @@ package org.scalaexercises.compiler
 
 import scala.annotation.tailrec
 
+import scala.collection.compat._
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc._
 import scala.tools.nsc.doc.{Settings => _, _}
@@ -91,7 +92,7 @@ class SourceTextExtraction {
       val rawImports = extraction.imports
       val paths      = rawImports.map(expandPath)
 
-      val imports = paths.groupBy(_._1).mapValues(_.map(_._2))
+      val imports = paths.groupBy(_._1).view.mapValues(_.map(_._2)).toMap
 
       val methods = extraction.methods.map(expandPath).map {
         case (k, v) =>
