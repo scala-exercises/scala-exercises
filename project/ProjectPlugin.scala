@@ -58,7 +58,7 @@ object ProjectPlugin extends AutoPlugin {
         // JS Versions
         'jquery        -> "3.4.1",
         'scalajsdom    -> "0.9.8",
-        'scalajsjquery -> "0.9.5",
+        'scalajsjquery -> "0.9.6",
         'scalatags     -> "0.7.0",
         'utest         -> "0.7.1"
       )
