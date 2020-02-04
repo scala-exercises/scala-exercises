@@ -20,7 +20,6 @@
 package org.scalaexercises.exercises.persistence.queries
 
 import cats.effect.IO
-import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries => Q}
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._

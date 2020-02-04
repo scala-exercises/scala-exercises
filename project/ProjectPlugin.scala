@@ -111,6 +111,7 @@ object ProjectPlugin extends AutoPlugin {
         Resolver.typesafeIvyRepo("releases"),
         Resolver.typesafeRepo("releases")
       ),
+      scalacOptions ~= (_ filterNot (_ == "-Xfuture")),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
       fork in Test := false,
       parallelExecution in Test := false,

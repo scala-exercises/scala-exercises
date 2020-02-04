@@ -26,7 +26,7 @@ import model._
 import factories.Factories._
 
 object ClientExerciseSpec extends TestSuite {
-  def tests = TestSuite {
+  def tests = Tests {
     "isFilled returns false when not all the responses have been filled" - {
       val filledExercise = clientExercise(args = Seq("a response", "another response"))
       assert(filledExercise.isFilled)
@@ -84,9 +84,9 @@ object ClientExerciseSpec extends TestSuite {
 }
 
 object ExercisesSpec extends TestSuite {
-  def tests = TestSuite {
-    'findByMethod {
-      assert(Exercises.findByMethod(List(), "foo") == None)
+  def tests = Tests {
+    Symbol("findByMethod") {
+      assert(Exercises.findByMethod(List(), "foo").isEmpty)
 
       val exercise = clientExercise(method = "foo", args = Seq("one", "two"))
       assert(
@@ -94,12 +94,12 @@ object ExercisesSpec extends TestSuite {
       )
     }
 
-    'updateByMethod {
+    Symbol("updateByMethod") {
       val state            = List(clientExercise(method = "foo", args = Seq("", "")))
       val updatedArguments = Seq("my", "answers")
       val newState         = Exercises.updateByMethod(state, "foo", updatedArguments)
       val newExercise      = Exercises.findByMethod(newState, "foo")
-      assert(newExercise != None)
+      assert(newExercise.isDefined)
       newExercise.foreach { ex =>
         assert(ex.arguments == updatedArguments)
       }
