@@ -30,6 +30,6 @@ private[domain] class FieldNamesPartlyApplied[CC] {
     lgen: LabelledGeneric.Aux[CC, LG],
     keys: Keys.Aux[LG, K],
     toList: ToTraversable[K, List]
-  ): List[String] = toList(keys()).map { case Symbol(s) ⇒ s.toLowerCase }
+  ): List[String] = toList(keys()).map { case Symbol(s) => s.toLowerCase }
   // format: ON
 }

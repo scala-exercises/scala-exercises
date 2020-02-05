@@ -27,7 +27,7 @@ import java.io.File
 import cats.implicits._
 import org.clapper.classutil.ClassFinder
 import org.objectweb.asm.Opcodes
-import org.scalaexercises.evaluator.types.Dependency
+import org.scalaexercises.evaluator.types.EvaluatorDependency
 import org.scalaexercises.runtime.model._
 
 import scala.util.Try
@@ -36,10 +36,10 @@ object Exercises {
   val LIBRARIES_PACKAGE = "org.scalaexercises.content"
 
   private[this] def classMap(cl: ClassLoader) = {
-    val files = cl
+    val files = (cl
       .asInstanceOf[URLClassLoader]
       .getURLs
-      .map(url => new File(url.getFile)) filter (_.exists)
+      .map(url => new File(url.getFile)) filter (_.exists)).toSeq
     val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
     val classes = classFinder.getClasses
       .filter(Try(_).isSuccess)
@@ -50,15 +50,15 @@ object Exercises {
   private[this] def subclassesOf[A: ClassTag](cl: ClassLoader): List[String] = {
     def loop(currentClassLoader: ClassLoader, acc: List[String]): List[String] =
       Option(currentClassLoader) match {
-        case None ⇒ acc
-        case Some(cll: URLClassLoader) ⇒
+        case None => acc
+        case Some(cll: URLClassLoader) =>
           val cn = ClassFinder
             .concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
             .filter(_.name.startsWith(LIBRARIES_PACKAGE))
             .map(_.name)
             .toList
           loop(currentClassLoader.getParent, acc ++ cn)
-        case Some(o) ⇒ loop(o.getParent, acc)
+        case Some(o) => loop(o.getParent, acc)
       }
     loop(cl, Nil)
   }
@@ -67,21 +67,21 @@ object Exercises {
       cl: ClassLoader = classOf[Exercise].getClassLoader): (List[String], List[Library]) = {
     val classNames: List[String] = subclassesOf[Library](cl)
 
-    val errorsAndLibraries = classNames.map { name ⇒
+    val errorsAndLibraries = classNames.map { name =>
       for {
-        loadedClass ← guard(Class.forName(name, true, cl), s"$name not found")
-        loadedObject ← guard(
+        loadedClass <- guard(Class.forName(name, true, cl), s"$name not found")
+        loadedObject <- guard(
           loadedClass.getField("MODULE$").get(null),
           s"$name must be defined as an object")
-        loadedLibrary ← guard(loadedObject.asInstanceOf[Library], s"$name must extend Library")
+        loadedLibrary <- guard(loadedObject.asInstanceOf[Library], s"$name must extend Library")
       } yield loadedLibrary
     }
 
     errorsAndLibraries.separate
   }
 
-  private def guard[A](f: ⇒ A, message: ⇒ String) =
-    Either.catchNonFatal(f).leftMap(_ ⇒ message)
+  private def guard[A](f: => A, message: => String) =
+    Either.catchNonFatal(f).leftMap(_ => message)
 
   def buildEvaluatorRequest(
       pkg: String,
@@ -90,18 +90,18 @@ object Exercises {
       imports: List[String] = Nil,
       resolvers: List[String],
       libraryDependencies: List[String]
-  ): (List[String], List[Dependency], String) = {
+  ): (List[String], List[EvaluatorDependency], String) = {
 
     val extractEvaluatorResolvers: List[String] = {
-      resolvers.filter(r => !r.isEmpty && r.contains("http")) map { resolver ⇒
+      resolvers.filter(r => !r.isEmpty && r.contains("http")) map { resolver =>
         resolver.substring(resolver.indexOf("http"))
       }
     }
 
-    val extractEvaluatorDependencies: List[Dependency] = {
-      libraryDependencies map { dep ⇒
+    val extractEvaluatorDependencies: List[EvaluatorDependency] = {
+      libraryDependencies map { dep =>
         val depArray = dep.split(":")
-        Dependency(groupId = depArray(0), artifactId = depArray(1), version = depArray(2))
+        EvaluatorDependency(groupId = depArray(0), artifactId = depArray(1), version = depArray(2))
       }
     }
 

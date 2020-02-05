@@ -39,7 +39,7 @@ trait DatabaseInstance {
     Databases(
       driver = testDriver,
       url = testUrl,
-      config = Map("user" → testUsername, "password" → testPassword)
+      config = Map("user" -> testUsername, "password" -> testPassword)
     )
   }
 

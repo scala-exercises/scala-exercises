@@ -30,7 +30,7 @@ import org.scalaexercises.evaluator.types._
 import org.scalaexercises.types.exercises.ExerciseEvaluation
 import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import org.scalaexercises.types.progress.SaveUserProgress
-import org.scalaexercises.types.evaluator.{Dependency => CoreDependency}
+import org.scalaexercises.types.evaluator.CoreDependency
 import org.scalaexercises.types.user.User
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -55,19 +55,19 @@ class ExercisesController(config: Configuration, components: ControllerComponent
 
   def evaluate(libraryName: String, sectionName: String): Action[JsValue] =
     AuthenticatedUserF[ExerciseEvaluation](parse.json) {
-      (evaluation: ExerciseEvaluation, user: User) ⇒
+      (evaluation: ExerciseEvaluation, user: User) =>
         def eval(
             runtimeInfo: Either[Throwable, EvaluationRequest]
         ): IO[Either[String, EvalResponse]] = runtimeInfo match {
-          case Left(ex) ⇒
+          case Left(ex) =>
             logError("eval", "Error while building the evaluation request", Some(ex))
             IO(Either.left(ex.getMessage))
-          case Right(evalRequest) ⇒
+          case Right(evalRequest) =>
             evalRequest match {
-              case Left(msg) ⇒
+              case Left(msg) =>
                 logError("eval", "Error before performing the evaluation")
                 IO(Either.left(msg))
-              case Right((resolvers, dependencies, code)) ⇒
+              case Right((resolvers, dependencies, code)) =>
                 evalRemote(resolvers, dependencies, code)
             }
         }
@@ -81,14 +81,14 @@ class ExercisesController(config: Configuration, components: ControllerComponent
             evaluatorClient.evaluates(EvalRequest(resolvers, dependencies.toEvaluatorDeps, code))
 
           evalResponse.attempt map {
-            case Left(evalException) ⇒
+            case Left(evalException) =>
               logError("evalRemote", "Error while evaluating", Some(evalException))
               Either.left(s"Evaluation failed : $evalException")
-            case Right(result) ⇒
+            case Right(result) =>
               result match {
-                case EvalResponse(EvalResponse.messages.ok, _, _, _, _) ⇒
+                case EvalResponse(EvalResponse.messages.ok, _, _, _, _) =>
                   Either.right(result)
-                case EvalResponse(msg, value, valueType, consoleOutput, compilationInfos) ⇒
+                case EvalResponse(msg, value, valueType, consoleOutput, compilationInfos) =>
                   Either.left(formatEvaluationResponse(msg, value, valueType, compilationInfos))
               }
           }
@@ -96,9 +96,9 @@ class ExercisesController(config: Configuration, components: ControllerComponent
 
         def mkHttpStatusCodeResponse(evaluationResult: Either[String, EvalResponse]): IO[Result] = {
           IO(evaluationResult match {
-            case Left(msg) ⇒
+            case Left(msg) =>
               BadRequest(s"Evaluation failed : $msg")
-            case Right(evalResponse) ⇒
+            case Right(evalResponse) =>
               Ok(s"Evaluation succeeded : $evalResponse")
           })
         }
@@ -118,16 +118,16 @@ class ExercisesController(config: Configuration, components: ControllerComponent
         def logError(method: String, mainMsg: String, ex: Option[Throwable] = None) = {
           val msg = s"[$method] $mainMsg. ExerciseEvaluation: $evaluation with user $user"
           ex match {
-            case Some(e) ⇒ logger.error(msg, e)
-            case None    ⇒ logger.error(msg)
+            case Some(e) => logger.error(msg, e)
+            case None    => logger.error(msg)
           }
         }
 
         (for {
-          runtimeInfo      ← exerciseOps.buildRuntimeInfo(evaluation).attempt
-          evaluationResult ← eval(runtimeInfo)
-          httpResponse     ← mkHttpStatusCodeResponse(evaluationResult)
-          _                ← userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
+          runtimeInfo      <- exerciseOps.buildRuntimeInfo(evaluation).attempt
+          evaluationResult <- eval(runtimeInfo)
+          httpResponse     <- mkHttpStatusCodeResponse(evaluationResult)
+          _                <- userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
         } yield httpResponse).unsafeToFuture()
 
     }

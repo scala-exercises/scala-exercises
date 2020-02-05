@@ -21,8 +21,8 @@ package org.scalaexercises.exercises.controllers
 
 import akka.util.ByteString
 import org.scalaexercises.evaluator.types.EvalResult._
-import org.scalaexercises.evaluator.types.{CompilationInfo, Dependency => EvaluatorDependency}
-import org.scalaexercises.types.evaluator.Dependency
+import org.scalaexercises.evaluator.types.{CompilationInfo, EvaluatorDependency}
+import org.scalaexercises.types.evaluator.CoreDependency
 import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.JsError
 import play.api.mvc.{Codec, Request}
@@ -36,16 +36,16 @@ object `package` {
     ContentTypeOf[Throwable](Some(ContentTypes.TEXT))
 
   implicit def writeableOf_Throwable(implicit codec: Codec): Writeable[Throwable] =
-    Writeable(e ⇒ ByteString(e.getMessage.getBytes("utf-8")))
+    Writeable(e => ByteString(e.getMessage.getBytes("utf-8")))
 
   implicit def contentTypeOf_JsError: ContentTypeOf[JsError] =
     ContentTypeOf[JsError](Some(ContentTypes.JSON))
 
   implicit def writeableOf_JsError: Writeable[JsError] =
-    Writeable(e ⇒ ByteString(JsError.toJson(e).toString.getBytes("utf-8")))
+    Writeable(e => ByteString(JsError.toJson(e).toString.getBytes("utf-8")))
 
-  implicit class EvaluatorDependenciesConverter(deps: List[Dependency]) {
-    def toEvaluatorDeps = deps map (d ⇒ EvaluatorDependency(d.groupId, d.artifactId, d.version))
+  implicit class EvaluatorDependenciesConverter(deps: List[CoreDependency]) {
+    def toEvaluatorDeps = deps map (d => EvaluatorDependency(d.groupId, d.artifactId, d.version))
   }
 
   def formatEvaluationResponse(
@@ -57,27 +57,27 @@ object `package` {
     val blockSeparator = ";"
 
     def printOption[T](maybeValue: Option[T]): String =
-      maybeValue map (v ⇒ s"$blockSeparator $v") getOrElse ""
+      maybeValue map (v => s"$blockSeparator $v") getOrElse ""
 
     def printTestFailed: String = valueType match {
-      case vt if vt.contains("org.scalatest.exceptions.TestFailedException") ⇒
+      case vt if vt.contains("org.scalatest.exceptions.TestFailedException") =>
         s"$blockSeparator Compilation and evaluation succeeded but that is not the right answer!"
-      case _ ⇒
+      case _ =>
         s"""
            |${printOption(value)}
            |${printOption(valueType)}""".stripMargin
     }
 
     def printCIList(list: List[CompilationInfo]): String =
-      list map { ci ⇒
-        s"${ci.message}${ci.pos.fold("")(rp ⇒ s" at [${rp.start}, ${rp.point}, ${rp.end}]")}"
+      list map { ci =>
+        s"${ci.message}${ci.pos.fold("")(rp => s" at [${rp.start}, ${rp.point}, ${rp.end}]")}"
       } mkString ", "
 
     def printCIMap: String =
       if (compilationInfos.nonEmpty)
         s"${
           val ciList = compilationInfos map {
-            case (k: String, list: List[CompilationInfo]) ⇒
+            case (k: String, list: List[CompilationInfo]) =>
               s"""
              |$blockSeparator $k -> ${printCIList(list)}""".stripMargin
           }

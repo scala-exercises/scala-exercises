@@ -35,25 +35,25 @@ object Test {
 
   def testSuccess[F, R, L <: HList](method: F, answer: L)(
       implicit A: Arbitrary[L],
-      fntop: FnToProduct.Aux[F, L ⇒ R]
+      fntop: FnToProduct.Aux[F, L => R]
   ): Prop = {
     val rightGen = genRightAnswer(answer)
-    val rightProp = forAll(rightGen)({ p ⇒
+    val rightProp = forAll(rightGen)({ p =>
       val result = Either.catchOnly[GeneratorDrivenPropertyCheckFailedException]({
         fntop(method)(p)
       })
       result match {
-        case Left(exc) ⇒
+        case Left(exc) =>
           exc.cause match {
-            case Some(originalException) ⇒ throw originalException
-            case _                       ⇒ false
+            case Some(originalException) => throw originalException
+            case _                       => false
           }
-        case _ ⇒ true
+        case _ => true
       }
     })
 
     val wrongGen = genWrongAnswer(answer)
-    val wrongProp = forAll(wrongGen)({ p ⇒
+    val wrongProp = forAll(wrongGen)({ p =>
       Either.catchNonFatal({ fntop(method)(p) }).isLeft
     })
 

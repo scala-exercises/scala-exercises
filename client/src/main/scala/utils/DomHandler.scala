@@ -38,14 +38,14 @@ object DomHandler {
   /** Replaces text matched into html inputs
    */
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): Coeval[Unit] = Coeval {
-    nodes foreach { case (n, r) ⇒ $(n).html(r) }
+    nodes foreach { case (n, r) => $(n).html(r) }
   }
 
   /** Highlights every preformatted code block.
    */
   def highlightCodeBlocks: Coeval[Unit] =
     Coeval {
-      $("pre").each((_: Any, code: dom.Element) ⇒ {
+      $("pre").each((_: Any, code: dom.Element) => {
         js.Dynamic.global.hljs.highlightBlock(code)
       })
     }.void
@@ -54,7 +54,7 @@ object DomHandler {
    */
   def emojify: Coeval[Unit] =
     Coeval {
-      $(".modal-body").each((_: Any, el: dom.Element) ⇒ {
+      $(".modal-body").each((_: Any, el: dom.Element) => {
         js.Dynamic.global.emojify.run(el)
       })
     }.void
@@ -83,23 +83,23 @@ object DomHandler {
   /** Assigns behaviors to the keyup event for inputs elements.
    */
   def onInputKeyUp(
-      onkeyup: (String, Seq[String]) ⇒ Coeval[Unit],
-      onEnterPressed: String ⇒ Coeval[Unit]
+      onkeyup: (String, Seq[String]) => Coeval[Unit],
+      onEnterPressed: String => Coeval[Unit]
   ): Coeval[Unit] =
     for {
-      inputs ← allInputs
-      _      ← inputs.map(input ⇒ attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
+      inputs <- allInputs
+      _      <- inputs.map(input => attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
     } yield ()
 
   /** Assigns behavior to an input element change event
    */
   def onInputChange(
-      onchange: (String, Seq[String]) ⇒ Coeval[Unit]
+      onchange: (String, Seq[String]) => Coeval[Unit]
   ): Coeval[Unit] = {
     for {
-      inputs ← allInputs
-      _ ← inputs
-        .map(input ⇒ {
+      inputs <- allInputs
+      _ <- inputs
+        .map(input => {
           attachOnInputChange(input, onchange)
           attachOnInputPaste(input, onchange)
         })
@@ -113,13 +113,13 @@ object DomHandler {
 
   def updateExerciseInput(
       input: HTMLInputElement,
-      actions: ((String, Seq[String])) ⇒ Unit
+      actions: ((String, Seq[String])) => Unit
   ) = {
     setInputWidth(input).value
 
     val maybeInputInfo = for {
-      methodName ← methodParent(input)
-      exercise   ← findExerciseByMethod(methodName)
+      methodName <- methodParent(input)
+      exercise   <- findExerciseByMethod(methodName)
       inputValues = getInputsValues(exercise)
     } yield (methodName, inputValues)
 
@@ -128,18 +128,18 @@ object DomHandler {
 
   def attachKeyUpHandler(
       input: HTMLInputElement,
-      onkeyup: (String, Seq[String]) ⇒ Coeval[Unit],
-      onEnterPressed: String ⇒ Coeval[Unit]
+      onkeyup: (String, Seq[String]) => Coeval[Unit],
+      onEnterPressed: String => Coeval[Unit]
   ): Coeval[Unit] =
     Coeval {
-      $(input).keyup((e: dom.KeyboardEvent) ⇒ {
+      $(input).keyup((e: dom.KeyboardEvent) => {
         updateExerciseInput(
           input,
-          (info: (String, Seq[String])) ⇒ {
+          (info: (String, Seq[String])) => {
             val (method, params) = info
             e.keyCode match {
-              case KeyCode.Enter ⇒ onEnterPressed(method).value
-              case _             ⇒ onkeyup(method, params).value
+              case KeyCode.Enter => onEnterPressed(method).value
+              case _             => onkeyup(method, params).value
             }
             ()
           }
@@ -151,13 +151,13 @@ object DomHandler {
    */
   def attachOnInputChange(
       input: HTMLInputElement,
-      onchange: (String, Seq[String]) ⇒ Coeval[Unit]
+      onchange: (String, Seq[String]) => Coeval[Unit]
   ): Coeval[Unit] =
     Coeval {
-      $(input).change((e: dom.Event) ⇒ {
+      $(input).change((e: dom.Event) => {
         updateExerciseInput(
           input,
-          (info: (String, Seq[String])) ⇒ ()
+          (info: (String, Seq[String])) => ()
         )
       })
     }.void
@@ -166,28 +166,28 @@ object DomHandler {
    */
   def attachOnInputPaste(
       input: HTMLInputElement,
-      onchange: (String, Seq[String]) ⇒ Coeval[Unit]
+      onchange: (String, Seq[String]) => Coeval[Unit]
   ): Coeval[Unit] =
     Coeval {
-      $(input).bind("paste", (e: dom.Event) ⇒ {
+      $(input).bind("paste", (e: dom.Event) => {
 
         setTimeout(100.0) {
           updateExerciseInput(
             input,
-            (info: (String, Seq[String])) ⇒ ()
+            (info: (String, Seq[String])) => ()
           )
         }
       })
     }.void
 
-  def onButtonClick(onClick: String ⇒ Coeval[Unit]): Coeval[Unit] =
-    allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ ⇒ ())
+  def onButtonClick(onClick: String => Coeval[Unit]): Coeval[Unit] =
+    allExercises.map(attachClickHandler(_, onClick)).sequence.map(_ => ())
 
-  def attachClickHandler(exercise: HTMLElement, onClick: String ⇒ Coeval[Unit]): Coeval[Unit] =
+  def attachClickHandler(exercise: HTMLElement, onClick: String => Coeval[Unit]): Coeval[Unit] =
     Coeval {
       $(exercise)
         .find(".compile button")
-        .click((e: dom.Event) ⇒ {
+        .click((e: dom.Event) => {
           onClick(getMethodAttr(exercise)).value
         })
     }.void
@@ -197,8 +197,8 @@ object DomHandler {
 
   def inputReplacements: Coeval[Seq[(HTMLElement, String)]] =
     for {
-      blocks ← getCodeBlocks
-    } yield blocks.map(code ⇒ code → replaceInputByRes(getTextInCode(code)))
+      blocks <- getCodeBlocks
+    } yield blocks.map(code => code -> replaceInputByRes(getTextInCode(code)))
 
   val resAssert = """(?s)(res\d+)""".r
 
@@ -215,8 +215,8 @@ object DomHandler {
 
   def libraryAndSection: Option[(String, String)] =
     for {
-      lib ← library
-      sec ← section
+      lib <- library
+      sec <- section
     } yield (lib, sec)
 
   def methods: List[String] = allExercises.map(getMethodAttr(_))
@@ -256,13 +256,13 @@ object DomHandler {
 
   def setInputValue(input: HTMLInputElement, v: String): Coeval[Unit] =
     for {
-      _ ← Coeval { $(input) `val` (v) }
-      _ ← setInputWidth(input)
+      _ <- Coeval { $(input) `val` (v) }
+      _ <- setInputWidth(input)
     } yield ()
 
   def inputSize(length: Int): Double = length match {
-    case 0 ⇒ 12d
-    case _ ⇒ 4d + length * 8.4
+    case 0 => 12d
+    case _ => 4d + length * 8.4
   }
 
   implicit class JQueryOps(j: JQuery) {
@@ -275,7 +275,7 @@ object DomHandler {
 
     def getDiv: HTMLDivElement = get[HTMLDivElement]
 
-    def all[A <: dom.Element]: Seq[A] = j.toArray().collect { case d: A @unchecked ⇒ d }.toSeq
+    def all[A <: dom.Element]: Seq[A] = j.toArray().collect { case d: A @unchecked => d }.toSeq
 
     def get[A <: dom.Element]: A = j.get().asInstanceOf[A]
 

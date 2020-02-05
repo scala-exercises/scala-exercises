@@ -5,7 +5,7 @@ val pluginVersion = System.getProperty("plugin.version")
 lazy val content = (project in file("content"))
   .enablePlugins(ExerciseCompilerPlugin)
   .settings(
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.13.1",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots"),
       Resolver.defaultLocal
@@ -20,7 +20,7 @@ lazy val content = (project in file("content"))
 lazy val contentInPackages = (project in file("contentinpackages"))
   .enablePlugins(ExerciseCompilerPlugin)
   .settings(
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.13.1",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots"),
       Resolver.defaultLocal
@@ -35,7 +35,7 @@ lazy val contentInPackages = (project in file("contentinpackages"))
 lazy val check = (project in file("check"))
   .dependsOn(content, contentInPackages)
   .settings(
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.13.1",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots"),
       Resolver.defaultLocal

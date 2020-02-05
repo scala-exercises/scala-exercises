@@ -58,8 +58,8 @@ class ApplicationController(config: Configuration, components: ControllerCompone
   /** cache the main repo stars, forks and watchers info for 30 mins */
   private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
     IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey)))(cs).flatMap {
-      case repo if repo.nonEmpty ⇒ IO.pure(repo)
-      case None ⇒
+      case repo if repo.nonEmpty => IO.pure(repo)
+      case None =>
         githubOps
           .getRepository(
             configUtils.githubSiteOwner,
@@ -75,23 +75,22 @@ class ApplicationController(config: Configuration, components: ControllerCompone
   def index =
     Secure(Action.async { implicit request =>
       (for {
-        authorize ← githubOps
+        authorize <- githubOps
           .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
-        libraries ← exerciseOps.getLibraries.map(service.reorderLibraries(topLibraries, _))
-        user      ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        progress  ← userExercisesProgress.fetchMaybeUserProgress(user)
-        repo      ← scalaexercisesRepo
+        libraries <- exerciseOps.getLibraries.map(service.reorderLibraries(topLibraries, _))
+        user      <- userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        progress  <- userExercisesProgress.fetchMaybeUserProgress(user)
+        repo      <- scalaexercisesRepo
         result = (libraries, user, request.session.get("oauth-token"), progress, authorize) match {
-          case (libraries, user, Some(_), progress, _) ⇒
+          case (libraries, user, Some(_), progress, _) =>
             Ok(
-              views.html.templates.home
-                .index(
-                  user = user,
-                  libraries = libraries,
-                  progress = progress,
-                  repo = repo.getOrElse(Repository(0, 0, 0)),
-                  config = config))
-          case (libraries, None, None, progress, authorize) ⇒
+              views.html.templates.home.index(
+                user = user,
+                libraries = libraries,
+                progress = progress,
+                repo = repo.getOrElse(Repository(0, 0, 0)),
+                config = config))
+          case (libraries, None, None, progress, authorize) =>
             Ok(
               views.html.templates.home
                 .index(
@@ -101,40 +100,40 @@ class ApplicationController(config: Configuration, components: ControllerCompone
                   redirectUrl = Option(authorize.url),
                   repo = repo.getOrElse(Repository(0, 0, 0)),
                   config = config))
-              .withSession("oauth-state" → authorize.state)
-          case (libraries, Some(user), None, _, _) ⇒ Unauthorized("Session token not found")
+              .withSession("oauth-state" -> authorize.state)
+          case (libraries, Some(user), None, _, _) => Unauthorized("Session token not found")
         }
       } yield result).unsafeToFuture()
 
     })
 
   def library(libraryName: String) =
-    Secure(Action.async { implicit request ⇒
+    Secure(Action.async { implicit request =>
       val ops = for {
-        library ← exerciseOps.getLibrary(libraryName)
-        user    ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        section ← user.flatTraverse(userProgressOps.getLastSeenSection(_, libraryName))
+        library <- exerciseOps.getLibrary(libraryName)
+        user    <- userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        section <- user.flatTraverse(userProgressOps.getLastSeenSection(_, libraryName))
       } yield (library, user, section)
 
       (ops map {
-        case (Some(library), _, Some(sectionName)) if library.sectionNames.contains(sectionName) ⇒
+        case (Some(library), _, Some(sectionName)) if library.sectionNames.contains(sectionName) =>
           Redirect(s"$libraryName/$sectionName")
-        case (Some(library), _, _) if library.sectionNames.nonEmpty ⇒
+        case (Some(library), _, _) if library.sectionNames.nonEmpty =>
           Redirect(s"$libraryName/${library.sectionNames.head}")
-        case (None, _, _) ⇒ NotFound("Library not found")
+        case (None, _, _) => NotFound("Library not found")
       }).unsafeToFuture()
     })
 
   def section(libraryName: String, sectionName: String) =
-    Secure(Action.async { implicit request ⇒
+    Secure(Action.async { implicit request =>
       val ops = for {
-        authorize ← githubOps
+        authorize <- githubOps
           .getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
-        library ← exerciseOps.getLibrary(libraryName)
-        section ← exerciseOps.getSection(libraryName, sectionName)
-        contributors = toContributors(section.fold(List.empty[Contribution])(s ⇒ s.contributions))
-        user        ← userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        libProgress ← userExercisesProgress.fetchMaybeUserProgressByLibrary(user, libraryName)
+        library <- exerciseOps.getLibrary(libraryName)
+        section <- exerciseOps.getSection(libraryName, sectionName)
+        contributors = toContributors(section.fold(List.empty[Contribution])(s => s.contributions))
+        user        <- userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+        libProgress <- userExercisesProgress.fetchMaybeUserProgressByLibrary(user, libraryName)
       } yield
         (
           library,
@@ -146,7 +145,7 @@ class ApplicationController(config: Configuration, components: ControllerCompone
           contributors)
 
       (ops map {
-        case (Some(l), Some(s), user, Some(token), libProgress, _, contributors) ⇒
+        case (Some(l), Some(s), user, Some(token), libProgress, _, contributors) =>
           Ok(
             views.html.templates.library.index(
               library = l,
@@ -157,7 +156,7 @@ class ApplicationController(config: Configuration, components: ControllerCompone
               config = config
             )
           )
-        case (Some(l), Some(s), user, None, libProgress, authorize, contributors) ⇒
+        case (Some(l), Some(s), user, None, libProgress, authorize, contributors) =>
           Ok(
             views.html.templates.library.index(
               library = l,
@@ -168,16 +167,16 @@ class ApplicationController(config: Configuration, components: ControllerCompone
               contributors = contributors,
               config = config
             )
-          ).withSession("oauth-state" → authorize.state)
-        case (Some(l), None, _, _, _, _, _) ⇒ NotFound("Section not found")
-        case (None, _, _, _, _, _, _)       ⇒ NotFound("Library not found")
-        case (_, _, _, _, _, _, _)          ⇒ NotFound("Library and section not found")
+          ).withSession("oauth-state" -> authorize.state)
+        case (Some(l), None, _, _, _, _, _) => NotFound("Section not found")
+        case (None, _, _, _, _, _, _)       => NotFound("Library not found")
+        case (_, _, _, _, _, _, _)          => NotFound("Library and section not found")
 
       }).unsafeToFuture()
     })
 
   def javascriptRoutes =
-    Secure(Action { implicit request ⇒
+    Secure(Action { implicit request =>
       import routes.javascript._
       Ok(
         JavaScriptReverseRouter("jsRoutes")(
@@ -188,9 +187,9 @@ class ApplicationController(config: Configuration, components: ControllerCompone
     })
 
   private def toContributors(contributions: List[Contribution]): List[Contributor] =
-    contributions.map(c ⇒ Contributor(c.author, c.authorUrl, c.avatarUrl)).distinct
+    contributions.map(c => Contributor(c.author, c.authorUrl, c.avatarUrl)).distinct
 
-  def onHandlerNotFound(route: String) = Action { implicit request ⇒
+  def onHandlerNotFound(route: String) = Action { implicit request =>
     if (route.endsWith("/")) {
       MovedPermanently("/" + request.path.take(request.path.length - 1).dropWhile(_ == '/'))
     } else {

@@ -56,23 +56,23 @@ class UserRepositorySpec
 
   // Properties
   property("new users can be created") {
-    forAll { newUser: Request ⇒
+    forAll { newUser: Request =>
       val tx: ConnectionIO[Boolean] =
-        repository.create(newUser).map { storedUser ⇒
-          storedUser.toOption.forall(u ⇒ u == newUser.asUser(u.id))
+        repository.create(newUser).map { storedUser =>
+          storedUser.toOption.forall(u => u == newUser.asUser(u.id))
         }
       assertConnectionIO(tx)
     }
   }
 
   property("users can be queried by their login") {
-    forAll { newUser: Request ⇒
+    forAll { newUser: Request =>
       val create = repository.create(newUser)
       val get    = repository.getByLogin(newUser.login)
 
       val tx: ConnectionIO[Boolean] =
-        create *> get map { storedUser ⇒
-          storedUser.forall(u ⇒ u == newUser.asUser(u.id))
+        create *> get map { storedUser =>
+          storedUser.forall(u => u == newUser.asUser(u.id))
         }
 
       assertConnectionIO(tx)
@@ -80,13 +80,13 @@ class UserRepositorySpec
   }
 
   property("users can be queried by their ID") {
-    forAll { newUser: Request ⇒
+    forAll { newUser: Request =>
       val tx: ConnectionIO[Boolean] =
-        repository.create(newUser).flatMap { storedUser ⇒
+        repository.create(newUser).flatMap { storedUser =>
           storedUser.toOption.fold(
             false.pure[ConnectionIO]
           )(
-            u ⇒ repository.getById(u.id).map(_.contains(u))
+            u => repository.getById(u.id).map(_.contains(u))
           )
         }
 
@@ -95,10 +95,10 @@ class UserRepositorySpec
   }
 
   property("users can be deleted") {
-    forAll { newUser: Request ⇒
+    forAll { newUser: Request =>
       val tx: ConnectionIO[Boolean] =
-        repository.create(newUser).flatMap { storedUser ⇒
-          storedUser.toOption.fold(false.pure[ConnectionIO]) { u ⇒
+        repository.create(newUser).flatMap { storedUser =>
+          storedUser.toOption.fold(false.pure[ConnectionIO]) { u =>
             val delete = repository.delete(u.id)
             val get    = repository.getByLogin(newUser.login)
             (delete *> get).map(_.isEmpty)
@@ -110,13 +110,13 @@ class UserRepositorySpec
   }
 
   property("users can be updated") {
-    forAll { newUser: Request ⇒
+    forAll { newUser: Request =>
       val create = repository.create(newUser)
       val get    = repository.getByLogin(newUser.login)
 
       val tx: ConnectionIO[Boolean] =
-        (create *> get).flatMap { storedUser ⇒
-          storedUser.fold(false.pure[ConnectionIO]) { u ⇒
+        (create *> get).flatMap { storedUser =>
+          storedUser.fold(false.pure[ConnectionIO]) { u =>
             val modifiedUser = u.copy(email = Some("alice+spam@example.com"))
             val update       = repository.update(modifiedUser)
             val get          = repository.getByLogin(u.login)

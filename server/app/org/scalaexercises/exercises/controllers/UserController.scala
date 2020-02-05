@@ -32,15 +32,15 @@ import upickle.default._
 class UserController(components: ControllerComponents)(implicit userOps: UserOps[IO], mode: Mode)
     extends BaseController {
 
-  implicit val jsonReader = (__ \ 'github).read[String](minLength[String](2))
+  implicit val jsonReader = (__ \ Symbol("github")).read[String](minLength[String](2))
 
   implicit val userWriter: Writer[User] = macroW
 
   def byLogin(login: String) =
-    Secure(Action.async { _ ⇒
+    Secure(Action.async { _ =>
       (userOps.getUserByLogin(login) map {
-        case Some(u) ⇒ Ok(write(u))
-        case None    ⇒ NotFound("The user doesn't exist")
+        case Some(u) => Ok(write(u))
+        case None    => NotFound("The user doesn't exist")
       }).unsafeToFuture()
     })
 

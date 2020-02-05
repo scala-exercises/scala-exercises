@@ -55,22 +55,22 @@ object UI {
   def noop: Coeval[Unit] = Coeval {}
 
   def update(s: State, a: Action): Coeval[Unit] = a match {
-    case Start                        ⇒ noop
-    case SetState(state)              ⇒ reflectState(state)
-    case UpdateExercise(method, args) ⇒ toggleExerciseClass(s, method)
-    case CompileExercise(method)      ⇒ startCompilation(s, method)
-    case CompilationOk(method)        ⇒ setAsSolved(s, method)
-    case CompilationFail(method, msg) ⇒ setAsErrored(s, method, msg)
-    case _                            ⇒ noop
+    case Start                        => noop
+    case SetState(state)              => reflectState(state)
+    case UpdateExercise(method, args) => toggleExerciseClass(s, method)
+    case CompileExercise(method)      => startCompilation(s, method)
+    case CompilationOk(method)        => setAsSolved(s, method)
+    case CompilationFail(method, msg) => setAsErrored(s, method, msg)
+    case _                            => noop
   }
 
   def exerciseStyle(e: ClientExercise): ExerciseStyle = {
     e.state match {
-      case Unsolved if (e.isFilled) ⇒ FilledStyle
-      case Unsolved                 ⇒ UnsolvedStyle
-      case Evaluating               ⇒ EvaluatingStyle
-      case Errored                  ⇒ ErroredStyle
-      case Solved                   ⇒ SolvedStyle
+      case Unsolved if (e.isFilled) => FilledStyle
+      case Unsolved                 => UnsolvedStyle
+      case Evaluating               => EvaluatingStyle
+      case Errored                  => ErroredStyle
+      case Solved                   => SolvedStyle
     }
   }
 
@@ -78,15 +78,15 @@ object UI {
     inputReplacements flatMap replaceInputs
 
   def reflectState(s: State): Coeval[Unit] =
-    s.map(reflectExercise).sequence.map(_ ⇒ ())
+    s.map(reflectExercise).sequence.map(_ => ())
 
   def reflectExercise(e: ClientExercise): Coeval[Unit] =
     (for {
-      exercise ← OptionT(Coeval(findExerciseByMethod(e.method)))
-      _ ← OptionT {
+      exercise <- OptionT(Coeval(findExerciseByMethod(e.method)))
+      _ <- OptionT {
         setExerciseStyle(e.method, exerciseStyle(e), if (e.isSolved) "solved-exercise" else "") map (_.some)
       }
-      _ ← OptionT(copyArgumentsToInputs(e, exercise) map (_.some))
+      _ <- OptionT(copyArgumentsToInputs(e, exercise) map (_.some))
     } yield ()).value.map(_.getOrElse(()))
 
   def copyArgumentsToInputs(e: ClientExercise, element: HTMLElement): Coeval[Unit] = {
@@ -94,17 +94,17 @@ object UI {
     val args      = e.arguments
     args
       .zip(theInputs)
-      .map { case (arg, input) ⇒ setInputValue(input, arg) }
+      .map { case (arg, input) => setInputValue(input, arg) }
       .toList
       .sequence
-      .map(_ ⇒ ())
+      .map(_ => ())
   }
 
   def toggleExerciseClass(s: State, method: String): Coeval[Unit] = {
     Exercises
       .findByMethod(s, method)
       .fold(noop)(
-        exercise ⇒
+        exercise =>
           setExerciseStyle(
             method,
             exerciseStyle(exercise),
@@ -113,23 +113,23 @@ object UI {
 
   def setExerciseStyle(method: String, style: ExerciseStyle, codeStyle: String = ""): Coeval[Unit] =
     (for {
-      exercise ← OptionT(Coeval(findExerciseByMethod(method)))
-      _        ← OptionT(setExerciseClass(exercise, style.className) map (_.some))
-      code     ← OptionT(Coeval(findExerciseCode(exercise)))
-      _        ← OptionT(setCodeClass(code, codeStyle) map (_.some))
+      exercise <- OptionT(Coeval(findExerciseByMethod(method)))
+      _        <- OptionT(setExerciseClass(exercise, style.className) map (_.some))
+      code     <- OptionT(Coeval(findExerciseCode(exercise)))
+      _        <- OptionT(setCodeClass(code, codeStyle) map (_.some))
     } yield ()).value.map(_.getOrElse(()))
 
   def addLogToExercise(method: String, msg: String): Coeval[Unit] =
     (for {
-      exercise ← OptionT(Coeval(findExerciseByMethod(method)))
-      _        ← OptionT(writeLog(exercise, msg) map (_.some))
+      exercise <- OptionT(Coeval(findExerciseByMethod(method)))
+      _        <- OptionT(writeLog(exercise, msg) map (_.some))
     } yield ()).value.map(_.getOrElse(()))
 
   def startCompilation(s: State, method: String): Coeval[Unit] =
     (isLogged, findByMethod(s, method)) match {
-      case (true, Some(exercise)) if exercise.isFilled ⇒ setExerciseStyle(method, EvaluatingStyle)
-      case (false, _)                                  ⇒ showSignUpModal
-      case _                                           ⇒ noop
+      case (true, Some(exercise)) if exercise.isFilled => setExerciseStyle(method, EvaluatingStyle)
+      case (false, _)                                  => showSignUpModal
+      case _                                           => noop
     }
 
   def setAsSolved(s: State, method: String): Coeval[Unit] =
@@ -137,7 +137,7 @@ object UI {
 
   def setAsErrored(s: State, method: String, msg: String): Coeval[Unit] =
     for {
-      _ ← addLogToExercise(method, msg)
-      _ ← setExerciseStyle(method, ErroredStyle)
+      _ <- addLogToExercise(method, msg)
+      _ <- setExerciseStyle(method, ErroredStyle)
     } yield ()
 }

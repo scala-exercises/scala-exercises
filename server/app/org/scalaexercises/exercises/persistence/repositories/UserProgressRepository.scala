@@ -26,7 +26,7 @@ import org.scalaexercises.types.progress._
 import org.scalaexercises.exercises.persistence.PersistenceModule
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
 import doobie._
-import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries ⇒ Q}
+import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries => Q}
 import Q.Implicits._
 
 trait UserProgressRepository {
@@ -116,8 +116,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
     val SaveUserProgress.Request(user, libraryName, sectionName, method, version, _, _, _) =
       request
     getExerciseEvaluation(user, libraryName, sectionName, method, version) flatMap {
-      case None        ⇒ create(request)
-      case Some(userP) ⇒ update(request)
+      case None        => create(request)
+      case Some(userP) => update(request)
     }
   }
 

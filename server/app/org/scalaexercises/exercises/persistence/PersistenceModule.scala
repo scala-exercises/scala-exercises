@@ -23,8 +23,6 @@ import cats.Foldable
 import doobie._
 import shapeless.HNil
 
-import scala.language.higherKinds
-
 class PersistenceModule {
 
   def fetchList[K: Read](sql: String): ConnectionIO[List[K]] =
