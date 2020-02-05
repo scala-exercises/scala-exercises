@@ -49,8 +49,8 @@ object Exercises {
   def findByMethod(s: State, method: String): Option[ClientExercise] =
     s.find(_.method == method)
 
-  def applyByMethod(s: State, method: String, f: ClientExercise ⇒ ClientExercise): State =
-    s.map(ex ⇒ {
+  def applyByMethod(s: State, method: String, f: ClientExercise => ClientExercise): State =
+    s.map(ex => {
       if (ex.method == method)
         f(ex)
       else
@@ -61,9 +61,9 @@ object Exercises {
     applyByMethod(s, method, _.copy(arguments = args, state = Unsolved))
 
   def evaluate(s: State, method: String): State = findByMethod(s, method) match {
-    case Some(exercise) if exercise.canBeCompiled ⇒
+    case Some(exercise) if exercise.canBeCompiled =>
       applyByMethod(s, method, _.copy(state = Evaluating))
-    case _ ⇒ s
+    case _ => s
   }
 
   def setAsSolved(s: State, method: String): State =

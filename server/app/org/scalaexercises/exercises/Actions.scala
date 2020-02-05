@@ -49,7 +49,7 @@ case class Secure[A](action: Action[A])(implicit mode: Mode) extends Action[A] {
         Results
           .MovedPermanently(secureUrl)
           .withHeaders(
-            "Strict-Transport-Security" → "max-age=31536000" // tells browsers to request the site URLs through HTTPS
+            "Strict-Transport-Security" -> "max-age=31536000" // tells browsers to request the site URLs through HTTPS
           )
       )
     } else {

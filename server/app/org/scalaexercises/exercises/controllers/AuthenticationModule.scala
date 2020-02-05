@@ -39,11 +39,11 @@ trait AuthenticationModule {
 
     override def invokeBlock[A](
         request: Request[A],
-        thunk: (UserRequest[A]) ⇒ Future[Result]
+        thunk: (UserRequest[A]) => Future[Result]
     ): Future[Result] = {
       request.session.get("user") match {
-        case Some(userId) ⇒ thunk(UserRequest(userId, request))
-        case None         ⇒ Future.successful(Forbidden)
+        case Some(userId) => thunk(UserRequest(userId, request))
+        case None         => Future.successful(Forbidden)
       }
     }
 
@@ -52,30 +52,30 @@ trait AuthenticationModule {
     override protected def executionContext: ExecutionContext = global
   }
 
-  def AuthenticatedUser(thunk: User ⇒ IO[Result])(
+  def AuthenticatedUser(thunk: User => IO[Result])(
       implicit userOps: UserOps[IO],
       mode: Mode,
       bodyParser: BodyParser[AnyContent]) =
-    Secure(new AuthenticationAction().async { request ⇒
+    Secure(new AuthenticationAction().async { request =>
       (userOps.getUserByLogin(request.userId) flatMap {
-        case Some(user) ⇒ thunk(user)
-        case _          ⇒ IO.pure(BadRequest("User login not found"))
+        case Some(user) => thunk(user)
+        case _          => IO.pure(BadRequest("User login not found"))
       }).unsafeToFuture()
     })
 
-  def AuthenticatedUserF[T](parser: BodyParser[JsValue])(thunk: (T, User) ⇒ Future[Result])(
+  def AuthenticatedUserF[T](parser: BodyParser[JsValue])(thunk: (T, User) => Future[Result])(
       implicit userOps: UserOps[IO],
       mode: Mode,
       bodyParser: BodyParser[AnyContent],
       format: Reads[T]) =
-    Secure(new AuthenticationAction().async(parser) { request ⇒
+    Secure(new AuthenticationAction().async(parser) { request =>
       request.body.validate[T] match {
-        case JsSuccess(validatedBody, _) ⇒
+        case JsSuccess(validatedBody, _) =>
           userOps.getUserByLogin(request.userId).unsafeToFuture() flatMap {
-            case Some(user) ⇒ thunk(validatedBody, user)
-            case _          ⇒ Future.successful(BadRequest("User login not found"))
+            case Some(user) => thunk(validatedBody, user)
+            case _          => Future.successful(BadRequest("User login not found"))
           }
-        case JsError(errors) ⇒
+        case JsError(errors) =>
           Future.successful(BadRequest(JsError.toJson(errors)))
       }
     })

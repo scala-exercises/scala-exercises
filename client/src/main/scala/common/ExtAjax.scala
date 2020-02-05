@@ -32,7 +32,7 @@ class ExtAjax(ajax: Ajax.type) {
       headers: Map[String, String] = Map.empty,
       withCredentials: Boolean = false
   ) = {
-    val contentType = ("Content-Type" → "application/x-www-form-urlencoded")
+    val contentType = ("Content-Type" -> "application/x-www-form-urlencoded")
     apply("POST", url, data, timeout, headers + contentType, withCredentials)
   }
 
@@ -43,7 +43,7 @@ class ExtAjax(ajax: Ajax.type) {
       headers: Map[String, String] = Map.empty,
       withCredentials: Boolean = false
   ) = {
-    val contentType = ("Content-Type" → "application/json")
+    val contentType = ("Content-Type" -> "application/json")
     apply("POST", url, data, timeout, headers + contentType, withCredentials)
   }
 
@@ -55,7 +55,7 @@ class ExtAjax(ajax: Ajax.type) {
       headers: Map[String, String] = Map.empty,
       withCredentials: Boolean = false
   ) = {
-    val ajaxReq = ("X-Requested-With" → "XMLHttpRequest")
+    val ajaxReq = ("X-Requested-With" -> "XMLHttpRequest")
     ajax.apply(method, url, data, timeout, headers + ajaxReq, withCredentials, "")
   }
 

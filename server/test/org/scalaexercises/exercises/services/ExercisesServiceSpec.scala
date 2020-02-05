@@ -104,8 +104,8 @@ class ExercisesServiceSpec extends AnyFlatSpec with Matchers {
 
     "return at least one category via classpath discovery" in {
       val foundSections = for {
-        library ← ExercisesService.libraries
-        section ← ExercisesService.section(library.description, expectedTestSection)
+        library <- ExercisesService.libraries
+        section <- ExercisesService.section(library.description, expectedTestSection)
       } yield section
       foundSections must not be empty
       val expectedCat = foundSections.find(_.description == expectedTestSection)

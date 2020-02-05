@@ -58,12 +58,12 @@ object ExercisesJS {
 
     def wireObservables: Coeval[Unit] =
       Coeval {
-        ui.foreach(ioAction ⇒ {
+        ui.foreach(ioAction => {
           ioAction.value
         })
-        effects.foreach((f: Future[Option[Action]]) ⇒ {
-          f.foreach(m ⇒ {
-            m.foreach { a ⇒
+        effects.foreach((f: Future[Option[Action]]) => {
+          f.foreach(m => {
+            m.foreach { a =>
               actions.onNext(a)
             }
           })
@@ -72,26 +72,26 @@ object ExercisesJS {
 
     def startInteraction: Coeval[Unit] = {
       for {
-        _ ← inputReplacements flatMap replaceInputs
-        _ ← onInputKeyUp((method: String, arguments: Seq[String]) ⇒ {
+        _ <- inputReplacements flatMap replaceInputs
+        _ <- onInputKeyUp((method: String, arguments: Seq[String]) => {
           triggerAction(UpdateExercise(method, arguments))
-        }, (method: String) ⇒ {
+        }, (method: String) => {
           triggerAction(CompileExercise(method))
         })
-        _ ← onButtonClick((method: String) ⇒ {
+        _ <- onButtonClick((method: String) => {
           triggerAction(CompileExercise(method))
         })
-        _ ← onInputChange((method: String, arguments: Seq[String]) ⇒ {
+        _ <- onInputChange((method: String, arguments: Seq[String]) => {
           triggerAction(UpdateExercise(method, arguments))
         })
       } yield ()
     }
 
     val program = for {
-      _ ← wireObservables
-      _ ← highlightCodeBlocks
-      _ ← emojify
-      _ ← startInteraction
+      _ <- wireObservables
+      _ <- highlightCodeBlocks
+      _ <- emojify
+      _ <- startInteraction
     } yield ()
 
     program.value

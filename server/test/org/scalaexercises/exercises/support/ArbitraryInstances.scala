@@ -41,12 +41,12 @@ trait ArbitraryInstances extends Assertions {
   implicit val userSaveRequestArbitrary: Arbitrary[Request] =
     Arbitrary(
       for {
-        login      ← Gen.uuid
-        name       ← Gen.alphaStr
-        githubId   ← Gen.uuid
-        githubUrl  ← Gen.alphaStr
-        pictureUrl ← Gen.alphaStr
-        email      ← Gen.alphaStr
+        login      <- Gen.uuid
+        name       <- Gen.alphaStr
+        githubId   <- Gen.uuid
+        githubUrl  <- Gen.alphaStr
+        pictureUrl <- Gen.alphaStr
+        email      <- Gen.alphaStr
       } yield
         Request(
           login = login.toString,
@@ -60,10 +60,10 @@ trait ArbitraryInstances extends Assertions {
   def persistentUserArbitrary(
       implicit transactor: Transactor[IO],
       UR: UserRepository): Arbitrary[User] = {
-    Arbitrary(arbitrary[Request] map { request ⇒
+    Arbitrary(arbitrary[Request] map { request =>
       UR.create(request).transact(transactor).unsafeRunSync match {
-        case Right(user) ⇒ user
-        case Left(error) ⇒ fail(s"Failed generating persistent users : $error")
+        case Right(user) => user
+        case Left(error) => fail(s"Failed generating persistent users : $error")
       }
     })
   }
@@ -74,15 +74,15 @@ trait ArbitraryInstances extends Assertions {
       implicit transactor: Transactor[IO]): Arbitrary[UserProgressPair] = {
 
     Arbitrary(for {
-      user ← persistentUserArbitrary.arbitrary
-      request ← {
-        arbitrary[SaveUserProgress.Request] map (p ⇒ p.copy(user = user))
+      user <- persistentUserArbitrary.arbitrary
+      request <- {
+        arbitrary[SaveUserProgress.Request] map (p => p.copy(user = user))
       }
     } yield UserProgressPair(request, user))
   }
 
   def genBoundedList[T](minSize: Int = 1, maxSize: Int = 100, gen: Gen[T]): Gen[List[T]] =
-    Gen.choose(minSize, maxSize) flatMap { size ⇒
+    Gen.choose(minSize, maxSize) flatMap { size =>
       Gen.listOfN(size, gen)
     }
 }

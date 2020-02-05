@@ -19,7 +19,6 @@
 
 package org.scalaexercises.compiler
 
-import scala.language.higherKinds
 import scala.tools.nsc._
 import scala.tools.nsc.doc.base._
 import scala.tools.nsc.doc.base.comment._
@@ -295,9 +294,9 @@ private[compiler] object CommentRendering {
     case Code(data) =>
       <pre class={ "scala" }><code class={ "scala" }>{ formatCode(data) }</code></pre>
     case UnorderedList(items) =>
-      <ul>{ renderListItems(items) }</ul>
+      <ul>{ renderListItems(items.toSeq) }</ul>
     case OrderedList(items, listStyle) =>
-      <ol class={ listStyle }>{ renderListItems(items) }</ol>
+      <ol class={ listStyle }>{ renderListItems(items.toSeq) }</ol>
     case DefinitionList(items) =>
       <dl>{ items map { case (t, d) => <dt>{ renderInline(t) }</dt><dd>{ renderBlock(d) }</dd> } }</dl>
     case HorizontalRule() =>

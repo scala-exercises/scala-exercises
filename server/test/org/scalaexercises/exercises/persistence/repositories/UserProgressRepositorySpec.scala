@@ -59,16 +59,16 @@ class UserProgressRepositorySpec
 
   def newUser(usr: UserCreation.Request): ConnectionIO[User] =
     for {
-      maybeUser ← userRepository.create(usr)
+      maybeUser <- userRepository.create(usr)
     } yield maybeUser.toOption.get
 
   ignore("new user progress records can be created") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request) =>
         val tx: ConnectionIO[Boolean] = for {
-          user ← newUser(usr)
+          user <- newUser(usr)
           progress = prg.copy(user = user)
-          userProgress ← repository.create(progress)
+          userProgress <- repository.create(progress)
         } yield userProgress == progress.asUserProgress(userProgress.id)
 
         assertConnectionIO(tx)
@@ -77,13 +77,13 @@ class UserProgressRepositorySpec
 
   ignore("existing user progress records can be updated") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request, someArgs: List[String]) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request, someArgs: List[String]) =>
         val tx: ConnectionIO[Boolean] = for {
-          user ← newUser(usr)
+          user <- newUser(usr)
           progress = prg.copy(user = user)
-          _ ← repository.create(progress)
+          _ <- repository.create(progress)
           updatedProgress = progress.copy(args = someArgs)
-          userProgress ← repository.update(updatedProgress)
+          userProgress <- repository.update(updatedProgress)
         } yield userProgress.equals(updatedProgress.asUserProgress(userProgress.id))
 
         assertConnectionIO(tx)
@@ -92,12 +92,12 @@ class UserProgressRepositorySpec
 
   ignore("user progress can be fetched by section") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request) =>
         val tx: ConnectionIO[Boolean] = for {
-          user ← newUser(usr)
+          user <- newUser(usr)
           progress = prg.copy(user = user)
-          userProgress ← repository.create(progress)
-          currentUserProgress ← repository.getExerciseEvaluations(
+          userProgress <- repository.create(progress)
+          currentUserProgress <- repository.getExerciseEvaluations(
             user = user,
             libraryName = prg.libraryName,
             sectionName = prg.sectionName)
@@ -109,19 +109,19 @@ class UserProgressRepositorySpec
 
   ignore("user progress can be fetched by exercise") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request) =>
         val tx: ConnectionIO[Boolean] = for {
-          user ← newUser(usr)
+          user <- newUser(usr)
           progress = prg.copy(user = user)
-          userProgress ← repository.create(progress)
-          currentUserProgress ← repository.getExerciseEvaluation(
+          userProgress <- repository.create(progress)
+          currentUserProgress <- repository.getExerciseEvaluation(
             user = user,
             libraryName = prg.libraryName,
             sectionName = prg.sectionName,
             method = prg.method,
             version = prg.version
           )
-        } yield currentUserProgress.forall(up ⇒ up.equals(userProgress))
+        } yield currentUserProgress.forall(up => up.equals(userProgress))
 
         assertConnectionIO(tx)
     }
@@ -129,13 +129,13 @@ class UserProgressRepositorySpec
 
   ignore("users progress can be queried by their ID") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request) =>
         val tx: ConnectionIO[Boolean] = for {
-          user ← newUser(usr)
+          user <- newUser(usr)
           progress = prg.copy(user = user)
-          userProgress      ← repository.create(progress)
-          maybeUserProgress ← repository.findById(userProgress.id)
-        } yield maybeUserProgress.forall(up ⇒ up.equals(userProgress))
+          userProgress      <- repository.create(progress)
+          maybeUserProgress <- repository.findById(userProgress.id)
+        } yield maybeUserProgress.forall(up => up.equals(userProgress))
 
         assertConnectionIO(tx)
     }
@@ -144,12 +144,12 @@ class UserProgressRepositorySpec
 
   ignore("user progress can be deleted") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request) =>
         val tx: ConnectionIO[Boolean] = for {
-          user          ← newUser(usr)
-          userProgress  ← repository.create(prg.copy(user = user))
-          _             ← repository.delete(userProgress.id)
-          maybeProgress ← repository.findById(userProgress.id)
+          user          <- newUser(usr)
+          userProgress  <- repository.create(prg.copy(user = user))
+          _             <- repository.delete(userProgress.id)
+          maybeProgress <- repository.findById(userProgress.id)
         } yield maybeProgress.isEmpty
 
         assertConnectionIO(tx)
@@ -158,12 +158,12 @@ class UserProgressRepositorySpec
 
   ignore("all user progress records can be deleted") {
     forAll(maxDiscardedFactor(10000d)) {
-      (usr: UserCreation.Request, prg: SaveUserProgress.Request) ⇒
+      (usr: UserCreation.Request, prg: SaveUserProgress.Request) =>
         val tx: ConnectionIO[Boolean] = for {
-          user          ← newUser(usr)
-          userProgress  ← repository.create(prg.copy(user = user))
-          _             ← repository.deleteAll()
-          maybeProgress ← repository.findById(userProgress.id)
+          user          <- newUser(usr)
+          userProgress  <- repository.create(prg.copy(user = user))
+          _             <- repository.deleteAll()
+          maybeProgress <- repository.findById(userProgress.id)
         } yield maybeProgress.isEmpty
 
         assertConnectionIO(tx)
