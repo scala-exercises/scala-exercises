@@ -56,7 +56,7 @@ object ProjectPlugin extends AutoPlugin {
         "scalamacros"         -> "2.1.1",
         "monix"               -> "3.1.0",
         "http4s"              -> "0.21.0-M6",
-        "circeversion"        -> "0.12.3",
+        "circeversion"        -> "0.13.0",
         "bettermonadicfor"    -> "0.3.1"
       ) ++ Map(
         // JS Versions
