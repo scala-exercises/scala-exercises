@@ -1,0 +1,9 @@
+pull_request_rules:
+  - name: Automatic merge scala-steward PRs when CI is passing
+    conditions:
+      - author=scala-steward
+      - status-success=continuous-integration/travis-ci/pr
+      - body~=labels:.*semver-patch
+    actions:
+      merge:
+        method: merge
