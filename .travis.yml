@@ -1,7 +1,7 @@
 language: scala
 sudo: required
 addons:
-  - postgresql: '11'
+  - postgresql: "11"
       apt:
         packages:
           - postgresql-client-11
