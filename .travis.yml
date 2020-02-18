@@ -2,6 +2,10 @@ language: scala
 sudo: required
 addons:
   - postgresql: "9.3"
+    apt:
+      packages:
+        - postgresql-client-9.3
+        - postgresql-server-dev-9.3
 services:
   - postgresql
 before_script:
