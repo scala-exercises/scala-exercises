@@ -5,6 +5,7 @@ addons:
 services:
   - postgresql
 before_script:
+  - pg_lsclusters
   - ./scripts/create_test_db
 scala:
   - 2.13.1
