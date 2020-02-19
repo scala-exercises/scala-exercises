@@ -50,7 +50,7 @@ object ProjectPlugin extends AutoPlugin {
         "scalatest"           -> "3.1.0",
         "scalatestplusScheck" -> "3.1.0.0-RC2",
         "scalacheckversion"   -> "1.14.2",
-        "scalacheckshapeless" -> "1.2.3",
+        "scalacheckshapeless" -> "1.2.4",
         "upickle"             -> "0.7.5",
         "webjars"             -> "2.7.3",
         "scalamacros"         -> "2.1.1",
