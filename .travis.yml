@@ -7,7 +7,6 @@ addons:
 before_script:
   - pg_lsclusters
   - sudo pg_ctlcluster 10 main start
-  - sudo service postgres restart
   - ./scripts/create_test_db
 scala:
   - 2.13.1
