@@ -1,9 +1,9 @@
 language: scala
 sudo: required
-addons:
-  - postgresql: "9.3"
 services:
   - postgresql
+addons:
+  - postgresql: "10"
 before_script:
   - ./scripts/create_test_db
 scala:

@@ -35,7 +35,7 @@ object ProjectPlugin extends AutoPlugin {
       ) ++ Map(
         // JVM Versions
         "catsversion"         -> "2.1.0",
-        "collectioncompat"    -> "2.1.3",
+        "collectioncompat"    -> "2.1.4",
         "doobieversion"       -> "0.8.6",
         "bootstrap"           -> "3.3.7",
         "github4s"            -> "0.21.0",
@@ -55,7 +55,7 @@ object ProjectPlugin extends AutoPlugin {
         "webjars"             -> "2.7.3",
         "scalamacros"         -> "2.1.1",
         "monix"               -> "3.1.0",
-        "http4s"              -> "0.21.1",
+        "http4s"              -> "0.21.0-RC4",
         "circeversion"        -> "0.12.3",
         "bettermonadicfor"    -> "0.3.1"
       ) ++ Map(
