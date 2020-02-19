@@ -1,11 +1,13 @@
 language: scala
 sudo: required
-addons:
-  - postgresql: "11"
 services:
   - postgresql
+addons:
+  - postgresql: "10"
 before_script:
   - pg_lsclusters
+  - sudo pg_ctlcluster 10 main start
+  - sudo service postgres restart
   - ./scripts/create_test_db
 scala:
   - 2.13.1
