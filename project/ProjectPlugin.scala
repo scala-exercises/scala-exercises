@@ -47,7 +47,7 @@ object ProjectPlugin extends AutoPlugin {
         "postgres"            -> "42.2.8",
         "scalajsscripts"      -> "1.1.4",
         "scalariform"         -> "0.2.10",
-        "scalatest"           -> "3.1.0",
+        "scalatest"           -> "3.1.1",
         "scalatestplusScheck" -> "3.1.0.0-RC2",
         "scalacheckversion"   -> "1.14.2",
         "scalacheckshapeless" -> "1.2.4",
