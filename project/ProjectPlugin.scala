@@ -34,7 +34,7 @@ object ProjectPlugin extends AutoPlugin {
         "monocle"       -> "0.6.0-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
-        "catsversion"         -> "2.1.0",
+        "catsversion"         -> "2.1.1",
         "collectioncompat"    -> "2.1.4",
         "doobieversion"       -> "0.8.6",
         "bootstrap"           -> "3.3.7",
