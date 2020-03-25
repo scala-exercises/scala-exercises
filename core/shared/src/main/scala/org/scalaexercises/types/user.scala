@@ -20,26 +20,26 @@
 package org.scalaexercises.types.user
 
 case class User(
-    id: Long,
-    login: String,
-    name: Option[String],
-    githubId: String,
-    pictureUrl: String,
-    githubUrl: String,
-    email: Option[String]
+  id:         Long,
+  login:      String,
+  name:       Option[String],
+  githubId:   String,
+  pictureUrl: String,
+  githubUrl:  String,
+  email:      Option[String]
 )
 
 object UserCreation {
   abstract class CreationError extends Product with Serializable
-  case object DuplicateName    extends CreationError
+  case object DuplicateName extends CreationError
 
   case class Request(
-      login: String,
-      name: Option[String],
-      githubId: String,
+      login:      String,
+      name:       Option[String],
+      githubId:   String,
       pictureUrl: String,
-      githubUrl: String,
-      email: Option[String]
+      githubUrl:  String,
+      email:      Option[String]
   ) {
 
     def asUser(id: Long): User =

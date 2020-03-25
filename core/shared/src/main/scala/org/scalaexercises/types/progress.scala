@@ -23,40 +23,31 @@ import org.scalaexercises.types.user._
 import org.scalaexercises.types.exercises._
 
 case class UserProgress(
-    id: Long,
-    userId: Long,
-    libraryName: String,
-    sectionName: String,
-    method: String,
-    version: Int,
-    exerciseType: ExerciseType = Other,
-    args: List[String],
-    succeeded: Boolean
+  id:           Long,
+  userId:       Long,
+  libraryName:  String,
+  sectionName:  String,
+  method:       String,
+  version:      Int,
+  exerciseType: ExerciseType = Other,
+  args:         List[String],
+  succeeded:    Boolean
 )
 
 object SaveUserProgress {
   case class Request(
-      user: User,
-      libraryName: String,
-      sectionName: String,
-      method: String,
-      version: Int,
+      user:         User,
+      libraryName:  String,
+      sectionName:  String,
+      method:       String,
+      version:      Int,
       exerciseType: ExerciseType,
-      args: List[String],
-      succeeded: Boolean
+      args:         List[String],
+      succeeded:    Boolean
   ) {
 
     def asUserProgress(id: Long): UserProgress =
-      UserProgress(
-        id,
-        user.id,
-        libraryName,
-        sectionName,
-        method,
-        version,
-        exerciseType,
-        args,
-        succeeded)
+      UserProgress(id, user.id, libraryName, sectionName, method, version, exerciseType, args, succeeded)
   }
 }
 
