@@ -35,7 +35,7 @@ object ProjectPlugin extends AutoPlugin {
       ) ++ Map(
         // JVM Versions
         "catsversion"         -> "2.1.1",
-        "collectioncompat"    -> "2.1.4",
+        "collectioncompat"    -> "2.1.5",
         "doobieversion"       -> "0.8.6",
         "bootstrap"           -> "3.3.7",
         "github4s"            -> "0.21.0",
