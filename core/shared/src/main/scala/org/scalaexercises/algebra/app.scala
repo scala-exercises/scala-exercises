@@ -20,7 +20,6 @@
 package org.scalaexercises.algebra
 
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.algebra.github.GithubOps
 import org.scalaexercises.algebra.progress.UserProgressOps
 import org.scalaexercises.algebra.user.UserOps
 
@@ -30,7 +29,6 @@ object app {
     val exerciseOps: ExerciseOps[F]
     val userOps: UserOps[F]
     val userProgressOps: UserProgressOps[F]
-    val githubOps: GithubOps[F]
   }
 
 }

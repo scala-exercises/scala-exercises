@@ -19,40 +19,49 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.effect.IO
+import cats.effect.{ContextShift, IO}
 import cats.implicits._
-import org.scalaexercises.algebra.github.GithubOps
+import github4s.Github
 import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.exercises.Secure
 import org.scalaexercises.exercises.utils.ConfigUtils
-import org.scalaexercises.types.github.GithubUser
+import org.scalaexercises.types.github.{GithubUser, OAuthToken}
 import org.scalaexercises.types.user.UserCreation
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.{AnyContent, BaseController, ControllerComponents}
 import play.api.{Configuration, Mode}
 
+import scala.concurrent.ExecutionContext
+
 class OAuthController(conf: Configuration, components: ControllerComponents)(
-    implicit userOps: UserOps[IO],
-    githubOps: GithubOps[IO],
+    implicit executionContext: ExecutionContext,
+    cs: ContextShift[IO],
+    userOps: UserOps[IO],
     configUtils: ConfigUtils,
     mode: Mode)
     extends BaseController {
 
-  def callback(codeOpt: Option[String] = None, stateOpt: Option[String] = None) =
+  private[this] def getAccessToken(code: String, state: String) =
+    Github[IO]().auth
+      .getAccessToken(
+        configUtils.githubAuthId,
+        configUtils.githubAuthSecret,
+        code,
+        configUtils.callbackUrl,
+        state)
+      .flatMap(response =>
+        IO.fromEither(response.result.map(token => OAuthToken(token.access_token))))
+
+  def callback(
+      codeOpt: Option[String] = None,
+      stateOpt: Option[String] = None): Secure[AnyContent] =
     Secure(Action.async { implicit request =>
       (codeOpt, stateOpt, request.session.get("oauth-state")).tupled
         .fold(IO.pure(BadRequest("Missing `code` or `state`"))) {
           case (code, state, oauthState) =>
             if (state == oauthState) {
-              githubOps
-                .getAccessToken(
-                  configUtils.githubAuthId,
-                  configUtils.githubAuthSecret,
-                  code,
-                  configUtils.callbackUrl,
-                  state)
-                .map { ot =>
-                  Redirect(configUtils.successUrl).withSession("oauth-token" -> ot.accessToken)
-                }
+              getAccessToken(code, state).map { ot =>
+                Redirect(configUtils.successUrl).withSession("oauth-token" -> ot.accessToken)
+              }
             } else IO.pure(BadRequest("Invalid github login"))
         }
         .unsafeToFuture()
@@ -68,14 +77,30 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
       email = githubUser.email
     )
 
-  def success() =
+  private[this] def getAuthUser(accessToken: Option[String]): IO[GithubUser] =
+    Github[IO](accessToken).users
+      .getAuth()
+      .flatMap(
+        response =>
+          IO.fromEither(
+            response.result.map(
+              user =>
+                GithubUser(
+                  login = user.login,
+                  name = user.name,
+                  avatar = user.avatar_url,
+                  url = user.html_url,
+                  email = user.email
+              ))))
+
+  def success(): Secure[AnyContent] =
     Secure(Action.async {
       implicit request =>
         request.session
           .get("oauth-token")
           .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken =>
             val ops = for {
-              ghuser <- githubOps.getAuthUser(Some(accessToken))
+              ghuser <- getAuthUser(accessToken.some)
               user   <- userOps.getOrCreate(createUserRequest(ghuser))
             } yield (ghuser, user)
 
@@ -90,7 +115,7 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
           .unsafeToFuture()
     })
 
-  def logout() = Secure(Action(Redirect("/").withNewSession))
+  def logout(): Secure[AnyContent] = Secure(Action(Redirect("/").withNewSession))
 
   override protected def controllerComponents: ControllerComponents = components
 }

@@ -23,17 +23,14 @@ import org.scalaexercises.definitions.{BuildInfo, Library}
 import org.scalaexercises.runtime.Timestamp
 
 import scala.reflect.runtime.{universe => ru}
-import cats.Eval
 import cats.implicits._
 import github4s.Github
-import Github._
-import github4s.GithubResponses.GHResult
-import github4s.free.domain.Commit
-import github4s.jvm.Implicits._
 import Comments.Mode
 import CommentRendering.RenderedComment
+import cats.effect.{ContextShift, IO}
+import github4s.domain.Commit
 
-import scalaj.http.HttpResponse
+import scala.concurrent.ExecutionContext
 
 class CompilerJava {
   def compile(
@@ -63,6 +60,9 @@ class CompilerJava {
 case class Compiler() {
 
   lazy val sourceTextExtractor = new SourceTextExtraction()
+
+  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+  implicit val ec: ExecutionContext = ExecutionContext.global
 
   def compile(
       library: Library,
@@ -161,12 +161,11 @@ case class Compiler() {
         repository: String,
         path: String): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
-      val contribs = Github(sys.env.get("GITHUB_TOKEN")).repos
+      val contribs = Github[IO](sys.env.get("GITHUB_TOKEN")).repos
         .listCommits(owner, repository, None, Option(path))
 
-      import github4s.implicits._
-      contribs.exec[Eval, HttpResponse[String]](Map.empty).value match {
-        case Right(GHResult(result, _, _)) =>
+      contribs.unsafeRunSync().result match {
+        case Right(result) =>
           result.collect({
             case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) =>
               ContributionInfo(

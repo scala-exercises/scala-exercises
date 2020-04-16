@@ -25,7 +25,6 @@ import com.typesafe.config.ConfigFactory
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
 import org.scalaexercises.algebra.exercises.ExerciseOps
-import org.scalaexercises.algebra.github.GithubOps
 import org.scalaexercises.algebra.progress._
 import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.exercises.controllers._
@@ -97,7 +96,6 @@ class Components(context: Context)
   lazy val generateRoutes: Routes = {
     implicit val userOps: UserOps[IO]                    = new UserOpsHandler[IO]
     implicit val userProgressOps: UserProgressOps[IO]    = new UserProgressOpsHandler[IO]
-    implicit val githubOps: GithubOps[IO]                = new GithubOpsHandler[IO]
     implicit val exerciseOps: ExerciseOps[IO]            = new ExerciseOpsHandler[IO]()
     implicit val userProgress: UserExercisesProgress[IO] = new UserExercisesProgress[IO]
 
