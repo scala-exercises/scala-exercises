@@ -1,0 +1,58 @@
+# Don't edit this file!
+# It is automatically updated after every release of https://github.com/47degrees/.github
+# If you want to suggest a change, please open a PR or issue in that repository
+
+name: Formatters & Tests
+
+on:
+  push:
+    branches: master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+      REQUIRES_JEKYLL_CI: ${{secrets.REQUIRES_JEKYLL_CI}}
+      REQUIRES_CODECOV: ${{secrets.REQUIRES_CODECOV}}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --tags
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Set up jekyll
+        if: env.REQUIRES_JEKYLL_CI != null
+        run: |
+          gem install jekyll -v 4
+      - name: Set up codecov
+        if: env.REQUIRES_CODECOV != null
+        run: |
+          curl -s https://codecov.io/bash > .codecov
+          chmod +x .codecov
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v7
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier/v1
+          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-coursier-
+      - name: Cache .sbt
+        uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-sbt-
+      - name: Run checks
+        run: sbt ci-test
+      - name: Upload codecov reports
+        if: env.REQUIRES_CODECOV != null
+        run: |
+          ./.codecov -X gcov

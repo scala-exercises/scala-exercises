@@ -1,0 +1,51 @@
+# Don't edit this file!
+# It is automatically updated after every release of https://github.com/47degrees/.github
+# If you want to suggest a change, please open a PR or issue in that repository
+
+name: Update documentation
+
+on:
+  push:
+    branches: master
+    tags: v**
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --tags
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v7
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier/v1
+          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-coursier-
+      - name: Cache .sbt
+        uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-sbt-
+      - name: Generate documentation
+        run: sbt ci-docs
+        env:
+          DOWNLOAD_INFO_FROM_GITHUB: true
+      - name: Create Documentation Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          commit-message: Update documentation and other files
+          title: 'Update documentation and other files'
+          labels: auto-documentation
+          branch: auto-update-docs
+          body: Update documentation and other files with latest changes.
