@@ -32,7 +32,7 @@ object ProjectPlugin extends AutoPlugin {
         "circe"         -> "0.6.0-SNAPSHOT",
         "fetch"         -> "0.6.0-SNAPSHOT",
         "monocle"       -> "0.6.0-SNAPSHOT",
-        "pureconfig"    -> "0.1.1"
+        "pureconfig"    -> "0.1.2"
       ) ++ Map(
         // JVM Versions
         "catsversion"         -> "2.1.1",
