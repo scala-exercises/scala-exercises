@@ -34,30 +34,32 @@ object ProjectPlugin extends AutoPlugin {
         "monocle"       -> "0.6.0-SNAPSHOT"
       ) ++ Map(
         // JVM Versions
-        "catsversion"         -> "2.1.1",
-        "collectioncompat"    -> "2.1.6",
-        "doobieversion"       -> "0.8.6",
-        "bootstrap"           -> "3.3.7",
-        "github4s"            -> "0.23.0",
-        "classutil"           -> "1.5.1",
-        "commonsio"           -> "2.6",
-        "highlightjs"         -> "9.15.10",
-        "knockoff"            -> "0.8.12",
-        "newrelic"            -> "5.9.0",
-        "postgres"            -> "42.2.8",
-        "scalajsscripts"      -> "1.1.4",
-        "scalariform"         -> "0.2.10",
-        "scalatest"           -> "3.1.1",
-        "scalatestplusScheck" -> "3.1.0.0-RC2",
-        "scalacheckversion"   -> "1.14.2",
-        "scalacheckshapeless" -> "1.2.4",
-        "upickle"             -> "0.7.5",
-        "webjars"             -> "2.7.3",
-        "scalamacros"         -> "2.1.1",
-        "monix"               -> "3.1.0",
-        "http4s"              -> "0.21.3",
-        "circeversion"        -> "0.12.3",
-        "bettermonadicfor"    -> "0.3.1"
+        "catsversion"           -> "2.1.1",
+        "collectioncompat"      -> "2.1.6",
+        "doobieversion"         -> "0.8.6",
+        "bootstrap"             -> "3.3.7",
+        "github4s"              -> "0.23.0",
+        "classutil"             -> "1.5.1",
+        "commonsio"             -> "2.6",
+        "highlightjs"           -> "9.15.10",
+        "knockoff"              -> "0.8.12",
+        "newrelic"              -> "5.9.0",
+        "postgres"              -> "42.2.8",
+        "scalajsscripts"        -> "1.1.4",
+        "scalariform"           -> "0.2.10",
+        "scalatest"             -> "3.1.1",
+        "scalatestplusScheck"   -> "3.1.0.0-RC2",
+        "scalacheckversion"     -> "1.14.2",
+        "scalacheckshapeless"   -> "1.2.4",
+        "upickle"               -> "0.7.5",
+        "webjars"               -> "2.7.3",
+        "scalamacros"           -> "2.1.1",
+        "monix"                 -> "3.1.0",
+        "http4s"                -> "0.21.3",
+        "circeversion"          -> "0.12.3",
+        "bettermonadicfor"      -> "0.3.1",
+        "testcontainers"        -> "0.36.1",
+        "testcontainers-specs2" -> "0.2.0-M2"
       ) ++ Map(
         // JS Versions
         "jquery"        -> "3.4.1",
@@ -119,7 +121,7 @@ object ProjectPlugin extends AutoPlugin {
       headerLicense := Some(
         ScalaExercisesLicense("2015-2019", "47 Degrees, LLC. <http://www.47deg.com>")),
       ScoverageKeys.coverageFailOnMinimum := false
-    ) ++ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % v("bettermonadicfor")) ++ shellPromptSettings
+    ) ++ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % v("bettermonadicfor"))
 
   object ScalaExercisesLicense {
 

@@ -31,10 +31,11 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import shapeless.HNil
 import cats.effect.IO
 import cats.implicits._
+import com.dimafeng.testcontainers.ForAllTestContainer
 
 trait DatabaseContext extends DatabaseInstance {
 
-  implicit val trx: Transactor[IO] = databaseTransactor
+  implicit val trx: Transactor[IO]
 
   case class PersistenceItem(id: Long, name: String, active: Boolean)
 
@@ -104,9 +105,12 @@ class PersistenceModuleSpec
     with ScalaCheckDrivenPropertyChecks
     with Matchers
     with BeforeAndAfterEach
+    with ForAllTestContainer
     with DatabaseContext
     with ArbitraryInstances
     with DatabaseInstance {
+
+  override lazy val trx: Transactor[IO] = databaseTransactor
 
   override def beforeEach: Unit = {
     for {
