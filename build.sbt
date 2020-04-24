@@ -6,6 +6,9 @@ import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
 
+addCommandAlias("ci-test", "test")
+addCommandAlias("ci-docs", "project-docs/mdoc")
+
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(noPublishSettings: _*)
@@ -65,23 +68,25 @@ lazy val server = (project in file("server"))
       "org.scala-exercises" %% "exercises-fetch"         % v("fetch") xscalaExercises,
       "org.scala-exercises" %% "exercises-monocle"       % v("monocle") xscalaExercises,
       "org.scala-exercises" %% "exercises-circe"         % v("circe") xscalaExercises,
-      "com.vmunier"                %% "scalajs-scripts"           % v("scalajsscripts"),
-      "com.lihaoyi"                %% "upickle"                   % v("upickle"),
-      "org.webjars"                %% "webjars-play"              % v("webjars"),
-      "org.webjars"                % "highlightjs"                % v("highlightjs"),
-      "org.foundweekends"          %% "knockoff"                  % v("knockoff"),
-      "com.newrelic.agent.java"    % "newrelic-agent"             % v("newrelic"),
-      "org.typelevel"              %% "cats-effect"               % v("catsversion"),
-      "commons-io"                 % "commons-io"                 % v("commonsio"),
-      "org.webjars.bower"          % "bootstrap-sass"             % v("bootstrap"),
-      "com.47deg"                  %% "github4s"                  % v("github4s"),
-      "org.scalatest"              %% "scalatest"                 % v("scalatest") % "runtime",
-      "org.scalatestplus"          %% "scalatestplus-scalacheck"  % v("scalatestplusScheck") % Test,
-      "org.tpolecat"               %% "doobie-core"               % v("doobieversion"),
-      "org.tpolecat"               %% "doobie-hikari"             % v("doobieversion"),
-      "org.tpolecat"               %% "doobie-postgres"           % v("doobieversion"),
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v("scalacheckshapeless") % Test,
-      "org.tpolecat"               %% "doobie-specs2"             % v("doobieversion") % Test
+      "com.vmunier"                %% "scalajs-scripts"                 % v("scalajsscripts"),
+      "com.lihaoyi"                %% "upickle"                         % v("upickle"),
+      "org.webjars"                %% "webjars-play"                    % v("webjars"),
+      "org.webjars"                % "highlightjs"                      % v("highlightjs"),
+      "org.foundweekends"          %% "knockoff"                        % v("knockoff"),
+      "com.newrelic.agent.java"    % "newrelic-agent"                   % v("newrelic"),
+      "org.typelevel"              %% "cats-effect"                     % v("catsversion"),
+      "commons-io"                 % "commons-io"                       % v("commonsio"),
+      "org.webjars.bower"          % "bootstrap-sass"                   % v("bootstrap"),
+      "com.47deg"                  %% "github4s"                        % v("github4s"),
+      "org.scalatest"              %% "scalatest"                       % v("scalatest") % "runtime",
+      "org.scalatestplus"          %% "scalatestplus-scalacheck"        % v("scalatestplusScheck") % Test,
+      "org.tpolecat"               %% "doobie-core"                     % v("doobieversion"),
+      "org.tpolecat"               %% "doobie-hikari"                   % v("doobieversion"),
+      "org.tpolecat"               %% "doobie-postgres"                 % v("doobieversion"),
+      "com.dimafeng"               %% "testcontainers-scala-scalatest"  % v("testcontainers") % Test,
+      "com.dimafeng"               %% "testcontainers-scala-postgresql" % v("testcontainers") % Test,
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14"       % v("scalacheckshapeless") % Test,
+      "org.tpolecat"               %% "doobie-scalatest"                % v("doobieversion") % Test
     )
   )
 
@@ -102,8 +107,6 @@ lazy val client = (project in file("client"))
     },
     jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
     skip in packageJSDependencies := false,
-    jsEnv := new JSDOMNodeJSEnv(),
-    //jsDependencies += RuntimeDOM % Test,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(
@@ -118,7 +121,6 @@ lazy val client = (project in file("client"))
   )
 
 lazy val `evaluator-client` = (project in file("eval-client"))
-  .enablePlugins(AutomateHeaderPlugin)
   .settings(
     name := "evaluator-client",
     libraryDependencies ++= Seq(
@@ -229,18 +231,19 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   )
   .enablePlugins(BuildInfoPlugin)
 
+lazy val `project-docs` = (project in file(".docs"))
+  .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
+  .settings(moduleName := "server-project-docs")
+  .settings(mdocIn := file(".docs"))
+  .settings(mdocOut := file("."))
+  .settings(skip in publish := true)
+  .enablePlugins(MdocPlugin)
+
 ///////////////////
 // Global settings:
 ///////////////////
 
 parallelExecution in Global := false
-
-// Disable forking in CI
-fork in Test := (System.getenv("CONTINUOUS_INTEGRATION") == null)
-
-pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
-pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
-pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
 lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 

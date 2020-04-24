@@ -20,7 +20,7 @@
 package org.scalaexercises.types.evaluator
 
 final case class CoreDependency(
-  groupId:    String,
-  artifactId: String,
-  version:    String
+    groupId: String,
+    artifactId: String,
+    version: String
 )
