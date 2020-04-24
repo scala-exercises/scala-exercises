@@ -23,23 +23,26 @@ import cats.effect.{ContextShift, IO}
 import doobie.util.transactor.Transactor
 import play.api.db.evolutions._
 import play.api.db.{Database, Databases}
+import com.dimafeng.testcontainers._
 
 import scala.concurrent.ExecutionContext
 
 trait DatabaseInstance {
 
-  val testDriver   = "org.postgresql.Driver"
-  def testUrl      = "jdbc:postgresql://localhost:5432/scalaexercises_test"
-  val testUsername = "scalaexercises_user"
-  val testPassword = "scalaexercises_pass"
+  val role: String   = "scala-exercises"
+  lazy val container = PostgreSQLContainer().configure(_.withUsername(role))
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
+  implicit val ContextShiftIO: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
 
   def createDatabase(): Database = {
     Databases(
-      driver = testDriver,
-      url = testUrl,
-      config = Map("user" -> testUsername, "password" -> testPassword)
+      driver = container.driverClassName,
+      url = container.jdbcUrl,
+      name = "default",
+      config = Map(
+        "user"     -> container.username,
+        "password" -> container.password
+      )
     )
   }
 
@@ -50,13 +53,11 @@ trait DatabaseInstance {
 
   def createTransactor(db: Database): Transactor[IO] =
     Transactor.fromDriverManager[IO](
-      testDriver,
-      testUrl,
-      testUsername,
-      testPassword
+      container.driverClassName,
+      container.jdbcUrl,
+      container.username,
+      container.password
     )
 
-  val databaseTransactor: Transactor[IO] = createTransactor(evolve(createDatabase()))
+  lazy val databaseTransactor: Transactor[IO] = createTransactor(evolve(createDatabase()))
 }
-
-object DatabaseInstance extends DatabaseInstance

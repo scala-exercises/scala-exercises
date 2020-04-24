@@ -30,8 +30,9 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.ScalacheckShapeless._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.propspec.AnyPropSpec
-import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import com.dimafeng.testcontainers.ForAllTestContainer
 
 class UserRepositorySpec
     extends AnyPropSpec
@@ -39,14 +40,11 @@ class UserRepositorySpec
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance
-    with BeforeAndAfterAll {
+    with ForAllTestContainer {
 
-  implicit val trx: Transactor[IO] = databaseTransactor
+  implicit lazy val trx: Transactor[IO] = databaseTransactor
 
-  val repository: UserRepository = implicitly[UserRepository]
-
-  override def beforeAll(): Unit =
-    repository.deleteAll().transact(trx).unsafeRunSync()
+  lazy val repository: UserRepository = implicitly[UserRepository]
 
   // Generators
   implicitly[Arbitrary[UserCreation.Request]]

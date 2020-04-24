@@ -1,0 +1,72 @@
+# Don't edit this file!
+# It is automatically updated after every release of https://github.com/47degrees/.github
+# If you want to suggest a change, please open a PR or issue in that repository
+
+name: Update changelog
+
+on:
+  push:
+    tags:
+      - v**
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --tags
+      - name: Setup ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - name: Install github-changelog-generator
+        run: gem install github_changelog_generator -v 1.15.0
+      - name: Generate changelog
+        env:
+          repo: ${{ github.repository }}
+        run: |
+          github_changelog_generator \
+            --user ${repo%/*} \
+            --project ${repo#*/} \
+            --token $GITHUB_TOKEN \
+            --exclude-labels "duplicate,question,invalid,wontfix,auto-update,auto-changelog,auto-documentation" \
+            --max-issues 1000 \
+            --configure-sections \
+          '{
+            "breaking": {
+              "prefix": "⚠️ **Breaking changes**",
+              "labels": ["breaking-change"]
+            },
+            "enhancement": {
+              "prefix": "🚀 **Features**",
+              "labels": ["enhancement"]
+            },
+            "documentation": {
+              "prefix": "📘 **Documentation**",
+              "labels": ["documentation"]
+            },
+            "bug": {
+              "prefix": "🐛 **Bug Fixes**",
+              "labels": ["bug"]
+            },
+            "dependency": {
+              "prefix": "📈 **Dependency updates**",
+              "labels": ["dependency-update", "scala-steward"]
+            }
+          }'
+      - name: Create Changelog Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          commit-message: Update CHANGELOG.md [ci skip]
+          title: 'Update CHANGELOG.md'
+          labels: auto-changelog
+          branch: auto-update-changelog
+          body: Update CHANGELOG.md with information from latest release

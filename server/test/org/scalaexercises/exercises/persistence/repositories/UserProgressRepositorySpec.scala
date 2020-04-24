@@ -31,12 +31,13 @@ import org.scalaexercises.exercises.support.{ArbitraryInstances, DatabaseInstanc
 import doobie._
 import doobie.implicits._
 import org.scalacheck.ScalacheckShapeless._
-import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatest.Assertion
 import org.scalatest.propspec.AnyPropSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalaexercises.types.user.User
 import cats.implicits._
+import com.dimafeng.testcontainers.ForAllTestContainer
 
 class UserProgressRepositorySpec
     extends AnyPropSpec
@@ -44,18 +45,15 @@ class UserProgressRepositorySpec
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance
-    with BeforeAndAfterAll {
+    with ForAllTestContainer {
 
-  implicit val trx: Transactor[IO] = databaseTransactor
+  implicit lazy val trx: Transactor[IO] = databaseTransactor
 
-  val repository: UserProgressRepository = implicitly[UserProgressRepository]
-  val userRepository: UserRepository     = implicitly[UserRepository]
+  lazy val repository: UserProgressRepository = implicitly[UserProgressRepository]
+  lazy val userRepository: UserRepository     = implicitly[UserRepository]
 
   def assertConnectionIO(cio: ConnectionIO[Boolean]): Assertion =
     assert(cio.transact(trx).unsafeRunSync())
-
-  override def beforeAll(): Unit =
-    (repository.deleteAll() *> userRepository.deleteAll()).transact(trx).unsafeRunSync()
 
   def newUser(usr: UserCreation.Request): ConnectionIO[User] =
     for {

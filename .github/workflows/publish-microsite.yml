@@ -1,0 +1,46 @@
+# Don't edit this file!
+# It is automatically updated after every release of https://github.com/47degrees/.github
+# If you want to suggest a change, please open a PR or issue in that repository
+
+name: Publish Microsite
+
+on:
+  push:
+    tags: v**
+
+jobs:
+  microsite:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REQUIRES_PUBLISH_MICROSITE: ${{secrets.REQUIRES_PUBLISH_MICROSITE}}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v7
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Set up jekyll
+        if: env.REQUIRES_PUBLISH_MICROSITE != null
+        run: |
+          gem install jekyll -v 4
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier/v1
+          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-coursier-
+      - name: Cache .sbt
+        uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-sbt-
+      - name: Publish Microsite
+        if: env.REQUIRES_PUBLISH_MICROSITE != null
+        run: sbt ci-microsite

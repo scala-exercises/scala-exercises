@@ -24,25 +24,40 @@ import org.scalaexercises.types.progress._
 import org.scalaexercises.exercises.persistence.domain.{UserProgressQueries => Q}
 import org.scalaexercises.exercises.persistence.repositories.UserProgressRepository._
 import org.scalaexercises.exercises.support.DatabaseInstance
-import doobie.specs2.analysisspec.IOChecker
+import doobie.scalatest.IOChecker
 import doobie.util.query.Query
 import doobie.util.update.Update
-import org.specs2.mutable.Specification
 import shapeless.HNil
 import doobie.util.transactor.Transactor
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.funsuite.AnyFunSuiteLike
+import org.scalatestplus.scalacheck.Checkers
+import com.dimafeng.testcontainers.ForAllTestContainer
 
-class UserProgressQueriesSpec extends Specification with IOChecker with DatabaseInstance {
+class UserProgressQueriesSpec
+    extends AnyFunSuiteLike
+    with Matchers
+    with Checkers
+    with ForAllTestContainer
+    with IOChecker
+    with DatabaseInstance {
 
   import Q.Implicits._
 
   override def transactor: Transactor[IO] = databaseTransactor
 
-  check(Update[InsertParams](Q.insert))
-  check(Update[UpdateParams](Q.update))
-  check(Update[Long](Q.deleteById))
-  check(Update[HNil](Q.deleteAll))
-  check(Query[Long, UserProgress](Q.findById))
-  check(Query[FindEvaluationByVersionParams, UserProgress](Q.findEvaluationByVersion))
-  check(Query[FindEvaluationsBySectionParams, UserProgress](Q.findEvaluationsBySection))
-  check(Query[FindLastSeenSectionParams, Option[String]](Q.findLastSeenSection))
+  test("UserProgressQueries.insert") { check(Update[InsertParams](Q.insert)) }
+  test("UserProgressQueries.update") { check(Update[UpdateParams](Q.update)) }
+  test("UserProgressQueries.deleteById") { check(Update[Long](Q.deleteById)) }
+  test("UserProgressQueries.deleteAll") { check(Update[HNil](Q.deleteAll)) }
+  test("UserProgressQueries.findById") { check(Query[Long, UserProgress](Q.findById)) }
+  test("UserProgressQueries.findEvaluationByVersion") {
+    check(Query[FindEvaluationByVersionParams, UserProgress](Q.findEvaluationByVersion))
+  }
+  test("UserProgressQueries.findEvaluationsBySection") {
+    check(Query[FindEvaluationsBySectionParams, UserProgress](Q.findEvaluationsBySection))
+  }
+  test("UserProgressQueries.findLastSeenSection") {
+    check(Query[FindLastSeenSectionParams, Option[String]](Q.findLastSeenSection))
+  }
 }

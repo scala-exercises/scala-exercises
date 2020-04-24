@@ -1,0 +1,9 @@
+# Don't edit this file!
+# It is automatically updated after every release of https://github.com/47degrees/.github
+# If you want to suggest a change, please open a PR or issue in that repository
+
+enhancement: ['enhancement/*', 'feature/*']
+documentation: ['docs/*', '.docs/*', 'doc/*']
+bug: ['bug/*', 'fix/*']
+tests: ['test/*', 'tests/*']
+dependency-update: ['dep/*', 'dependency/*', 'dependency-update/*']
