@@ -83,8 +83,6 @@ object ProjectPlugin extends AutoPlugin {
         Resolver.typesafeRepo("releases")
       ),
       scalacOptions ~= (_ filterNot (_ == "-Xfuture")),
-      parallelExecution in Test := false,
-      cancelable in Global := true,
       ScoverageKeys.coverageFailOnMinimum := false
     ) ++ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % V.bettermonadicfor)
 

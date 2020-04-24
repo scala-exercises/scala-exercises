@@ -4,8 +4,8 @@ import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
 
-addCommandAlias("ci-test", "runtime/publishLocal; test")
-addCommandAlias("ci-docs", "project-docs/mdoc")
+addCommandAlias("ci-test", ";runtime/publishLocal; test")
+addCommandAlias("ci-docs", ";project-docs/mdoc")
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
@@ -160,6 +160,7 @@ lazy val compiler = (project in file("compiler"))
     fork := true,
     Test / fork := true,
     libraryDependencies ++= Seq(
+      "org.scala-lang"         % "scala-reflect"            % V.scala,
       "org.scala-lang"         % "scala-library"            % V.scala,
       "org.scala-lang"         % "scala-compiler"           % V.scala,
       "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
