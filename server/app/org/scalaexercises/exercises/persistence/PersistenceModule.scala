@@ -45,7 +45,8 @@ class PersistenceModule {
   def updateWithGeneratedKeys[A: Write, K: Read](
       sql: String,
       fields: List[String],
-      values: A): ConnectionIO[K] =
+      values: A
+  ): ConnectionIO[K] =
     Update[A](sql).withUniqueGeneratedKeys[K](fields: _*)(values)
 
   def updateMany[F[_]: Foldable, A: Write](sql: String, values: F[A]): ConnectionIO[Int] =

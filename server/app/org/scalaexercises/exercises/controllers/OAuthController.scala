@@ -37,8 +37,8 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
     cs: ContextShift[IO],
     userOps: UserOps[IO],
     configUtils: ConfigUtils,
-    mode: Mode)
-    extends BaseController {
+    mode: Mode
+) extends BaseController {
 
   private[this] def getAccessToken(code: String, state: String) =
     Github[IO]().auth
@@ -47,13 +47,16 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
         configUtils.githubAuthSecret,
         code,
         configUtils.callbackUrl,
-        state)
+        state
+      )
       .flatMap(response =>
-        IO.fromEither(response.result.map(token => OAuthToken(token.access_token))))
+        IO.fromEither(response.result.map(token => OAuthToken(token.access_token)))
+      )
 
   def callback(
       codeOpt: Option[String] = None,
-      stateOpt: Option[String] = None): Secure[AnyContent] =
+      stateOpt: Option[String] = None
+  ): Secure[AnyContent] =
     Secure(Action.async { implicit request =>
       (codeOpt, stateOpt, request.session.get("oauth-state")).tupled
         .fold(IO.pure(BadRequest("Missing `code` or `state`"))) {
@@ -80,18 +83,19 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
   private[this] def getAuthUser(accessToken: Option[String]): IO[GithubUser] =
     Github[IO](accessToken).users
       .getAuth()
-      .flatMap(
-        response =>
-          IO.fromEither(
-            response.result.map(
-              user =>
-                GithubUser(
-                  login = user.login,
-                  name = user.name,
-                  avatar = user.avatar_url,
-                  url = user.html_url,
-                  email = user.email
-              ))))
+      .flatMap(response =>
+        IO.fromEither(
+          response.result.map(user =>
+            GithubUser(
+              login = user.login,
+              name = user.name,
+              avatar = user.avatar_url,
+              url = user.html_url,
+              email = user.email
+            )
+          )
+        )
+      )
 
   def success(): Secure[AnyContent] =
     Secure(Action.async {

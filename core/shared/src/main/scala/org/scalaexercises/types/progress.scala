@@ -56,7 +56,8 @@ object SaveUserProgress {
         version,
         exerciseType,
         args,
-        succeeded)
+        succeeded
+      )
   }
 }
 

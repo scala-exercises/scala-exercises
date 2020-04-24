@@ -64,7 +64,8 @@ object Exercises {
   }
 
   def discoverLibraries(
-      cl: ClassLoader = classOf[Exercise].getClassLoader): (List[String], List[Library]) = {
+      cl: ClassLoader = classOf[Exercise].getClassLoader
+  ): (List[String], List[Library]) = {
     val classNames: List[String] = subclassesOf[Library](cl)
 
     val errorsAndLibraries = classNames.map { name =>
@@ -72,7 +73,8 @@ object Exercises {
         loadedClass <- guard(Class.forName(name, true, cl), s"$name not found")
         loadedObject <- guard(
           loadedClass.getField("MODULE$").get(null),
-          s"$name must be defined as an object")
+          s"$name must be defined as an object"
+        )
         loadedLibrary <- guard(loadedObject.asInstanceOf[Library], s"$name must extend Library")
       } yield loadedLibrary
     }

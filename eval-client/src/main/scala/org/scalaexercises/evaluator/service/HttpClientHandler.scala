@@ -33,7 +33,8 @@ object HttpClientHandler {
   private val headerContentType = Header("content-type", "application/json")
 
   def apply[F[_]](uri: String, authString: String, resource: Resource[F, Client[F]])(
-      implicit F: Sync[F]): HttpClientService[F] =
+      implicit F: Sync[F]
+  ): HttpClientService[F] =
     new HttpClientService[F] {
       override def evaluates(evalRequest: EvalRequest): F[EvalResponse] =
         for {

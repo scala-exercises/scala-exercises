@@ -69,9 +69,7 @@ class UserRepositorySpec
       val get    = repository.getByLogin(newUser.login)
 
       val tx: ConnectionIO[Boolean] =
-        create *> get map { storedUser =>
-          storedUser.forall(u => u == newUser.asUser(u.id))
-        }
+        create *> get map { storedUser => storedUser.forall(u => u == newUser.asUser(u.id)) }
 
       assertConnectionIO(tx)
     }
@@ -83,9 +81,7 @@ class UserRepositorySpec
         repository.create(newUser).flatMap { storedUser =>
           storedUser.toOption.fold(
             false.pure[ConnectionIO]
-          )(
-            u => repository.getById(u.id).map(_.contains(u))
-          )
+          )(u => repository.getById(u.id).map(_.contains(u)))
         }
 
       assertConnectionIO(tx)

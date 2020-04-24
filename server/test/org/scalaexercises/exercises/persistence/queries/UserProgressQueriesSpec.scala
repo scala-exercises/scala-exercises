@@ -46,11 +46,11 @@ class UserProgressQueriesSpec
 
   override def transactor: Transactor[IO] = databaseTransactor
 
-  test("UserProgressQueries.insert") { check(Update[InsertParams](Q.insert)) }
-  test("UserProgressQueries.update") { check(Update[UpdateParams](Q.update)) }
-  test("UserProgressQueries.deleteById") { check(Update[Long](Q.deleteById)) }
-  test("UserProgressQueries.deleteAll") { check(Update[HNil](Q.deleteAll)) }
-  test("UserProgressQueries.findById") { check(Query[Long, UserProgress](Q.findById)) }
+  test("UserProgressQueries.insert")(check(Update[InsertParams](Q.insert)))
+  test("UserProgressQueries.update")(check(Update[UpdateParams](Q.update)))
+  test("UserProgressQueries.deleteById")(check(Update[Long](Q.deleteById)))
+  test("UserProgressQueries.deleteAll")(check(Update[HNil](Q.deleteAll)))
+  test("UserProgressQueries.findById")(check(Query[Long, UserProgress](Q.findById)))
   test("UserProgressQueries.findEvaluationByVersion") {
     check(Query[FindEvaluationByVersionParams, UserProgress](Q.findEvaluationByVersion))
   }

@@ -52,10 +52,8 @@ object Test {
       }
     })
 
-    val wrongGen = genWrongAnswer(answer)
-    val wrongProp = forAll(wrongGen)({ p =>
-      Either.catchNonFatal({ fntop(method)(p) }).isLeft
-    })
+    val wrongGen  = genWrongAnswer(answer)
+    val wrongProp = forAll(wrongGen)({ p => Either.catchNonFatal({ fntop(method)(p) }).isLeft })
 
     Prop.all(rightProp, wrongProp)
   }

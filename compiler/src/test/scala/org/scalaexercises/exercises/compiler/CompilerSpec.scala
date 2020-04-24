@@ -111,7 +111,8 @@ class CompilerSpec extends AnyFunSpec with Matchers {
         metaInfo,
         "/",
         "sample",
-        fetchContributors = false)
+        fetchContributors = false
+      )
       assert(res.isRight, s"""; ${res.fold(identity, _ => "")}""")
     }
 
@@ -143,7 +144,8 @@ class CompilerSpec extends AnyFunSpec with Matchers {
         metaInfo,
         "/",
         "sample",
-        fetchContributors = false)
+        fetchContributors = false
+      )
       assert(res.isLeft, s"""; ${res.fold(identity, _ => "")}""")
     }
   }

@@ -47,19 +47,20 @@ trait ArbitraryInstances extends Assertions {
         githubUrl  <- Gen.alphaStr
         pictureUrl <- Gen.alphaStr
         email      <- Gen.alphaStr
-      } yield
-        Request(
-          login = login.toString,
-          name = Option(name),
-          githubId = githubId.toString,
-          pictureUrl = pictureUrl,
-          githubUrl = githubUrl,
-          email = Option(email)
-        ))
+      } yield Request(
+        login = login.toString,
+        name = Option(name),
+        githubId = githubId.toString,
+        pictureUrl = pictureUrl,
+        githubUrl = githubUrl,
+        email = Option(email)
+      )
+    )
 
   def persistentUserArbitrary(
       implicit transactor: Transactor[IO],
-      UR: UserRepository): Arbitrary[User] = {
+      UR: UserRepository
+  ): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request =>
       UR.create(request).transact(transactor).unsafeRunSync match {
         case Right(user) => user
@@ -71,7 +72,8 @@ trait ArbitraryInstances extends Assertions {
   case class UserProgressPair(request: SaveUserProgress.Request, user: User)
 
   implicit def saveUserProgressArbitrary(
-      implicit transactor: Transactor[IO]): Arbitrary[UserProgressPair] = {
+      implicit transactor: Transactor[IO]
+  ): Arbitrary[UserProgressPair] = {
 
     Arbitrary(for {
       user <- persistentUserArbitrary.arbitrary
@@ -82,9 +84,7 @@ trait ArbitraryInstances extends Assertions {
   }
 
   def genBoundedList[T](minSize: Int = 1, maxSize: Int = 100, gen: Gen[T]): Gen[List[T]] =
-    Gen.choose(minSize, maxSize) flatMap { size =>
-      Gen.listOfN(size, gen)
-    }
+    Gen.choose(minSize, maxSize) flatMap { size => Gen.listOfN(size, gen) }
 }
 
 object ArbitraryInstances extends ArbitraryInstances

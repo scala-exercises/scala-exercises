@@ -132,7 +132,7 @@ private[compiler] object CommentZed {
   object Ignore extends SingletonFunctor[Ignore] with Ignore[Nothing]
 
   /** Functor, for a singleton type. */
-  sealed trait SingletonFunctor[F[+ _]] { instance: F[Nothing] =>
+  sealed trait SingletonFunctor[F[+_]] { instance: F[Nothing] =>
     implicit def singletonEq[A]: Eq[F[A]] = new Eq[F[A]] {
       def eqv(a1: F[A], a2: F[A]): Boolean = a1 == a2 // always true?
     }
@@ -218,7 +218,8 @@ private[compiler] object CommentParsing {
   ): String Either ParsedComment[A#Name, A#Description, A#Explanation] = parse0(comment)
 
   private[this] def parse0[N[_]: ParseK, D[_]: ParseK, E[_]: ParseK](
-      comment: Comment): String Either ParsedComment[N, D, E] = {
+      comment: Comment
+  ): String Either ParsedComment[N, D, E] = {
     val params = comment.valueParams
 
     lazy val nameEither = {
@@ -246,12 +247,11 @@ private[compiler] object CommentParsing {
       name        <- ParseK[N].fromEither(nameEither)
       description <- ParseK[D].fromEither(descriptionEither)
       explanation <- ParseK[E].fromEither(explanationEither)
-    } yield
-      ParsedComment(
-        name = name,
-        description = description,
-        explanation = explanation
-      )
+    } yield ParsedComment(
+      name = name,
+      description = description,
+      explanation = explanation
+    )
 
   }
 
@@ -275,7 +275,8 @@ private[compiler] object CommentRendering {
   }
 
   def render[N[_], D[_]: Functor, E[_]: Functor](
-      parsedComment: ParsedComment[N, D, E]): RenderedComment[N, D, E] =
+      parsedComment: ParsedComment[N, D, E]
+  ): RenderedComment[N, D, E] =
     RenderedComment(
       name = parsedComment.name,
       description = Functor[D].map(parsedComment.description)(renderBody),
@@ -286,19 +287,19 @@ private[compiler] object CommentRendering {
     Xhtml.toXhtml(body.blocks flatMap renderBlock)
 
   private[this] def renderBlock(block: Block): NodeSeq = block match {
-    case Title(in, 1)  => <h3>{ renderInline(in) }</h3>
-    case Title(in, 2)  => <h4>{ renderInline(in) }</h4>
-    case Title(in, 3)  => <h5>{ renderInline(in) }</h5>
-    case Title(in, _)  => <h6>{ renderInline(in) }</h6>
-    case Paragraph(in) => <p>{ renderInline(in) }</p>
+    case Title(in, 1)  => <h3>{renderInline(in)}</h3>
+    case Title(in, 2)  => <h4>{renderInline(in)}</h4>
+    case Title(in, 3)  => <h5>{renderInline(in)}</h5>
+    case Title(in, _)  => <h6>{renderInline(in)}</h6>
+    case Paragraph(in) => <p>{renderInline(in)}</p>
     case Code(data) =>
-      <pre class={ "scala" }><code class={ "scala" }>{ formatCode(data) }</code></pre>
+      <pre class={"scala"}><code class={"scala"}>{formatCode(data)}</code></pre>
     case UnorderedList(items) =>
-      <ul>{ renderListItems(items.toSeq) }</ul>
+      <ul>{renderListItems(items.toSeq)}</ul>
     case OrderedList(items, listStyle) =>
-      <ol class={ listStyle }>{ renderListItems(items.toSeq) }</ol>
+      <ol class={listStyle}>{renderListItems(items.toSeq)}</ol>
     case DefinitionList(items) =>
-      <dl>{ items map { case (t, d) => <dt>{ renderInline(t) }</dt><dd>{ renderBlock(d) }</dd> } }</dl>
+      <dl>{items map { case (t, d) => <dt>{renderInline(t)}</dt><dd>{renderBlock(d)}</dd> }}</dl>
     case HorizontalRule() =>
       <hr/>
   }
@@ -308,23 +309,23 @@ private[compiler] object CommentRendering {
       item match {
         case OrderedList(_, _) |
             UnorderedList(_) => // html requires sub ULs to be put into the last LI
-          xmlList.init ++ <li>{ xmlList.last.child ++ renderBlock(item) }</li>
+          xmlList.init ++ <li>{xmlList.last.child ++ renderBlock(item)}</li>
         case Paragraph(inline) =>
-          xmlList :+ <li>{ renderInline(inline) }</li> // LIs are blocks, no need to use Ps
+          xmlList :+ <li>{renderInline(inline)}</li> // LIs are blocks, no need to use Ps
         case block =>
-          xmlList :+ <li>{ renderBlock(block) }</li>
+          xmlList :+ <li>{renderBlock(block)}</li>
       }
     }
 
   private[this] def renderInline(inl: Inline): NodeSeq = inl match {
     case Chain(items)             => items flatMap renderInline
-    case Italic(in)               => <i>{ renderInline(in) }</i>
-    case Bold(in)                 => <b>{ renderInline(in) }</b>
-    case Underline(in)            => <u>{ renderInline(in) }</u>
-    case Superscript(in)          => <sup>{ renderInline(in) }</sup>
-    case Subscript(in)            => <sub>{ renderInline(in) }</sub>
-    case Link(raw, title)         => <a href={ raw } target="_blank">{ renderInline(title) }</a>
-    case Monospace(in)            => <code>{ renderInline(in) }</code>
+    case Italic(in)               => <i>{renderInline(in)}</i>
+    case Bold(in)                 => <b>{renderInline(in)}</b>
+    case Underline(in)            => <u>{renderInline(in)}</u>
+    case Superscript(in)          => <sup>{renderInline(in)}</sup>
+    case Subscript(in)            => <sub>{renderInline(in)}</sub>
+    case Link(raw, title)         => <a href={raw} target="_blank">{renderInline(title)}</a>
+    case Monospace(in)            => <code>{renderInline(in)}</code>
     case Text(text)               => scala.xml.Text(text)
     case Summary(in)              => renderInline(in)
     case HtmlTag(tag)             => scala.xml.Unparsed(tag)

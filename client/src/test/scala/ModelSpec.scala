@@ -100,9 +100,7 @@ object ExercisesSpec extends TestSuite {
       val newState         = Exercises.updateByMethod(state, "foo", updatedArguments)
       val newExercise      = Exercises.findByMethod(newState, "foo")
       assert(newExercise.isDefined)
-      newExercise.foreach { ex =>
-        assert(ex.arguments == updatedArguments)
-      }
+      newExercise.foreach(ex => assert(ex.arguments == updatedArguments))
     }
   }
 }

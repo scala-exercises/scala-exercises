@@ -176,7 +176,8 @@ object SourceTextExtraction {
                 visitMethodExpr(
                   nextPathReversed,
                   expr,
-                  visitDocComment(nextPathReversed, comment, acc))
+                  visitDocComment(nextPathReversed, comment, acc)
+                )
               )
 
             case moduleDef @ ModuleDef(mods, _, impl) =>

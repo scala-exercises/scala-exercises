@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-case class ConfigUtils @Inject()(conf: Configuration) {
+case class ConfigUtils @Inject() (conf: Configuration) {
 
   lazy val githubAuthId: String     = getConfigString("github.client.id")
   lazy val githubAuthSecret: String = getConfigString("github.client.secret")

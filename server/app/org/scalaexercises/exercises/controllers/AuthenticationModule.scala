@@ -52,10 +52,9 @@ trait AuthenticationModule {
     override protected def executionContext: ExecutionContext = global
   }
 
-  def AuthenticatedUser(thunk: User => IO[Result])(
-      implicit userOps: UserOps[IO],
-      mode: Mode,
-      bodyParser: BodyParser[AnyContent]) =
+  def AuthenticatedUser(
+      thunk: User => IO[Result]
+  )(implicit userOps: UserOps[IO], mode: Mode, bodyParser: BodyParser[AnyContent]) =
     Secure(new AuthenticationAction().async { request =>
       (userOps.getUserByLogin(request.userId) flatMap {
         case Some(user) => thunk(user)
@@ -67,7 +66,8 @@ trait AuthenticationModule {
       implicit userOps: UserOps[IO],
       mode: Mode,
       bodyParser: BodyParser[AnyContent],
-      format: Reads[T]) =
+      format: Reads[T]
+  ) =
     Secure(new AuthenticationAction().async(parser) { request =>
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) =>

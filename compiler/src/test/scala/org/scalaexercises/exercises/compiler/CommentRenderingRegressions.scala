@@ -29,7 +29,7 @@ class CommentRenderingRegressions extends AnyFunSpec with Matchers with Inside {
   import Comments.Mode
 
   private[this] val global = new DocExtractionGlobal() {
-    locally { new Run() }
+    locally(new Run())
   }
 
   private[this] val commentFactory = CommentFactory(global)

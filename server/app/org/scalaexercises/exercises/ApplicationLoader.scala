@@ -48,9 +48,10 @@ class ExercisesApplicationLoader extends ApplicationLoader {
     val mode = context.environment.mode.toString.toLowerCase
     new Components(
       context.copy(
-        initialConfiguration = context.initialConfiguration.withFallback(
-          Configuration(ConfigFactory.load(s"application.$mode.conf")))
-      )).application
+        initialConfiguration = context.initialConfiguration
+          .withFallback(Configuration(ConfigFactory.load(s"application.$mode.conf")))
+      )
+    ).application
   }
 }
 
@@ -72,10 +73,10 @@ class Components(context: Context)
     ec <- ExecutionContexts.fixedThreadPool[IO](threadPool)
     cs = IO.contextShift(ec)
     blocker <- Blocker[IO]
-  } yield
-    Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
-      implicitly,
-      cs)).allocated
+  } yield Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
+    implicitly,
+    cs
+  )).allocated
 
   lazy implicit val trans: Transactor[IO] = transactorResource.map(_._1).unsafeRunSync
 

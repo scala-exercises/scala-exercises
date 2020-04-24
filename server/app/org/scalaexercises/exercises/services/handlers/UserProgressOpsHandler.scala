@@ -38,7 +38,8 @@ class UserProgressOpsHandler[F[_]](implicit F: Sync[F], T: Transactor[F])
   override def getExerciseEvaluations(
       user: User,
       library: String,
-      section: String): F[List[UserProgress]] =
+      section: String
+  ): F[List[UserProgress]] =
     repo.getExerciseEvaluations(user, library, section).transact(T)
 
   override def getLastSeenSection(user: User, library: String): F[Option[String]] =

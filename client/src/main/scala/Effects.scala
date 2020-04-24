@@ -39,7 +39,7 @@ object Effects {
   }
 
   def loadInitialData: Future[Option[Action]] = {
-    DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection => {
+    DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]]) { libAndSection =>
       val (lib, sect) = libAndSection
       Client
         .fetchProgress(lib, sect)
@@ -48,7 +48,7 @@ object Effects {
             Some(SetState(validateState(state)))
           }
         })
-    })
+    }
   }
 
   def compileExercise(s: State, method: String): Future[Option[Action]] =
@@ -56,12 +56,12 @@ object Effects {
       case Some(exercise) if exercise.isFilled =>
         Client
           .compileExercise(exercise)
-          .map(result => {
+          .map { result =>
             if (result.ok)
               Some(CompilationOk(result.method))
             else
               Some(CompilationFail(result.method, result.msg))
-          })
+          }
       case _ => noop
     }
 

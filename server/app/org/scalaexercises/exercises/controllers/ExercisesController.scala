@@ -43,8 +43,8 @@ class ExercisesController(config: Configuration, components: ControllerComponent
     ce: ConcurrentEffect[IO],
     configUtils: ConfigUtils,
     BPAnyContent: BodyParser[AnyContent],
-    mode: Mode)
-    extends BaseController
+    mode: Mode
+) extends BaseController
     with JsonFormats
     with AuthenticationModule {
 
