@@ -186,7 +186,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright (C)  2016-2020 47 Degrees <https://47deg.com>
+   Copyright (C)  2014-2020 47 Degrees <https://47deg.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
