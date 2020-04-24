@@ -1,17 +1,15 @@
-import org.scalajs.core.tools.linker.ModuleInitializer
-import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 import play.sbt.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
 
-addCommandAlias("ci-test", "evaluator-client/publishLocal; runtime/publishLocal; test")
+addCommandAlias("ci-test", "runtime/publishLocal; test")
 addCommandAlias("ci-docs", "project-docs/mdoc")
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
-  .settings(noPublishSettings: _*)
+  .settings(skip in publish := true)
   .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
   .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
 
@@ -23,14 +21,14 @@ lazy val `scala-exercises` = (project in file("."))
 
 lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
+    fork in Test := false,
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % v("catsversion")
+      "org.typelevel" %%% "cats-core" % V.catsversion
     )
   )
-  .jsSettings(sharedJsSettings: _*)
 
 lazy val coreJvm = core.jvm
-lazy val coreJs  = core.js
+lazy val coreJs  = core.js.settings(fork in Test := false)
 
 // Client and Server projects
 lazy val server = (project in file("server"))
@@ -39,7 +37,7 @@ lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
   .enablePlugins(JavaAppPackaging)
-  .settings(noPublishSettings: _*)
+  .settings(skip in publish := true)
   .settings(
     scalaJSProjects := clients,
     pipelineStages in Assets := Seq(scalaJSPipeline),
@@ -55,38 +53,36 @@ lazy val server = (project in file("server"))
       cacheApi,
       ws,
       caffeine,
-      specs2 xscalaz,
-      "org.scala-exercises" %% "runtime"          % version.value changing (),
-      "org.scala-exercises" %% "evaluator-client" % version.value changing (),
-      "org.scala-exercises" %% "exercises-stdlib"        % v("stdlib") xscalaExercises,
-      "org.scala-exercises" %% "exercises-cats"          % v("cats") xscalaExercises,
-      "org.scala-exercises" %% "exercises-shapeless"     % v("shapeless") xscalaExercises,
-      "org.scala-exercises" %% "exercises-scalatutorial" % v("scalatutorial") xscalaExercises,
-      "org.scala-exercises" %% "exercises-fpinscala"     % v("fpinscala") xscalaExercises,
-      "org.scala-exercises" %% "exercises-doobie"        % v("doobie") xscalaExercises,
-      "org.scala-exercises" %% "exercises-scalacheck"    % v("scalacheck") xscalaExercises,
-      "org.scala-exercises" %% "exercises-fetch"         % v("fetch") xscalaExercises,
-      "org.scala-exercises" %% "exercises-monocle"       % v("monocle") xscalaExercises,
-      "org.scala-exercises" %% "exercises-circe"         % v("circe") xscalaExercises,
-      "com.vmunier"                %% "scalajs-scripts"                 % v("scalajsscripts"),
-      "com.lihaoyi"                %% "upickle"                         % v("upickle"),
-      "org.webjars"                %% "webjars-play"                    % v("webjars"),
-      "org.webjars"                % "highlightjs"                      % v("highlightjs"),
-      "org.foundweekends"          %% "knockoff"                        % v("knockoff"),
-      "com.newrelic.agent.java"    % "newrelic-agent"                   % v("newrelic"),
-      "org.typelevel"              %% "cats-effect"                     % v("catsversion"),
-      "commons-io"                 % "commons-io"                       % v("commonsio"),
-      "org.webjars.bower"          % "bootstrap-sass"                   % v("bootstrap"),
-      "com.47deg"                  %% "github4s"                        % v("github4s"),
-      "org.scalatest"              %% "scalatest"                       % v("scalatest") % "runtime",
-      "org.scalatestplus"          %% "scalatestplus-scalacheck"        % v("scalatestplusScheck") % Test,
-      "org.tpolecat"               %% "doobie-core"                     % v("doobieversion"),
-      "org.tpolecat"               %% "doobie-hikari"                   % v("doobieversion"),
-      "org.tpolecat"               %% "doobie-postgres"                 % v("doobieversion"),
-      "com.dimafeng"               %% "testcontainers-scala-scalatest"  % v("testcontainers") % Test,
-      "com.dimafeng"               %% "testcontainers-scala-postgresql" % v("testcontainers") % Test,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14"       % v("scalacheckshapeless") % Test,
-      "org.tpolecat"               %% "doobie-scalatest"                % v("doobieversion") % Test
+      "org.scala-exercises"        %% "runtime"                         % version.value changing (),
+      "org.scala-exercises"        %% "exercises-stdlib"                % V.exercisesStdlib,
+      "org.scala-exercises"        %% "exercises-cats"                  % V.exercisesCats,
+      "org.scala-exercises"        %% "exercises-shapeless"             % V.exercisesShapeless,
+      "org.scala-exercises"        %% "exercises-scalatutorial"         % V.exercisesScalatutorial,
+      "org.scala-exercises"        %% "exercises-fpinscala"             % V.exercisesFpinscala,
+      "org.scala-exercises"        %% "exercises-doobie"                % V.exercisesDoobie,
+      "org.scala-exercises"        %% "exercises-scalacheck"            % V.exercisesScalacheck,
+      "org.scala-exercises"        %% "exercises-fetch"                 % V.exercisesFetch,
+      "org.scala-exercises"        %% "exercises-monocle"               % V.exercisesMonocle,
+      "org.scala-exercises"        %% "exercises-circe"                 % V.exercisesCirce,
+      "com.vmunier"                %% "scalajs-scripts"                 % V.scalajsscripts,
+      "com.lihaoyi"                %% "upickle"                         % V.upickle,
+      "org.webjars"                %% "webjars-play"                    % V.webjars,
+      "org.webjars"                % "highlightjs"                      % V.highlightjs,
+      "org.foundweekends"          %% "knockoff"                        % V.knockoff,
+      "com.newrelic.agent.java"    % "newrelic-agent"                   % V.newrelic,
+      "org.typelevel"              %% "cats-effect"                     % V.catsversion,
+      "commons-io"                 % "commons-io"                       % V.commonsio,
+      "org.webjars.bower"          % "bootstrap-sass"                   % V.bootstrap,
+      "com.47deg"                  %% "github4s"                        % V.github4s,
+      "org.scalatest"              %% "scalatest"                       % V.scalatest % Runtime,
+      "org.scalatestplus"          %% "scalacheck-1-14"                 % V.scalatestplusScheck % Test,
+      "org.tpolecat"               %% "doobie-core"                     % V.doobieversion,
+      "org.tpolecat"               %% "doobie-hikari"                   % V.doobieversion,
+      "org.tpolecat"               %% "doobie-postgres"                 % V.doobieversion,
+      "com.dimafeng"               %% "testcontainers-scala-scalatest"  % V.testcontainers % Test,
+      "com.dimafeng"               %% "testcontainers-scala-postgresql" % V.testcontainers % Test,
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14"       % V.scalacheckshapeless % Test,
+      "org.tpolecat"               %% "doobie-scalatest"                % V.doobieversion % Test
     )
   )
 
@@ -95,28 +91,23 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
   .settings(name := "client")
-  .settings(noPublishSettings: _*)
+  .settings(skip in publish := true)
   .settings(
+    fork in Test := false,
     scalaJSUseMainModuleInitializer := true,
-    scalaJSMainModuleInitializer := Some(
-      ModuleInitializer.mainMethod("org.scalaexercises.client.scripts.ExercisesJS", "main")),
-    scalaJSUseMainModuleInitializer in Test := false,
     sourceMappings := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
-    scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
-      _.withParallel(false)
-    },
     jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
     skip in packageJSDependencies := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(
-      "io.monix"      %%% "monix"     % v("monix"),
-      "org.typelevel" %%% "cats-core" % v("catsversion"),
-      "com.lihaoyi" %%% "scalatags" % v("scalatags") xscalajs,
-      "org.scala-js" %%% "scalajs-dom" % v("scalajsdom"),
-      "be.doeraene" %%% "scalajs-jquery" % v("scalajsjquery") xscalajs,
-      "com.lihaoyi" %%% "upickle" % v("upickle"),
-      "com.lihaoyi" %%% "utest"   % v("utest") % Test
+      "io.monix"      %%% "monix"          % V.monix,
+      "org.typelevel" %%% "cats-core"      % V.catsversion,
+      "com.lihaoyi"   %%% "scalatags"      % V.jsDependencyScalatags,
+      "org.scala-js"  %%% "scalajs-dom"    % V.jsDependencyScalajsdom,
+      "be.doeraene"   %%% "scalajs-jquery" % V.jsDependencyScalajsjquery,
+      "com.lihaoyi"   %%% "upickle"        % V.upickle,
+      "com.lihaoyi"   %%% "utest"          % V.jsDependencyUtest % Test
     )
   )
 
@@ -124,13 +115,12 @@ lazy val `evaluator-client` = (project in file("eval-client"))
   .settings(
     name := "evaluator-client",
     libraryDependencies ++= Seq(
-      "org.http4s"    %% "http4s-blaze-client" % v("http4s"),
-      "org.http4s"    %% "http4s-circe"        % v("http4s"),
-      "io.circe"      %% "circe-core"          % v("circeversion"),
-      "io.circe"      %% "circe-generic"       % v("circeversion"),
-      "org.scalatest" %% "scalatest"           % v("scalatest") % Test
-    ),
-    crossScalaVersions := Seq(scala_212, scala_213)
+      "org.http4s"    %% "http4s-blaze-client" % V.http4s,
+      "org.http4s"    %% "http4s-circe"        % V.http4s,
+      "io.circe"      %% "circe-core"          % V.circeversion,
+      "io.circe"      %% "circe-generic"       % V.circeversion,
+      "org.scalatest" %% "scalatest"           % V.scalatest % Test
+    )
   )
 
 lazy val clients = Seq(client)
@@ -141,12 +131,11 @@ lazy val definitions = (project in file("definitions"))
   .settings(name := "definitions")
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel"              %% "cats-core"                 % v("catsversion"),
-      "org.scalatest"              %% "scalatest"                 % v("scalatest"),
-      "org.scalacheck"             %% "scalacheck"                % v("scalacheckversion"),
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % v("scalacheckshapeless")
-    ),
-    crossScalaVersions := Seq(scala_212, scala_213)
+      "org.typelevel"              %% "cats-core"                 % V.catsversion,
+      "org.scalatest"              %% "scalatest"                 % V.scalatest,
+      "org.scalacheck"             %% "scalacheck"                % V.scalacheckversion,
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % V.scalacheckshapeless
+    )
   )
 
 // Runtime
@@ -156,11 +145,10 @@ lazy val runtime = (project in file("runtime"))
   .settings(name := "runtime")
   .settings(
     libraryDependencies ++= Seq(
-      "org.clapper"   %% "classutil" % v("classutil"),
-      "org.typelevel" %% "cats-core" % v("catsversion") % "compile",
-      "org.scalatest" %% "scalatest" % v("scalatest") % Test
-    ),
-    crossScalaVersions := Seq(scala_212, scala_213)
+      "org.clapper"   %% "classutil" % V.classutil,
+      "org.typelevel" %% "cats-core" % V.catsversion % Compile,
+      "org.scalatest" %% "scalatest" % V.scalatest % Test
+    )
   )
 
 // Compiler
@@ -169,22 +157,19 @@ lazy val compiler = (project in file("compiler"))
   .settings(name := "exercise-compiler")
   .settings(
     exportJars := true,
+    fork := true,
+    Test / fork := true,
     libraryDependencies ++= Seq(
-      "org.scala-lang"         % "scala-compiler"           % scalaVersion.value,
-      "org.scala-lang.modules" %% "scala-collection-compat" % v("collectioncompat"),
-      "org.typelevel"          %% "cats-core"               % v("catsversion") % "compile",
-      "com.47deg"              %% "github4s"                % v("github4s"),
-      "org.scalariform"        %% "scalariform"             % v("scalariform"),
-      "org.typelevel"          %% "cats-laws"               % v("catsversion") % Test,
-      "org.scalatest"          %% "scalatest"               % v("scalatest") % Test
+      "org.scala-lang"         % "scala-library"            % V.scala,
+      "org.scala-lang"         % "scala-compiler"           % V.scala,
+      "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
+      "org.typelevel"          %% "cats-core"               % V.catsversion % Compile,
+      "com.47deg"              %% "github4s"                % V.github4s,
+      "org.scalariform"        %% "scalariform"             % V.scalariform,
+      "org.typelevel"          %% "cats-laws"               % V.catsversion % Test,
+      "org.scalatest"          %% "scalatest"               % V.scalatest % Test
     ),
-    scalacOptions := {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 12)) => scalacOptions.value ++ Seq("-Ypartial-unification")
-        case _             => scalacOptions.value
-      }
-    },
-    crossScalaVersions := Seq(scala_212, scala_213)
+    scalacOptions := scalacOptions.value
   )
   .dependsOn(definitions, runtime)
 
@@ -193,13 +178,12 @@ lazy val compiler = (project in file("compiler"))
 lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(name := "sbt-exercise")
   .settings(
-    scalaVersion := scala_212,
     sbtPlugin := true,
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % v("catsversion") % "compile"
+      "org.typelevel" %% "cats-core" % V.catsversion % Compile
     ),
     scalacOptions += "-Ypartial-unification",
-    addCompilerPlugin("org.scalamacros" % "paradise" % v("scalamacros") cross CrossVersion.full),
+    addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
     // Leverage build info to populate compiler classpath--
     // This allows SBT, which currently requires Scala 2.10.x, to load and run
     // the compiler, which requires Scala 2.11.x.
@@ -213,7 +197,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       }
     )
   )
-// scripted plugin
+  // scripted plugin
   .enablePlugins(SbtPlugin)
   .settings(
     scriptedLaunchOpts := {
@@ -251,10 +235,12 @@ lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
 
 addCommandAlias(
   "testAll",
-  ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted")
+  ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted"
+)
 addCommandAlias(
   "publishAll",
-  ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal")
+  ";definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal"
+)
 addCommandAlias(
   "publishSignedAll",
   ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned;evaluator-client/publishSigned"
