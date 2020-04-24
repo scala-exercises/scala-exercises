@@ -38,7 +38,7 @@ import org.scalajs.dom.ext.{Ajax, AjaxException}
 object Client {
   def readProgress(library: String, section: String, raw: String): List[ClientExercise] = {
     val parsedBody = read[SectionExercises](raw)
-    parsedBody.exercises.map(e => {
+    parsedBody.exercises.map { e =>
       ClientExercise(
         library = library,
         section = section,
@@ -46,7 +46,7 @@ object Client {
         arguments = e.args,
         state = if (e.succeeded) Solved else Unsolved
       )
-    })
+    }
   }
 
   def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
@@ -70,9 +70,7 @@ object Client {
     val request = EvaluationRequest(e.library, e.section, e.method, 1, "Koans", e.arguments)
     Ajax
       .postAsJson(url, write(request))
-      .map(r => {
-        EvaluationResult(true, e.method)
-      })
+      .map(r => EvaluationResult(true, e.method))
       .recover({
         case exc: AjaxException => {
           EvaluationResult(

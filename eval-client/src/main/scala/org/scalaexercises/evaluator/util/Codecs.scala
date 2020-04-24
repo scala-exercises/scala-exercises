@@ -36,22 +36,22 @@ object Codecs {
 
   implicit val decodeEvalResponse: Decoder[EvalResponse] = deriveDecoder[EvalResponse]
 
-  implicit val encodeEvalRequest: Encoder[EvalRequest] = Encoder.instance(
-    req =>
-      Json.obj(
-        ("resolvers", Json.arr(req.resolvers.map(Json.fromString): _*)),
-        ("dependencies", Json.arr(req.dependencies.map(_.asJson): _*)),
-        ("code", Json.fromString(req.code))
-    ))
+  implicit val encodeEvalRequest: Encoder[EvalRequest] = Encoder.instance(req =>
+    Json.obj(
+      ("resolvers", Json.arr(req.resolvers.map(Json.fromString): _*)),
+      ("dependencies", Json.arr(req.dependencies.map(_.asJson): _*)),
+      ("code", Json.fromString(req.code))
+    )
+  )
 
-  implicit val encodeDependency: Encoder[EvaluatorDependency] = Encoder.instance(
-    dep =>
-      Json.obj(
-        ("groupId", Json.fromString(dep.groupId)),
-        ("artifactId", Json.fromString(dep.artifactId)),
-        ("version", Json.fromString(dep.version)),
-        ("exclusions", dep.exclusions.asJson)
-    ))
+  implicit val encodeDependency: Encoder[EvaluatorDependency] = Encoder.instance(dep =>
+    Json.obj(
+      ("groupId", Json.fromString(dep.groupId)),
+      ("artifactId", Json.fromString(dep.artifactId)),
+      ("version", Json.fromString(dep.version)),
+      ("exclusions", dep.exclusions.asJson)
+    )
+  )
 
   implicit val encodeExclusion: Encoder[Exclusion] = semiauto.deriveEncoder[Exclusion]
 

@@ -66,7 +66,7 @@ class CommentParsingRenderingSpec extends AnyFunSpec with Matchers with Inside {
   private[this] val content3 = "Hello World!!!!!!!"
 
   private[this] val global = new DocExtractionGlobal() {
-    locally { new Run() }
+    locally(new Run())
   }
 
   private[this] val commentFactory = CommentFactory(global)

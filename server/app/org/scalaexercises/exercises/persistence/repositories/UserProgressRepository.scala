@@ -45,12 +45,14 @@ trait UserProgressRepository {
       libraryName: String,
       sectionName: String,
       method: String,
-      version: Int): ConnectionIO[Option[UserProgress]]
+      version: Int
+  ): ConnectionIO[Option[UserProgress]]
 
   def getExerciseEvaluations(
       user: User,
       libraryName: String,
-      sectionName: String): ConnectionIO[List[UserProgress]]
+      sectionName: String
+  ): ConnectionIO[List[UserProgress]]
 
   def getLastSeenSection(user: User, libraryName: String): ConnectionIO[Option[String]]
 
@@ -68,7 +70,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
       version,
       exerciseType,
       args,
-      succeeded) = request
+      succeeded
+    ) = request
     persistence
       .updateWithGeneratedKeys[InsertParams, UserProgress](
         Q.insert,
@@ -92,7 +95,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
       version,
       exerciseType,
       args,
-      succeeded) = request
+      succeeded
+    ) = request
     persistence
       .updateWithGeneratedKeys[UpdateParams, UserProgress](
         Q.update,
@@ -108,7 +112,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
           user.id,
           libraryName,
           sectionName,
-          method)
+          method
+        )
       )
   }
 
@@ -136,7 +141,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
   override def getExerciseEvaluations(
       user: User,
       libraryName: String,
-      sectionName: String): ConnectionIO[List[UserProgress]] =
+      sectionName: String
+  ): ConnectionIO[List[UserProgress]] =
     persistence.fetchList[FindEvaluationsBySectionParams, UserProgress](
       Q.findEvaluationsBySection,
       (user.id, libraryName, sectionName)

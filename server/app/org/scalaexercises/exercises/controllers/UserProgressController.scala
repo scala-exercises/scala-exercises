@@ -38,8 +38,7 @@ class UserProgressController(components: ControllerComponents)(
   def fetchUserProgressBySection(libraryName: String, sectionName: String) =
     AuthenticatedUser { user =>
       exercisesProgress.fetchUserProgressByLibrarySection(user, libraryName, sectionName) map {
-        response =>
-          Ok(Json.toJson(response))
+        response => Ok(Json.toJson(response))
       }
     }
 

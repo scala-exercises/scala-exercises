@@ -65,7 +65,8 @@ class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
           "myPackage.Bar.bar"                -> "/** This is Bar.bar */",
           "myPackage.Bar"                    -> "/** This is Bar */",
           "myPackage.Foo"                    -> "/** This is Foo */"
-        ))
+        )
+      )
     }
   }
 
@@ -97,7 +98,8 @@ class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
           s"$multiLevelPackage.Bar.bar"                -> "/** This is Bar.bar */",
           s"$multiLevelPackage.Bar"                    -> "/** This is Bar */",
           s"$multiLevelPackage.Foo"                    -> "/** This is Foo */"
-        ))
+        )
+      )
     }
 
   }

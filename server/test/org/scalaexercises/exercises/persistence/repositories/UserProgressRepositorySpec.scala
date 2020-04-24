@@ -98,7 +98,8 @@ class UserProgressRepositorySpec
           currentUserProgress <- repository.getExerciseEvaluations(
             user = user,
             libraryName = prg.libraryName,
-            sectionName = prg.sectionName)
+            sectionName = prg.sectionName
+          )
         } yield currentUserProgress.size.equals(1) && currentUserProgress.head.equals(userProgress)
 
         assertConnectionIO(tx)

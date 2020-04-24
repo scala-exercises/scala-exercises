@@ -103,12 +103,14 @@ object UI {
   def toggleExerciseClass(s: State, method: String): Coeval[Unit] = {
     Exercises
       .findByMethod(s, method)
-      .fold(noop)(
-        exercise =>
-          setExerciseStyle(
-            method,
-            exerciseStyle(exercise),
-            if (exercise.isSolved) "solved-exercise" else ""))
+      .fold(noop)(exercise =>
+        setExerciseStyle(
+          method,
+          exerciseStyle(exercise),
+          if (exercise.isSolved) "solved-exercise"
+          else ""
+        )
+      )
   }
 
   def setExerciseStyle(method: String, style: ExerciseStyle, codeStyle: String = ""): Coeval[Unit] =

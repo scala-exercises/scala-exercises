@@ -138,7 +138,7 @@ class MethodBodyReaderSpec extends AnyFunSpec with Matchers with MethodBodyReade
 
 trait MethodBodyReaderSpecUtilities {
   val global = new DocExtractionGlobal() {
-    locally { new Run() }
+    locally(new Run())
   }
 
   import global._
@@ -158,7 +158,8 @@ trait MethodBodyReaderSpecUtilities {
     unwrap(
       global
         .newUnitParser(wrap(code))
-        .compilationUnit())
+        .compilationUnit()
+    )
   }
 
   def extractSnippet(code: String): String = {

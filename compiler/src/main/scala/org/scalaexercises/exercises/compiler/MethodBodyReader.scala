@@ -35,9 +35,7 @@ object MethodBodyReader {
     val lineRanges = normalizedLineRanges(content, bodyStart, bodyEnd)
 
     lineRanges
-      .map { lineRange =>
-        content.slice(lineRange._1, lineRange._2).mkString
-      }
+      .map(lineRange => content.slice(lineRange._1, lineRange._2).mkString)
       .mkString("\n")
   }
 
@@ -117,9 +115,7 @@ object MethodBodyReader {
     }
 
     val (minSpace, offsets) = loop(start, Int.MaxValue, Nil)
-    offsets.map { kv =>
-      (kv._1 + minSpace) -> kv._2
-    }.reverse
+    offsets.map(kv => (kv._1 + minSpace) -> kv._2).reverse
   }
 
 }

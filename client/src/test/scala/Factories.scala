@@ -35,5 +35,6 @@ object Factories {
       section = section,
       method = method,
       arguments = args,
-      state = state)
+      state = state
+    )
 }

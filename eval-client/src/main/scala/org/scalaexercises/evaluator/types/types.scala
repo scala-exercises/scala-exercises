@@ -38,19 +38,22 @@ final case class EvaluatorDependency(
     groupId: String,
     artifactId: String,
     version: String,
-    exclusions: Option[List[Exclusion]] = None)
+    exclusions: Option[List[Exclusion]] = None
+)
 
 final case class EvalRequest(
     resolvers: List[String] = Nil,
     dependencies: List[EvaluatorDependency] = Nil,
-    code: String)
+    code: String
+)
 
 final case class EvalResponse(
     msg: String,
     value: Option[String] = None,
     valueType: Option[String] = None,
     consoleOutput: Option[String] = None,
-    compilationInfos: CI = Map.empty)
+    compilationInfos: CI = Map.empty
+)
 
 object EvalResponse {
 

@@ -492,7 +492,8 @@ class PersistenceModuleSpec
         fetchItemById(updateResult).transact(trx).unsafeRunSync() shouldBe PersistenceItem(
           updateResult,
           name,
-          active)
+          active
+        )
       }
     }
   }

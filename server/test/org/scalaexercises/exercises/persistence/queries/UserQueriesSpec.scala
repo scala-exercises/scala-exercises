@@ -43,12 +43,12 @@ class UserQueriesSpec
 
   override def transactor: Transactor[IO] = databaseTransactor
 
-  test("UserQueries.all") { check(Query[Unit, User](Q.all)) }
-  test("UserQueries.findById") { check(Query[Long, User](Q.findById)) }
-  test("UserQueries.findByLogin") { check(Query[String, User](Q.findByLogin)) }
-  test("UserQueries.update") { check(Update[UpdateParams](Q.update)) }
-  test("UserQueries.insert") { check(Update[InsertParams](Q.insert)) }
-  test("UserQueries.deleteById") { check(Update[Long](Q.deleteById)) }
-  test("UserQueries.deleteAll") { check(Update[Unit](Q.deleteAll)) }
+  test("UserQueries.all")(check(Query[Unit, User](Q.all)))
+  test("UserQueries.findById")(check(Query[Long, User](Q.findById)))
+  test("UserQueries.findByLogin")(check(Query[String, User](Q.findByLogin)))
+  test("UserQueries.update")(check(Update[UpdateParams](Q.update)))
+  test("UserQueries.insert")(check(Update[InsertParams](Q.insert)))
+  test("UserQueries.deleteById")(check(Update[Long](Q.deleteById)))
+  test("UserQueries.deleteAll")(check(Update[Unit](Q.deleteAll)))
 
 }

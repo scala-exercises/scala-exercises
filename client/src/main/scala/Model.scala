@@ -50,12 +50,12 @@ object Exercises {
     s.find(_.method == method)
 
   def applyByMethod(s: State, method: String, f: ClientExercise => ClientExercise): State =
-    s.map(ex => {
+    s.map { ex =>
       if (ex.method == method)
         f(ex)
       else
         ex
-    })
+    }
 
   def updateByMethod(s: State, method: String, args: Seq[String]): State =
     applyByMethod(s, method, _.copy(arguments = args, state = Unsolved))

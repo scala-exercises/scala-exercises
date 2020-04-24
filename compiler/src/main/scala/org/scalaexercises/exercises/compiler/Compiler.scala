@@ -136,30 +136,32 @@ case class Compiler() {
             .traverse(
               internal
                 .instanceToClassSymbol(_)
-                .flatMap(symbol => maybeMakeSectionInfo(library, symbol)))
+                .flatMap(symbol => maybeMakeSectionInfo(library, symbol))
+            )
         }
-      } yield
-        LibraryInfo(
-          symbol = symbol,
-          comment = comment,
-          sections = sections,
-          color = library.color,
-          logoPath = library.logoPath,
-          owner = library.owner,
-          repository = library.repository
-        )
+      } yield LibraryInfo(
+        symbol = symbol,
+        comment = comment,
+        sections = sections,
+        color = library.color,
+        logoPath = library.logoPath,
+        owner = library.owner,
+        repository = library.repository
+      )
 
     def checkEmptySectionList(librarySymbol: Symbol, library: Library): Either[String, Library] =
       if (library.sections.isEmpty)
         Either.left(
-          s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section")
+          s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section"
+        )
       else
         Either.right(library)
 
     def fetchContributions(
         owner: String,
         repository: String,
-        path: String): List[ContributionInfo] = {
+        path: String
+    ): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
       val contribs = Github[IO](sys.env.get("GITHUB_TOKEN")).repos
         .listCommits(owner, repository, None, Option(path))
@@ -198,19 +200,19 @@ case class Compiler() {
         exercises <- symbol.toType.decls.toList
           .filter(symbol =>
             symbol.isPublic && !symbol.isSynthetic &&
-              symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
+              symbol.name != termNames.CONSTRUCTOR && symbol.isMethod
+          )
           .map(_.asMethod)
           .filterNot(_.isGetter)
           .traverse(maybeMakeExerciseInfo)
-      } yield
-        SectionInfo(
-          symbol = symbol,
-          comment = comment,
-          exercises = exercises,
-          imports = Nil,
-          path = extracted.symbolPaths.get(symbol.toString),
-          contributions = contributions
-        )
+      } yield SectionInfo(
+        symbol = symbol,
+        comment = comment,
+        exercises = exercises,
+        imports = Nil,
+        path = extracted.symbolPaths.get(symbol.toString),
+        contributions = contributions
+      )
     }
     def maybeMakeExerciseInfo(
         symbol: MethodSymbol
@@ -223,15 +225,14 @@ case class Compiler() {
           .flatMap(Comments.parseAndRender[Mode.Exercise])
           .leftMap(enhanceDocError(symbolPath))
         method <- internal.resolveMethod(symbolPath)
-      } yield
-        ExerciseInfo(
-          symbol = symbol,
-          comment = comment,
-          code = method.code,
-          packageName = pkgName,
-          imports = method.imports,
-          qualifiedMethod = symbolPath.mkString(".")
-        )
+      } yield ExerciseInfo(
+        symbol = symbol,
+        comment = comment,
+        code = method.code,
+        packageName = pkgName,
+        imports = method.imports,
+        qualifiedMethod = symbolPath.mkString(".")
+      )
     }
 
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)
