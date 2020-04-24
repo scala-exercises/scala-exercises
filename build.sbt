@@ -6,7 +6,7 @@ import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
 
-addCommandAlias("ci-test", "test")
+addCommandAlias("ci-test", "evaluator-client/publishLocal; runtime/publishLocal; test")
 addCommandAlias("ci-docs", "project-docs/mdoc")
 
 lazy val `scala-exercises` = (project in file("."))
