@@ -23,7 +23,10 @@
       "required": true
     },
     "EVOLUTIONS_AUTO_APPLY": "true",
-    "EVOLUTIONS_AUTO_APPLY_DOWNS": "true"
+    "EVOLUTIONS_AUTO_APPLY_DOWNS": "true",
+    "GITHUB_TOKEN": {
+      "required": true
+    }
   },
   "formation": {
     "web": {
