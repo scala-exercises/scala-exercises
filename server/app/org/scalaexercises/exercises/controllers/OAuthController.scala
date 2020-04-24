@@ -29,6 +29,7 @@ import org.scalaexercises.types.github.{GithubUser, OAuthToken}
 import org.scalaexercises.types.user.UserCreation
 import play.api.mvc.{AnyContent, BaseController, ControllerComponents}
 import play.api.{Configuration, Mode}
+import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
@@ -40,18 +41,22 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
     mode: Mode
 ) extends BaseController {
 
+  lazy val clientResource = BlazeClientBuilder[IO](executionContext).resource
+
   private[this] def getAccessToken(code: String, state: String) =
-    Github[IO]().auth
-      .getAccessToken(
-        configUtils.githubAuthId,
-        configUtils.githubAuthSecret,
-        code,
-        configUtils.callbackUrl,
-        state
-      )
-      .flatMap(response =>
-        IO.fromEither(response.result.map(token => OAuthToken(token.access_token)))
-      )
+    clientResource.use { client =>
+      Github[IO](client, None).auth
+        .getAccessToken(
+          configUtils.githubAuthId,
+          configUtils.githubAuthSecret,
+          code,
+          configUtils.callbackUrl,
+          state
+        )
+        .flatMap(response =>
+          IO.fromEither(response.result.map(token => OAuthToken(token.access_token)))
+        )
+    }
 
   def callback(
       codeOpt: Option[String] = None,
@@ -81,21 +86,23 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(
     )
 
   private[this] def getAuthUser(accessToken: Option[String]): IO[GithubUser] =
-    Github[IO](accessToken).users
-      .getAuth()
-      .flatMap(response =>
-        IO.fromEither(
-          response.result.map(user =>
-            GithubUser(
-              login = user.login,
-              name = user.name,
-              avatar = user.avatar_url,
-              url = user.html_url,
-              email = user.email
+    clientResource.use { client =>
+      Github[IO](client, accessToken).users
+        .getAuth()
+        .flatMap(response =>
+          IO.fromEither(
+            response.result.map(user =>
+              GithubUser(
+                login = user.login,
+                name = user.name,
+                avatar = user.avatar_url,
+                url = user.html_url,
+                email = user.email
+              )
             )
           )
         )
-      )
+    }
 
   def success(): Secure[AnyContent] =
     Secure(Action.async {

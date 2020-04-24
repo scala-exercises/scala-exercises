@@ -29,6 +29,7 @@ import Comments.Mode
 import CommentRendering.RenderedComment
 import cats.effect.{ContextShift, IO}
 import github4s.domain.Commit
+import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
@@ -63,6 +64,8 @@ case class Compiler() {
 
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val ec: ExecutionContext = ExecutionContext.global
+
+  lazy val clientResource = BlazeClientBuilder[IO](ec).resource
 
   def compile(
       library: Library,
@@ -163,8 +166,10 @@ case class Compiler() {
         path: String
     ): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
-      val contribs = Github[IO](sys.env.get("GITHUB_TOKEN")).repos
-        .listCommits(owner, repository, None, Option(path))
+      val contribs = clientResource.use { client =>
+        Github[IO](client, sys.env.get("GITHUB_TOKEN")).repos
+          .listCommits(owner, repository, None, Option(path))
+      }
 
       contribs.unsafeRunSync().result match {
         case Right(result) =>
