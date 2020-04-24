@@ -15,14 +15,13 @@ object ProjectPlugin extends AutoPlugin {
   object autoImport {
 
     lazy val V = new {
-      val bettermonadicfor: String          = "0.3.1"
       val bootstrap: String                 = "3.3.7"
-      val catsversion: String               = "2.1.1"
-      val circeversion: String              = "0.12.3"
+      val cats: String                      = "2.1.1"
+      val circe: String                     = "0.13.0"
       val classutil: String                 = "1.5.1"
       val collectioncompat: String          = "2.1.6"
       val commonsio: String                 = "2.6"
-      val doobieversion: String             = "0.8.6"
+      val doobie: String                    = "0.9.0"
       val exercisesCats: String             = "0.6.0-SNAPSHOT"
       val exercisesCirce: String            = "0.6.0-SNAPSHOT"
       val exercisesDoobie: String           = "0.6.0-SNAPSHOT"
@@ -33,7 +32,7 @@ object ProjectPlugin extends AutoPlugin {
       val exercisesScalatutorial: String    = "0.6.0-SNAPSHOT"
       val exercisesShapeless: String        = "0.6.0-SNAPSHOT"
       val exercisesStdlib: String           = "0.6.0-SNAPSHOT"
-      val github4s: String                  = "0.23.0"
+      val github4s: String                  = "0.24.0"
       val highlightjs: String               = "9.15.10"
       val http4s: String                    = "0.21.3"
       val jsDependencyJquery: String        = "3.4.1"
@@ -46,11 +45,9 @@ object ProjectPlugin extends AutoPlugin {
       val newrelic: String                  = "5.9.0"
       val postgres: String                  = "42.2.8"
       val scala: String                     = "2.13.2"
+      val scala212: String                  = "2.12.11"
       val scalacheck: String                = "1.14.3"
       val scalacheckShapeless: String       = "1.2.5"
-      val scalacheckshapeless: String       = "1.2.4"
-      val scalacheckversion: String         = "1.14.2"
-      val scalaExercises: String            = "0.6.0-SNAPSHOT"
       val scalajsscripts: String            = "1.1.4"
       val scalamacros: String               = "2.1.1"
       val scalariform: String               = "0.2.10"
@@ -88,6 +85,6 @@ object ProjectPlugin extends AutoPlugin {
       parallelExecution in Test := false,
       cancelable in Global := true,
       ScoverageKeys.coverageFailOnMinimum := false
-    ) ++ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % V.bettermonadicfor)
+    )
 
 }

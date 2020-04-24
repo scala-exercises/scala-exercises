@@ -31,6 +31,7 @@ import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.{Configuration, Logger, Mode}
+import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
@@ -54,34 +55,40 @@ class ApplicationController(config: Configuration, components: ControllerCompone
 
   val MainRepoCacheKey = "scala-exercises.repo"
 
+  lazy val clientResource = BlazeClientBuilder[IO](executionContext).resource
+
   private lazy val logger = Logger(this.getClass)
 
   private[this] def getAuthorizeUrl(clientId: String, redirectUri: String) = {
-    Github[IO]().auth
-      .authorizeUrl(clientId, redirectUri, List.empty)
-      .flatMap(response =>
-        IO.fromEither(response.result.map(auth => Authorize(auth.url, auth.state)))
-      )
+    clientResource.use { client =>
+      Github[IO](client, None).auth
+        .authorizeUrl(clientId, redirectUri, List.empty)
+        .flatMap(response =>
+          IO.fromEither(response.result.map(auth => Authorize(auth.url, auth.state)))
+        )
+    }
   }
 
   private[this] def getRepository(owner: String, repo: String) = {
-    Github[IO](sys.env.get("GITHUB_TOKEN")).repos
-      .get(owner, repo)
-      .flatMap(response =>
-        IO.fromEither(
-          response.result.map(repo =>
-            Repository(
-              subscribers = repo.status.subscribers_count.getOrElse(0),
-              stargazers = repo.status.stargazers_count,
-              forks = repo.status.forks_count
+    clientResource.use { client =>
+      Github[IO](client, sys.env.get("GITHUB_TOKEN")).repos
+        .get(owner, repo)
+        .flatMap(response =>
+          IO.fromEither(
+            response.result.map(repo =>
+              Repository(
+                subscribers = repo.status.subscribers_count.getOrElse(0),
+                stargazers = repo.status.stargazers_count,
+                forks = repo.status.forks_count
+              )
             )
           )
         )
-      )
-      .redeem({ _ =>
-        logger.error("Error fetching scala-exercises repository information")
-        None
-      }, repo => repo.some)
+        .redeem({ _ =>
+          logger.error("Error fetching scala-exercises repository information")
+          None
+        }, repo => repo.some)
+    }
   }
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
