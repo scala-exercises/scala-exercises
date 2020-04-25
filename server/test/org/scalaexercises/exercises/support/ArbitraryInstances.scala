@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.support
@@ -47,19 +44,20 @@ trait ArbitraryInstances extends Assertions {
         githubUrl  <- Gen.alphaStr
         pictureUrl <- Gen.alphaStr
         email      <- Gen.alphaStr
-      } yield
-        Request(
-          login = login.toString,
-          name = Option(name),
-          githubId = githubId.toString,
-          pictureUrl = pictureUrl,
-          githubUrl = githubUrl,
-          email = Option(email)
-        ))
+      } yield Request(
+        login = login.toString,
+        name = Option(name),
+        githubId = githubId.toString,
+        pictureUrl = pictureUrl,
+        githubUrl = githubUrl,
+        email = Option(email)
+      )
+    )
 
   def persistentUserArbitrary(
       implicit transactor: Transactor[IO],
-      UR: UserRepository): Arbitrary[User] = {
+      UR: UserRepository
+  ): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request =>
       UR.create(request).transact(transactor).unsafeRunSync match {
         case Right(user) => user
@@ -71,7 +69,8 @@ trait ArbitraryInstances extends Assertions {
   case class UserProgressPair(request: SaveUserProgress.Request, user: User)
 
   implicit def saveUserProgressArbitrary(
-      implicit transactor: Transactor[IO]): Arbitrary[UserProgressPair] = {
+      implicit transactor: Transactor[IO]
+  ): Arbitrary[UserProgressPair] = {
 
     Arbitrary(for {
       user <- persistentUserArbitrary.arbitrary
@@ -82,9 +81,7 @@ trait ArbitraryInstances extends Assertions {
   }
 
   def genBoundedList[T](minSize: Int = 1, maxSize: Int = 100, gen: Gen[T]): Gen[List[T]] =
-    Gen.choose(minSize, maxSize) flatMap { size =>
-      Gen.listOfN(size, gen)
-    }
+    Gen.choose(minSize, maxSize) flatMap { size => Gen.listOfN(size, gen) }
 }
 
 object ArbitraryInstances extends ArbitraryInstances

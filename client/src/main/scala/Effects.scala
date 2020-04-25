@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.client
@@ -39,7 +36,7 @@ object Effects {
   }
 
   def loadInitialData: Future[Option[Action]] = {
-    DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]])(libAndSection => {
+    DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]]) { libAndSection =>
       val (lib, sect) = libAndSection
       Client
         .fetchProgress(lib, sect)
@@ -48,7 +45,7 @@ object Effects {
             Some(SetState(validateState(state)))
           }
         })
-    })
+    }
   }
 
   def compileExercise(s: State, method: String): Future[Option[Action]] =
@@ -56,12 +53,12 @@ object Effects {
       case Some(exercise) if exercise.isFilled =>
         Client
           .compileExercise(exercise)
-          .map(result => {
+          .map { result =>
             if (result.ok)
               Some(CompilationOk(result.method))
             else
               Some(CompilationFail(result.method, result.msg))
-          })
+          }
       case _ => noop
     }
 

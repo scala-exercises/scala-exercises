@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.controllers
@@ -52,10 +49,9 @@ trait AuthenticationModule {
     override protected def executionContext: ExecutionContext = global
   }
 
-  def AuthenticatedUser(thunk: User => IO[Result])(
-      implicit userOps: UserOps[IO],
-      mode: Mode,
-      bodyParser: BodyParser[AnyContent]) =
+  def AuthenticatedUser(
+      thunk: User => IO[Result]
+  )(implicit userOps: UserOps[IO], mode: Mode, bodyParser: BodyParser[AnyContent]) =
     Secure(new AuthenticationAction().async { request =>
       (userOps.getUserByLogin(request.userId) flatMap {
         case Some(user) => thunk(user)
@@ -67,7 +63,8 @@ trait AuthenticationModule {
       implicit userOps: UserOps[IO],
       mode: Mode,
       bodyParser: BodyParser[AnyContent],
-      format: Reads[T]) =
+      format: Reads[T]
+  ) =
     Secure(new AuthenticationAction().async(parser) { request =>
       request.body.validate[T] match {
         case JsSuccess(validatedBody, _) =>

@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.client
@@ -45,18 +42,14 @@ object DomHandler {
    */
   def highlightCodeBlocks: Coeval[Unit] =
     Coeval {
-      $("pre").each((_: Any, code: dom.Element) => {
-        js.Dynamic.global.hljs.highlightBlock(code)
-      })
+      $("pre").each((_: Any, code: dom.Element) => js.Dynamic.global.hljs.highlightBlock(code))
     }.void
 
   /** Converts emoji markup into inline emoji images.
    */
   def emojify: Coeval[Unit] =
     Coeval {
-      $(".modal-body").each((_: Any, el: dom.Element) => {
-        js.Dynamic.global.emojify.run(el)
-      })
+      $(".modal-body").each((_: Any, el: dom.Element) => js.Dynamic.global.emojify.run(el))
     }.void
 
   /** Set the class attribute to an exercise node
@@ -98,12 +91,10 @@ object DomHandler {
   ): Coeval[Unit] = {
     for {
       inputs <- allInputs
-      _ <- inputs
-        .map(input => {
-          attachOnInputChange(input, onchange)
-          attachOnInputPaste(input, onchange)
-        })
-        .sequence
+      _ <- inputs.map { input =>
+        attachOnInputChange(input, onchange)
+        attachOnInputPaste(input, onchange)
+      }.sequence
     } yield ()
   }
 
@@ -132,7 +123,7 @@ object DomHandler {
       onEnterPressed: String => Coeval[Unit]
   ): Coeval[Unit] =
     Coeval {
-      $(input).keyup((e: dom.KeyboardEvent) => {
+      $(input).keyup { (e: dom.KeyboardEvent) =>
         updateExerciseInput(
           input,
           (info: (String, Seq[String])) => {
@@ -144,7 +135,7 @@ object DomHandler {
             ()
           }
         )
-      })
+      }
     }.void
 
   /** Provides support for input changes related to events like drag-and-drop and others (not pasting)
@@ -154,12 +145,12 @@ object DomHandler {
       onchange: (String, Seq[String]) => Coeval[Unit]
   ): Coeval[Unit] =
     Coeval {
-      $(input).change((e: dom.Event) => {
+      $(input).change { (e: dom.Event) =>
         updateExerciseInput(
           input,
           (info: (String, Seq[String])) => ()
         )
-      })
+      }
     }.void
 
   /** Provides support for input changes related to a pasting event
@@ -187,9 +178,7 @@ object DomHandler {
     Coeval {
       $(exercise)
         .find(".compile button")
-        .click((e: dom.Event) => {
-          onClick(getMethodAttr(exercise)).value
-        })
+        .click((e: dom.Event) => onClick(getMethodAttr(exercise)).value)
     }.void
 
   def setInputWidth(input: HTMLInputElement): Coeval[JQuery] =
@@ -243,7 +232,7 @@ object DomHandler {
   def inputsInExercise(exercise: HTMLElement): Seq[HTMLInputElement] =
     $(exercise).find("input").inputs
 
-  def getCodeBlocks: Coeval[Seq[HTMLElement]] = Coeval { $("code.exercise-code").elements }
+  def getCodeBlocks: Coeval[Seq[HTMLElement]] = Coeval($("code.exercise-code").elements)
 
   def getTextInCode(code: HTMLElement): String = $(code).text
 
@@ -256,7 +245,7 @@ object DomHandler {
 
   def setInputValue(input: HTMLInputElement, v: String): Coeval[Unit] =
     for {
-      _ <- Coeval { $(input) `val` (v) }
+      _ <- Coeval($(input) `val` (v))
       _ <- setInputWidth(input)
     } yield ()
 

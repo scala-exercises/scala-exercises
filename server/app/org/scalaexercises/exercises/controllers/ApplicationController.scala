@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.controllers
@@ -34,11 +31,13 @@ import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.{Configuration, Logger, Mode}
+import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
 class ApplicationController(config: Configuration, components: ControllerComponents)(
-    cache: AsyncCacheApi)(
+    cache: AsyncCacheApi
+)(
     implicit executionContext: ExecutionContext,
     exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
@@ -47,40 +46,49 @@ class ApplicationController(config: Configuration, components: ControllerCompone
     cs: ContextShift[IO],
     service: ExercisesService,
     configUtils: ConfigUtils,
-    mode: Mode)
-    extends BaseController
+    mode: Mode
+) extends BaseController
     with AuthenticationModule {
 
-  lazy val topLibraries: List[String] = config.getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
+  lazy val topLibraries: List[String] =
+    config.getOptional[Seq[String]]("exercises.top_libraries") map (_.toList) getOrElse Nil
 
   val MainRepoCacheKey = "scala-exercises.repo"
+
+  lazy val clientResource = BlazeClientBuilder[IO](executionContext).resource
 
   private lazy val logger = Logger(this.getClass)
 
   private[this] def getAuthorizeUrl(clientId: String, redirectUri: String) = {
-    Github[IO]().auth
-      .authorizeUrl(clientId, redirectUri, List.empty)
-      .flatMap(response =>
-        IO.fromEither(response.result.map(auth => Authorize(auth.url, auth.state))))
+    clientResource.use { client =>
+      Github[IO](client, None).auth
+        .authorizeUrl(clientId, redirectUri, List.empty)
+        .flatMap(response =>
+          IO.fromEither(response.result.map(auth => Authorize(auth.url, auth.state)))
+        )
+    }
   }
 
   private[this] def getRepository(owner: String, repo: String) = {
-    Github[IO](sys.env.get("GITHUB_TOKEN")).repos
-      .get(owner, repo)
-      .flatMap(
-        response =>
+    clientResource.use { client =>
+      Github[IO](client, sys.env.get("GITHUB_TOKEN")).repos
+        .get(owner, repo)
+        .flatMap(response =>
           IO.fromEither(
-            response.result.map(
-              repo =>
-                Repository(
-                  subscribers = repo.status.subscribers_count.getOrElse(0),
-                  stargazers = repo.status.stargazers_count,
-                  forks = repo.status.forks_count
-              ))))
-      .redeem({ _ =>
-        logger.error("Error fetching scala-exercises repository information")
-        None
-      }, repo => repo.some)
+            response.result.map(repo =>
+              Repository(
+                subscribers = repo.status.subscribers_count.getOrElse(0),
+                stargazers = repo.status.stargazers_count,
+                forks = repo.status.forks_count
+              )
+            )
+          )
+        )
+        .redeem({ _ =>
+          logger.error("Error fetching scala-exercises repository information")
+          None
+        }, repo => repo.some)
+    }
   }
 
   /** cache the main repo stars, forks and watchers info for 30 mins */
@@ -107,7 +115,9 @@ class ApplicationController(config: Configuration, components: ControllerCompone
                 libraries = libraries,
                 progress = progress,
                 repo = repo.getOrElse(Repository(0, 0, 0)),
-                config = config))
+                config = config
+              )
+            )
           case (libraries, None, None, progress, authorize) =>
             Ok(
               views.html.templates.home
@@ -117,8 +127,9 @@ class ApplicationController(config: Configuration, components: ControllerCompone
                   progress = progress,
                   redirectUrl = Option(authorize.url),
                   repo = repo.getOrElse(Repository(0, 0, 0)),
-                  config = config))
-              .withSession("oauth-state" -> authorize.state)
+                  config = config
+                )
+            ).withSession("oauth-state" -> authorize.state)
           case (libraries, Some(user), None, _, _) => Unauthorized("Session token not found")
         }
       } yield result).unsafeToFuture()
@@ -144,22 +155,25 @@ class ApplicationController(config: Configuration, components: ControllerCompone
 
   def section(libraryName: String, sectionName: String) =
     Secure(Action.async { implicit request =>
-      val ops = for {
-        authorize <- getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
-        library   <- exerciseOps.getLibrary(libraryName)
-        section   <- exerciseOps.getSection(libraryName, sectionName)
-        contributors = toContributors(section.fold(List.empty[Contribution])(s => s.contributions))
-        user        <- userOps.getUserByLogin(request.session.get("user").getOrElse(""))
-        libProgress <- userExercisesProgress.fetchMaybeUserProgressByLibrary(user, libraryName)
-      } yield
-        (
+      val ops =
+        for {
+          authorize <- getAuthorizeUrl(configUtils.githubAuthId, configUtils.callbackUrl)
+          library   <- exerciseOps.getLibrary(libraryName)
+          section   <- exerciseOps.getSection(libraryName, sectionName)
+          contributors = toContributors(
+            section.fold(List.empty[Contribution])(s => s.contributions)
+          )
+          user        <- userOps.getUserByLogin(request.session.get("user").getOrElse(""))
+          libProgress <- userExercisesProgress.fetchMaybeUserProgressByLibrary(user, libraryName)
+        } yield (
           library,
           section,
           user,
           request.session.get("oauth-token"),
           libProgress,
           authorize,
-          contributors)
+          contributors
+        )
 
       (ops map {
         case (Some(l), Some(s), user, Some(token), libProgress, _, contributors) =>

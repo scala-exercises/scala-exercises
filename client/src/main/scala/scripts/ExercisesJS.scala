@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.client
@@ -58,32 +55,24 @@ object ExercisesJS {
 
     def wireObservables: Coeval[Unit] =
       Coeval {
-        ui.foreach(ioAction => {
-          ioAction.value
-        })
-        effects.foreach((f: Future[Option[Action]]) => {
-          f.foreach(m => {
-            m.foreach { a =>
-              actions.onNext(a)
-            }
-          })
-        })
+        ui.foreach(ioAction => ioAction.value)
+        effects.foreach { (f: Future[Option[Action]]) =>
+          f.foreach(m => m.foreach(a => actions.onNext(a)))
+        }
       }.void
 
     def startInteraction: Coeval[Unit] = {
       for {
         _ <- inputReplacements flatMap replaceInputs
-        _ <- onInputKeyUp((method: String, arguments: Seq[String]) => {
+        _ <- onInputKeyUp(
+          (method: String, arguments: Seq[String]) =>
+            triggerAction(UpdateExercise(method, arguments)),
+          (method: String) => triggerAction(CompileExercise(method))
+        )
+        _ <- onButtonClick((method: String) => triggerAction(CompileExercise(method)))
+        _ <- onInputChange { (method: String, arguments: Seq[String]) =>
           triggerAction(UpdateExercise(method, arguments))
-        }, (method: String) => {
-          triggerAction(CompileExercise(method))
-        })
-        _ <- onButtonClick((method: String) => {
-          triggerAction(CompileExercise(method))
-        })
-        _ <- onInputChange((method: String, arguments: Seq[String]) => {
-          triggerAction(UpdateExercise(method, arguments))
-        })
+        }
       } yield ()
     }
 

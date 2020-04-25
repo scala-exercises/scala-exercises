@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.types.progress
@@ -23,31 +20,41 @@ import org.scalaexercises.types.user._
 import org.scalaexercises.types.exercises._
 
 case class UserProgress(
-  id:           Long,
-  userId:       Long,
-  libraryName:  String,
-  sectionName:  String,
-  method:       String,
-  version:      Int,
-  exerciseType: ExerciseType = Other,
-  args:         List[String],
-  succeeded:    Boolean
+    id: Long,
+    userId: Long,
+    libraryName: String,
+    sectionName: String,
+    method: String,
+    version: Int,
+    exerciseType: ExerciseType = Other,
+    args: List[String],
+    succeeded: Boolean
 )
 
 object SaveUserProgress {
   case class Request(
-      user:         User,
-      libraryName:  String,
-      sectionName:  String,
-      method:       String,
-      version:      Int,
+      user: User,
+      libraryName: String,
+      sectionName: String,
+      method: String,
+      version: Int,
       exerciseType: ExerciseType,
-      args:         List[String],
-      succeeded:    Boolean
+      args: List[String],
+      succeeded: Boolean
   ) {
 
     def asUserProgress(id: Long): UserProgress =
-      UserProgress(id, user.id, libraryName, sectionName, method, version, exerciseType, args, succeeded)
+      UserProgress(
+        id,
+        user.id,
+        libraryName,
+        sectionName,
+        method,
+        version,
+        exerciseType,
+        args,
+        succeeded
+      )
   }
 }
 

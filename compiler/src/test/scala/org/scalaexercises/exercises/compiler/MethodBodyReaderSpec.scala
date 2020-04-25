@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.compiler
@@ -138,7 +135,7 @@ class MethodBodyReaderSpec extends AnyFunSpec with Matchers with MethodBodyReade
 
 trait MethodBodyReaderSpecUtilities {
   val global = new DocExtractionGlobal() {
-    locally { new Run() }
+    locally(new Run())
   }
 
   import global._
@@ -158,7 +155,8 @@ trait MethodBodyReaderSpecUtilities {
     unwrap(
       global
         .newUnitParser(wrap(code))
-        .compilationUnit())
+        .compilationUnit()
+    )
   }
 
   def extractSnippet(code: String): String = {

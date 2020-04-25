@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises
@@ -48,9 +45,10 @@ class ExercisesApplicationLoader extends ApplicationLoader {
     val mode = context.environment.mode.toString.toLowerCase
     new Components(
       context.copy(
-        initialConfiguration = context.initialConfiguration.withFallback(
-          Configuration(ConfigFactory.load(s"application.$mode.conf")))
-      )).application
+        initialConfiguration = context.initialConfiguration
+          .withFallback(Configuration(ConfigFactory.load(s"application.$mode.conf")))
+      )
+    ).application
   }
 }
 
@@ -72,10 +70,10 @@ class Components(context: Context)
     ec <- ExecutionContexts.fixedThreadPool[IO](threadPool)
     cs = IO.contextShift(ec)
     blocker <- Blocker[IO]
-  } yield
-    Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
-      implicitly,
-      cs)).allocated
+  } yield Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
+    implicitly,
+    cs
+  )).allocated
 
   lazy implicit val trans: Transactor[IO] = transactorResource.map(_._1).unsafeRunSync
 

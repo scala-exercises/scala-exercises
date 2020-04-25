@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.persistence.repositories
@@ -30,8 +27,9 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.ScalacheckShapeless._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.propspec.AnyPropSpec
-import org.scalatest.{Assertion, BeforeAndAfterAll}
+import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import com.dimafeng.testcontainers.ForAllTestContainer
 
 class UserRepositorySpec
     extends AnyPropSpec
@@ -39,14 +37,11 @@ class UserRepositorySpec
     with Matchers
     with ArbitraryInstances
     with DatabaseInstance
-    with BeforeAndAfterAll {
+    with ForAllTestContainer {
 
-  implicit val trx: Transactor[IO] = databaseTransactor
+  implicit lazy val trx: Transactor[IO] = databaseTransactor
 
-  val repository: UserRepository = implicitly[UserRepository]
-
-  override def beforeAll(): Unit =
-    repository.deleteAll().transact(trx).unsafeRunSync()
+  lazy val repository: UserRepository = implicitly[UserRepository]
 
   // Generators
   implicitly[Arbitrary[UserCreation.Request]]
@@ -71,9 +66,7 @@ class UserRepositorySpec
       val get    = repository.getByLogin(newUser.login)
 
       val tx: ConnectionIO[Boolean] =
-        create *> get map { storedUser =>
-          storedUser.forall(u => u == newUser.asUser(u.id))
-        }
+        create *> get map { storedUser => storedUser.forall(u => u == newUser.asUser(u.id)) }
 
       assertConnectionIO(tx)
     }
@@ -85,9 +78,7 @@ class UserRepositorySpec
         repository.create(newUser).flatMap { storedUser =>
           storedUser.toOption.fold(
             false.pure[ConnectionIO]
-          )(
-            u => repository.getById(u.id).map(_.contains(u))
-          )
+          )(u => repository.getById(u.id).map(_.contains(u)))
         }
 
       assertConnectionIO(tx)

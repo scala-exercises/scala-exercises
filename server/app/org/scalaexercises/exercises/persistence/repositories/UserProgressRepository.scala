@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.persistence.repositories
@@ -45,12 +42,14 @@ trait UserProgressRepository {
       libraryName: String,
       sectionName: String,
       method: String,
-      version: Int): ConnectionIO[Option[UserProgress]]
+      version: Int
+  ): ConnectionIO[Option[UserProgress]]
 
   def getExerciseEvaluations(
       user: User,
       libraryName: String,
-      sectionName: String): ConnectionIO[List[UserProgress]]
+      sectionName: String
+  ): ConnectionIO[List[UserProgress]]
 
   def getLastSeenSection(user: User, libraryName: String): ConnectionIO[Option[String]]
 
@@ -68,7 +67,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
       version,
       exerciseType,
       args,
-      succeeded) = request
+      succeeded
+    ) = request
     persistence
       .updateWithGeneratedKeys[InsertParams, UserProgress](
         Q.insert,
@@ -92,7 +92,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
       version,
       exerciseType,
       args,
-      succeeded) = request
+      succeeded
+    ) = request
     persistence
       .updateWithGeneratedKeys[UpdateParams, UserProgress](
         Q.update,
@@ -108,7 +109,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
           user.id,
           libraryName,
           sectionName,
-          method)
+          method
+        )
       )
   }
 
@@ -136,7 +138,8 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
   override def getExerciseEvaluations(
       user: User,
       libraryName: String,
-      sectionName: String): ConnectionIO[List[UserProgress]] =
+      sectionName: String
+  ): ConnectionIO[List[UserProgress]] =
     persistence.fetchList[FindEvaluationsBySectionParams, UserProgress](
       Q.findEvaluationsBySection,
       (user.id, libraryName, sectionName)

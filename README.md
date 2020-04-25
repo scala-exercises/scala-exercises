@@ -1,5 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/47deg/scala-exercises.png?label=ready&title=Ready)](https://waffle.io/47deg/scala-exercises)
-[![Build Status](https://travis-ci.org/scala-exercises/scala-exercises.svg?branch=master)](https://travis-ci.org/scala-exercises/scala-exercises)
 [![Join the conversation on Gitter](https://img.shields.io/gitter/room/47deg/scala-exercises.svg)](https://gitter.im/scala-exercises/scala-exercises)
 [![codecov.io](http://codecov.io/github/scala-exercises/scala-exercises/coverage.svg?branch=master)](http://codecov.io/github/scala-exercises/scala-exercises?branch=master)
 
@@ -18,7 +16,6 @@
 - SHARE: The system will consider the category complete when all its exercises are successfully done. Don't forget to share your progress on social networks before moving on to the next category!
 
 - EDIT: After completing a category, you'll be able to go back and edit it. Add new exercises or improve existing ones by sending a pull request.
-
 
 ## Getting Started
 
@@ -40,6 +37,7 @@ Scala Exercises is available at [scala-exercises.org](https://scala-exercises.or
 #### Installing the app locally
 
 ##### Get the repository
+
 First of all, either clone the repository via git
 
 ```sh
@@ -51,6 +49,7 @@ or download it
 ```sh
 $ wget https://github.com/scala-exercises/scala-exercises/archive/master.zip
 ```
+
 ##### Configure the database
 
 You'll need a working [PostgreSQL 9.4](http://www.postgresql.org/download/) database and user for running the app. Once the database is running,
@@ -121,11 +120,11 @@ Now run `sbt server/run` and the application index will also display the added e
 
 ## Troubleshooting
 
-#### Additional exercises do not show up in the application
+## Additional exercises do not show up in the application
 
 See the [Adding more exercises](#adding-more-exercises) section. Note that, currently, the `compile` step is required before `publishLocal` for the application to be able to pickup the exercises.
 
-#### Ensime
+## Ensime
 
 If you use *ensime* and you have configured the `sbt-ensime` plugin in your sbt user
 global settings, it's likely you might have this issue running the application locally:
@@ -161,6 +160,7 @@ $ psql -U your_postgres_user -c "GRANT ALL PRIVILEGES ON DATABASE scalaexercises
 ## Project structure
 
 The project is split between a few directories, namely:
+
 - `server`, which contains the server code written using Play,
 - `client`, which contains ScalaJS code for a frontend part of the application,
 - `shared`, where code shared between the server and the client exists,

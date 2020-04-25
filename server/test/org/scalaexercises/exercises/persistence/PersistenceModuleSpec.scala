@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.persistence
@@ -31,10 +28,11 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import shapeless.HNil
 import cats.effect.IO
 import cats.implicits._
+import com.dimafeng.testcontainers.ForAllTestContainer
 
 trait DatabaseContext extends DatabaseInstance {
 
-  implicit val trx: Transactor[IO] = databaseTransactor
+  implicit val trx: Transactor[IO]
 
   case class PersistenceItem(id: Long, name: String, active: Boolean)
 
@@ -104,9 +102,12 @@ class PersistenceModuleSpec
     with ScalaCheckDrivenPropertyChecks
     with Matchers
     with BeforeAndAfterEach
+    with ForAllTestContainer
     with DatabaseContext
     with ArbitraryInstances
     with DatabaseInstance {
+
+  override lazy val trx: Transactor[IO] = databaseTransactor
 
   override def beforeEach: Unit = {
     for {
@@ -488,7 +489,8 @@ class PersistenceModuleSpec
         fetchItemById(updateResult).transact(trx).unsafeRunSync() shouldBe PersistenceItem(
           updateResult,
           name,
-          active)
+          active
+        )
       }
     }
   }

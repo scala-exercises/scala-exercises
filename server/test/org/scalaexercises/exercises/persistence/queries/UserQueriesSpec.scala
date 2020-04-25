@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.persistence.queries
 
 import cats.effect.IO
-import doobie.specs2.analysisspec.IOChecker
+import doobie.scalatest.IOChecker
 import doobie.util.query.Query
 import doobie.util.transactor.Transactor
 import doobie.util.update.Update
@@ -28,18 +25,27 @@ import org.scalaexercises.exercises.persistence.domain.{UserQueries => Q}
 import org.scalaexercises.exercises.persistence.repositories.UserRepository._
 import org.scalaexercises.exercises.support.DatabaseInstance
 import org.scalaexercises.types.user.User
-import org.specs2.mutable.Specification
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.funsuite.AnyFunSuiteLike
+import org.scalatestplus.scalacheck.Checkers
+import com.dimafeng.testcontainers.ForAllTestContainer
 
-class UserQueriesSpec extends Specification with IOChecker with DatabaseInstance {
+class UserQueriesSpec
+    extends AnyFunSuiteLike
+    with Matchers
+    with Checkers
+    with ForAllTestContainer
+    with IOChecker
+    with DatabaseInstance {
 
   override def transactor: Transactor[IO] = databaseTransactor
 
-  check(Query[Unit, User](Q.all))
-  check(Query[Long, User](Q.findById))
-  check(Query[String, User](Q.findByLogin))
-  check(Update[UpdateParams](Q.update))
-  check(Update[InsertParams](Q.insert))
-  check(Update[Long](Q.deleteById))
-  check(Update[Unit](Q.deleteAll))
+  test("UserQueries.all")(check(Query[Unit, User](Q.all)))
+  test("UserQueries.findById")(check(Query[Long, User](Q.findById)))
+  test("UserQueries.findByLogin")(check(Query[String, User](Q.findByLogin)))
+  test("UserQueries.update")(check(Update[UpdateParams](Q.update)))
+  test("UserQueries.insert")(check(Update[InsertParams](Q.insert)))
+  test("UserQueries.deleteById")(check(Update[Long](Q.deleteById)))
+  test("UserQueries.deleteAll")(check(Update[Unit](Q.deleteAll)))
 
 }

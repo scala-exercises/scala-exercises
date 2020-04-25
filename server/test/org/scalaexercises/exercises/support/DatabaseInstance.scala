@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.exercises.support
@@ -23,23 +20,26 @@ import cats.effect.{ContextShift, IO}
 import doobie.util.transactor.Transactor
 import play.api.db.evolutions._
 import play.api.db.{Database, Databases}
+import com.dimafeng.testcontainers._
 
 import scala.concurrent.ExecutionContext
 
 trait DatabaseInstance {
 
-  val testDriver   = "org.postgresql.Driver"
-  def testUrl      = "jdbc:postgresql://localhost:5432/scalaexercises_test"
-  val testUsername = "scalaexercises_user"
-  val testPassword = "scalaexercises_pass"
+  val role: String   = "scala-exercises"
+  lazy val container = PostgreSQLContainer().configure(_.withUsername(role))
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
+  implicit val ContextShiftIO: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
 
   def createDatabase(): Database = {
     Databases(
-      driver = testDriver,
-      url = testUrl,
-      config = Map("user" -> testUsername, "password" -> testPassword)
+      driver = container.driverClassName,
+      url = container.jdbcUrl,
+      name = "default",
+      config = Map(
+        "user"     -> container.username,
+        "password" -> container.password
+      )
     )
   }
 
@@ -50,13 +50,11 @@ trait DatabaseInstance {
 
   def createTransactor(db: Database): Transactor[IO] =
     Transactor.fromDriverManager[IO](
-      testDriver,
-      testUrl,
-      testUsername,
-      testPassword
+      container.driverClassName,
+      container.jdbcUrl,
+      container.username,
+      container.password
     )
 
-  val databaseTransactor: Transactor[IO] = createTransactor(evolve(createDatabase()))
+  lazy val databaseTransactor: Transactor[IO] = createTransactor(evolve(createDatabase()))
 }
-
-object DatabaseInstance extends DatabaseInstance

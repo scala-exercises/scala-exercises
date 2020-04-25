@@ -1,0 +1,48 @@
+# Don't edit this file!
+# It is automatically updated after every release of https://github.com/47degrees/.github
+# If you want to suggest a change, please open a PR or issue in that repository
+
+name: Release
+
+on:
+  push:
+    branches: master
+    tags: v**
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      DOWNLOAD_INFO_FROM_GITHUB: true
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+      PGP_SECRET: ${{ secrets.PGP_SECRET }}
+      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      REQUIRES_PUBLISH_MICROSITE: ${{secrets.REQUIRES_PUBLISH_MICROSITE}}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --tags
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v7
+      - name: Setup GPG
+        uses: olafurpg/setup-gpg@v2
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier/v1
+          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-coursier-
+      - name: Cache .sbt
+        uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
+          restore-keys: ${{ runner.os }}-sbt-
+      - name: Release new version
+        if: env.SONATYPE_USERNAME != null
+        run: sbt ci-release

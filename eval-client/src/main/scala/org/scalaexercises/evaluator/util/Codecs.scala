@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.evaluator.util
@@ -36,22 +33,22 @@ object Codecs {
 
   implicit val decodeEvalResponse: Decoder[EvalResponse] = deriveDecoder[EvalResponse]
 
-  implicit val encodeEvalRequest: Encoder[EvalRequest] = Encoder.instance(
-    req =>
-      Json.obj(
-        ("resolvers", Json.arr(req.resolvers.map(Json.fromString): _*)),
-        ("dependencies", Json.arr(req.dependencies.map(_.asJson): _*)),
-        ("code", Json.fromString(req.code))
-    ))
+  implicit val encodeEvalRequest: Encoder[EvalRequest] = Encoder.instance(req =>
+    Json.obj(
+      ("resolvers", Json.arr(req.resolvers.map(Json.fromString): _*)),
+      ("dependencies", Json.arr(req.dependencies.map(_.asJson): _*)),
+      ("code", Json.fromString(req.code))
+    )
+  )
 
-  implicit val encodeDependency: Encoder[EvaluatorDependency] = Encoder.instance(
-    dep =>
-      Json.obj(
-        ("groupId", Json.fromString(dep.groupId)),
-        ("artifactId", Json.fromString(dep.artifactId)),
-        ("version", Json.fromString(dep.version)),
-        ("exclusions", dep.exclusions.asJson)
-    ))
+  implicit val encodeDependency: Encoder[EvaluatorDependency] = Encoder.instance(dep =>
+    Json.obj(
+      ("groupId", Json.fromString(dep.groupId)),
+      ("artifactId", Json.fromString(dep.artifactId)),
+      ("version", Json.fromString(dep.version)),
+      ("exclusions", dep.exclusions.asJson)
+    )
+  )
 
   implicit val encodeExclusion: Encoder[Exclusion] = semiauto.deriveEncoder[Exclusion]
 

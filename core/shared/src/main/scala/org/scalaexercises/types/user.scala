@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +12,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.types.user
 
 case class User(
-  id:         Long,
-  login:      String,
-  name:       Option[String],
-  githubId:   String,
-  pictureUrl: String,
-  githubUrl:  String,
-  email:      Option[String]
+    id: Long,
+    login: String,
+    name: Option[String],
+    githubId: String,
+    pictureUrl: String,
+    githubUrl: String,
+    email: Option[String]
 )
 
 object UserCreation {
   abstract class CreationError extends Product with Serializable
-  case object DuplicateName extends CreationError
+  case object DuplicateName    extends CreationError
 
   case class Request(
-      login:      String,
-      name:       Option[String],
-      githubId:   String,
+      login: String,
+      name: Option[String],
+      githubId: String,
       pictureUrl: String,
-      githubUrl:  String,
-      email:      Option[String]
+      githubUrl: String,
+      email: Option[String]
   ) {
 
     def asUser(id: Long): User =

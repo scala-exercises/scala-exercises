@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.compiler
@@ -29,6 +26,7 @@ import Comments.Mode
 import CommentRendering.RenderedComment
 import cats.effect.{ContextShift, IO}
 import github4s.domain.Commit
+import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
@@ -63,6 +61,8 @@ case class Compiler() {
 
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val ec: ExecutionContext = ExecutionContext.global
+
+  lazy val clientResource = BlazeClientBuilder[IO](ec).resource
 
   def compile(
       library: Library,
@@ -136,33 +136,37 @@ case class Compiler() {
             .traverse(
               internal
                 .instanceToClassSymbol(_)
-                .flatMap(symbol => maybeMakeSectionInfo(library, symbol)))
+                .flatMap(symbol => maybeMakeSectionInfo(library, symbol))
+            )
         }
-      } yield
-        LibraryInfo(
-          symbol = symbol,
-          comment = comment,
-          sections = sections,
-          color = library.color,
-          logoPath = library.logoPath,
-          owner = library.owner,
-          repository = library.repository
-        )
+      } yield LibraryInfo(
+        symbol = symbol,
+        comment = comment,
+        sections = sections,
+        color = library.color,
+        logoPath = library.logoPath,
+        owner = library.owner,
+        repository = library.repository
+      )
 
     def checkEmptySectionList(librarySymbol: Symbol, library: Library): Either[String, Library] =
       if (library.sections.isEmpty)
         Either.left(
-          s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section")
+          s"Unable to create ${librarySymbol.fullName}: A Library object must contain at least one section"
+        )
       else
         Either.right(library)
 
     def fetchContributions(
         owner: String,
         repository: String,
-        path: String): List[ContributionInfo] = {
+        path: String
+    ): List[ContributionInfo] = {
       println(s"Fetching contributions for repository $owner/$repository file $path")
-      val contribs = Github[IO](sys.env.get("GITHUB_TOKEN")).repos
-        .listCommits(owner, repository, None, Option(path))
+      val contribs = clientResource.use { client =>
+        Github[IO](client, sys.env.get("GITHUB_TOKEN")).repos
+          .listCommits(owner, repository, None, Option(path))
+      }
 
       contribs.unsafeRunSync().result match {
         case Right(result) =>
@@ -198,19 +202,19 @@ case class Compiler() {
         exercises <- symbol.toType.decls.toList
           .filter(symbol =>
             symbol.isPublic && !symbol.isSynthetic &&
-              symbol.name != termNames.CONSTRUCTOR && symbol.isMethod)
+              symbol.name != termNames.CONSTRUCTOR && symbol.isMethod
+          )
           .map(_.asMethod)
           .filterNot(_.isGetter)
           .traverse(maybeMakeExerciseInfo)
-      } yield
-        SectionInfo(
-          symbol = symbol,
-          comment = comment,
-          exercises = exercises,
-          imports = Nil,
-          path = extracted.symbolPaths.get(symbol.toString),
-          contributions = contributions
-        )
+      } yield SectionInfo(
+        symbol = symbol,
+        comment = comment,
+        exercises = exercises,
+        imports = Nil,
+        path = extracted.symbolPaths.get(symbol.toString),
+        contributions = contributions
+      )
     }
     def maybeMakeExerciseInfo(
         symbol: MethodSymbol
@@ -223,15 +227,14 @@ case class Compiler() {
           .flatMap(Comments.parseAndRender[Mode.Exercise])
           .leftMap(enhanceDocError(symbolPath))
         method <- internal.resolveMethod(symbolPath)
-      } yield
-        ExerciseInfo(
-          symbol = symbol,
-          comment = comment,
-          code = method.code,
-          packageName = pkgName,
-          imports = method.imports,
-          qualifiedMethod = symbolPath.mkString(".")
-        )
+      } yield ExerciseInfo(
+        symbol = symbol,
+        comment = comment,
+        code = method.code,
+        packageName = pkgName,
+        imports = method.imports,
+        qualifiedMethod = symbolPath.mkString(".")
+      )
     }
 
     val treeGen = TreeGen[mirror.universe.type](mirror.universe)

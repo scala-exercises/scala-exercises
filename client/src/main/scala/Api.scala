@@ -1,7 +1,5 @@
 /*
- *  scala-exercises
- *
- *  Copyright 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2014-2020 47 Degrees <https://47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.scalaexercises.client
@@ -38,7 +35,7 @@ import org.scalajs.dom.ext.{Ajax, AjaxException}
 object Client {
   def readProgress(library: String, section: String, raw: String): List[ClientExercise] = {
     val parsedBody = read[SectionExercises](raw)
-    parsedBody.exercises.map(e => {
+    parsedBody.exercises.map { e =>
       ClientExercise(
         library = library,
         section = section,
@@ -46,7 +43,7 @@ object Client {
         arguments = e.args,
         state = if (e.succeeded) Solved else Unsolved
       )
-    })
+    }
   }
 
   def fetchProgress(library: String, section: String): Future[Option[List[ClientExercise]]] = {
@@ -70,9 +67,7 @@ object Client {
     val request = EvaluationRequest(e.library, e.section, e.method, 1, "Koans", e.arguments)
     Ajax
       .postAsJson(url, write(request))
-      .map(r => {
-        EvaluationResult(true, e.method)
-      })
+      .map(r => EvaluationResult(true, e.method))
       .recover({
         case exc: AjaxException => {
           EvaluationResult(
