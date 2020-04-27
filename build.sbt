@@ -1,5 +1,4 @@
 import org.scalajs.core.tools.linker.ModuleInitializer
-import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 import play.sbt.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
@@ -8,21 +7,15 @@ import webscalajs._
 
 addCommandAlias(
   "ci-test",
-  ";scalafmtCheckAll; scalafmtSbtCheck; publishAll; sbt-exercise/scripted; coverage; test; coverageReport; coverageAggregate"
+  "scalafmtCheckAll; scalafmtSbtCheck; coverage; test; coverageReport; coverageAggregate"
 )
-addCommandAlias("ci-docs", ";github; project-docs/mdoc; headerCreateAll")
+addCommandAlias("ci-docs", "github; project-docs/mdoc; headerCreateAll")
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
   .settings(skip in publish := true)
-  .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
-  .dependsOn(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
-
-////////////////////
-// Project Modules:
-////////////////////
-
-// Purely functional core
+  .aggregate(server, client, coreJs, coreJvm)
+  .dependsOn(server, client, coreJs, coreJvm)
 
 lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   .settings(
@@ -34,10 +27,9 @@ lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
 lazy val coreJvm = core.jvm
 lazy val coreJs  = core.js
 
-// Client and Server projects
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
-  .dependsOn(coreJvm, `evaluator-client`, runtime)
+  .dependsOn(coreJvm)
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
   .enablePlugins(JavaAppPackaging)
@@ -57,6 +49,7 @@ lazy val server = (project in file("server"))
       cacheApi,
       ws,
       caffeine,
+      "org.scala-exercises"        %% "runtime"                         % V.runtime,
       "org.scala-exercises"        %% "exercises-stdlib"                % V.exercisesStdlib,
       "org.scala-exercises"        %% "exercises-cats"                  % V.exercisesCats,
       "org.scala-exercises"        %% "exercises-shapeless"             % V.exercisesShapeless,
@@ -120,127 +113,12 @@ lazy val client = (project in file("client"))
     )
   )
 
-lazy val `evaluator-client` = (project in file("eval-client"))
-  .settings(
-    name := "evaluator-client",
-    libraryDependencies ++= Seq(
-      "org.http4s"    %% "http4s-blaze-client" % V.http4s,
-      "org.http4s"    %% "http4s-circe"        % V.http4s,
-      "io.circe"      %% "circe-core"          % V.circe,
-      "io.circe"      %% "circe-generic"       % V.circe,
-      "org.scalatest" %% "scalatest"           % V.scalatest % Test
-    )
-  )
-
 lazy val clients = Seq(client)
 
-// Definitions
-
-lazy val definitions = (project in file("definitions"))
-  .settings(name := "definitions")
-  .settings(
-    libraryDependencies ++= Seq(
-      "org.typelevel"              %% "cats-core"                 % V.cats,
-      "org.scalatest"              %% "scalatest"                 % V.scalatest,
-      "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % V.scalacheckShapeless
-    )
-  )
-
-// Runtime
-
-lazy val runtime = (project in file("runtime"))
-  .dependsOn(`evaluator-client`)
-  .settings(name := "runtime")
-  .settings(
-    libraryDependencies ++= Seq(
-      "org.clapper"   %% "classutil" % V.classutil,
-      "org.typelevel" %% "cats-core" % V.cats % Compile,
-      "org.scalatest" %% "scalatest" % V.scalatest % Test
-    )
-  )
-
-// Compiler
-
-lazy val compiler = (project in file("compiler"))
-  .settings(name := "exercise-compiler")
-  .settings(
-    exportJars := true,
-    libraryDependencies ++= Seq(
-      "org.scala-lang"         % "scala-compiler"           % V.scala,
-      "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
-      "org.typelevel"          %% "cats-core"               % V.cats % Compile,
-      "org.http4s"             %% "http4s-blaze-client"     % V.http4s,
-      "org.http4s"             %% "http4s-circe"            % V.http4s,
-      "com.47deg"              %% "github4s"                % V.github4s,
-      "org.scalariform"        %% "scalariform"             % V.scalariform,
-      "org.typelevel"          %% "cats-laws"               % V.cats % Test,
-      "org.scalatest"          %% "scalatest"               % V.scalatest % Test
-    )
-  )
-  .dependsOn(definitions, runtime)
-
-// Compiler plugin
-
-lazy val `sbt-exercise` = (project in file("sbt-exercise"))
-  .settings(name := "sbt-exercise")
-  .settings(
-    scalaVersion := V.scala212,
-    libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % V.cats % Compile
-    ),
-    scalacOptions += "-Ypartial-unification",
-    addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
-    // Leverage build info to populate compiler classpath--
-    // This allows SBT, which currently requires Scala 2.10.x, to load and run
-    // the compiler, which requires Scala 2.11.x.
-    compilerClasspath := { fullClasspath in (compiler, Compile) }.value,
-    buildInfoObject := "Meta",
-    buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
-    buildInfoKeys := Seq(
-      version,
-      BuildInfoKey.map(compilerClasspath) {
-        case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
-      }
-    )
-  )
-  .settings(
-    scriptedLaunchOpts := {
-      scriptedLaunchOpts.value ++
-        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
-    },
-    scriptedBufferLog := false
-  )
-  .enablePlugins(SbtPlugin)
-  .enablePlugins(BuildInfoPlugin)
-
 lazy val `project-docs` = (project in file(".docs"))
-  .aggregate(server, client, coreJs, coreJvm, runtime, definitions, compiler, `evaluator-client`)
+  .aggregate(server, client, coreJs, coreJvm)
   .settings(moduleName := "server-project-docs")
   .settings(mdocIn := file(".docs"))
   .settings(mdocOut := file("."))
   .settings(skip in publish := true)
   .enablePlugins(MdocPlugin)
-
-///////////////////
-// Global settings:
-///////////////////
-
-parallelExecution in Global := false
-
-lazy val compilerClasspath = TaskKey[Classpath]("compiler-classpath")
-
-// Aliases
-
-addCommandAlias(
-  "testAll",
-  ";server/test;client/test;definitions/test;runtime/test;compiler/test;sbt-exercise/scripted"
-)
-addCommandAlias(
-  "publishAll",
-  ";evaluator-client/publishLocal;definitions/publishLocal;runtime/publishLocal;compiler/publishLocal;sbt-exercise/publishLocal"
-)
-addCommandAlias(
-  "publishSignedAll",
-  ";definitions/publishSigned;runtime/publishSigned;compiler/publishSigned;sbt-exercise/publishSigned;evaluator-client/publishSigned"
-)
