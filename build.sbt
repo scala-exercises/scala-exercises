@@ -1,4 +1,3 @@
-import org.scalajs.core.tools.linker.ModuleInitializer
 import play.sbt.PlayImport._
 import sbt.Keys._
 import sbt.Project.projectToRef
@@ -25,7 +24,7 @@ lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
   )
 
 lazy val coreJvm = core.jvm
-lazy val coreJs  = core.js
+lazy val coreJs  = core.js.disablePlugins(ScoverageSbtPlugin)
 
 lazy val server = (project in file("server"))
   .aggregate(clients.map(projectToRef): _*)
@@ -90,14 +89,8 @@ lazy val client = (project in file("client"))
   .settings(skip in publish := true)
   .settings(
     scalaJSUseMainModuleInitializer := true,
-    scalaJSMainModuleInitializer := Some(
-      ModuleInitializer.mainMethod("org.scalaexercises.client.scripts.ExercisesJS", "main")
-    ),
     scalaJSUseMainModuleInitializer in Test := false,
     sourceMappings := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
-    scalaJSOptimizerOptions in (Compile, fullOptJS) ~= {
-      _.withParallel(false)
-    },
     jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
     skip in packageJSDependencies := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
