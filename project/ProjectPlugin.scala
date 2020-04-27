@@ -58,6 +58,13 @@ object ProjectPlugin extends AutoPlugin {
       organization := "org.scala-exercises",
       organizationName := "47 Degrees",
       organizationHomepage := Some(url("https://47deg.com")),
+      scmInfo := Some(
+        ScmInfo(
+          url("https://github.com/scala-exercises/scala-exercises"),
+          "scm:git:https://github.com/scala-exercises/scala-exercises.git",
+          Some("scm:git:git@github.com:scala-exercises/scala-exercises.git")
+        )
+      ),
       scalaVersion := autoImport.V.scala,
       scalacOptions ~= (_ filterNot (_ == "-Xfuture")),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
