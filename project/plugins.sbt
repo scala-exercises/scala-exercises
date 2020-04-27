@@ -1,30 +1,16 @@
-// Comment to get more information during initialization
-logLevel := Level.Warn
-
-// Resolvers
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("snapshots"),
-  Resolver.typesafeRepo("http://repo.typesafe.com/typesafe/maven-releases/"),
-  Resolver.typesafeIvyRepo("http://repo.typesafe.com/typesafe/releases/"),
-  Resolver.bintrayRepo("eed3si9n", "sbt-plugins")
-)
-
-// Sbt plugins
-addSbtPlugin("org.irundaia.sbt"    % "sbt-sassify"               % "1.4.13")
-addSbtPlugin("org.scala-js"        % "sbt-scalajs"               % "0.6.32")
-addSbtPlugin("com.eed3si9n"        % "sbt-buildinfo"             % "0.9.0")
-addSbtPlugin("com.typesafe.play"   % "sbt-plugin"                % "2.8.1")
-addSbtPlugin("org.portable-scala"  % "sbt-scalajs-crossproject"  % "0.6.1")
-addSbtPlugin("com.vmunier"         % "sbt-web-scalajs"           % "1.0.9-0.6")
-addSbtPlugin("com.typesafe.sbt"    % "sbt-gzip"                  % "1.0.2")
-addSbtPlugin("com.github.cb372"    % "sbt-explicit-dependencies" % "0.2.11")
-addSbtPlugin("org.scoverage"       % "sbt-scoverage"             % "1.6.1")
-addSbtPlugin("com.typesafe.sbt"    % "sbt-native-packager"       % "1.7.0")
-addSbtPlugin("org.scalameta"       % "sbt-mdoc"                  % "2.1.5")
-addSbtPlugin("org.scalameta"       % "sbt-scalafmt"              % "2.3.4")
-addSbtPlugin("com.alejandrohdezma" % "sbt-mdoc-toc"              % "0.2")
-addSbtPlugin("com.geirsson"        % "sbt-ci-release"            % "1.5.3")
-addSbtPlugin("de.heikoseeberger"   % "sbt-header"                % "5.6.0")
-addSbtPlugin("com.alejandrohdezma" %% "sbt-github"               % "0.8.0")
-addSbtPlugin("com.alejandrohdezma" % "sbt-github-header"         % "0.8.0")
-addSbtPlugin("com.alejandrohdezma" % "sbt-github-mdoc"           % "0.8.0")
+addSbtPlugin("org.irundaia.sbt"    % "sbt-sassify"              % "1.4.13")
+addSbtPlugin("org.scala-js"        % "sbt-scalajs"              % "0.6.32")
+addSbtPlugin("com.eed3si9n"        % "sbt-buildinfo"            % "0.9.0")
+addSbtPlugin("com.typesafe.play"   % "sbt-plugin"               % "2.8.1")
+addSbtPlugin("org.portable-scala"  % "sbt-scalajs-crossproject" % "0.6.1")
+addSbtPlugin("com.vmunier"         % "sbt-web-scalajs"          % "1.0.9-0.6")
+addSbtPlugin("com.typesafe.sbt"    % "sbt-gzip"                 % "1.0.2")
+addSbtPlugin("org.scoverage"       % "sbt-scoverage"            % "1.6.1")
+addSbtPlugin("com.typesafe.sbt"    % "sbt-native-packager"      % "1.7.0")
+addSbtPlugin("org.scalameta"       % "sbt-mdoc"                 % "2.1.5")
+addSbtPlugin("org.scalameta"       % "sbt-scalafmt"             % "2.3.4")
+addSbtPlugin("com.alejandrohdezma" % "sbt-mdoc-toc"             % "0.2")
+addSbtPlugin("com.geirsson"        % "sbt-ci-release"           % "1.5.3")
+addSbtPlugin("de.heikoseeberger"   % "sbt-header"               % "5.6.0")
+addSbtPlugin("com.alejandrohdezma" % "sbt-github-header"        % "0.8.1")
+addSbtPlugin("com.alejandrohdezma" % "sbt-github-mdoc"          % "0.8.1")
