@@ -34,7 +34,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyScalatags: String     = "0.9.1"
       val jsDependencyUtest: String         = "0.7.4"
       val knockoff: String                  = "0.8.13"
-      val monix: String                     = "3.2.0"
+      val monix: String                     = "3.2.1"
       val newrelic: String                  = "5.9.0"
       val postgres: String                  = "42.2.8"
       val runtime: String                   = "0.6.0"
