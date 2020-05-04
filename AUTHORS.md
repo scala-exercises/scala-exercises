@@ -9,10 +9,9 @@
 The maintainers of the project are:
 
 - [![47erbot](https://avatars1.githubusercontent.com/u/24799081?v=4&s=20) **47erbot**](https://github.com/47erbot)
-- [![AntonioMateoGomez](https://avatars0.githubusercontent.com/u/25897490?v=4&s=20) **AntonioMateoGomez**](https://github.com/AntonioMateoGomez)
 - [![AdrianRaFo](https://avatars0.githubusercontent.com/u/15971742?v=4&s=20) **Adrian Ramirez Fornell (AdrianRaFo)**](https://github.com/AdrianRaFo)
 - [![angoglez](https://avatars0.githubusercontent.com/u/10107285?v=4&s=20) **Ana Gómez González (angoglez)**](https://github.com/angoglez)
-- [![andyscott](https://avatars3.githubusercontent.com/u/310363?v=4&s=20) **Andy Scott (andyscott)**](https://github.com/andyscott)
+- [![AntonioMateoGomez](https://avatars0.githubusercontent.com/u/25897490?v=4&s=20) **Antonio Mateo (AntonioMateoGomez)**](https://github.com/AntonioMateoGomez)
 - [![dominv](https://avatars1.githubusercontent.com/u/3943031?v=4&s=20) **Domingo Valera (dominv)**](https://github.com/dominv)
 - [![kiroco12](https://avatars1.githubusercontent.com/u/48894338?v=4&s=20) **Enrique Nieto (kiroco12)**](https://github.com/kiroco12)
 - [![fedefernandez](https://avatars0.githubusercontent.com/u/720923?v=4&s=20) **Fede Fernández (fedefernandez)**](https://github.com/fedefernandez)
@@ -28,6 +27,7 @@ The maintainers of the project are:
 - [![peterneyens](https://avatars1.githubusercontent.com/u/6407606?v=4&s=20) **Peter Neyens (peterneyens)**](https://github.com/peterneyens)
 - [![rafaparadela](https://avatars3.githubusercontent.com/u/315070?v=4&s=20) **Rafa Paradela (rafaparadela)**](https://github.com/rafaparadela)
 - [![raulraja](https://avatars3.githubusercontent.com/u/456796?v=4&s=20) **Raúl Raja Martínez (raulraja)**](https://github.com/raulraja)
+- [![andyscott](https://avatars3.githubusercontent.com/u/310363?v=4&s=20) **nAｽd?octt (andyscott)**](https://github.com/andyscott)
 
 ## Contributors
 
@@ -45,6 +45,7 @@ These are the people that have contributed to the _scala-exercises_ project:
 - [![fedefernandez](https://avatars0.githubusercontent.com/u/720923?v=4&s=20) **fedefernandez**](https://github.com/fedefernandez)
 - [![hasumedic](https://avatars2.githubusercontent.com/u/681283?v=4&s=20) **hasumedic**](https://github.com/hasumedic)
 - [![franciscodr](https://avatars1.githubusercontent.com/u/1200151?v=4&s=20) **franciscodr**](https://github.com/franciscodr)
+- [![47erbot](https://avatars1.githubusercontent.com/u/24799081?v=4&s=20) **47erbot**](https://github.com/47erbot)
 - [![cblp](https://avatars0.githubusercontent.com/u/63495?v=4&s=20) **cblp**](https://github.com/cblp)
 - [![justinelsberry](https://avatars1.githubusercontent.com/u/205617?v=4&s=20) **justinelsberry**](https://github.com/justinelsberry)
 - [![peterneyens](https://avatars1.githubusercontent.com/u/6407606?v=4&s=20) **peterneyens**](https://github.com/peterneyens)
@@ -72,7 +73,6 @@ These are the people that have contributed to the _scala-exercises_ project:
 - [![WizzieP](https://avatars2.githubusercontent.com/u/7952058?v=4&s=20) **WizzieP**](https://github.com/WizzieP)
 - [![mathhun](https://avatars1.githubusercontent.com/u/5974117?v=4&s=20) **mathhun**](https://github.com/mathhun)
 - [![fada21](https://avatars0.githubusercontent.com/u/1994645?v=4&s=20) **fada21**](https://github.com/fada21)
-- [![47erbot](https://avatars1.githubusercontent.com/u/24799081?v=4&s=20) **47erbot**](https://github.com/47erbot)
 - [![adericbourg](https://avatars3.githubusercontent.com/u/615743?v=4&s=20) **adericbourg**](https://github.com/adericbourg)
 - [![Potherca](https://avatars3.githubusercontent.com/u/195757?v=4&s=20) **Potherca**](https://github.com/Potherca)
 - [![penyaskito](https://avatars2.githubusercontent.com/u/516163?v=4&s=20) **penyaskito**](https://github.com/penyaskito)
