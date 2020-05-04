@@ -31,7 +31,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyJquery: String        = "3.4.1"
       val jsDependencyScalajsdom: String    = "1.0.0"
       val jsDependencyScalajsjquery: String = "1.0.0"
-      val jsDependencyScalatags: String     = "0.9.0"
+      val jsDependencyScalatags: String     = "0.9.1"
       val jsDependencyUtest: String         = "0.7.4"
       val knockoff: String                  = "0.8.13"
       val monix: String                     = "3.2.0"
