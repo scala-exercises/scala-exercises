@@ -23,8 +23,8 @@ import play.api.Mode
 import play.api.libs.json.Json
 import play.api.mvc._
 
-class UserProgressController(components: ControllerComponents)(
-    implicit userOps: UserOps[IO],
+class UserProgressController(components: ControllerComponents)(implicit
+    userOps: UserOps[IO],
     exercisesProgress: UserExercisesProgress[IO],
     bodyParser: BodyParser[AnyContent],
     mode: Mode

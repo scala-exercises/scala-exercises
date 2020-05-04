@@ -22,8 +22,8 @@ import org.scalaexercises.exercises.Secure
 import play.api.Mode
 import play.api.mvc._
 
-class SitemapController(components: ControllerComponents)(
-    implicit exerciseOps: ExerciseOps[IO],
+class SitemapController(components: ControllerComponents)(implicit
+    exerciseOps: ExerciseOps[IO],
     mode: Mode
 ) extends BaseController {
 

@@ -69,7 +69,7 @@ object Client {
       .postAsJson(url, write(request))
       .map(r => EvaluationResult(true, e.method))
       .recover({
-        case exc: AjaxException => {
+        case exc: AjaxException =>
           EvaluationResult(
             false,
             e.method,
@@ -80,7 +80,6 @@ object Client {
             else
               SERVER_ERROR
           )
-        }
       })
   }
 }

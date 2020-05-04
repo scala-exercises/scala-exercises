@@ -60,7 +60,8 @@ trait AuthenticationModule {
     })
 
   def AuthenticatedUserF[T](parser: BodyParser[JsValue])(thunk: (T, User) => Future[Result])(
-      implicit userOps: UserOps[IO],
+      implicit
+      userOps: UserOps[IO],
       mode: Mode,
       bodyParser: BodyParser[AnyContent],
       format: Reads[T]

@@ -34,9 +34,10 @@ object DomHandler {
 
   /** Replaces text matched into html inputs
    */
-  def replaceInputs(nodes: Seq[(HTMLElement, String)]): Coeval[Unit] = Coeval {
-    nodes foreach { case (n, r) => $(n).html(r) }
-  }
+  def replaceInputs(nodes: Seq[(HTMLElement, String)]): Coeval[Unit] =
+    Coeval {
+      nodes foreach { case (n, r) => $(n).html(r) }
+    }
 
   /** Highlights every preformatted code block.
    */
@@ -160,15 +161,18 @@ object DomHandler {
       onchange: (String, Seq[String]) => Coeval[Unit]
   ): Coeval[Unit] =
     Coeval {
-      $(input).bind("paste", (e: dom.Event) => {
+      $(input).bind(
+        "paste",
+        (e: dom.Event) => {
 
-        setTimeout(100.0) {
-          updateExerciseInput(
-            input,
-            (info: (String, Seq[String])) => ()
-          )
+          setTimeout(100.0) {
+            updateExerciseInput(
+              input,
+              (info: (String, Seq[String])) => ()
+            )
+          }
         }
-      })
+      )
     }.void
 
   def onButtonClick(onClick: String => Coeval[Unit]): Coeval[Unit] =
@@ -215,9 +219,10 @@ object DomHandler {
   def methodParent(input: HTMLInputElement): Option[String] =
     methodName($(input).closest(".exercise").getDiv)
 
-  def allInputs: Coeval[List[HTMLInputElement]] = Coeval {
-    $(".exercise-code>input").inputs.toList
-  }
+  def allInputs: Coeval[List[HTMLInputElement]] =
+    Coeval {
+      $(".exercise-code>input").inputs.toList
+    }
 
   def inputs(el: HTMLElement): List[HTMLInputElement] = $(el).find("input").inputs.toList
 
@@ -249,10 +254,11 @@ object DomHandler {
       _ <- setInputWidth(input)
     } yield ()
 
-  def inputSize(length: Int): Double = length match {
-    case 0 => 12d
-    case _ => 4d + length * 8.4
-  }
+  def inputSize(length: Int): Double =
+    length match {
+      case 0 => 12d
+      case _ => 4d + length * 8.4
+    }
 
   implicit class JQueryOps(j: JQuery) {
 

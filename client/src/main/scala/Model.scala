@@ -57,11 +57,12 @@ object Exercises {
   def updateByMethod(s: State, method: String, args: Seq[String]): State =
     applyByMethod(s, method, _.copy(arguments = args, state = Unsolved))
 
-  def evaluate(s: State, method: String): State = findByMethod(s, method) match {
-    case Some(exercise) if exercise.canBeCompiled =>
-      applyByMethod(s, method, _.copy(state = Evaluating))
-    case _ => s
-  }
+  def evaluate(s: State, method: String): State =
+    findByMethod(s, method) match {
+      case Some(exercise) if exercise.canBeCompiled =>
+        applyByMethod(s, method, _.copy(state = Evaluating))
+      case _ => s
+    }
 
   def setAsSolved(s: State, method: String): State =
     applyByMethod(s, method, _.copy(state = Solved))
