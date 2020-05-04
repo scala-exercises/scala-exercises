@@ -24,18 +24,19 @@ import state.{State}
 import factories.Factories._
 
 object StateSpec extends TestSuite {
-  def tests = Tests {
-    Symbol("SetState") {
-      val newState = List(clientExercise(method = "foo", args = Seq("", "")))
-      val action   = SetState(newState)
-      val state    = List()
-      assert(State.update(state, action) == newState)
+  def tests =
+    Tests {
+      Symbol("SetState") {
+        val newState = List(clientExercise(method = "foo", args = Seq("", "")))
+        val action   = SetState(newState)
+        val state    = List()
+        assert(State.update(state, action) == newState)
+      }
+      Symbol("UpdateExercise") {
+        val action   = UpdateExercise("foo", Seq("one", "two"))
+        val state    = List(clientExercise(method = "foo", args = Seq("", "")))
+        val newState = State.update(state, action)
+        assert(newState.head.arguments == Seq("one", "two"))
+      }
     }
-    Symbol("UpdateExercise") {
-      val action   = UpdateExercise("foo", Seq("one", "two"))
-      val state    = List(clientExercise(method = "foo", args = Seq("", "")))
-      val newState = State.update(state, action)
-      assert(newState.head.arguments == Seq("one", "two"))
-    }
-  }
 }

@@ -54,8 +54,8 @@ trait ArbitraryInstances extends Assertions {
       )
     )
 
-  def persistentUserArbitrary(
-      implicit transactor: Transactor[IO],
+  def persistentUserArbitrary(implicit
+      transactor: Transactor[IO],
       UR: UserRepository
   ): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request =>
@@ -68,8 +68,8 @@ trait ArbitraryInstances extends Assertions {
 
   case class UserProgressPair(request: SaveUserProgress.Request, user: User)
 
-  implicit def saveUserProgressArbitrary(
-      implicit transactor: Transactor[IO]
+  implicit def saveUserProgressArbitrary(implicit
+      transactor: Transactor[IO]
   ): Arbitrary[UserProgressPair] = {
 
     Arbitrary(for {

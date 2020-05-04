@@ -56,12 +56,13 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
     val UserCreation.Request(login, name, githubId, pictureUrl, githubUrl, email) = request
 
     for {
-      _ <- persistence
-        .updateWithGeneratedKeys[InsertParams, User](
-          Q.insert,
-          Q.allFields,
-          (login, name, githubId, pictureUrl, githubUrl, email)
-        )
+      _ <-
+        persistence
+          .updateWithGeneratedKeys[InsertParams, User](
+            Q.insert,
+            Q.allFields,
+            (login, name, githubId, pictureUrl, githubUrl, email)
+          )
       user <- getByLogin(login)
     } yield Either.fromOption(user, UserCreation.DuplicateName)
   }
@@ -73,12 +74,13 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
 
   def update(user: User): ConnectionIO[Option[User]] =
     for {
-      _ <- persistence
-        .updateWithGeneratedKeys[UpdateParams, User](
-          Q.update,
-          Q.allFields,
-          (user.name, user.githubId, user.pictureUrl, user.githubUrl, user.email, user.id)
-        )
+      _ <-
+        persistence
+          .updateWithGeneratedKeys[UpdateParams, User](
+            Q.update,
+            Q.allFields,
+            (user.name, user.githubId, user.pictureUrl, user.githubUrl, user.email, user.id)
+          )
       maybeUser <- getById(user.id)
     } yield maybeUser
 }

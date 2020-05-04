@@ -33,8 +33,8 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.{Configuration, Logger, Mode}
 
-class ExercisesController(config: Configuration, components: ControllerComponents)(
-    implicit exerciseOps: ExerciseOps[IO],
+class ExercisesController(config: Configuration, components: ControllerComponents)(implicit
+    exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
     ce: ConcurrentEffect[IO],
@@ -55,19 +55,20 @@ class ExercisesController(config: Configuration, components: ControllerComponent
       (evaluation: ExerciseEvaluation, user: User) =>
         def eval(
             runtimeInfo: Either[Throwable, EvaluationRequest]
-        ): IO[Either[String, EvalResponse]] = runtimeInfo match {
-          case Left(ex) =>
-            logError("eval", "Error while building the evaluation request", Some(ex))
-            IO(Either.left(ex.getMessage))
-          case Right(evalRequest) =>
-            evalRequest match {
-              case Left(msg) =>
-                logError("eval", "Error before performing the evaluation")
-                IO(Either.left(msg))
-              case Right((resolvers, dependencies, code)) =>
-                evalRemote(resolvers, dependencies, code)
-            }
-        }
+        ): IO[Either[String, EvalResponse]] =
+          runtimeInfo match {
+            case Left(ex) =>
+              logError("eval", "Error while building the evaluation request", Some(ex))
+              IO(Either.left(ex.getMessage))
+            case Right(evalRequest) =>
+              evalRequest match {
+                case Left(msg) =>
+                  logError("eval", "Error before performing the evaluation")
+                  IO(Either.left(msg))
+                case Right((resolvers, dependencies, code)) =>
+                  evalRemote(resolvers, dependencies, code)
+              }
+          }
 
         def evalRemote(
             resolvers: List[String],

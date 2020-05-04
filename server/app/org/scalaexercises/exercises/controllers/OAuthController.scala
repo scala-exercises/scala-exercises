@@ -30,8 +30,8 @@ import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
-class OAuthController(conf: Configuration, components: ControllerComponents)(
-    implicit executionContext: ExecutionContext,
+class OAuthController(conf: Configuration, components: ControllerComponents)(implicit
+    executionContext: ExecutionContext,
     cs: ContextShift[IO],
     userOps: UserOps[IO],
     configUtils: ConfigUtils,
