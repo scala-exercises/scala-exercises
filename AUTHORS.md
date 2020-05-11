@@ -11,6 +11,7 @@ The maintainers of the project are:
 - [![47erbot](https://avatars1.githubusercontent.com/u/24799081?v=4&s=20) **47erbot**](https://github.com/47erbot)
 - [![AdrianRaFo](https://avatars0.githubusercontent.com/u/15971742?v=4&s=20) **Adrian Ramirez Fornell (AdrianRaFo)**](https://github.com/AdrianRaFo)
 - [![angoglez](https://avatars0.githubusercontent.com/u/10107285?v=4&s=20) **Ana Gómez González (angoglez)**](https://github.com/angoglez)
+- [![andyscott](https://avatars3.githubusercontent.com/u/310363?v=4&s=20) **Andy Scott (andyscott)**](https://github.com/andyscott)
 - [![AntonioMateoGomez](https://avatars0.githubusercontent.com/u/25897490?v=4&s=20) **Antonio Mateo (AntonioMateoGomez)**](https://github.com/AntonioMateoGomez)
 - [![BenFradet](https://avatars2.githubusercontent.com/u/1737211?v=4&s=20) **Ben Fradet (BenFradet)**](https://github.com/BenFradet)
 - [![dominv](https://avatars1.githubusercontent.com/u/3943031?v=4&s=20) **Domingo Valera (dominv)**](https://github.com/dominv)
@@ -28,7 +29,6 @@ The maintainers of the project are:
 - [![peterneyens](https://avatars1.githubusercontent.com/u/6407606?v=4&s=20) **Peter Neyens (peterneyens)**](https://github.com/peterneyens)
 - [![rafaparadela](https://avatars3.githubusercontent.com/u/315070?v=4&s=20) **Rafa Paradela (rafaparadela)**](https://github.com/rafaparadela)
 - [![raulraja](https://avatars3.githubusercontent.com/u/456796?v=4&s=20) **Raúl Raja Martínez (raulraja)**](https://github.com/raulraja)
-- [![andyscott](https://avatars3.githubusercontent.com/u/310363?v=4&s=20) **nAｽd?octt (andyscott)**](https://github.com/andyscott)
 
 ## Contributors
 
