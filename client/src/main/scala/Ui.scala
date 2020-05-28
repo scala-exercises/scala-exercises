@@ -51,15 +51,16 @@ case object SolvedStyle extends ExerciseStyle {
 object UI {
   def noop: Coeval[Unit] = Coeval {}
 
-  def update(s: State, a: Action): Coeval[Unit] = a match {
-    case Start                        => noop
-    case SetState(state)              => reflectState(state)
-    case UpdateExercise(method, args) => toggleExerciseClass(s, method)
-    case CompileExercise(method)      => startCompilation(s, method)
-    case CompilationOk(method)        => setAsSolved(s, method)
-    case CompilationFail(method, msg) => setAsErrored(s, method, msg)
-    case _                            => noop
-  }
+  def update(s: State, a: Action): Coeval[Unit] =
+    a match {
+      case Start                        => noop
+      case SetState(state)              => reflectState(state)
+      case UpdateExercise(method, args) => toggleExerciseClass(s, method)
+      case CompileExercise(method)      => startCompilation(s, method)
+      case CompilationOk(method)        => setAsSolved(s, method)
+      case CompilationFail(method, msg) => setAsErrored(s, method, msg)
+      case _                            => noop
+    }
 
   def exerciseStyle(e: ClientExercise): ExerciseStyle = {
     e.state match {
@@ -81,7 +82,11 @@ object UI {
     (for {
       exercise <- OptionT(Coeval(findExerciseByMethod(e.method)))
       _ <- OptionT {
-        setExerciseStyle(e.method, exerciseStyle(e), if (e.isSolved) "solved-exercise" else "") map (_.some)
+        setExerciseStyle(
+          e.method,
+          exerciseStyle(e),
+          if (e.isSolved) "solved-exercise" else ""
+        ) map (_.some)
       }
       _ <- OptionT(copyArgumentsToInputs(e, exercise) map (_.some))
     } yield ()).value.map(_.getOrElse(()))

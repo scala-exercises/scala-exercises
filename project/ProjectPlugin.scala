@@ -13,8 +13,8 @@ object ProjectPlugin extends AutoPlugin {
 
     lazy val V = new {
       val bootstrap: String                 = "3.3.7"
-      val cats: String                      = "2.1.3"
-      val commonsio: String                 = "2.6"
+      val cats: String                      = "2.1.1"
+      val commonsio: String                 = "2.7"
       val doobie: String                    = "0.9.0"
       val exercisesCats: String             = "0.6.2"
       val exercisesCirce: String            = "0.6.2"
@@ -31,10 +31,10 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyJquery: String        = "3.4.1"
       val jsDependencyScalajsdom: String    = "1.0.0"
       val jsDependencyScalajsjquery: String = "1.0.0"
-      val jsDependencyScalatags: String     = "0.9.0"
+      val jsDependencyScalatags: String     = "0.9.1"
       val jsDependencyUtest: String         = "0.7.4"
       val knockoff: String                  = "0.8.13"
-      val monix: String                     = "3.2.0"
+      val monix: String                     = "3.2.1"
       val newrelic: String                  = "5.9.0"
       val postgres: String                  = "42.2.8"
       val runtime: String                   = "0.6.0"
@@ -42,12 +42,12 @@ object ProjectPlugin extends AutoPlugin {
       val scalacheck: String                = "1.14.3"
       val scalacheckShapeless: String       = "1.2.5"
       val scalajsscripts: String            = "1.1.4"
-      val scalatest: String                 = "3.1.1"
-      val scalatestplusScheck: String       = "3.1.1.1"
+      val scalatest: String                 = "3.1.2"
+      val scalatestplusScheck: String       = "3.1.2.0"
       val shapeless: String                 = "2.3.3"
-      val testcontainers: String            = "0.36.1"
+      val testcontainers: String            = "0.37.0"
       val upickle: String                   = "1.1.0"
-      val webjars: String                   = "2.7.3"
+      val webjars: String                   = "2.8.0"
     }
 
   }

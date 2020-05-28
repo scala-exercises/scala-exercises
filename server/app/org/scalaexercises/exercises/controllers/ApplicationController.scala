@@ -37,8 +37,8 @@ import scala.concurrent.ExecutionContext
 
 class ApplicationController(config: Configuration, components: ControllerComponents)(
     cache: AsyncCacheApi
-)(
-    implicit executionContext: ExecutionContext,
+)(implicit
+    executionContext: ExecutionContext,
     exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
@@ -84,10 +84,13 @@ class ApplicationController(config: Configuration, components: ControllerCompone
             )
           )
         )
-        .redeem({ _ =>
-          logger.error("Error fetching scala-exercises repository information")
-          None
-        }, repo => repo.some)
+        .redeem(
+          { _ =>
+            logger.error("Error fetching scala-exercises repository information")
+            None
+          },
+          repo => repo.some
+        )
     }
   }
 
@@ -220,13 +223,13 @@ class ApplicationController(config: Configuration, components: ControllerCompone
   private def toContributors(contributions: List[Contribution]): List[Contributor] =
     contributions.map(c => Contributor(c.author, c.authorUrl, c.avatarUrl)).distinct
 
-  def onHandlerNotFound(route: String) = Action { implicit request =>
-    if (route.endsWith("/")) {
-      MovedPermanently("/" + request.path.take(request.path.length - 1).dropWhile(_ == '/'))
-    } else {
-      NotFound
+  def onHandlerNotFound(route: String) =
+    Action { implicit request =>
+      if (route.endsWith("/"))
+        MovedPermanently("/" + request.path.take(request.path.length - 1).dropWhile(_ == '/'))
+      else
+        NotFound
     }
-  }
 
   override protected def controllerComponents: ControllerComponents = components
 }

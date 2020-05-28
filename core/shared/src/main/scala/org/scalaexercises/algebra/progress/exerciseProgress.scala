@@ -123,8 +123,8 @@ class UserExercisesProgress[F[_]: Monad](implicit UO: UserProgressOps[F], EO: Ex
 }
 
 object UserExercisesProgress {
-  implicit def instance[F[_]: Monad](
-      implicit UO: UserProgressOps[F],
+  implicit def instance[F[_]: Monad](implicit
+      UO: UserProgressOps[F],
       EO: ExerciseOps[F]
   ): UserExercisesProgress[F] = new UserExercisesProgress[F]
 

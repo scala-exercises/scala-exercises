@@ -62,22 +62,22 @@ lazy val server = (project in file("server"))
       "com.vmunier"                %% "scalajs-scripts"                 % V.scalajsscripts,
       "com.lihaoyi"                %% "upickle"                         % V.upickle,
       "org.webjars"                %% "webjars-play"                    % V.webjars,
-      "org.webjars"                % "highlightjs"                      % V.highlightjs,
+      "org.webjars"                 % "highlightjs"                     % V.highlightjs,
       "org.foundweekends"          %% "knockoff"                        % V.knockoff,
-      "com.newrelic.agent.java"    % "newrelic-agent"                   % V.newrelic,
+      "com.newrelic.agent.java"     % "newrelic-agent"                  % V.newrelic,
       "org.typelevel"              %% "cats-effect"                     % V.cats,
-      "commons-io"                 % "commons-io"                       % V.commonsio,
-      "org.webjars.bower"          % "bootstrap-sass"                   % V.bootstrap,
+      "commons-io"                  % "commons-io"                      % V.commonsio,
+      "org.webjars.bower"           % "bootstrap-sass"                  % V.bootstrap,
       "com.47deg"                  %% "github4s"                        % V.github4s,
-      "org.scalatest"              %% "scalatest"                       % V.scalatest % Runtime,
+      "org.scalatest"              %% "scalatest"                       % V.scalatest           % Runtime,
       "org.scalatestplus"          %% "scalacheck-1-14"                 % V.scalatestplusScheck % Test,
       "org.tpolecat"               %% "doobie-core"                     % V.doobie,
       "org.tpolecat"               %% "doobie-hikari"                   % V.doobie,
       "org.tpolecat"               %% "doobie-postgres"                 % V.doobie,
-      "com.dimafeng"               %% "testcontainers-scala-scalatest"  % V.testcontainers % Test,
-      "com.dimafeng"               %% "testcontainers-scala-postgresql" % V.testcontainers % Test,
+      "com.dimafeng"               %% "testcontainers-scala-scalatest"  % V.testcontainers      % Test,
+      "com.dimafeng"               %% "testcontainers-scala-postgresql" % V.testcontainers      % Test,
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.14"       % V.scalacheckShapeless % Test,
-      "org.tpolecat"               %% "doobie-scalatest"                % V.doobie % Test
+      "org.tpolecat"               %% "doobie-scalatest"                % V.doobie              % Test
     )
   )
 

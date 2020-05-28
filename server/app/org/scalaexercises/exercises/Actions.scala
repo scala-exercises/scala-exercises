@@ -49,9 +49,8 @@ case class Secure[A](action: Action[A])(implicit mode: Mode) extends Action[A] {
             "Strict-Transport-Security" -> "max-age=31536000" // tells browsers to request the site URLs through HTTPS
           )
       )
-    } else {
+    } else
       action(request)
-    }
   }
 
   lazy val parser = action.parser

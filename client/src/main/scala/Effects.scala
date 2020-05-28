@@ -29,11 +29,12 @@ import api.Client
 object Effects {
   def noop: Future[Option[Action]] = Future(None)
 
-  def perform(s: State, a: Action): Future[Option[Action]] = a match {
-    case Start                   => loadInitialData
-    case CompileExercise(method) => compileExercise(s, method)
-    case _                       => noop
-  }
+  def perform(s: State, a: Action): Future[Option[Action]] =
+    a match {
+      case Start                   => loadInitialData
+      case CompileExercise(method) => compileExercise(s, method)
+      case _                       => noop
+    }
 
   def loadInitialData: Future[Option[Action]] = {
     DomHandler.libraryAndSection.fold(Future(None): Future[Option[Action]]) { libAndSection =>
@@ -41,9 +42,8 @@ object Effects {
       Client
         .fetchProgress(lib, sect)
         .collect({
-          case Some(state) => {
+          case Some(state) =>
             Some(SetState(validateState(state)))
-          }
         })
     }
   }
@@ -69,11 +69,10 @@ object Effects {
           .findExerciseByMethod(exercise.method)
           .map(DomHandler.inputsInExercise)
           .fold(acc) { inputs =>
-            if (exercise.arguments.size == inputs.size) {
+            if (exercise.arguments.size == inputs.size)
               acc :+ exercise
-            } else {
+            else
               acc :+ exercise.copy(arguments = Seq.empty, state = Unsolved)
-            }
           }
     }
 

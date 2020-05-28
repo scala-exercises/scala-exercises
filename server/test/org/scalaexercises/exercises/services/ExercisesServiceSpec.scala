@@ -135,5 +135,5 @@ class ExercisesServiceSpec extends AnyFlatSpec with Matchers {
     }.pendingUntilFixed("Need to update tests for new compiler")
 
   }
- */
+   */
 }

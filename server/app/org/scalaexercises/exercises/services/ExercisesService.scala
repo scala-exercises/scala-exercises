@@ -145,9 +145,8 @@ sealed trait RuntimeSharedConversions {
             )
             (colors0, library0)
           }
-        } else {
+        } else
           State.pure[Colors, RuntimeLibrary](library)
-        }
       }
       .runA(autoPalette)
       .value
