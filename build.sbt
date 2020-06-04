@@ -59,6 +59,7 @@ lazy val server = (project in file("server"))
       "org.scala-exercises"        %% "exercises-fetch"                 % V.exercisesFetch,
       "org.scala-exercises"        %% "exercises-monocle"               % V.exercisesMonocle,
       "org.scala-exercises"        %% "exercises-circe"                 % V.exercisesCirce,
+      "org.scala-exercises"        %% "exercises-pureconfig"            % V.exercisesPureconfig,
       "com.vmunier"                %% "scalajs-scripts"                 % V.scalajsscripts,
       "com.lihaoyi"                %% "upickle"                         % V.upickle,
       "org.webjars"                %% "webjars-play"                    % V.webjars,
