@@ -32,49 +32,56 @@ import scala.scalajs.js.Any.iterableOps
 
 object DomHandler {
 
-  /** Replaces text matched into html inputs
+  /**
+   * Replaces text matched into html inputs
    */
   def replaceInputs(nodes: Seq[(HTMLElement, String)]): Coeval[Unit] =
     Coeval {
       nodes foreach { case (n, r) => $(n).html(r) }
     }
 
-  /** Highlights every preformatted code block.
+  /**
+   * Highlights every preformatted code block.
    */
   def highlightCodeBlocks: Coeval[Unit] =
     Coeval {
       $("pre").each((_: Any, code: dom.Element) => js.Dynamic.global.hljs.highlightBlock(code))
     }.void
 
-  /** Converts emoji markup into inline emoji images.
+  /**
+   * Converts emoji markup into inline emoji images.
    */
   def emojify: Coeval[Unit] =
     Coeval {
       $(".modal-body").each((_: Any, el: dom.Element) => js.Dynamic.global.emojify.run(el))
     }.void
 
-  /** Set the class attribute to an exercise node
+  /**
+   * Set the class attribute to an exercise node
    */
   def setExerciseClass(e: HTMLElement, style: String): Coeval[Unit] =
     Coeval {
       $(e).attr("class", s"exercise $style")
     }.void
 
-  /** Set the class attribute to an exercise code node
+  /**
+   * Set the class attribute to an exercise code node
    */
   def setCodeClass(e: HTMLElement, style: String): Coeval[Unit] =
     Coeval {
       $(e).attr("class", s"exercise-pre $style")
     }.void
 
-  /** Write a message in the log of an exercise
+  /**
+   * Write a message in the log of an exercise
    */
   def writeLog(e: HTMLElement, msg: String): Coeval[Unit] =
     Coeval {
       $(e).find(".log").text(msg)
     }.void
 
-  /** Assigns behaviors to the keyup event for inputs elements.
+  /**
+   * Assigns behaviors to the keyup event for inputs elements.
    */
   def onInputKeyUp(
       onkeyup: (String, Seq[String]) => Coeval[Unit],
@@ -85,7 +92,8 @@ object DomHandler {
       _      <- inputs.map(input => attachKeyUpHandler(input, onkeyup, onEnterPressed)).sequence
     } yield ()
 
-  /** Assigns behavior to an input element change event
+  /**
+   * Assigns behavior to an input element change event
    */
   def onInputChange(
       onchange: (String, Seq[String]) => Coeval[Unit]
@@ -99,7 +107,8 @@ object DomHandler {
     } yield ()
   }
 
-  /** Shows modal for signing up
+  /**
+   * Shows modal for signing up
    */
   def showSignUpModal: Coeval[Unit] = Coeval($("#mustSignUp").modal("show")).map(_ => ())
 
@@ -139,7 +148,8 @@ object DomHandler {
       }
     }.void
 
-  /** Provides support for input changes related to events like drag-and-drop and others (not pasting)
+  /**
+   * Provides support for input changes related to events like drag-and-drop and others (not pasting)
    */
   def attachOnInputChange(
       input: HTMLInputElement,
@@ -154,7 +164,8 @@ object DomHandler {
       }
     }.void
 
-  /** Provides support for input changes related to a pasting event
+  /**
+   * Provides support for input changes related to a pasting event
    */
   def attachOnInputPaste(
       input: HTMLInputElement,
