@@ -18,7 +18,8 @@ package org.scalaexercises.types.exercises
 
 import org.scalaexercises.types.evaluator.CoreDependency
 
-/** A library representing a lib or lang. Ej. stdlib, cats, scalaz...
+/**
+ * A library representing a lib or lang. Ej. stdlib, cats, scalaz...
  */
 case class Library(
     owner: String,
@@ -36,14 +37,16 @@ case class Library(
   val shortTimestamp: String     = timestamp.split('T').headOption.getOrElse(timestamp)
 }
 
-/** Represents the Library Build Metadata Information
+/**
+ * Represents the Library Build Metadata Information
  */
 case class BuildInfo(
     resolvers: List[String],
     libraryDependencies: List[String]
 )
 
-/** A section in a library. For example `Extractors`
+/**
+ * A section in a library. For example `Extractors`
  */
 case class Section(
     name: String,
@@ -53,7 +56,8 @@ case class Section(
     contributions: List[Contribution] = Nil
 )
 
-/** Exercises within a Category
+/**
+ * Exercises within a Category
  */
 case class Exercise(
     method: String,
@@ -63,7 +67,8 @@ case class Exercise(
     explanation: Option[String] = None
 )
 
-/** Input params necessary to evaluate an exercise
+/**
+ * Input params necessary to evaluate an exercise
  */
 case class ExerciseEvaluation(
     libraryName: String,

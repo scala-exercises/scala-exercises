@@ -29,7 +29,8 @@ case class Secure[A](action: Action[A])(implicit mode: Mode) extends Action[A] {
     val inWWW      = request.domain.startsWith("www.")
     val previewApp = request.domain.startsWith("scala-exercises-pr")
 
-    /** Behing load balancers request.secure will be false **/
+    /**
+     * Behing load balancers request.secure will be false * */
     val isSecure = request.headers
       .get("x-forwarded-proto")
       .getOrElse("")

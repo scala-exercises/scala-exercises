@@ -22,7 +22,8 @@ import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 import org.scalaexercises.types.user._
 
-/** Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
+/**
+ * Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 trait UserProgressOps[F[_]] {

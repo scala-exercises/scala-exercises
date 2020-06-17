@@ -20,7 +20,8 @@ import cats.Monad
 import cats.implicits._
 import org.scalaexercises.types.user.{User, UserCreation}
 
-/** Exposes User operations as a Free monadic algebra that may be combined with other Algebras via
+/**
+ * Exposes User operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 trait UserOps[F[_]] {
