@@ -4,11 +4,13 @@ import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
 
-addCommandAlias(
-  "ci-test",
-  "scalafmtCheckAll; scalafmtSbtCheck; coverage; test; coverageReport; coverageAggregate"
-)
-addCommandAlias("ci-docs", "github; project-docs/mdoc; headerCreateAll")
+ThisBuild / organization := "org.scala-exercises"
+ThisBuild / githubOrganization := "47degrees"
+ThisBuild / scalaVersion := "2.13.2"
+
+addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
+addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
+addCommandAlias("ci-publish", "github; ci-release")
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
@@ -108,10 +110,7 @@ lazy val client = (project in file("client"))
 
 lazy val clients = Seq(client)
 
-lazy val `project-docs` = (project in file(".docs"))
-  .aggregate(server, client, coreJs, coreJvm)
-  .settings(moduleName := "server-project-docs")
-  .settings(mdocIn := file(".docs"))
+lazy val documentation = project
   .settings(mdocOut := file("."))
-  .settings(skip in publish := true)
+  .settings(publish / skip := true)
   .enablePlugins(MdocPlugin)
