@@ -38,7 +38,6 @@ object ProjectPlugin extends AutoPlugin {
       val newrelic: String                  = "5.9.0"
       val postgres: String                  = "42.2.8"
       val runtime: String                   = "0.6.1"
-      val scala: String                     = "2.13.2"
       val scalacheck: String                = "1.14.3"
       val scalacheckShapeless: String       = "1.2.5"
       val scalajsscripts: String            = "1.1.4"
@@ -54,10 +53,6 @@ object ProjectPlugin extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[_]] =
     Seq(
-      description := "Scala Exercises: The path to enlightenment",
-      organization := "org.scala-exercises",
-      organizationName := "47 Degrees",
-      organizationHomepage := Some(url("https://47deg.com")),
       scmInfo := Some(
         ScmInfo(
           url("https://github.com/scala-exercises/scala-exercises"),
@@ -65,7 +60,6 @@ object ProjectPlugin extends AutoPlugin {
           Some("scm:git:git@github.com:scala-exercises/scala-exercises.git")
         )
       ),
-      scalaVersion := autoImport.V.scala,
       scalacOptions ~= (_ filterNot (_ == "-Xfuture")),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
       fork in Test := false,
