@@ -19,7 +19,8 @@ package org.scalaexercises.exercises.persistence
 package object domain {
 
   /**
-   * Get the field names of a case class */
+   * Get the field names of a case class
+   */
   private[domain] def fieldNames[CC]: FieldNamesPartlyApplied[CC] =
     new FieldNamesPartlyApplied[CC]
 
