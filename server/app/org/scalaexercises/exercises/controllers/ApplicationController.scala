@@ -95,7 +95,8 @@ class ApplicationController(config: Configuration, components: ControllerCompone
   }
 
   /**
-   * cache the main repo stars, forks and watchers info for 30 mins */
+   * cache the main repo stars, forks and watchers info for 30 mins
+   */
   private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
     IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey)))(cs).flatMap {
       case repo if repo.nonEmpty => IO.pure(repo)
