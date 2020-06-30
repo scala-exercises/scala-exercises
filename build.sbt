@@ -6,7 +6,7 @@ import webscalajs._
 
 ThisBuild / organization := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
-ThisBuild / scalaVersion := "2.13.2"
+ThisBuild / scalaVersion := "2.13.3"
 
 addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
@@ -67,7 +67,7 @@ lazy val server = (project in file("server"))
       "org.webjars"                 % "highlightjs"                     % V.highlightjs,
       "org.foundweekends"          %% "knockoff"                        % V.knockoff,
       "com.newrelic.agent.java"     % "newrelic-agent"                  % V.newrelic,
-      "org.typelevel"              %% "cats-effect"                     % V.cats,
+      "org.typelevel"              %% "cats-effect"                     % V.catsEffect,
       "commons-io"                  % "commons-io"                      % V.commonsio,
       "org.webjars.bower"           % "bootstrap-sass"                  % V.bootstrap,
       "com.47deg"                  %% "github4s"                        % V.github4s,
