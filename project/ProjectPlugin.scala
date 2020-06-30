@@ -37,7 +37,7 @@ object ProjectPlugin extends AutoPlugin {
       val monix: String                     = "3.2.2"
       val newrelic: String                  = "5.9.0"
       val postgres: String                  = "42.2.8"
-      val runtime: String                   = "0.6.3"
+      val runtime: String                   = "0.6.3.1"
       val scalacheck: String                = "1.14.3"
       val scalacheckShapeless: String       = "1.2.5"
       val scalajsscripts: String            = "1.1.4"
