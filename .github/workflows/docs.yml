@@ -5,47 +5,74 @@
 name: Update documentation
 
 on:
-  push:
-    branches: master
-    tags: v**
+  release:
+    types: [published]
+  repository_dispatch:
+    types: [docs]
 
 jobs:
   documentation:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
         with:
+          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           ref: master
-          fetch-depth: 0
       - name: Fetch tags
         run: git fetch --tags
       - name: Setup Scala
         uses: olafurpg/setup-scala@v7
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/coursier/v1
-          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
-          restore-keys: ${{ runner.os }}-coursier-
-      - name: Cache .sbt
-        uses: actions/cache@v1
-        with:
-          path: ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
-          restore-keys: ${{ runner.os }}-sbt-
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+      - name: Setup github-changelog-generator
+        run: gem install github_changelog_generator -v 1.15.0
+      - name: Setup yq
+        run: sudo snap install yq
+      - name: Run pre-conditions
+        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.docs)" || true
       - name: Generate documentation
         run: sbt ci-docs
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOWNLOAD_INFO_FROM_GITHUB: true
-      - name: Create Documentation Pull Request
-        uses: peter-evans/create-pull-request@v2
+      - name: Run post-conditions
+        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.docs)" || true
+      - name: Generate changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+        run: |
+              github_changelog_generator \
+                --user ${repo%/*} \
+                --project ${repo#*/} \
+                --token $GITHUB_TOKEN \
+                --exclude-labels "duplicate,question,invalid,wontfix,auto-update,auto-changelog,auto-documentation" \
+                --configure-sections \
+              '{
+                "breaking": {
+                  "prefix": "⚠️ **Breaking changes**",
+                  "labels": ["breaking-change"]
+                },
+                "enhancement": {
+                  "prefix": "🚀 **Features**",
+                  "labels": ["enhancement"]
+                },
+                "documentation": {
+                  "prefix": "📘 **Documentation**",
+                  "labels": ["documentation"]
+                },
+                "bug": {
+                  "prefix": "🐛 **Bug Fixes**",
+                  "labels": ["bug"]
+                },
+                "dependency": {
+                  "prefix": "📈 **Dependency updates**",
+                  "labels": ["dependency-update", "scala-steward"]
+                }
+              }'
+      - name: Push changes
+        uses: stefanzweifel/git-auto-commit-action@v4.1.3
         with:
-          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-          commit-message: Update documentation and other files
-          title: 'Update documentation and other files'
-          labels: auto-documentation
-          branch: auto-update-docs
-          body: Update documentation and other files with latest changes.
+          commit_message: 'Update documentation, changelog and other files [skip ci]'

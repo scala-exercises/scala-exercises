@@ -5,21 +5,15 @@
 name: Release
 
 on:
+  release:
+    types: [published]
   push:
     branches: master
-    tags: v**
 
 jobs:
   release:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
-    env:
-      DOWNLOAD_INFO_FROM_GITHUB: true
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-      PGP_SECRET: ${{ secrets.PGP_SECRET }}
-      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      REQUIRES_PUBLISH_MICROSITE: ${{secrets.REQUIRES_PUBLISH_MICROSITE}}
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
@@ -29,20 +23,21 @@ jobs:
         run: git fetch --tags
       - name: Setup Scala
         uses: olafurpg/setup-scala@v7
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
       - name: Setup GPG
         uses: olafurpg/setup-gpg@v2
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/coursier/v1
-          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
-          restore-keys: ${{ runner.os }}-coursier-
-      - name: Cache .sbt
-        uses: actions/cache@v1
-        with:
-          path: ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
-          restore-keys: ${{ runner.os }}-sbt-
+      - name: Setup yq
+        run: sudo snap install yq
+      - name: Run pre-conditions
+        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.release)" || true
       - name: Release new version
-        if: env.SONATYPE_USERNAME != null
-        run: sbt ci-release
+        run: sbt ci-publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      - name: Run post-conditions
+        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.release)" || true
