@@ -102,25 +102,24 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(imp
     }
 
   def success(): Secure[AnyContent] =
-    Secure(Action.async {
-      implicit request =>
-        request.session
-          .get("oauth-token")
-          .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken =>
-            val ops = for {
-              ghuser <- getAuthUser(accessToken.some)
-              user   <- userOps.getOrCreate(createUserRequest(ghuser))
-            } yield (ghuser, user)
+    Secure(Action.async { implicit request =>
+      request.session
+        .get("oauth-token")
+        .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken =>
+          val ops = for {
+            ghuser <- getAuthUser(accessToken.some)
+            user   <- userOps.getOrCreate(createUserRequest(ghuser))
+          } yield (ghuser, user)
 
-            ops.map {
-              case (ghu, u) =>
-                Redirect(request.headers.get("referer") match {
-                  case Some(url) if !url.contains("github") => url
-                  case _                                    => "/"
-                }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
-            }
+          ops.map {
+            case (ghu, u) =>
+              Redirect(request.headers.get("referer") match {
+                case Some(url) if !url.contains("github") => url
+                case _                                    => "/"
+              }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
           }
-          .unsafeToFuture()
+        }
+        .unsafeToFuture()
     })
 
   def logout(): Secure[AnyContent] = Secure(Action(Redirect("/").withNewSession))
