@@ -27,7 +27,7 @@ object ProjectPlugin extends AutoPlugin {
       val exercisesScalatutorial: String    = "0.6.4"
       val exercisesShapeless: String        = "0.6.4"
       val exercisesStdlib: String           = "0.6.4"
-      val github4s: String                  = "0.24.1"
+      val github4s: String                  = "0.25.0"
       val highlightjs: String               = "9.15.10"
       val jsDependencyJquery: String        = "3.4.1"
       val jsDependencyScalajsdom: String    = "1.0.0"
@@ -45,8 +45,8 @@ object ProjectPlugin extends AutoPlugin {
       val scalatest: String                 = "3.2.0"
       val scalatestplusScheck: String       = "3.2.0.0"
       val shapeless: String                 = "2.3.3"
-      val testcontainers: String            = "0.38.0"
-      val upickle: String                   = "1.2.0"
+      val testcontainers: String            = "0.38.1"
+      val upickle: String                   = "1.1.0"
       val webjars: String                   = "2.8.0"
     }
 
