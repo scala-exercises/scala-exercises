@@ -11,48 +11,42 @@ on:
 
 jobs:
   test:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-      REQUIRES_JEKYLL_CI: ${{secrets.REQUIRES_JEKYLL_CI}}
-      REQUIRES_CODECOV: ${{secrets.REQUIRES_CODECOV}}
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-      - name: Fetch tags
-        run: git fetch --tags
-      - name: Set up Ruby 2.6
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Set up jekyll
-        if: env.REQUIRES_JEKYLL_CI != null
-        run: |
-          gem install jekyll -v 4
-      - name: Set up codecov
-        if: env.REQUIRES_CODECOV != null
-        run: |
-          curl -s https://codecov.io/bash > .codecov
-          chmod +x .codecov
+          ref: ${{ github.head_ref }}
+      - name: Label PR
+        if:   github.event_name == 'pull_request'
+        uses: TimonVS/pr-labeler-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Scala
         uses: olafurpg/setup-scala@v7
-      - name: Cache dependencies
-        uses: actions/cache@v1
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+      - name: Setup yq
+        run: sudo snap install yq
+      - name: Run pre-conditions
+        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.ci)" || true
+      - name: Run scalafmt on Scala Steward PRs
+        if:  github.event.pull_request.user.login == '47erbot' && contains(github.event.pull_request.body, 'Scala Steward')
+        run: sbt "scalafixEnable; fix" || sbt "scalafmtAll; scalafmtSbt" || true
+      - name: Push changes
+        uses: stefanzweifel/git-auto-commit-action@v4.1.3
         with:
-          path: ~/.cache/coursier/v1
-          key: ${{ runner.os }}-coursier-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
-          restore-keys: ${{ runner.os }}-coursier-
-      - name: Cache .sbt
-        uses: actions/cache@v1
-        with:
-          path: ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('build.sbt') }}-${{ hashFiles('project/*.scala') }}
-          restore-keys: ${{ runner.os }}-sbt-
+          commit_message: Run formatter/linter
       - name: Run checks
         run: sbt ci-test
-      - name: Upload codecov reports
-        if: env.REQUIRES_CODECOV != null
-        run: |
-          ./.codecov -X gcov
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+      - name: Run post-conditions
+        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.ci)" || true
+      - name: Automerge Scala Steward PRs
+        if: success() && github.event_name == 'pull_request' && contains(github.event.pull_request.body, 'Scala Steward')
+        uses: ridedott/merge-me-action@v1.1.36
+        with:
+          GITHUB_LOGIN: 47erbot
+          GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}

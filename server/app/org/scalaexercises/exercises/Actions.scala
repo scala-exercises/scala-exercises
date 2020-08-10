@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 47 Degrees <https://47deg.com>
+ * Copyright 2014-2020 47 Degrees Open Source <https://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@ case class Secure[A](action: Action[A])(implicit mode: Mode) extends Action[A] {
     val inWWW      = request.domain.startsWith("www.")
     val previewApp = request.domain.startsWith("scala-exercises-pr")
 
-    /** Behing load balancers request.secure will be false **/
+    /**
+     * Behing load balancers request.secure will be false *
+     */
     val isSecure = request.headers
       .get("x-forwarded-proto")
       .getOrElse("")

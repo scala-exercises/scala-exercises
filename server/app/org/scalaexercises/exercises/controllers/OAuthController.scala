@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 47 Degrees <https://47deg.com>
+ * Copyright 2014-2020 47 Degrees Open Source <https://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,25 +102,24 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(imp
     }
 
   def success(): Secure[AnyContent] =
-    Secure(Action.async {
-      implicit request =>
-        request.session
-          .get("oauth-token")
-          .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken =>
-            val ops = for {
-              ghuser <- getAuthUser(accessToken.some)
-              user   <- userOps.getOrCreate(createUserRequest(ghuser))
-            } yield (ghuser, user)
+    Secure(Action.async { implicit request =>
+      request.session
+        .get("oauth-token")
+        .fold(IO.pure(Unauthorized("Missing OAuth token"))) { accessToken =>
+          val ops = for {
+            ghuser <- getAuthUser(accessToken.some)
+            user   <- userOps.getOrCreate(createUserRequest(ghuser))
+          } yield (ghuser, user)
 
-            ops.map {
-              case (ghu, u) =>
-                Redirect(request.headers.get("referer") match {
-                  case Some(url) if !url.contains("github") => url
-                  case _                                    => "/"
-                }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
-            }
+          ops.map {
+            case (ghu, u) =>
+              Redirect(request.headers.get("referer") match {
+                case Some(url) if !url.contains("github") => url
+                case _                                    => "/"
+              }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
           }
-          .unsafeToFuture()
+        }
+        .unsafeToFuture()
     })
 
   def logout(): Secure[AnyContent] = Secure(Action(Redirect("/").withNewSession))

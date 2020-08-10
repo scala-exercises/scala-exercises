@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 47 Degrees <https://47deg.com>
+ * Copyright 2014-2020 47 Degrees Open Source <https://www.47deg.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ import org.scalaexercises.types.exercises._
 import org.scalaexercises.types.progress._
 import org.scalaexercises.types.user._
 
-/** Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
+/**
+ * Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 trait UserProgressOps[F[_]] {
