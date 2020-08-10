@@ -3,7 +3,9 @@
 # If you want to suggest a change, please open a PR or issue in that repository
 
 enhancement: ['enhancement/*', 'feature/*']
-documentation: ['docs/*', '.docs/*', 'doc/*']
+documentation: ['docs/*', 'doc/*']
+breaking-change: ['breaking/*', 'break/*']
 bug: ['bug/*', 'fix/*']
 tests: ['test/*', 'tests/*']
 dependency-update: ['dep/*', 'dependency/*', 'dependency-update/*']
+scala-steward: ['update/*']
