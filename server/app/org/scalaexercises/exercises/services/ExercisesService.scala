@@ -75,22 +75,21 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
     } yield (runtimeLibrary.buildMetaInfo, runtimeExercise.packageName, runtimeExercise.imports)
 
-    runtimeInfo map {
-      case (b: RuntimeBuildInfo, pckgName: String, importList: List[String]) =>
-        val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
-          pckgName,
-          evaluation.method,
-          evaluation.args,
-          importList,
-          b.resolvers,
-          b.libraryDependencies
-        )
+    runtimeInfo map { case (b: RuntimeBuildInfo, pckgName: String, importList: List[String]) =>
+      val (resolvers, dependencies, code) = Exercises.buildEvaluatorRequest(
+        pckgName,
+        evaluation.method,
+        evaluation.args,
+        importList,
+        b.resolvers,
+        b.libraryDependencies
+      )
 
-        (
-          resolvers,
-          dependencies map (d => CoreDependency(d.groupId, d.artifactId, d.version)),
-          code
-        )
+      (
+        resolvers,
+        dependencies map (d => CoreDependency(d.groupId, d.artifactId, d.version)),
+        code
+      )
 
     }
   }

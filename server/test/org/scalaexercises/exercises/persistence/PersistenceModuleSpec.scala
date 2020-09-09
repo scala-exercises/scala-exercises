@@ -134,39 +134,39 @@ class PersistenceModuleSpec
     "return a list of PersistenceItem ((String, Boolean) tuple list) if there are some elements in the table " +
       "that meet the criteria" in {
 
-      forAll { data: List[(String, Boolean)] =>
-        deleteAll().transact(trx).unsafeRunSync()
-        insertItems(data).transact(trx).unsafeRunSync()
+        forAll { data: List[(String, Boolean)] =>
+          deleteAll().transact(trx).unsafeRunSync()
+          insertItems(data).transact(trx).unsafeRunSync()
 
-        val list = persistenceModule
-          .fetchList[PersistenceItem](
-            sql = fetchAllSql
-          )
-          .transact(trx)
-          .unsafeRunSync()
+          val list = persistenceModule
+            .fetchList[PersistenceItem](
+              sql = fetchAllSql
+            )
+            .transact(trx)
+            .unsafeRunSync()
 
-        list.size shouldBe data.size
+          list.size shouldBe data.size
+        }
       }
-    }
   }
 
   "return an empty list of PersistenceItem (String list) if there are some elements in the table " +
     "that meet the criteria" in {
 
-    forAll { names: List[String] =>
-      val namesWithStatus = names map ((_, false))
-      insertItems(namesWithStatus).transact(trx).unsafeRunSync()
+      forAll { names: List[String] =>
+        val namesWithStatus = names map ((_, false))
+        insertItems(namesWithStatus).transact(trx).unsafeRunSync()
 
-      val list = persistenceModule
-        .fetchList[PersistenceItem](
-          sql = fetchAllActiveSql
-        )
-        .transact(trx)
-        .unsafeRunSync()
+        val list = persistenceModule
+          .fetchList[PersistenceItem](
+            sql = fetchAllActiveSql
+          )
+          .transact(trx)
+          .unsafeRunSync()
 
-      list shouldBe empty
+        list shouldBe empty
+      }
     }
-  }
 
   "fetchList" should {
     "return an empty list if the table is empty" in {
@@ -354,57 +354,57 @@ class PersistenceModuleSpec
     "return the number of affected rows equals to 0 after updating items in the table " +
       "if the table is empty" in {
 
-      forAll { _: Int =>
-        persistenceModule
-          .update(sql = updateAllSql)
-          .transact(trx)
-          .unsafeRunSync() shouldBe 0
+        forAll { _: Int =>
+          persistenceModule
+            .update(sql = updateAllSql)
+            .transact(trx)
+            .unsafeRunSync() shouldBe 0
+        }
       }
-    }
     "return the number of affected rows after updating items in the table " +
       "if there are some elements that meet the criteria" in {
 
-      forAll { names: List[String] =>
-        val namesWithStatus = names map ((_, true))
-        insertItems(namesWithStatus).transact(trx).unsafeRunSync()
+        forAll { names: List[String] =>
+          val namesWithStatus = names map ((_, true))
+          insertItems(namesWithStatus).transact(trx).unsafeRunSync()
 
-        val updateResult = persistenceModule
-          .update(updateAllActiveSql)
-          .transact(trx)
-          .unsafeRunSync()
+          val updateResult = persistenceModule
+            .update(updateAllActiveSql)
+            .transact(trx)
+            .unsafeRunSync()
 
-        updateResult shouldBe names.size
+          updateResult shouldBe names.size
+        }
       }
-    }
     "return the number of affected rows equals to 0 after updating items in the table " +
       "if there aren't any elements that meet the criteria" in {
 
-      forAll { names: List[String] =>
-        val namesWithStatus = names map ((_, false))
-        insertItems(namesWithStatus).transact(trx).unsafeRunSync()
+        forAll { names: List[String] =>
+          val namesWithStatus = names map ((_, false))
+          insertItems(namesWithStatus).transact(trx).unsafeRunSync()
 
-        persistenceModule
-          .update(updateAllActiveSql)
-          .transact(trx)
-          .unsafeRunSync() shouldBe 0
+          persistenceModule
+            .update(updateAllActiveSql)
+            .transact(trx)
+            .unsafeRunSync() shouldBe 0
+        }
       }
-    }
   }
 
   "update" should {
     "return the number of affected rows equals to 0 after updating items in the table " +
       "if the table is empty" in {
 
-      forAll { active: Boolean =>
-        persistenceModule
-          .update(
-            sql = updateByStatusSql,
-            values = (!active, active)
-          )
-          .transact(trx)
-          .unsafeRunSync() shouldBe 0
+        forAll { active: Boolean =>
+          persistenceModule
+            .update(
+              sql = updateByStatusSql,
+              values = (!active, active)
+            )
+            .transact(trx)
+            .unsafeRunSync() shouldBe 0
+        }
       }
-    }
     "return the number of affected rows equals to 1 after updating a single item in the table " in {
 
       forAll { data: (String, Boolean) =>
@@ -425,38 +425,38 @@ class PersistenceModuleSpec
     "return the number of affected rows after updating items in the table " +
       "if there are some elements that meet the criteria" in {
 
-      forAll { names: List[String] =>
-        val namesWithStatus = names map ((_, true))
-        insertItems(namesWithStatus).transact(trx).unsafeRunSync()
+        forAll { names: List[String] =>
+          val namesWithStatus = names map ((_, true))
+          insertItems(namesWithStatus).transact(trx).unsafeRunSync()
 
-        val updateResult =
+          val updateResult =
+            persistenceModule
+              .update(
+                sql = updateByStatusSql,
+                values = (false, true)
+              )
+              .transact(trx)
+              .unsafeRunSync()
+
+          updateResult shouldBe names.size
+        }
+      }
+    "return the number of affected rows equals to 0 after updating items in the table " +
+      "if there aren't any elements that meet the criteria" in {
+
+        forAll { names: List[String] =>
+          val namesWithStatus = names map ((_, false))
+          insertItems(namesWithStatus).transact(trx).unsafeRunSync()
+
           persistenceModule
             .update(
               sql = updateByStatusSql,
               values = (false, true)
             )
             .transact(trx)
-            .unsafeRunSync()
-
-        updateResult shouldBe names.size
+            .unsafeRunSync() shouldBe 0
+        }
       }
-    }
-    "return the number of affected rows equals to 0 after updating items in the table " +
-      "if there aren't any elements that meet the criteria" in {
-
-      forAll { names: List[String] =>
-        val namesWithStatus = names map ((_, false))
-        insertItems(namesWithStatus).transact(trx).unsafeRunSync()
-
-        persistenceModule
-          .update(
-            sql = updateByStatusSql,
-            values = (false, true)
-          )
-          .transact(trx)
-          .unsafeRunSync() shouldBe 0
-      }
-    }
     "return the number of affected rows equals to 1 after inserting a new item in the table" in {
 
       forAll { data: (String, Boolean) =>
@@ -512,37 +512,37 @@ class PersistenceModuleSpec
     "return the number of affected rows equals to 0 after updating a batch of items " +
       "in the table if the table is empty" in {
 
-      forAll { data: List[(String, Boolean, Long)] =>
-        persistenceModule
-          .updateMany[List, (String, Boolean, Long)](
-            sql = updateByIdSql,
-            values = data
-          )
-          .transact(trx)
-          .unsafeRunSync() shouldBe 0
+        forAll { data: List[(String, Boolean, Long)] =>
+          persistenceModule
+            .updateMany[List, (String, Boolean, Long)](
+              sql = updateByIdSql,
+              values = data
+            )
+            .transact(trx)
+            .unsafeRunSync() shouldBe 0
+        }
       }
-    }
     "return the number of affected rows after updating a batch of items in the table " +
       "if the items exist" in {
 
-      forAll { data: List[(String, Boolean)] =>
-        val fetchData = {
-          for {
-            _      <- insertItems(data)
-            result <- fetchAll
-          } yield result
-        }.transact(trx).unsafeRunSync() map {
-          case (name, active, id) => (name, !active, id)
-        }
+        forAll { data: List[(String, Boolean)] =>
+          val fetchData = {
+            for {
+              _      <- insertItems(data)
+              result <- fetchAll
+            } yield result
+          }.transact(trx).unsafeRunSync() map { case (name, active, id) =>
+            (name, !active, id)
+          }
 
-        persistenceModule
-          .updateMany[List, (String, Boolean, Long)](
-            sql = updateByIdSql,
-            values = fetchData
-          )
-          .transact(trx)
-          .unsafeRunSync() shouldBe fetchData.size
+          persistenceModule
+            .updateMany[List, (String, Boolean, Long)](
+              sql = updateByIdSql,
+              values = fetchData
+            )
+            .transact(trx)
+            .unsafeRunSync() shouldBe fetchData.size
+        }
       }
-    }
   }
 }

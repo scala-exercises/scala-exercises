@@ -61,13 +61,12 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(imp
   ): Secure[AnyContent] =
     Secure(Action.async { implicit request =>
       (codeOpt, stateOpt, request.session.get("oauth-state")).tupled
-        .fold(IO.pure(BadRequest("Missing `code` or `state`"))) {
-          case (code, state, oauthState) =>
-            if (state == oauthState) {
-              getAccessToken(code, state).map { ot =>
-                Redirect(configUtils.successUrl).withSession("oauth-token" -> ot.accessToken)
-              }
-            } else IO.pure(BadRequest("Invalid github login"))
+        .fold(IO.pure(BadRequest("Missing `code` or `state`"))) { case (code, state, oauthState) =>
+          if (state == oauthState) {
+            getAccessToken(code, state).map { ot =>
+              Redirect(configUtils.successUrl).withSession("oauth-token" -> ot.accessToken)
+            }
+          } else IO.pure(BadRequest("Invalid github login"))
         }
         .unsafeToFuture()
     })
@@ -111,12 +110,11 @@ class OAuthController(conf: Configuration, components: ControllerComponents)(imp
             user   <- userOps.getOrCreate(createUserRequest(ghuser))
           } yield (ghuser, user)
 
-          ops.map {
-            case (ghu, u) =>
-              Redirect(request.headers.get("referer") match {
-                case Some(url) if !url.contains("github") => url
-                case _                                    => "/"
-              }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
+          ops.map { case (ghu, u) =>
+            Redirect(request.headers.get("referer") match {
+              case Some(url) if !url.contains("github") => url
+              case _                                    => "/"
+            }).withSession("oauth-token" -> accessToken, "user" -> ghu.login)
           }
         }
         .unsafeToFuture()
