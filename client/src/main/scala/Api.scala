@@ -68,18 +68,17 @@ object Client {
     Ajax
       .postAsJson(url, write(request))
       .map(r => EvaluationResult(true, e.method))
-      .recover({
-        case exc: AjaxException =>
-          EvaluationResult(
-            false,
-            e.method,
-            if (exc.isTimeout)
-              TIMEOUT_ERROR
-            else if (exc.xhr.status == BAD_REQUEST)
-              exc.xhr.responseText
-            else
-              SERVER_ERROR
-          )
+      .recover({ case exc: AjaxException =>
+        EvaluationResult(
+          false,
+          e.method,
+          if (exc.isTimeout)
+            TIMEOUT_ERROR
+          else if (exc.xhr.status == BAD_REQUEST)
+            exc.xhr.responseText
+          else
+            SERVER_ERROR
+        )
       })
   }
 }
