@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
       - name: Label PR
         if:   github.event_name == 'pull_request'
         uses: TimonVS/pr-labeler-action@v3
