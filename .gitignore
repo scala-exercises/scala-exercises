@@ -27,6 +27,7 @@ project/plugins/project/
 .history
 .cache
 .lib/
+.bsp
 
 ### Scala ###
 
