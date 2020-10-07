@@ -32,9 +32,9 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyJquery: String        = "3.4.1"
       val jsDependencyScalajsdom: String    = "1.1.0"
       val jsDependencyScalajsjquery: String = "1.0.0"
-      val jsDependencyScalatags: String     = "0.9.1"
+      val jsDependencyScalatags: String     = "0.9.2"
       val jsDependencyUtest: String         = "0.7.5"
-      val knockoff: String                  = "0.8.13"
+      val knockoff: String                  = "0.8.14"
       val monix: String                     = "3.2.2"
       val newrelic: String                  = "5.13.0"
       val postgres: String                  = "42.2.8"
@@ -45,8 +45,8 @@ object ProjectPlugin extends AutoPlugin {
       val scalatest: String                 = "3.2.2"
       val scalatestplusScheck: String       = "3.2.2.0"
       val shapeless: String                 = "2.3.3"
-      val testcontainers: String            = "0.38.4"
-      val upickle: String                   = "1.2.0"
+      val testcontainers: String            = "0.38.3"
+      val upickle: String                   = "1.2.1"
       val webjars: String                   = "2.8.0"
     }
 
