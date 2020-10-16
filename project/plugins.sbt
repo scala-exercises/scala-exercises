@@ -1,5 +1,5 @@
 addSbtPlugin("org.irundaia.sbt"    % "sbt-sassify"              % "1.5.1")
-addSbtPlugin("org.scala-js"        % "sbt-scalajs"              % "1.2.0")
+addSbtPlugin("org.scala-js"        % "sbt-scalajs"              % "1.3.0")
 addSbtPlugin("com.eed3si9n"        % "sbt-buildinfo"            % "0.10.0")
 addSbtPlugin("com.typesafe.play"   % "sbt-plugin"               % "2.8.2")
 addSbtPlugin("org.portable-scala"  % "sbt-scalajs-crossproject" % "1.0.0")
