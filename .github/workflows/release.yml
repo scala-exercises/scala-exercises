@@ -26,7 +26,7 @@ jobs:
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
       - name: Setup GPG
-        uses: olafurpg/setup-gpg@v2
+        uses: olafurpg/setup-gpg@v3
       - name: Setup yq
         run: sudo snap install yq
       - name: Run pre-conditions
