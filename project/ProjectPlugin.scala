@@ -27,7 +27,7 @@ object ProjectPlugin extends AutoPlugin {
       val exercisesScalatutorial: String    = "0.6.4"
       val exercisesShapeless: String        = "0.6.4"
       val exercisesStdlib: String           = "0.6.4"
-      val github4s: String                  = "0.26.0"
+      val github4s: String                  = "0.27.1"
       val highlightjs: String               = "10.1.2"
       val jsDependencyJquery: String        = "3.4.1"
       val jsDependencyScalajsdom: String    = "1.1.0"
