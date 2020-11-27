@@ -13,8 +13,8 @@ object ProjectPlugin extends AutoPlugin {
 
     lazy val V = new {
       val bootstrap: String                 = "3.3.7"
-      val cats: String                      = "2.2.0"
-      val catsEffect: String                = "2.2.0"
+      val cats: String                      = "2.3.0"
+      val catsEffect: String                = "2.3.0"
       val commonsio: String                 = "2.8.0"
       val doobie: String                    = "0.9.4"
       val exercisesCats: String             = "0.6.4"
@@ -43,7 +43,7 @@ object ProjectPlugin extends AutoPlugin {
       val scalacheckShapeless: String       = "1.2.5"
       val scalajsscripts: String            = "1.1.4"
       val scalatest: String                 = "3.2.3"
-      val scalatestplusScheck: String       = "3.2.2.0"
+      val scalatestplusScheck: String       = "3.2.3.0"
       val shapeless: String                 = "2.3.3"
       val testcontainers: String            = "0.38.7"
       val upickle: String                   = "1.2.2"
