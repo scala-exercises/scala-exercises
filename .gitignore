@@ -34,8 +34,7 @@ project/plugins/project/
 *.metals
 .bloop/
 .metals/
-project/.bloop/
-project/metals.sbt
+metals.sbt
 
 ### Vim ###
 
