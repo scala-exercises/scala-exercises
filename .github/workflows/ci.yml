@@ -35,7 +35,7 @@ jobs:
       - name: Setup yq
         run: sudo snap install yq
       - name: Run pre-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.ci)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.pre.ci // "true"' .github/actions.yml)" || true
       - name: Run scalafmt on Scala Steward PRs
         if: github.event.pull_request.user.login == '47erbot' && contains(github.event.pull_request.body, 'Scala Steward')
         run: sbt "scalafixEnable; fix" || sbt "scalafmtAll; scalafmtSbt" || true
@@ -48,7 +48,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
       - name: Run post-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.ci)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.post.ci // "true"' .github/actions.yml)" || true
       - name: Automerge Scala Steward PRs
         if: success() && github.event_name == 'pull_request' && contains(github.event.pull_request.body, 'Scala Steward')
         uses: ridedott/merge-me-action@v1.1.36

@@ -31,14 +31,14 @@ jobs:
       - name: Setup yq
         run: sudo snap install yq
       - name: Run pre-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.docs)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.pre.docs // "true"' .github/actions.yml)" || true
       - name: Generate documentation
         run: sbt ci-docs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOWNLOAD_INFO_FROM_GITHUB: true
       - name: Run post-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.docs)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.post.docs // "true"' .github/actions.yml)" || true
       - name: Generate changelog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

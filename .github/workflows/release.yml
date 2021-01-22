@@ -30,7 +30,7 @@ jobs:
       - name: Setup yq
         run: sudo snap install yq
       - name: Run pre-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.release)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.pre.release // "true"' .github/actions.yml)" || true
       - name: Release new version
         run: sbt ci-publish
         env:
@@ -40,4 +40,4 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
       - name: Run post-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.release)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.post.release // "true"' .github/actions.yml)" || true
