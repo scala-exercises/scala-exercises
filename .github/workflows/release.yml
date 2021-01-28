@@ -24,7 +24,9 @@ jobs:
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
       - name: Setup GPG
         uses: olafurpg/setup-gpg@v3
       - name: Setup yq

@@ -25,7 +25,9 @@ jobs:
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
       - name: Setup github-changelog-generator
         run: gem install github_changelog_generator -v 1.15.0
       - name: Setup yq
