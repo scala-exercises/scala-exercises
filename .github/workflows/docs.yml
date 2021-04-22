@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-          ref: master
+          ref: main
       - name: Fetch tags
         run: git fetch --tags
       - name: Setup Scala
