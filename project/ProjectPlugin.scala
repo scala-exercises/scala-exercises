@@ -13,7 +13,7 @@ object ProjectPlugin extends AutoPlugin {
 
     lazy val V = new {
       val bootstrap: String                 = "3.3.7"
-      val cats: String                      = "2.5.0"
+      val cats: String                      = "2.6.0"
       val catsEffect: String                = "2.4.1"
       val commonsio: String                 = "2.8.0"
       val doobie: String                    = "0.13.0"
