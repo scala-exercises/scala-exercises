@@ -14,9 +14,9 @@ object ProjectPlugin extends AutoPlugin {
     lazy val V = new {
       val bootstrap: String                 = "3.3.7"
       val cats: String                      = "2.6.1"
-      val catsEffect: String                = "3.1.1"
-      val commonsio: String                 = "2.8.0"
-      val doobie: String                    = "0.13.2"
+      val catsEffect: String                = "2.5.1"
+      val commonsio: String                 = "2.9.0"
+      val doobie: String                    = "0.13.4"
       val exercisesCats: String             = "0.6.4"
       val exercisesCirce: String            = "0.6.4"
       val exercisesDoobie: String           = "0.6.4"
@@ -34,7 +34,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyScalajsjquery: String = "1.0.0"
       val jsDependencyScalatags: String     = "0.9.4"
       val jsDependencyUtest: String         = "0.7.10"
-      val knockoff: String                  = "0.8.14"
+      val knockoff: String                  = "0.9.0"
       val monix: String                     = "3.4.0"
       val newrelic: String                  = "5.13.0"
       val postgres: String                  = "42.2.8"
@@ -45,9 +45,9 @@ object ProjectPlugin extends AutoPlugin {
       val scalatest: String                 = "3.2.8"
       val scalatestplusScheck: String       = "3.2.2.0"
       val shapeless: String                 = "2.3.3"
-      val testcontainers: String            = "0.39.3"
-      val upickle: String                   = "1.3.14"
-      val webjars: String                   = "2.8.0-1"
+      val testcontainers: String            = "0.39.5"
+      val upickle: String                   = "1.3.15"
+      val webjars: String                   = "2.8.8"
     }
 
   }
