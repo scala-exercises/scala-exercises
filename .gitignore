@@ -12,8 +12,8 @@ out/
 *.class
 *.log
 
-### Dependencies ###
-node_modules/
+# dependencies
+node_modules
 
 ### macOS ###
 
