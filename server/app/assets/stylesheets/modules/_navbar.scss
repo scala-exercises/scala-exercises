@@ -11,8 +11,10 @@
         display: inline-block;
         padding-left: 38px;
         font-family: $headings-font-family;
-        text-transform: uppercase;
+        font-weight: 600;
+
     }
+
     .section-name {
         padding-left: 0;
     }
@@ -21,8 +23,9 @@
         top: 20px;
     }
 }
-
+.navbar-inverse {
 .navbar-nav {
+  font-family: $headings-font-family;
     li {
         > a {
             padding-left: 15px;
@@ -46,11 +49,15 @@
                     top: 22px;
                 }
             }
+            &:hover {
+              color: rgba(#fff, 0.6);
+            }
         }
         >.dropdown-toggle {
             padding-left: 54px;
         }
     }
+}
 }
 
 .navbar-collapse {
