@@ -30,11 +30,11 @@
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="https://www.47deg.com/trainings/">Training</a></li>
-            <li><a href="https://www.47deg.com/services/">Support</a></li>
+            <li><a href="https://www.47deg.com/trainings/"><i class="far fa-laptop-code"></i>Training</a></li>
+            <li><a href="https://www.47deg.com/services/"><i class="far fa-browser"></i>Support</a></li>
             @user match {
               case Some(u) => { @templates.base.userInfo(u) }
-              case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
+              case None => { <li><a href="@redirectUrl"><i class="fab fa-github"></i>Login with GitHub</a></li> }
             }
           </ul>
         </div>
