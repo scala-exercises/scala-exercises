@@ -12,6 +12,9 @@ out/
 *.class
 *.log
 
+# dependencies
+node_modules/
+
 ### macOS ###
 
 .DS_Store
@@ -34,8 +37,7 @@ project/plugins/project/
 *.metals
 .bloop/
 .metals/
-project/.bloop/
-project/metals.sbt
+metals.sbt
 
 ### Vim ###
 
@@ -70,3 +72,7 @@ tags
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Direnv
+
+.direnv

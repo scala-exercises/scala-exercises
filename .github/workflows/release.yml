@@ -8,7 +8,7 @@ on:
   release:
     types: [published]
   push:
-    branches: master
+    branches: main
 
 jobs:
   release:
@@ -22,15 +22,17 @@ jobs:
       - name: Fetch tags
         run: git fetch --tags
       - name: Setup Scala
-        uses: olafurpg/setup-scala@v7
+        uses: olafurpg/setup-scala@v10
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
       - name: Setup GPG
-        uses: olafurpg/setup-gpg@v2
+        uses: olafurpg/setup-gpg@v3
       - name: Setup yq
         run: sudo snap install yq
       - name: Run pre-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.release)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.pre.release // "true"' .github/actions.yml)" || true
       - name: Release new version
         run: sbt ci-publish
         env:
@@ -40,4 +42,4 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
       - name: Run post-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.release)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.post.release // "true"' .github/actions.yml)" || true

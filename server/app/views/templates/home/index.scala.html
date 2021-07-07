@@ -30,16 +30,19 @@
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://www.47deg.com/trainings/"><i class="far fa-laptop-code"></i>Training</a></li>
+            <li><a href="https://www.47deg.com/services/"><i class="far fa-browser"></i>Support</a></li>
             @user match {
               case Some(u) => { @templates.base.userInfo(u) }
-              case None => { <li><a href="@redirectUrl"><i class="fa fa-github"></i>Login with GitHub</a></li> }
+              case None => { <li><a href="@redirectUrl"><i class="fab fa-github"></i>Login with GitHub</a></li> }
             }
           </ul>
         </div>
           <!--.nav-collapse -->
       </div>
     </header>
-    <main class="jumbotron text-center parallax-window" data-parallax="scroll" data-image-src="@routes.Assets.at("images/jumbotron_background.png")">
+    <main class="jumbotron">
+      <img src=@routes.Assets.at("images/jumbotron_background-2.jpg") alt="">
       <div class="container">
         <div class="row">
           <div class="col-md-8 col-md-offset-2">
@@ -209,7 +212,7 @@
 	<a target="_blank" href="http://docs.scala-lang.org/">
           <div class="col-md-4">
             <img src="@routes.Assets.at("images/logo_scala.svg")"/>
-	  
+
 	    <h3>Standard Library Docs</h3>
             <p>Access community-driven documentation for Scala including guides, tutorials and glossary.</p>
           </div>
@@ -218,9 +221,9 @@
           <div class="col-md-4">
              <img src="@routes.Assets.at("images/logo_typelevel.svg")"/>
             <h3>Typelevel libraries</h3>
-            <p>Let the Scala compiler work for you. Typelevel provides type classes, instances, conversions, testing, supplements to the standard library.</p>	    
+            <p>Let the Scala compiler work for you. Typelevel provides type classes, instances, conversions, testing, supplements to the standard library.</p>
           </div>
-	</a>	  
+	</a>
       </div>
     </section>
 
