@@ -1,6 +1,7 @@
 // Footer
 // -----------------------------------------------------
 #bottom {
+   color: rgba(#fff, 0.5);
     padding: {
         top: ($padding-large-vertical * 2);
         bottom: ($padding-large-vertical * 3);
@@ -39,10 +40,10 @@
             margin-right: 8px;
         }
         text-decoration: underline;
-        color: $dark-link-color;
+        color: rgba(#fff, 0.5);
         &:hover {
             text-decoration: none;
-            color: $dark-link-color-hover;
+            color: rgba(#fff, 0.8);
         }
     }
 }
