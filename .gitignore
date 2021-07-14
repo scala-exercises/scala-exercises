@@ -12,9 +12,6 @@ out/
 *.class
 *.log
 
-# dependencies
-node_modules/
-
 ### macOS ###
 
 .DS_Store
