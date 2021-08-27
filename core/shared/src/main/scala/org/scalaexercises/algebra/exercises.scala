@@ -22,8 +22,8 @@ import org.scalaexercises.types.exercises.ExerciseEvaluation.EvaluationRequest
 import cats.implicits._
 
 /**
- * Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras via
- * Coproduct.
+ * Exposes Exercise operations as a Free monadic algebra that may be combined with other Algebras
+ * via Coproduct.
  */
 trait ExerciseOps[F[_]] {
 
