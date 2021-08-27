@@ -159,7 +159,7 @@ class UserProgressDoobieRepository(implicit persistence: PersistenceModule)
 object UserProgressRepository {
   type UpdateParams =
     (String, String, String, Int, ExerciseType, List[String], Boolean, Long, String, String, String)
-  type InsertParams                   = (Long, String, String, String, Int, ExerciseType, List[String], Boolean)
+  type InsertParams = (Long, String, String, String, Int, ExerciseType, List[String], Boolean)
   type FindEvaluationByVersionParams  = (Long, String, String, String, Int)
   type FindEvaluationsBySectionParams = (Long, String, String)
   type FindLastSeenSectionParams      = (Long, String)

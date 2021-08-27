@@ -20,7 +20,7 @@ package programspec
 import utest._
 
 import actions._
-import state.{State}
+import state.State
 import factories.Factories._
 
 object StateSpec extends TestSuite {
