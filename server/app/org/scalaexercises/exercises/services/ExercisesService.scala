@@ -24,9 +24,9 @@ import cats.implicits._
 import javax.inject.Singleton
 import org.apache.commons.io.IOUtils
 import org.scalaexercises.runtime.model.{
-  DefaultLibrary,
   BuildInfo => RuntimeBuildInfo,
   Contribution => RuntimeContribution,
+  DefaultLibrary,
   Exercise => RuntimeExercise,
   Library => RuntimeLibrary,
   Section => RuntimeSection
