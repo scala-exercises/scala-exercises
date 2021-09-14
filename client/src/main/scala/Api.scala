@@ -50,10 +50,10 @@ object Client {
     val url = Routes.Exercises.progress(library, section)
     Ajax
       .get(url)
-      .collect({
+      .collect {
         case r if r.ok => Some(readProgress(library, section, r.responseText))
-      })
-      .recover({ case exc: AjaxException => None })
+      }
+      .recover { case exc: AjaxException => None }
   }
 
   val SERVER_ERROR = "There was a problem evaluating your answer, please try again later."
@@ -68,7 +68,7 @@ object Client {
     Ajax
       .postAsJson(url, write(request))
       .map(r => EvaluationResult(true, e.method))
-      .recover({ case exc: AjaxException =>
+      .recover { case exc: AjaxException =>
         EvaluationResult(
           false,
           e.method,
@@ -79,6 +79,6 @@ object Client {
           else
             SERVER_ERROR
         )
-      })
+      }
   }
 }

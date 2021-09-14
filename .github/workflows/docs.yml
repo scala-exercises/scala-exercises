@@ -19,26 +19,28 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-          ref: master
+          ref: main
       - name: Fetch tags
         run: git fetch --tags
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
       - name: Setup github-changelog-generator
         run: gem install github_changelog_generator -v 1.15.0
       - name: Setup yq
         run: sudo snap install yq
       - name: Run pre-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" pre.docs)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.pre.docs // "true"' .github/actions.yml)" || true
       - name: Generate documentation
         run: sbt ci-docs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOWNLOAD_INFO_FROM_GITHUB: true
       - name: Run post-conditions
-        run: test -f .github/actions.yml && eval "$(yq r .github/actions.yml -D "true" post.docs)" || true
+        run: test -f .github/actions.yml && eval "$(yq e '.post.docs // "true"' .github/actions.yml)" || true
       - name: Generate changelog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

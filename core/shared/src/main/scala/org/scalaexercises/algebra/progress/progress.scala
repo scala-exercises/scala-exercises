@@ -23,8 +23,8 @@ import org.scalaexercises.types.progress._
 import org.scalaexercises.types.user._
 
 /**
- * Exposes User Progress operations as a Free monadic algebra that may be combined with other Algebras via
- * Coproduct
+ * Exposes User Progress operations as a Free monadic algebra that may be combined with other
+ * Algebras via Coproduct
  */
 trait UserProgressOps[F[_]] {
   def saveUserProgress(userProgress: SaveUserProgress.Request): F[UserProgress]

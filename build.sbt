@@ -4,9 +4,9 @@ import sbt.Project.projectToRef
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import webscalajs._
 
-ThisBuild / organization := "org.scala-exercises"
+ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion       := "2.13.3"
 
 addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
@@ -36,10 +36,10 @@ lazy val server = (project in file("server"))
   .enablePlugins(JavaAppPackaging)
   .settings(skip in publish := true)
   .settings(
-    scalaJSProjects := clients,
+    scalaJSProjects          := clients,
     pipelineStages in Assets := Seq(scalaJSPipeline),
-    pipelineStages := Seq(scalaJSProd, gzip),
-    routesGenerator := InjectedRoutesGenerator,
+    pipelineStages           := Seq(scalaJSProd, gzip),
+    routesGenerator          := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
     scalacOptions += "-Ymacro-annotations",
@@ -50,36 +50,36 @@ lazy val server = (project in file("server"))
       cacheApi,
       ws,
       caffeine,
-      "org.scala-exercises"        %% "runtime"                         % V.runtime,
-      "org.scala-exercises"        %% "exercises-stdlib"                % V.exercisesStdlib,
-      "org.scala-exercises"        %% "exercises-cats"                  % V.exercisesCats,
-      "org.scala-exercises"        %% "exercises-shapeless"             % V.exercisesShapeless,
-      "org.scala-exercises"        %% "exercises-scalatutorial"         % V.exercisesScalatutorial,
-      "org.scala-exercises"        %% "exercises-fpinscala"             % V.exercisesFpinscala,
-      "org.scala-exercises"        %% "exercises-doobie"                % V.exercisesDoobie,
-      "org.scala-exercises"        %% "exercises-scalacheck"            % V.exercisesScalacheck,
-      "org.scala-exercises"        %% "exercises-fetch"                 % V.exercisesFetch,
-      "org.scala-exercises"        %% "exercises-monocle"               % V.exercisesMonocle,
-      "org.scala-exercises"        %% "exercises-circe"                 % V.exercisesCirce,
-      "com.vmunier"                %% "scalajs-scripts"                 % V.scalajsscripts,
-      "com.lihaoyi"                %% "upickle"                         % V.upickle,
-      "org.webjars"                %% "webjars-play"                    % V.webjars,
-      "org.webjars"                 % "highlightjs"                     % V.highlightjs,
-      "org.foundweekends"          %% "knockoff"                        % V.knockoff,
-      "com.newrelic.agent.java"     % "newrelic-agent"                  % V.newrelic,
-      "org.typelevel"              %% "cats-effect"                     % V.catsEffect,
-      "commons-io"                  % "commons-io"                      % V.commonsio,
-      "org.webjars.bower"           % "bootstrap-sass"                  % V.bootstrap,
-      "com.47deg"                  %% "github4s"                        % V.github4s,
-      "org.scalatest"              %% "scalatest"                       % V.scalatest           % Runtime,
-      "org.scalatestplus"          %% "scalacheck-1-14"                 % V.scalatestplusScheck % Test,
-      "org.tpolecat"               %% "doobie-core"                     % V.doobie,
-      "org.tpolecat"               %% "doobie-hikari"                   % V.doobie,
-      "org.tpolecat"               %% "doobie-postgres"                 % V.doobie,
-      "com.dimafeng"               %% "testcontainers-scala-scalatest"  % V.testcontainers      % Test,
-      "com.dimafeng"               %% "testcontainers-scala-postgresql" % V.testcontainers      % Test,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14"       % V.scalacheckShapeless % Test,
-      "org.tpolecat"               %% "doobie-scalatest"                % V.doobie              % Test
+      "org.scala-exercises"    %% "runtime"                 % V.runtime,
+      "org.scala-exercises"    %% "exercises-stdlib"        % V.exercisesStdlib,
+      "org.scala-exercises"    %% "exercises-cats"          % V.exercisesCats,
+      "org.scala-exercises"    %% "exercises-shapeless"     % V.exercisesShapeless,
+      "org.scala-exercises"    %% "exercises-scalatutorial" % V.exercisesScalatutorial,
+      "org.scala-exercises"    %% "exercises-fpinscala"     % V.exercisesFpinscala,
+      "org.scala-exercises"    %% "exercises-doobie"        % V.exercisesDoobie,
+      "org.scala-exercises"    %% "exercises-scalacheck"    % V.exercisesScalacheck,
+      "org.scala-exercises"    %% "exercises-fetch"         % V.exercisesFetch,
+      "org.scala-exercises"    %% "exercises-monocle"       % V.exercisesMonocle,
+      "org.scala-exercises"    %% "exercises-circe"         % V.exercisesCirce,
+      "com.vmunier"            %% "scalajs-scripts"         % V.scalajsscripts,
+      "com.lihaoyi"            %% "upickle"                 % V.upickle,
+      "org.webjars"            %% "webjars-play"            % V.webjars,
+      "org.webjars"             % "highlightjs"             % V.highlightjs,
+      "org.foundweekends"      %% "knockoff"                % V.knockoff,
+      "com.newrelic.agent.java" % "newrelic-agent"          % V.newrelic,
+      "org.typelevel"          %% "cats-effect"             % V.catsEffect,
+      "commons-io"              % "commons-io"              % V.commonsio,
+      "org.webjars.bower"       % "bootstrap-sass"          % V.bootstrap,
+      "com.47deg"              %% "github4s"                % V.github4s,
+      "org.scalatest"          %% "scalatest"               % V.scalatest           % Runtime,
+      "org.scalatestplus"      %% "scalacheck-1-14"         % V.scalatestplusScheck % Test,
+      "org.tpolecat"           %% "doobie-core"             % V.doobie,
+      "org.tpolecat"           %% "doobie-hikari"           % V.doobie,
+      "org.tpolecat"           %% "doobie-postgres"         % V.doobie,
+      "com.dimafeng" %% "testcontainers-scala-scalatest"  % V.testcontainers % Test,
+      "com.dimafeng" %% "testcontainers-scala-postgresql" % V.testcontainers % Test,
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % V.scalacheckShapeless % Test,
+      "org.tpolecat"               %% "doobie-scalatest"          % V.doobie              % Test
     )
   )
 
@@ -90,11 +90,11 @@ lazy val client = (project in file("client"))
   .settings(name := "client")
   .settings(skip in publish := true)
   .settings(
-    scalaJSUseMainModuleInitializer := true,
+    scalaJSUseMainModuleInitializer         := true,
     scalaJSUseMainModuleInitializer in Test := false,
-    sourceMappings := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
-    jsDependencies += "org.webjars" % "jquery" % "3.4.1" / "3.4.1/jquery.js",
-    skip in packageJSDependencies := false,
+    sourceMappings                          := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
+    jsDependencies += "org.webjars"          % "jquery" % "3.4.1" / "3.4.1/jquery.js",
+    skip in packageJSDependencies           := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(

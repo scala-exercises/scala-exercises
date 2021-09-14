@@ -17,7 +17,7 @@
 package org.scalaexercises.client
 package ui
 
-import org.scalajs.dom.raw.{HTMLElement}
+import org.scalajs.dom.raw.HTMLElement
 
 import cats.data.OptionT
 import cats.implicits._
