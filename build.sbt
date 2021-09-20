@@ -6,7 +6,7 @@ import webscalajs._
 
 ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
-ThisBuild / scalaVersion       := "2.13.3"
+ThisBuild / scalaVersion       := "2.13.6"
 
 addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
