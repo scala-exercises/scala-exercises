@@ -63,7 +63,7 @@ object Client {
 
   def compileExercise(e: ClientExercise): Future[EvaluationResult] = {
     val url = Routes.Exercises.evaluate(e.library, e.section)
-    //TODO: TBD version and exercise types
+    // TODO: TBD version and exercise types
     val request = EvaluationRequest(e.library, e.section, e.method, 1, "Koans", e.arguments)
     Ajax
       .postAsJson(url, write(request))
