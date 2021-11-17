@@ -45,7 +45,7 @@ object ProjectPlugin extends AutoPlugin {
       val scalatest: String                 = "3.2.10"
       val scalatestplusScheck: String       = "3.2.2.0"
       val shapeless: String                 = "2.3.3"
-      val testcontainers: String            = "0.39.11"
+      val testcontainers: String            = "0.39.12"
       val upickle: String                   = "1.4.2"
       val webjars: String                   = "2.8.8-1"
     }
