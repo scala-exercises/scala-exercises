@@ -14,11 +14,11 @@ addCommandAlias("ci-publish", "github; ci-release")
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
-  .settings(skip in publish := true)
+  .settings((publish / skip) := true)
   .aggregate(server, client, coreJs, coreJvm)
   .dependsOn(server, client, coreJs, coreJvm)
 
-lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
+lazy val core = (file("core") / crossProject(JSPlatform, JVMPlatform))
   .settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % V.cats
@@ -34,14 +34,14 @@ lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
   .enablePlugins(JavaAppPackaging)
-  .settings(skip in publish := true)
+  .settings((publish / skip) := true)
   .settings(
     scalaJSProjects          := clients,
-    pipelineStages in Assets := Seq(scalaJSPipeline),
+    (Assets / pipelineStages) := Seq(scalaJSPipeline),
     pipelineStages           := Seq(scalaJSProd, gzip),
     routesGenerator          := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
-    testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
+    (Test / testOptions) := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(
       filters,
@@ -88,13 +88,13 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
   .settings(name := "client")
-  .settings(skip in publish := true)
+  .settings((publish / skip) := true)
   .settings(
     scalaJSUseMainModuleInitializer         := true,
-    scalaJSUseMainModuleInitializer in Test := false,
+    (Test / scalaJSUseMainModuleInitializer) := false,
     sourceMappings                          := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
     jsDependencies += "org.webjars"          % "jquery" % "3.4.1" / "3.4.1/jquery.js",
-    skip in packageJSDependencies           := false,
+    (packageJSDependencies / skip)           := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(
