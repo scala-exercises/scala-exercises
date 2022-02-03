@@ -87,7 +87,7 @@ class UserDoobieRepository(implicit persistence: PersistenceModule) extends User
 
 object UserRepository {
 
-  //Queries input:
+  // Queries input:
   type UpdateParams = (Option[String], String, String, String, Option[String], Long)
   type InsertParams = (String, Option[String], String, String, String, Option[String])
 

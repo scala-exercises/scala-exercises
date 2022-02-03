@@ -125,7 +125,7 @@ class ExercisesController(config: Configuration, components: ControllerComponent
           runtimeInfo      <- exerciseOps.buildRuntimeInfo(evaluation).attempt
           evaluationResult <- eval(runtimeInfo)
           httpResponse     <- mkHttpStatusCodeResponse(evaluationResult)
-          _                <- userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
+          _ <- userProgressOps.saveUserProgress(mkSaveProgressRequest(evaluationResult.isRight))
         } yield httpResponse).unsafeToFuture()
 
     }
