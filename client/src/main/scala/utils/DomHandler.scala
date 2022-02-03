@@ -22,7 +22,7 @@ import org.scalajs.dom.ext.KeyCode
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLDivElement, HTMLElement, HTMLInputElement}
-import org.scalajs.jquery.{JQuery, jQuery => $}
+import org.scalajs.jquery.{jQuery => $, JQuery}
 
 import scala.scalajs.js.timers._
 import monix.eval.Coeval
@@ -149,7 +149,8 @@ object DomHandler {
     }.void
 
   /**
-   * Provides support for input changes related to events like drag-and-drop and others (not pasting)
+   * Provides support for input changes related to events like drag-and-drop and others (not
+   * pasting)
    */
   def attachOnInputChange(
       input: HTMLInputElement,

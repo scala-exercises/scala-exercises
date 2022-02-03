@@ -23,11 +23,6 @@ jobs:
       - name: Checkout project (main)
         if: github.event_name == 'push'
         uses: actions/checkout@v2
-      - name: Label PR
-        if: github.event_name == 'pull_request'
-        uses: TimonVS/pr-labeler-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
       - name: Setup Ruby

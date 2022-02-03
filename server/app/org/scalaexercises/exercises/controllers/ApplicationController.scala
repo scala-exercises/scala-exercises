@@ -100,7 +100,7 @@ class ApplicationController(config: Configuration, components: ControllerCompone
   private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
     IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey)))(cs).flatMap {
       case repo if repo.nonEmpty => IO.pure(repo)
-      case None                  => getRepository(configUtils.githubSiteOwner, configUtils.githubSiteRepo)
+      case None => getRepository(configUtils.githubSiteOwner, configUtils.githubSiteRepo)
     }
   }
 
