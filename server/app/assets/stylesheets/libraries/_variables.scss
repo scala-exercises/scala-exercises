@@ -1,6 +1,6 @@
 // Variables Bootstrap
 // -----------------------------------------------------
-@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Open+Sans&display=swap');
 
 $scala:                           #F05C59;
 $akka:                            #14A8BA;
@@ -45,7 +45,7 @@ $font-size-h6:            ceil(($font-size-base * 0.85));
 
 
 $headings-font-family:           "Montserrat", sans-serif;
-$headings-font-weight:           400;
+$headings-font-weight:           600;
 $headings-color:                 $gray-base;
 
 // Components
