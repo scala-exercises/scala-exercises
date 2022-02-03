@@ -41,9 +41,9 @@ object Effects {
       val (lib, sect) = libAndSection
       Client
         .fetchProgress(lib, sect)
-        .collect({ case Some(state) =>
+        .collect { case Some(state) =>
           Some(SetState(validateState(state)))
-        })
+        }
     }
   }
 
