@@ -44,5 +44,5 @@ case class ConfigUtils @Inject() (conf: Configuration) {
     s"$rootUrl/_oauth-callback"
   }
 
-  val successUrl = org.scalaexercises.exercises.controllers.routes.OAuthController.success()
+  val successUrl = org.scalaexercises.exercises.controllers.routes.OAuthController.success
 }
