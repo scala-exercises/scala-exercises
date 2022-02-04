@@ -68,7 +68,7 @@ class Components(context: Context)
     configuration.getOptional[Int]("play.db.prototype.hikaricp.maximumPoolSize").getOrElse(32)
 
   lazy val transactorResource = (for {
-    ec <- ExecutionContexts.fixedThreadPool[IO](threadPool)
+    ec      <- ExecutionContexts.fixedThreadPool[IO](threadPool)
     blocker <- Blocker[IO]
   } yield Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
     implicitly,
