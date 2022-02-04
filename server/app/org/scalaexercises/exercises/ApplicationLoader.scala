@@ -17,7 +17,7 @@
 package org.scalaexercises.exercises
 
 import _root_.controllers._
-import cats.effect.{ConcurrentEffect, IO}
+import cats.effect.IO
 import com.typesafe.config.ConfigFactory
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
@@ -69,8 +69,7 @@ class Components(context: Context)
 
   lazy val transactorResource = (for {
     ec <- ExecutionContexts.fixedThreadPool[IO](threadPool)
-    cs = IO.contextShift(ec)
-    blocker <- Resource.unit[IO]
+    blocker <- Blocker[IO]
   } yield Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
     implicitly,
     cs
