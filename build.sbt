@@ -8,6 +8,11 @@ ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
 ThisBuild / scalaVersion       := "2.13.3"
 
+// Required to prevent errors for eviction from binary incompatible dependency
+// resolutions.
+// See also: https://github.com/scala-exercises/exercises-cats/pull/267
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % "always"
+
 addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
 addCommandAlias("ci-publish", "github; ci-release")
@@ -18,7 +23,7 @@ lazy val `scala-exercises` = (project in file("."))
   .aggregate(server, client, coreJs, coreJvm)
   .dependsOn(server, client, coreJs, coreJvm)
 
-lazy val core = (file("core") / crossProject(JSPlatform, JVMPlatform))
+lazy val core = crossProject(JSPlatform, JVMPlatform).in(file("core"))
   .settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % V.cats
