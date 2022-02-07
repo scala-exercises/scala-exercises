@@ -17,7 +17,8 @@
 package org.scalaexercises.exercises
 
 import _root_.controllers._
-import cats.effect.IO
+import cats.effect.{IO, Resource}
+import cats.effect.unsafe.IORuntime
 import com.typesafe.config.ConfigFactory
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
@@ -39,7 +40,6 @@ import play.api.mvc.EssentialFilter
 import router.Routes
 
 import scala.concurrent.Future
-import cats.effect.Resource
 
 class ExercisesApplicationLoader extends ApplicationLoader {
   def load(context: Context) = {
@@ -60,6 +60,8 @@ class Components(context: Context)
     with EvolutionsComponents
     with HikariCPComponents {
 
+  implicit val runtime: IORuntime = IORuntime.global
+
   applicationEvolutions.start()
 
   override lazy val dynamicEvolutions: DynamicEvolutions = new DynamicEvolutions
@@ -68,22 +70,14 @@ class Components(context: Context)
     configuration.getOptional[Int]("play.db.prototype.hikaricp.maximumPoolSize").getOrElse(32)
 
   lazy val transactorResource = (for {
-    ec      <- ExecutionContexts.fixedThreadPool[IO](threadPool)
-    blocker <- Blocker[IO]
-  } yield Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec, blocker)(
-    implicitly,
-    cs
-  )).allocated
+    ec <- ExecutionContexts.fixedThreadPool[IO](threadPool)
+  } yield Transactor.fromDataSource[IO](dbApi.database("default").dataSource, ec)).allocated
 
-  lazy implicit val trans: Transactor[IO] = transactorResource.map(_._1).unsafeRunSync
+  lazy implicit val trans: Transactor[IO] = transactorResource.map(_._1).unsafeRunSync()
 
   implicit val wsClient: WSClient = AhcWSClient()
 
   implicit val mode = environment.mode
-
-  implicit def cs: ContextShift[IO] = IO.contextShift(controllerComponents.executionContext)
-
-  implicit def ce: ConcurrentEffect[IO] = IO.ioConcurrentEffect(cs)
 
   implicit val bodyParserAnyContent = controllerComponents.parsers.anyContent
 

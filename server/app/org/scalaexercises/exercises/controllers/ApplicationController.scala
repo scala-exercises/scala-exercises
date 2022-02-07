@@ -17,6 +17,7 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import cats.implicits._
 import github4s.Github
 import org.scalaexercises.algebra.exercises.ExerciseOps
@@ -31,7 +32,7 @@ import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.{Configuration, Logger, Mode}
-import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.blaze.client.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
@@ -43,7 +44,6 @@ class ApplicationController(config: Configuration, components: ControllerCompone
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
     userExercisesProgress: UserExercisesProgress[IO],
-    cs: ContextShift[IO],
     service: ExercisesService,
     configUtils: ConfigUtils,
     mode: Mode
@@ -55,7 +55,7 @@ class ApplicationController(config: Configuration, components: ControllerCompone
 
   val MainRepoCacheKey = "scala-exercises.repo"
 
-  lazy val clientResource = BlazeClientBuilder[IO](executionContext).resource
+  lazy val clientResource = BlazeClientBuilder[IO].resource
 
   private lazy val logger = Logger(this.getClass)
 
@@ -98,7 +98,7 @@ class ApplicationController(config: Configuration, components: ControllerCompone
    * cache the main repo stars, forks and watchers info for 30 mins
    */
   private[this] def scalaexercisesRepo: IO[Option[Repository]] = {
-    IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey)))(cs).flatMap {
+    IO.fromFuture(IO(cache.get[Repository](MainRepoCacheKey))).flatMap {
       case repo if repo.nonEmpty => IO.pure(repo)
       case None => getRepository(configUtils.githubSiteOwner, configUtils.githubSiteRepo)
     }

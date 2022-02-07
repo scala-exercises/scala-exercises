@@ -17,6 +17,7 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import cats.implicits._
 import github4s.Github
 import org.scalaexercises.algebra.user.UserOps
@@ -26,19 +27,20 @@ import org.scalaexercises.types.github.{GithubUser, OAuthToken}
 import org.scalaexercises.types.user.UserCreation
 import play.api.mvc.{AnyContent, BaseController, ControllerComponents}
 import play.api.{Configuration, Mode}
-import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.blaze.client.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
 class OAuthController(conf: Configuration, components: ControllerComponents)(implicit
     executionContext: ExecutionContext,
-    cs: ContextShift[IO],
     userOps: UserOps[IO],
     configUtils: ConfigUtils,
     mode: Mode
 ) extends BaseController {
 
-  lazy val clientResource = BlazeClientBuilder[IO](executionContext).resource
+  implicit val runtime: IORuntime = IORuntime.global
+
+  lazy val clientResource = BlazeClientBuilder[IO].resource
 
   private[this] def getAccessToken(code: String, state: String) =
     clientResource.use { client =>

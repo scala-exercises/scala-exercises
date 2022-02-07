@@ -17,6 +17,7 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.exercises.Secure
 import play.api.Mode
@@ -26,6 +27,8 @@ class SitemapController(components: ControllerComponents)(implicit
     exerciseOps: ExerciseOps[IO],
     mode: Mode
 ) extends BaseController {
+
+  implicit val runtime: IORuntime = IORuntime.global
 
   def sitemap =
     Secure(Action.async { _ =>

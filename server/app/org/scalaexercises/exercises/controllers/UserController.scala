@@ -17,6 +17,7 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.exercises.Secure
 import org.scalaexercises.types.user.User
@@ -28,6 +29,8 @@ import upickle.default._
 
 class UserController(components: ControllerComponents)(implicit userOps: UserOps[IO], mode: Mode)
     extends BaseController {
+
+  implicit val runtime: IORuntime = IORuntime.global
 
   implicit val jsonReader = (__ \ Symbol("github")).read[String](minLength[String](2))
 
