@@ -64,9 +64,9 @@ object ProjectPlugin extends AutoPlugin {
       ),
       scalacOptions ~= (_ filterNot (_ == "-Xfuture")),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
-      (Test / fork)                        := false,
-      (Test / parallelExecution)           := false,
-      (Global / cancelable)                := true,
+      (Test / fork)                       := false,
+      (Test / parallelExecution)          := false,
+      (Global / cancelable)               := true,
       ScoverageKeys.coverageFailOnMinimum := false
     )
 

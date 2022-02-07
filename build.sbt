@@ -23,7 +23,8 @@ lazy val `scala-exercises` = (project in file("."))
   .aggregate(server, client, coreJs, coreJvm)
   .dependsOn(server, client, coreJs, coreJvm)
 
-lazy val core = crossProject(JSPlatform, JVMPlatform).in(file("core"))
+lazy val core = crossProject(JSPlatform, JVMPlatform)
+  .in(file("core"))
   .settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % V.cats
@@ -41,10 +42,10 @@ lazy val server = (project in file("server"))
   .enablePlugins(JavaAppPackaging)
   .settings((publish / skip) := true)
   .settings(
-    scalaJSProjects          := clients,
+    scalaJSProjects           := clients,
     (Assets / pipelineStages) := Seq(scalaJSPipeline),
-    pipelineStages           := Seq(scalaJSProd, gzip),
-    routesGenerator          := InjectedRoutesGenerator,
+    pipelineStages            := Seq(scalaJSProd, gzip),
+    routesGenerator           := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
     (Test / testOptions) := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
     scalacOptions += "-Ymacro-annotations",
@@ -95,9 +96,9 @@ lazy val client = (project in file("client"))
   .settings(name := "client")
   .settings((publish / skip) := true)
   .settings(
-    scalaJSUseMainModuleInitializer         := true,
+    scalaJSUseMainModuleInitializer          := true,
     (Test / scalaJSUseMainModuleInitializer) := false,
-    sourceMappings                          := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
+    sourceMappings                           := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
     jsDependencies += "org.webjars" % "jquery" % V.jqueryWebjar / s"${V.jqueryWebjar}/jquery.js",
     testFrameworks += new TestFramework("utest.runner.Framework"),
     scalacOptions += "-Ymacro-annotations",
