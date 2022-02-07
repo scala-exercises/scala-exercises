@@ -17,7 +17,7 @@
 package org.scalaexercises.exercises.persistence.repositories
 
 import cats.effect.IO
-import cats.implicits._
+import cats.syntax.all._
 import org.scalaexercises.types.user.UserCreation
 import org.scalaexercises.types.user.UserCreation.Request
 import org.scalaexercises.exercises.support.{ArbitraryInstances, DatabaseInstance}

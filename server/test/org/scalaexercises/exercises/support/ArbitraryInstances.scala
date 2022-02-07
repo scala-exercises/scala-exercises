@@ -17,6 +17,7 @@
 package org.scalaexercises.exercises.support
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import org.scalaexercises.types.user.UserCreation._
 import org.scalaexercises.types.progress.SaveUserProgress
 import org.scalaexercises.exercises.persistence.repositories.UserRepository
@@ -29,6 +30,8 @@ import org.scalatest.Assertions
 import org.scalaexercises.types.user.User
 
 trait ArbitraryInstances extends Assertions {
+
+  implicit val runtime: IORuntime = IORuntime.global
 
   // Avoids creating strings with null chars because Postgres text fields don't support it.
   // see http://stackoverflow.com/questions/1347646/postgres-error-on-insert-error-invalid-byte-sequence-for-encoding-utf8-0x0
@@ -59,7 +62,7 @@ trait ArbitraryInstances extends Assertions {
       UR: UserRepository
   ): Arbitrary[User] = {
     Arbitrary(arbitrary[Request] map { request =>
-      UR.create(request).transact(transactor).unsafeRunSync match {
+      UR.create(request).transact(transactor).unsafeRunSync() match {
         case Right(user) => user
         case Left(error) => fail(s"Failed generating persistent users : $error")
       }

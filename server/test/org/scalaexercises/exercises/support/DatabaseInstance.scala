@@ -16,7 +16,7 @@
 
 package org.scalaexercises.exercises.support
 
-import cats.effect.{ContextShift, IO}
+import cats.effect.IO
 import doobie.util.transactor.Transactor
 import play.api.db.evolutions._
 import play.api.db.{Database, Databases}
@@ -28,8 +28,6 @@ trait DatabaseInstance {
 
   val role: String   = "scala-exercises"
   lazy val container = PostgreSQLContainer().configure(_.withUsername(role))
-
-  implicit val ContextShiftIO: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
 
   def createDatabase(): Database = {
     Databases(
