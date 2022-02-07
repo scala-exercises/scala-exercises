@@ -8,17 +8,23 @@ ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
 ThisBuild / scalaVersion       := "2.13.3"
 
+// Required to prevent errors for eviction from binary incompatible dependency
+// resolutions.
+// See also: https://github.com/scala-exercises/exercises-cats/pull/267
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % "always"
+
 addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
 addCommandAlias("ci-publish", "github; ci-release")
 
 lazy val `scala-exercises` = (project in file("."))
   .settings(moduleName := "scala-exercises")
-  .settings(skip in publish := true)
+  .settings((publish / skip) := true)
   .aggregate(server, client, coreJs, coreJvm)
   .dependsOn(server, client, coreJs, coreJvm)
 
-lazy val core = (crossProject(JSPlatform, JVMPlatform) in file("core"))
+lazy val core = crossProject(JSPlatform, JVMPlatform)
+  .in(file("core"))
   .settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %%% "cats-core" % V.cats
@@ -34,14 +40,14 @@ lazy val server = (project in file("server"))
   .enablePlugins(PlayScala)
   .enablePlugins(SbtWeb)
   .enablePlugins(JavaAppPackaging)
-  .settings(skip in publish := true)
+  .settings((publish / skip) := true)
   .settings(
-    scalaJSProjects          := clients,
-    pipelineStages in Assets := Seq(scalaJSPipeline),
-    pipelineStages           := Seq(scalaJSProd, gzip),
-    routesGenerator          := InjectedRoutesGenerator,
+    scalaJSProjects           := clients,
+    (Assets / pipelineStages) := Seq(scalaJSPipeline),
+    pipelineStages            := Seq(scalaJSProd, gzip),
+    routesGenerator           := InjectedRoutesGenerator,
     routesImport += "config.Routes._",
-    testOptions in Test := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
+    (Test / testOptions) := Seq(Tests.Argument(TestFrameworks.Specs2, "console")),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(
       filters,
@@ -88,13 +94,12 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .disablePlugins(ScoverageSbtPlugin)
   .settings(name := "client")
-  .settings(skip in publish := true)
+  .settings((publish / skip) := true)
   .settings(
-    scalaJSUseMainModuleInitializer         := true,
-    scalaJSUseMainModuleInitializer in Test := false,
-    sourceMappings                          := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
+    scalaJSUseMainModuleInitializer          := true,
+    (Test / scalaJSUseMainModuleInitializer) := false,
+    sourceMappings                           := SourceMappings.fromFiles(Seq(coreJs.base / "..")),
     jsDependencies += "org.webjars" % "jquery" % V.jqueryWebjar / s"${V.jqueryWebjar}/jquery.js",
-    skip in packageJSDependencies  := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
     scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Seq(

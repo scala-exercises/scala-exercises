@@ -35,7 +35,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyScalatags: String     = "0.9.4"
       val jsDependencyUtest: String         = "0.7.10"
       val jqueryWebjar: String              = "3.6.0"
-      val knockoff: String                  = "0.9.0"
+      val knockoff: String                  = "0.8.14"
       val monix: String                     = "3.4.0"
       val newrelic: String                  = "5.13.0"
       val postgres: String                  = "42.2.8"
@@ -64,9 +64,9 @@ object ProjectPlugin extends AutoPlugin {
       ),
       scalacOptions ~= (_ filterNot (_ == "-Xfuture")),
       javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:-options"),
-      fork in Test                        := false,
-      parallelExecution in Test           := false,
-      cancelable in Global                := true,
+      (Test / fork)                       := false,
+      (Test / parallelExecution)          := false,
+      (Global / cancelable)               := true,
       ScoverageKeys.coverageFailOnMinimum := false
     )
 
