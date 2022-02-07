@@ -13,7 +13,7 @@ ThisBuild / scalaVersion       := "2.13.3"
 // See also: https://github.com/scala-exercises/exercises-cats/pull/267
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % "always"
 
-addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
+addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered; fail")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
 addCommandAlias("ci-publish", "github; ci-release")
 
