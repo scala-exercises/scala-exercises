@@ -17,32 +17,31 @@
 package org.scalaexercises.exercises
 package services
 
-import java.util.Base64
-
 import cats.data.State
 import cats.syntax.all._
-import javax.inject.Singleton
 import org.apache.commons.io.IOUtils
+import org.clapper.classutil.ClassFinder
+import org.objectweb.asm.Opcodes
 import org.scalaexercises.definitions.{Library => DefnLibrary}
-import org.scalaexercises.runtime.model.{
-  BuildInfo => RuntimeBuildInfo,
-  Contribution => RuntimeContribution,
-  DefaultLibrary,
-  Exercise => RuntimeExercise,
-  Library => RuntimeLibrary,
-  Section => RuntimeSection
-}
-import org.scalaexercises.runtime.{Exercises, Timestamp}
+import org.scalaexercises.runtime.Exercises
+import org.scalaexercises.runtime.Timestamp
+import org.scalaexercises.runtime.model.DefaultLibrary
+import org.scalaexercises.runtime.model.{BuildInfo => RuntimeBuildInfo}
+import org.scalaexercises.runtime.model.{Contribution => RuntimeContribution}
+import org.scalaexercises.runtime.model.{Exercise => RuntimeExercise}
+import org.scalaexercises.runtime.model.{Library => RuntimeLibrary}
+import org.scalaexercises.runtime.model.{Section => RuntimeSection}
 import org.scalaexercises.types.evaluator.CoreDependency
 import org.scalaexercises.types.exercises._
 import play.api.Logger
-import scala.reflect.ClassTag
-import java.net.URLClassLoader
-import org.clapper.classutil.ClassFinder
+
 import java.io.File
-import org.objectweb.asm.Opcodes
-import scala.util.Try
+import java.net.URLClassLoader
 import java.time.Instant
+import java.util.Base64
+import javax.inject.Singleton
+import scala.reflect.ClassTag
+import scala.util.Try
 
 @Singleton
 class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
@@ -103,9 +102,29 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
   val discoveredViaOverride = discoverLibraries()
 
+  lazy val (errors, runtimeLibraries) = (Nil, List(
+    new RuntimeLibrary {
+      def owner = "James"
+      def repository = "https://github.com/jisantuc/cliffs"
+      def name = "example"
+      def description = "passing an actual value"
+      def color = Some("#e7816f")
+      def logoPath = "https://cdn.vox-cdn.com/thumbor/eT0h9ntj8Vv9oY-WTg3uLcqFZ9c=/1400x1400/filters:format(png)/cdn.vox-cdn.com/uploads/chorus_asset/file/23260648/sf6.png"
+      def logoData = None
+      def sections = List.empty[org.scalaexercises.runtime.model.Section]
+      def timestamp = Instant.now().toString()
+      def buildMetaInfo = new org.scalaexercises.runtime.model.BuildInfo {
+        def resolvers = Nil
+        def libraryDependencies = Nil
+      }
+    }
+  ))
+
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
-    errors.foreach(error => logger.warn(s"error loading lib: $error")) // TODO: handle errors better?
+    errors.foreach(error =>
+      logger.warn(s"error loading lib: $error")
+    ) // TODO: handle errors better?
     (libraries1, libraries1.map(lib => lib.name -> lib.sections).toMap)
   }
 
