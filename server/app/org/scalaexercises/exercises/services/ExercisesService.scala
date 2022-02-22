@@ -20,9 +20,10 @@ package services
 import java.util.Base64
 
 import cats.data.State
-import cats.implicits._
+import cats.syntax.all._
 import javax.inject.Singleton
 import org.apache.commons.io.IOUtils
+import org.scalaexercises.definitions.{Library => DefnLibrary}
 import org.scalaexercises.runtime.model.{
   BuildInfo => RuntimeBuildInfo,
   Contribution => RuntimeContribution,
@@ -35,13 +36,72 @@ import org.scalaexercises.runtime.{Exercises, Timestamp}
 import org.scalaexercises.types.evaluator.CoreDependency
 import org.scalaexercises.types.exercises._
 import play.api.Logger
+import scala.reflect.ClassTag
+import java.net.URLClassLoader
+import org.clapper.classutil.ClassFinder
+import java.io.File
+import org.objectweb.asm.Opcodes
+import scala.util.Try
+import java.time.Instant
 
 @Singleton
 class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
+  private def guard[A](f: => A, message: => String) =
+    Either.catchNonFatal(f).leftMap(_ => message)
+
+  private def classMap(cl: ClassLoader) = {
+    val files = (cl
+      .asInstanceOf[URLClassLoader]
+      .getURLs
+      .map(url => new File(url.getFile)) filter (_.exists)).toSeq
+    val classFinder = ClassFinder(files, Some(Opcodes.ASM7))
+    val classes = classFinder
+      .getClasses()
+      .filter(Try(_).isSuccess)
+      .toList
+    ClassFinder.classInfoMap(classes.iterator)
+  }
+
+  private def subclassesOf[A: ClassTag](cl: ClassLoader): List[String] = {
+    def loop(currentClassLoader: ClassLoader, acc: List[String], iter: Int): List[String] = {
+      Option(currentClassLoader) match {
+        case None => acc
+        case Some(cll: URLClassLoader) =>
+          val subclasses = ClassFinder.concreteSubclasses(implicitly[ClassTag[A]].runtimeClass, classMap(cll))
+          val cn = ClassFinder
+            .concreteSubclasses(implicitly[ClassTag[A]].runtimeClass.getName, classMap(cll))
+            .map(_.name)
+            .toList
+          loop(currentClassLoader.getParent, acc ++ cn, iter + 1)
+        case Some(o) => loop(o.getParent, acc, iter + 1)
+      }
+    }
+    loop(cl, Nil, 0)
+  }
+
+  private def discoverLibraries(
+      cl: ClassLoader = classOf[DefnLibrary].getClassLoader
+  ): (List[String], List[DefnLibrary]) = {
+    val classNames: List[String] = subclassesOf[DefnLibrary](cl)
+
+    val errorsAndLibraries = classNames.map { name =>
+      for {
+        loadedClass <- guard(Class.forName(name, true, cl), s"$name not found")
+        loadedObject <- guard(
+          loadedClass.getField("MODULE$").get(null),
+          s"$name must be defined as an object"
+        )
+        loadedLibrary <- guard(loadedObject.asInstanceOf[DefnLibrary], s"$name must extend Library")
+      } yield loadedLibrary
+    }
+
+    errorsAndLibraries.separate
+  }
+
   private lazy val logger = Logger(this.getClass)
 
-  lazy val (errors, runtimeLibraries) = Exercises.discoverLibraries()
+  val discoveredViaOverride = discoverLibraries()
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)

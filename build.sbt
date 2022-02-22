@@ -6,7 +6,7 @@ import webscalajs._
 
 ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
-ThisBuild / scalaVersion       := "2.13.3"
+ThisBuild / scalaVersion       := "2.13.8"
 
 // Required to prevent errors for eviction from binary incompatible dependency
 // resolutions.
@@ -90,7 +90,9 @@ lazy val server = (project in file("server"))
       "com.dimafeng" %% "testcontainers-scala-scalatest"  % V.testcontainers % Test,
       "com.dimafeng" %% "testcontainers-scala-postgresql" % V.testcontainers % Test,
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % V.scalacheckShapeless % Test,
-      "org.tpolecat"               %% "doobie-scalatest"          % V.doobie              % Test
+      "org.tpolecat"               %% "doobie-scalatest"          % V.doobie              % Test,
+      "org.scala-exercises"        %% "exercise-compiler"         % "0.7.1+14-b94ba7a2-SNAPSHOT",
+      "org.scala-exercises"        %% "definitions"               % "0.7.1+14-b94ba7a2-SNAPSHOT"
     )
   )
 
