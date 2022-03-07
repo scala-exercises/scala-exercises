@@ -1,4 +1,4 @@
-addSbtPlugin("org.irundaia.sbt"    % "sbt-sassify"              % "1.5.1")
+addSbtPlugin("io.github.irundaia"  % "sbt-sassify"              % "1.5.2")
 addSbtPlugin("org.scala-js"        % "sbt-scalajs"              % "1.9.0")
 addSbtPlugin("com.eed3si9n"        % "sbt-buildinfo"            % "0.11.0")
 addSbtPlugin("com.typesafe.play"   % "sbt-plugin"               % "2.8.13")
