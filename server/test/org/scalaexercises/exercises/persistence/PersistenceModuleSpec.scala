@@ -27,7 +27,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import shapeless.HNil
 import cats.effect.IO
-import cats.implicits._
+import cats.syntax.all._
 import com.dimafeng.testcontainers.ForAllTestContainer
 
 trait DatabaseContext extends DatabaseInstance {
@@ -109,7 +109,7 @@ class PersistenceModuleSpec
 
   override lazy val trx: Transactor[IO] = databaseTransactor
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     for {
       _ <- dropTable
       _ <- createTable

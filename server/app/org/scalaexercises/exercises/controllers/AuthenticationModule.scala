@@ -17,6 +17,7 @@
 package org.scalaexercises.exercises.controllers
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import org.scalaexercises.algebra.user.UserOps
 import org.scalaexercises.exercises.Secure
 import org.scalaexercises.types.user.User
@@ -29,6 +30,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthenticationModule {
+
+  implicit val runtime: IORuntime = IORuntime.global
+
   case class UserRequest[A](userId: String, request: Request[A]) extends WrappedRequest[A](request)
 
   class AuthenticationAction(implicit bodyParser: BodyParser[AnyContent])

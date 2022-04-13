@@ -45,7 +45,7 @@ class ExercisesService(cl: ClassLoader) extends RuntimeSharedConversions {
 
   lazy val (libraries: List[Library], librarySections: Map[String, List[Section]]) = {
     val libraries1 = colorize(runtimeLibraries).map(convertLibrary)
-    errors.foreach(error => logger.warn(s"$error")) // TODO: handle errors better?
+    errors.foreach(error => logger.warn(s"error loading lib: $error")) // TODO: handle errors better?
     (libraries1, libraries1.map(lib => lib.name -> lib.sections).toMap)
   }
 

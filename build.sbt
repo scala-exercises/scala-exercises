@@ -13,7 +13,12 @@ ThisBuild / scalaVersion       := "2.13.3"
 // See also: https://github.com/scala-exercises/exercises-cats/pull/267
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % "always"
 
-addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered")
+// TODO remove before merge
+ThisBuild / resolvers +=
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+// TODO remove deliberate fail before merge
+addCommandAlias("ci-test", "scalafmtCheckAll; scalafmtSbtCheck; testCovered; fail")
 addCommandAlias("ci-docs", "github; documentation/mdoc; headerCreateAll")
 addCommandAlias("ci-publish", "github; ci-release")
 

@@ -16,7 +16,7 @@
 
 package org.scalaexercises.exercises.controllers
 
-import cats.effect.{ConcurrentEffect, IO}
+import cats.effect.IO
 import cats.implicits._
 import org.scalaexercises.algebra.exercises.ExerciseOps
 import org.scalaexercises.algebra.progress.UserProgressOps
@@ -37,7 +37,6 @@ class ExercisesController(config: Configuration, components: ControllerComponent
     exerciseOps: ExerciseOps[IO],
     userOps: UserOps[IO],
     userProgressOps: UserProgressOps[IO],
-    ce: ConcurrentEffect[IO],
     configUtils: ConfigUtils,
     BPAnyContent: BodyParser[AnyContent],
     mode: Mode

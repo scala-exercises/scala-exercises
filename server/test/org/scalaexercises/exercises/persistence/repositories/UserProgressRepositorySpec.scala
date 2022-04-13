@@ -33,7 +33,7 @@ import org.scalatest.propspec.AnyPropSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import org.scalaexercises.types.user.User
-import cats.implicits._
+import cats.syntax.all._
 import com.dimafeng.testcontainers.ForAllTestContainer
 
 class UserProgressRepositorySpec
