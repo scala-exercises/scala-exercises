@@ -73,13 +73,11 @@ object `package` {
 
     def printCIMap: String =
       if (compilationInfos.nonEmpty)
-        s"${
-            val ciList = compilationInfos map { case (k: String, list: List[CompilationInfo]) =>
-              s"""
+        s"${val ciList = compilationInfos map { case (k: String, list: List[CompilationInfo]) =>
+            s"""
              |$blockSeparator $k -> ${printCIList(list)}""".stripMargin
-            }
-            ciList.mkString(" ")
-          }"
+          }
+          ciList.mkString(" ") }"
       else ""
 
     s"""$msg
