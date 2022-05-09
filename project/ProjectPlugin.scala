@@ -36,7 +36,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyUtest: String         = "0.7.11"
       val jqueryWebjar: String              = "3.6.0"
       val knockoff: String                  = "0.8.14"
-      val monix: String                     = "3.4.0"
+      val monix: String                     = "3.4.1"
       val newrelic: String                  = "5.13.0"
       val postgres: String                  = "42.2.8"
       val runtime: String                   = "0.6.4"
