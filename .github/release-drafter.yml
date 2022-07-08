@@ -29,3 +29,35 @@ template: |
   ## Contributors to this release
 
   $CONTRIBUTORS
+
+autolabeler:
+  - label: "enhancement"
+    branch:
+      - '/enhancement\/.+/'
+      - '/feature\/.+/'
+  - label: "documentation"
+    files:
+      - "*.md"
+    branch:
+      - '/docs\/.+/'
+      - '/doc\/.+/'
+  - label: "breaking-change"
+    branch:
+      - '/breaking\/.+/'
+      - '/break\/.+/'
+  - label: "bug"
+    branch:
+      - '/bug\/.+/'
+      - '/fix\/.+/'
+  - label: "tests"
+    branch:
+      - '/test\/.+/'
+      - '/tests\/.+/'
+  - label: "dependency-update"
+    branch:
+      - '/dep\/.+/'
+      - '/dependency\/.+/'
+      - '/dependency-update\/.+/'
+  - label: "scala-steward"
+    branch:
+      - '/update\/.+/'
