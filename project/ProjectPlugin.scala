@@ -32,7 +32,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyJquery: String        = "3.4.1"
       val jsDependencyScalajsdom: String    = "1.2.0"
       val jsDependencyScalajsjquery: String = "1.0.0"
-      val jsDependencyScalatags: String     = "0.9.4"
+      val jsDependencyScalatags: String     = "0.12.0"
       val jsDependencyUtest: String         = "0.8.1"
       val jqueryWebjar: String              = "3.6.1"
       val knockoff: String                  = "0.8.14"
