@@ -24,7 +24,9 @@ jobs:
         if: github.event_name == 'push'
         uses: actions/checkout@v2
       - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
+        uses: olafurpg/setup-scala@v11
+        with:
+          java-version: adopt@1.11
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

@@ -22,7 +22,9 @@ jobs:
       - name: Fetch tags
         run: git fetch --tags
       - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
+        uses: olafurpg/setup-scala@v11
+        with:
+          java-version: adopt@1.11
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
