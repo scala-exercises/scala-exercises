@@ -53,6 +53,9 @@ Sessionx.vim
 # Temporary
 .netrwhist
 
+# Project local build artefacts
+.output
+
 # Auto-generated tag files
 tags
 
