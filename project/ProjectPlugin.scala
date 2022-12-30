@@ -41,7 +41,7 @@ object ProjectPlugin extends AutoPlugin {
       val postgres: String                  = "42.2.8"
       val runtime: String                   = "0.6.4"
       val scalacheck: String                = "1.14.3"
-      val scalacheckShapeless: String       = "1.2.5"
+      val scalacheckShapeless: String       = "1.3.0"
       val scalajsscripts: String            = "1.2.0"
       val scalatest: String                 = "3.2.14"
       val scalatestplusScheck: String       = "3.2.2.0"
