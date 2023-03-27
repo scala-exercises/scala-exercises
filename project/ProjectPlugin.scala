@@ -34,7 +34,7 @@ object ProjectPlugin extends AutoPlugin {
       val jsDependencyScalajsjquery: String = "1.0.0"
       val jsDependencyScalatags: String     = "0.9.4"
       val jsDependencyUtest: String         = "0.8.1"
-      val jqueryWebjar: String              = "3.6.3"
+      val jqueryWebjar: String              = "3.6.4"
       val knockoff: String                  = "0.8.14"
       val monix: String                     = "3.4.1"
       val newrelic: String                  = "5.13.0"
@@ -46,7 +46,7 @@ object ProjectPlugin extends AutoPlugin {
       val scalatest: String                 = "3.2.15"
       val scalatestplusScheck: String       = "3.2.2.0"
       val shapeless: String                 = "2.3.3"
-      val testcontainers: String            = "0.40.12"
+      val testcontainers: String            = "0.40.14"
       val upickle: String                   = "2.0.0"
       val webjars: String                   = "2.8.18"
     }
