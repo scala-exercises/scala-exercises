@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
-ruby '2.5.7'
+ruby '3.4.10'
 
-gem 'sassc', '2.2.1'
+gem 'sassc', '2.4.0'
